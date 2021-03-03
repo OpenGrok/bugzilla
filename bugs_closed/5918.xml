@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>5918</bug_id>
+          
+          <creation_ts>2008-12-19 01:16:00 +0000</creation_ts>
+          <short_desc>RFE: Support history and annotation for remote CVS repositories</short_desc>
+          <delta_ts>2010-02-17 12:58:40 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>scm</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXED</resolution>
+          
+          
+          
+          
+          
+          <priority>P4</priority>
+          <bug_severity>enhancement</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Jorgen Austvik">jorgen.austvik</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          <cc>knut.hatlen</cc>
+          <qa_contact name="Jorgen Austvik">jorgen.austvik</qa_contact>
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>24142</commentid>
+            <who name="Jorgen Austvik">jorgen.austvik</who>
+            <bug_when>2008-12-19 01:16:06 +0000</bug_when>
+            <thetext>&gt; Well, there is another issue, CVS history and annotation issue.  Our CVS 
+&gt; Server is the other Windows Server, OpenGrok is installed on a Linux 
+&gt; machine. I used CVS Checkout to checkout all the project source code 
+&gt; into OpenGrok source folder, however, In the OpenGrok page, the History 
+&gt; and Annotate is disabled. I think it is because the CVS Checkout command 
+&gt; didn&apos;t actually check the history files. Do you know is there any way I 
+&gt; can check out the history files and annotations files from CVS Server to 
+&gt; OpenGrok machine?
+
+We could check CVS/Repository to see if this is a remote repository or not (starts with &quot;:&quot;?).
+
+If it is a remote repository - get history and annotations using an external cvs command.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>24433</commentid>
+            <who name="Jorgen Austvik">jorgen.austvik</who>
+            <bug_when>2008-12-25 14:08:16 +0000</bug_when>
+            <thetext>Pushed:
+
+austvik@enzo:~/devel/opengrok/trunk$ hg push
+pushing to ssh://austvik@hg.opensolaris.org/hg/opengrok/trunk
+searching for changes
+remote: adding changesets
+remote: adding manifests
+remote: adding file changes
+remote: added 1 changesets with 5 changes to 5 files
+remote: Sending notification for 71eb4d006733853cb6eef38ef2f34b4e0012af87
+
+For CVS repositories there is now an added edpendencie: CVS executable.</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>7594</bug_id>
+          
+          <creation_ts>2009-03-21 19:21:00 +0000</creation_ts>
+          <short_desc>[patch] add support for sorting results by filepath</short_desc>
+          <delta_ts>2009-09-02 09:17:58 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>webapp</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXED</resolution>
+          
+          
+          
+          
+          
+          <priority>P4</priority>
+          <bug_severity>minor</bug_severity>
+          <target_milestone>0.8</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Christian Lohmaier">cloph</reporter>
+          <assigned_to name="Lubos Kosco">Lubos.Kosco</assigned_to>
+          <cc>Lubos.Kosco</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>32075</commentid>
+              <attachid>1573</attachid>
+            <who name="Christian Lohmaier">cloph</who>
+            <bug_when>2009-03-21 19:21:42 +0000</bug_when>
+            <thetext>Created attachment 1573
+patch that lets you sort by pathname in addition to &quot;relevancy&quot; and &quot;date&quot;
+
+The attached tiny patch adds support for sorting the results by pathname.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>45921</commentid>
+            <who name="Christian Lohmaier">cloph</who>
+            <bug_when>2009-08-05 17:05:06 +0000</bug_when>
+            <thetext>*PING*
+
+while a feature, and not a bugfix, it would still be nice to get a response, even more so since it is a PATCH...</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>45936</commentid>
+            <who name="Trond Norbye">trond.norbye</who>
+            <bug_when>2009-08-05 23:45:12 +0000</bug_when>
+            <thetext>Sorry, I missed this. Please sign the http://www.opensolaris.org/os/about/sun_contributor_agreement and I&apos;ll apply the patch.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>47247</commentid>
+            <who name="Christian Lohmaier">cloph</who>
+            <bug_when>2009-08-20 12:18:53 +0000</bug_when>
+            <thetext>FYI: I sent the SCA last week (via email-attachment), but so far no reply/ID sent back.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>47257</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2009-08-20 12:46:49 +0000</bug_when>
+            <thetext>I checked and you&apos;re really not in the db of contributors yet, seems it takes some time, I pinged the responsible, no worries, we will not forget about you ;)
+
+--
+L</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>47595</commentid>
+            <who name="Christian Lohmaier">cloph</who>
+            <bug_when>2009-08-24 14:25:28 +0000</bug_when>
+            <thetext>No worries, I mainly commented because I was complaining about no progress/no comment, so I didn&apos;t want to be the one who doesn&apos;t let others know about the status :-)
+
+my ID is #OS0390</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>47991</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2009-08-27 14:46:36 +0000</bug_when>
+            <thetext>(In reply to comment #5)
+&gt; No worries, I mainly commented because I was complaining about no progress/no
+&gt; comment, so I didn&apos;t want to be the one who doesn&apos;t let others know about the
+&gt; status :-)
+&gt; 
+&gt; my ID is #OS0390
+
+thanks, one I test that your fix will not break searching in path I will integrate it ...</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>48080</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2009-08-28 08:42:49 +0000</bug_when>
+            <thetext>fixed in
+ 819	9472f7561c42
+
+thanks Christian</thetext>
+          </long_desc>
+      
+          <attachment
+              isobsolete="0"
+              ispatch="1"
+              isprivate="0"
+              isurl="0"
+          >
+            <attachid>1573</attachid>
+            <date>2009-03-21 19:21:00 +0000</date>
+            <delta_ts>2009-03-21 19:21:42 +0000</delta_ts>
+            <desc>patch that lets you sort by pathname in addition to &quot;relevancy&quot; and &quot;date&quot;</desc>
+            <filename>opengrok_sortByPathname.patch</filename>
+            <type>text/plain</type>
+            <size>3799</size>
+            <attacher>cloph</attacher>
+            
+              <data encoding="base64">ZGlmZiAtciBiZGFiNmExNDMwMzYgLXIgNDdmODVhNzliNTBmIHNyYy9vcmcvb3BlbnNvbGFyaXMv
+b3Blbmdyb2svYW5hbHlzaXMvQW5hbHl6ZXJHdXJ1LmphdmEKLS0tIGEvc3JjL29yZy9vcGVuc29s
+YXJpcy9vcGVuZ3Jvay9hbmFseXNpcy9BbmFseXplckd1cnUuamF2YQlUaHUgRmViIDI2IDA5OjE3
+OjI3IDIwMDkgKzAxMDAKKysrIGIvc3JjL29yZy9vcGVuc29sYXJpcy9vcGVuZ3Jvay9hbmFseXNp
+cy9BbmFseXplckd1cnUuamF2YQlTYXQgTWFyIDIxIDIzOjU2OjM4IDIwMDkgKzAxMDAKQEAgLTIx
+Niw3ICsyMTYsNyBAQAogICAgICAgICBEb2N1bWVudCBkb2MgPSBuZXcgRG9jdW1lbnQoKTsKICAg
+ICAgICAgU3RyaW5nIGRhdGUgPSBEYXRlVG9vbHMudGltZVRvU3RyaW5nKGZpbGUubGFzdE1vZGlm
+aWVkKCksIERhdGVUb29scy5SZXNvbHV0aW9uLk1JTExJU0VDT05EKTsKICAgICAgICAgZG9jLmFk
+ZChuZXcgRmllbGQoInUiLCBVdGlsLnVpZChwYXRoLCBkYXRlKSwgRmllbGQuU3RvcmUuWUVTLCBG
+aWVsZC5JbmRleC5VTl9UT0tFTklaRUQpKTsKLSAgICAgICAgZG9jLmFkZChuZXcgRmllbGQoImZ1
+bGxwYXRoIiwgZmlsZS5nZXRBYnNvbHV0ZVBhdGgoKSwgRmllbGQuU3RvcmUuWUVTLCBGaWVsZC5J
+bmRleC5UT0tFTklaRUQpKTsKKyAgICAgICAgZG9jLmFkZChuZXcgRmllbGQoImZ1bGxwYXRoIiwg
+ZmlsZS5nZXRBYnNvbHV0ZVBhdGgoKSwgRmllbGQuU3RvcmUuTk8sIEZpZWxkLkluZGV4LlVOX1RP
+S0VOSVpFRCkpOwogCiAgICAgICAgIHRyeSB7CiAgICAgICAgICAgICBIaXN0b3J5UmVhZGVyIGhy
+ID0gSGlzdG9yeUd1cnUuZ2V0SW5zdGFuY2UoKS5nZXRIaXN0b3J5UmVhZGVyKGZpbGUpOwpAQCAt
+MjQ3LDcgKzI0Nyw2IEBACiAgICAgICAgICAgICB9CiAgICAgICAgICAgICBmYS5hbmFseXplKGRv
+YywgaW4pOwogICAgICAgICB9Ci0gICAgICAgIGRvYy5yZW1vdmVGaWVsZCgiZnVsbHBhdGgiKTsK
+IAogICAgICAgICByZXR1cm4gZG9jOwogICAgIH0KZGlmZiAtciBiZGFiNmExNDMwMzYgLXIgNDdm
+ODVhNzliNTBmIHdlYi9zZWFyY2guanNwCi0tLSBhL3dlYi9zZWFyY2guanNwCVRodSBGZWIgMjYg
+MDk6MTc6MjcgMjAwOSArMDEwMAorKysgYi93ZWIvc2VhcmNoLmpzcAlTYXQgTWFyIDIxIDIzOjU2
+OjM4IDIwMDkgKzAxMDAKQEAgLTU5LDEzICs1OSwxNCBAQAogCiBmaW5hbCBTdHJpbmcgTEFTVE1P
+RFRJTUUgPSAibGFzdG1vZHRpbWUiOwogZmluYWwgU3RyaW5nIFJFTEVWQU5DWSA9ICJyZWxldmFu
+Y3kiOworZmluYWwgU3RyaW5nIEJZX1BBVEggPSAiZnVsbHBhdGgiOwogCiBDb29raWVbXSBjb29r
+aWVzID0gcmVxdWVzdC5nZXRDb29raWVzKCk7CiBpZiAoY29va2llcyAhPSBudWxsKSB7CiAgICAg
+Zm9yIChDb29raWUgY29va2llIDogY29va2llcykgewogICAgICAgICBpZiAoY29va2llLmdldE5h
+bWUoKS5lcXVhbHMoIk9wZW5Hcm9rL3NvcnRpbmciKSkgewogICAgICAgICAgICAgc29ydCA9IGNv
+b2tpZS5nZXRWYWx1ZSgpOwotICAgICAgICAgICAgaWYgKCFMQVNUTU9EVElNRS5lcXVhbHMoc29y
+dCkgJiYgIVJFTEVWQU5DWS5lcXVhbHMoc29ydCkpIHsKKyAgICAgICAgICAgIGlmICghTEFTVE1P
+RFRJTUUuZXF1YWxzKHNvcnQpICYmICFSRUxFVkFOQ1kuZXF1YWxzKHNvcnQpICYmICFCWV9QQVRI
+LmVxdWFscyhzb3J0KSkgewogICAgICAgICAgICAgICAgIHNvcnQgPSBudWxsOwogICAgICAgICAg
+ICAgfQogICAgICAgICAgICAgYnJlYWs7CkBAIC03OSw2ICs4MCw4IEBACiAgICAgICAgIHNvcnQg
+PSBMQVNUTU9EVElNRTsKICAgICB9IGVsc2UgaWYgKFJFTEVWQU5DWS5lcXVhbHMoc29ydFBhcmFt
+KSkgewogICAgICAgICBzb3J0ID0gUkVMRVZBTkNZOworICAgIH0gZWxzZSBpZiAoQllfUEFUSC5l
+cXVhbHMoc29ydFBhcmFtKSkgeworICAgICAgICBzb3J0ID0gQllfUEFUSDsKICAgICB9CiAgICAg
+aWYgKHNvcnQgIT0gbnVsbCkgewogICAgICAgICBDb29raWUgY29va2llID0gbmV3IENvb2tpZSgi
+T3Blbkdyb2svc29ydGluZyIsIHNvcnQpOwpAQCAtMTQ4LDggKzE1MSwxMCBAQAogICAgICAgICAg
+ICAgaXJlYWRlciA9IEluZGV4UmVhZGVyLm9wZW4ocm9vdCk7CiAgICAgICAgICAgICBzZWFyY2hl
+ciA9IG5ldyBJbmRleFNlYXJjaGVyKGlyZWFkZXIpOwogCi0gICAgICAgICAgICBpZiAoImxhc3Rt
+b2R0aW1lIi5lcXVhbHMoc29ydCkpIHsKKyAgICAgICAgICAgIGlmIChMQVNUTU9EVElNRS5lcXVh
+bHMoc29ydCkpIHsKICAgICAgICAgICAgICAgICBoaXRzID0gc2VhcmNoZXIuc2VhcmNoKHF1ZXJ5
+LCBuZXcgU29ydCgiZGF0ZSIsIHRydWUpKTsKKyAgICAgICAgICAgIH0gZWxzZSBpZiAoQllfUEFU
+SC5lcXVhbHMoc29ydCkpIHsKKyAgICAgICAgICAgICAgICBoaXRzID0gc2VhcmNoZXIuc2VhcmNo
+KHF1ZXJ5LCBuZXcgU29ydChCWV9QQVRIKSk7CiAgICAgICAgICAgICB9IGVsc2UgewogICAgICAg
+ICAgICAgICAgIGhpdHMgPSBzZWFyY2hlci5zZWFyY2gocXVlcnkpOwogICAgICAgICAgICAgfQpA
+QCAtMjAzLDE0ICsyMDgsMTggQEAKICAgICAgICAgICAgICAgICB1cmwuYXBwZW5kKHF1ZXJ5cy5z
+dWJzdHJpbmcoMCwgaWR4KSk7CiAgICAgICAgICAgICB9CiAgICAgICAgIH0KKyAKKyAgICAgICAg
+JT5Tb3J0IGJ5OiA8JQogICAgICAgICB1cmwuYXBwZW5kKCJzb3J0PSIpOwogICAgICAgICAKICAg
+ICAgICAgaWYgKHNvcnQgPT0gbnVsbCB8fCBSRUxFVkFOQ1kuZXF1YWxzKHNvcnQpKSB7Ci0gICAg
+ICAgICAgIHVybC5hcHBlbmQoTEFTVE1PRFRJTUUpOwotICAgICAgICAgICAlPjxiPlNvcnQgYnkg
+cmVsZXZhbmNlPC9iPiA8YSBocmVmPSI8JT11cmwudG9TdHJpbmcoKSU+Ij5Tb3J0IGJ5IGxhc3Qg
+bW9kaWZpZWQgdGltZTwvYT48JQorICAgICAgICAgICAlPjxiPnJlbGV2YW5jZTwvYj4gfCA8YSBo
+cmVmPSI8JT11cmwudG9TdHJpbmcoKStMQVNUTU9EVElNRSU+Ij5sYXN0IG1vZGlmaWVkIHRpbWU8
+L2E+IHwgPGEgaHJlZj0iPCU9dXJsLnRvU3RyaW5nKCkrQllfUEFUSCU+Ij5wYXRoPC9hPjwlCisg
+ICAgICAgIH0gZWxzZSBpZiAoTEFTVE1PRFRJTUUuZXF1YWxzKHNvcnQpKSB7CisgICAgICAgICAg
+ICU+PGEgaHJlZj0iPCU9dXJsLnRvU3RyaW5nKCkrUkVMRVZBTkNZJT4iPnJlbGV2YW5jZTwvYT4g
+fCA8Yj5sYXN0IG1vZGlmaWVkIHRpbWU8L2I+IHwgPGEgaHJlZj0iPCU9dXJsLnRvU3RyaW5nKCkr
+QllfUEFUSCU+Ij5wYXRoPC9hPjwlCisgICAgICAgIH0gZWxzZSBpZiAoQllfUEFUSC5lcXVhbHMo
+c29ydCkpIHsKKyAgICAgICAgICAgJT48YSBocmVmPSI8JT11cmwudG9TdHJpbmcoKStSRUxFVkFO
+Q1klPiI+cmVsZXZhbmNlPC9hPiB8IDxhIGhyZWY9IjwlPXVybC50b1N0cmluZygpK0xBU1RNT0RU
+SU1FJT4iPmxhc3QgbW9kaWZpZWQgdGltZTwvYT4gfCA8Yj5wYXRoPC9iPjwlCiAgICAgICAgIH0g
+ZWxzZSB7Ci0gICAgICAgICAgIHVybC5hcHBlbmQoUkVMRVZBTkNZKTsKLSAgICAgICAgICAgJT48
+YSBocmVmPSI8JT11cmwudG9TdHJpbmcoKSU+Ij5Tb3J0IGJ5IHJlbGV2YW5jZTwvYT4gPGI+U29y
+dCBieSBsYXN0IG1vZGlmaWVkIHRpbWU8L2I+PCUKKyAgICAgICAgICAgJT48YSBocmVmPSI8JT11
+cmwudG9TdHJpbmcoKStSRUxFVkFOQ1klPiI+cmVsZXZhbmNlPC9hPiB8IDxhIGhyZWY9IjwlPXVy
+bC50b1N0cmluZygpK0xBU1RNT0RUSU1FJT4iPmxhc3QgbW9kaWZpZWQgdGltZTwvYT4gfCA8YSBo
+cmVmPSI8JT11cmwudG9TdHJpbmcoKStCWV9QQVRIJT4iPnBhdGg8L2E+PCUKICAgICAgICAgfQog
+ICAgICAgfSAlPjwvdGQ+PC90cj48L3RhYmxlPgogPC9kaXY+Cg==
+</data>
+
+          </attachment>
+      
+
+    </bug>
+
+</bugzilla>

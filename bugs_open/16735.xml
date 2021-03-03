@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>16735</bug_id>
+          
+          <creation_ts>2010-08-06 01:02:00 +0000</creation_ts>
+          <short_desc>Would like to be able to assemble a set of projects using symlinks</short_desc>
+          <delta_ts>2010-10-08 09:08:43 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>indexer</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>NEW</bug_status>
+          
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>minor</bug_severity>
+          <target_milestone>---</target_milestone>
+          <dependson>17189</dependson>
+    
+    <dependson>15961</dependson>
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Dan Price">daniel.price</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          <cc>Lubos.Kosco</cc>
+    
+    <cc>opengrok-dev</cc>
+    
+    <cc>patrick.allen.higgins</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>76261</commentid>
+            <who name="Dan Price">daniel.price</who>
+            <bug_when>2010-08-06 01:02:42 +0000</bug_when>
+            <thetext>I noticed that work is going on to provide some support for symlinks.
+
+I would like to be able to assemble a group of projects together using
+symlinks.
+
+For example, let&apos;s say I have
+
+/blah/blah/foo-gui-1.0
+/blah/blah/foo-gui-2.0
+/blah/blah/foo-gui-3.0
+/bug/yub/foo-cli-1.0
+/bug/yub/foo-cli-2.0
+/bug/yub/foo-cli-3.0
+
+I&apos;d like to be able to group things together-- for example, I&apos;d like
+to be able to do:
+
+/opengrok/foo-1.0
+/opengrok/foo-1.0/foo-gui-1.0 -&gt; /blah/blah/foo-gui-1.0
+/opengrok/foo-1.0/foo-cli-1.0 -&gt; /bug/yub/foo-gui-1.0
+
+Presently, doing this causes opengrok to complain that
+/opengrok/foo-1.0/foo-gui-1.0 and /opengrok/foo-1.0/foo-cli-1.0
+are non-local symlinks.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>76266</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2010-08-06 08:13:20 +0000</bug_when>
+            <thetext>Hi,
+I _think_ what you want to achieve below is already possible with latest trunk
+
+option -N
+( http://grok.czech.sun.com:8080/source/xref/opengrok-trunk/src/org/opensolaris/opengrok/index/CommandLineOptions.java#81 )
+
+should be able to make it explicit
+_but_ I think if the symlink is inside the source root or repository (don&apos;t remember from top of my head) it will be followed too by default ...
+
+can you please test below with a trunk build ?
+(you can fetch a hourly build from : http://helius.sfbay.sun.com:7000/hudson/job/OGPackage/ws/dist/ )
+
+cheers
+L</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>76366</commentid>
+            <who name="Patrick Higgins">patrick.allen.higgins</who>
+            <bug_when>2010-08-09 18:58:22 +0000</bug_when>
+            <thetext>(In reply to comment #1)
+&gt; _but_ I think if the symlink is inside the source root or repository (don&apos;t
+&gt; remember from top of my head) it will be followed too by default ...
+
+The symlink will only be followed by default if it is in the source root directory (not a subdirectory of source root).
+
+In Dan&apos;s example, if /opengrok was the source root and /opengrok/foo-1.0 is a directory in the source root, then all the symlinks that assemble the project will not be recognized without explict -N options for each.
+
+If /opengrok/foo-1.0 is the source root, then they will be picked up automatically.</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

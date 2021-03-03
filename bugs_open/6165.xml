@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>6165</bug_id>
+          
+          <creation_ts>2009-01-20 06:29:00 +0000</creation_ts>
+          <short_desc>allow file type assignment in configuration.xml</short_desc>
+          <delta_ts>2010-11-09 10:34:49 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>analyzer</component>
+          <version>unspecified</version>
+          <rep_platform>Other</rep_platform>
+          <op_sys>Solaris</op_sys>
+          <bug_status>NEW</bug_status>
+          
+          
+          
+          
+          
+          
+          <priority>P4</priority>
+          <bug_severity>enhancement</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Vladimir Kotal">vladimir.kotal</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          <cc>knut.hatlen</cc>
+    
+    <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>25389</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2009-01-20 06:29:23 +0000</bug_when>
+            <thetext>Some files can be detected as a wrong/unwanted type (see bug #6163). It would be nice to have a possibility to configure these via configuration.xml.
+
+We can do it via -A command line switch but only by specifying suffixes (see bug #6164).
+
+Something like this would be nice:
+
+&lt;void property=&quot;static_classes&quot;&gt;
+  &lt;void property=&quot;plain&quot;&gt;
+    &lt;string&gt;README*&lt;/string&gt;
+    &lt;string&gt;*.txt&lt;/string&gt;
+    &lt;string&gt;usr/src/foo/*/textfiles/*&lt;/string&gt;
+  &lt;/void&gt;
+&lt;/void&gt;</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

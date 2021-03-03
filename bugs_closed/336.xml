@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>336</bug_id>
+          
+          <creation_ts>2007-12-27 10:40:00 +0000</creation_ts>
+          <short_desc>RFE: annotated xref view should provide author and revision info for each line</short_desc>
+          <delta_ts>2007-12-27 12:48:00 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>misc</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXED</resolution>
+          
+          
+          
+          
+          
+          <priority>P4</priority>
+          <bug_severity>enhancement</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Hemang Lavana">HemangLavana</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>927</commentid>
+            <who name="Hemang Lavana">HemangLavana</who>
+            <bug_when>2007-12-27 10:40:37 +0000</bug_when>
+            <thetext>Hi,
+
+The annotate xref view can be enhanced by adding two new columns (author and revision info) for each line in the file. For example, if lines 1 thru 8 were modified by author xxx in revision 1.4, line 9 is modified by author yyy in revision 1.22.2 and line 10 onwards is modified by author zzz in revision 1.14, then the annotated view can be represented as:
+
+xxx    1.4  1  This is line 1
+            2  next line
+            3  another line
+            4  one more line
+            5  yet one more line
+            6  foo
+            7  blah blah
+            8  end of author xxx
+yyy 1.22.2  9  line 9 modified by yyy
+zzz   1.14 10  line 10
+           11  one more line
+           12  ...
+
+
+Such a view can be very useful and is provided by fisheye product, see sample link below:
+
+http://fisheye1.cenqua.com/browse/gaim/gaim/plugins/tcl/tcl_cmds.c?r=1.22
+
+I very much like opengrok over other code browser/search tools (especially for its very good performance). I hope to see good features like this one being added to opengrok in the near future.
+
+Thanks,
+Hemang.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>928</commentid>
+            <who name="Trond Norbye">trond.norbye</who>
+            <bug_when>2007-12-27 12:48:00 +0000</bug_when>
+            <thetext>This is already implemented for Mercurial and Subversion already. The current Cvs library we are using does not support annotate, but I am working on a workaround.</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

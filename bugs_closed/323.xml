@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>323</bug_id>
+          
+          <creation_ts>2007-12-18 14:22:00 +0000</creation_ts>
+          <short_desc>opengrok cannot cope with directory names / file names with unusual characters in them</short_desc>
+          <delta_ts>2008-01-15 12:00:26 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>webapp</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>Solaris</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXED</resolution>
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>normal</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Dan Price">daniel.price</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          <cc>knut.hatlen</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>900</commentid>
+            <who name="Dan Price">daniel.price</who>
+            <bug_when>2007-12-18 14:22:06 +0000</bug_when>
+            <thetext>File names like &quot;foo bar&quot; and &quot;foo+bar&quot; seem to cause opengrok to not be able to open those files.  I think the problem is that opengrok isn&apos;t URLDecoder.decode&apos;ing the URI requests it is getting.
+
+I have a proposed fix for at least part of this problem, but I don&apos;t understand the security implications.  The fix is probably incomplete, too.  I don&apos;t really understand how all of the servlet stuff works together.
+
+
+diff -r 50531b2b239f web/mast.jsp
+--- a/web/mast.jsp      Mon Dec 17 15:43:48 2007 -0800
++++ b/web/mast.jsp      Tue Dec 18 13:52:29 2007 -0800
+@@ -26,6 +26,7 @@ javax.servlet.http.*,
+ javax.servlet.http.*,
+ java.util.*,
+ java.io.*,
++java.net.URLDecoder,
+ org.opensolaris.opengrok.index.*,
+ org.opensolaris.opengrok.configuration.*
+ &quot;
+@@ -35,6 +36,11 @@ String reqURI = request.getRequestURI();
+ String reqURI = request.getRequestURI();
+ String path = request.getPathInfo();
+ if (path == null) path = &quot;&quot;;
++try {
++    path = URLDecoder.decode(path, &quot;ISO-8859-1&quot;);
++} catch (UnsupportedEncodingException e) {
++    path = &quot;&quot;;
++}
+ RuntimeEnvironment environment = RuntimeEnvironment.getInstance();
+ environment.setUrlPrefix(context + &quot;/s?&quot;);
+ environment.register();</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>983</commentid>
+              <attachid>54</attachid>
+            <who name="Leo Davis">ldavis</who>
+            <bug_when>2008-01-11 15:08:51 +0000</bug_when>
+            <thetext>Created attachment 54
+Fixes downloads and links with spaces in path/filename.
+
+I&apos;ve seen this also.  I also saw some incorrect behavior when downloading files with spaces in the filename.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>1014</commentid>
+            <who name="Trond Norbye">trond.norbye</who>
+            <bug_when>2008-01-15 12:00:26 +0000</bug_when>
+            <thetext>Applied patch as changeset dd5628b633ab.
+
+Please retest and reopen the bug if similar problems still exist.</thetext>
+          </long_desc>
+      
+          <attachment
+              isobsolete="0"
+              ispatch="1"
+              isprivate="0"
+              isurl="0"
+          >
+            <attachid>54</attachid>
+            <date>2008-01-11 15:08:00 +0000</date>
+            <delta_ts>2008-01-11 15:08:51 +0000</delta_ts>
+            <desc>Fixes downloads and links with spaces in path/filename.</desc>
+            <filename>space-in-path.patch</filename>
+            <type>text/plain</type>
+            <size>4648</size>
+            <attacher>ldavis</attacher>
+            
+              <data encoding="base64">IyBIRyBjaGFuZ2VzZXQgcGF0Y2gKIyBVc2VyIExlbyBEYXZpcyA8bGRhdmlzQGZvbml4LmNvbT4K
+IyBEYXRlIDEyMDAwOTIxNDEgMjUyMDAKIyBOb2RlIElEIDkwMTE1NTIxMTI3MDg1ZTlhM2JlZTNk
+ZDVmMTU1MGI2NTA3NGJhYzEKIyBQYXJlbnQgIGE3OTMxZmZiZmU3MTI0MWQ3NmYyMGRjMDQwYWQ4
+Y2RlOTRlMzVkMzAKVGhpcyBzaG91bGQgZml4IHNvbWUgaXNzdWVzIHdpdGggZmlsZXMvZGlyZWN0
+b3JpZXMgaGF2aW5nIHNwYWNlIGluIHBhdGhuYW1lCnByb2JsZW1zLgoKd2ViL2hpc3RvcnkuanNw
+OiBhZGRlZCBwZXJjZW50IGVuY29kaW5nIHRvIFJTUyBVUklzCndlYi9saXN0LmpzcDogRml4IHJh
+dyBmaWxlIGRvd25sb2FkcyAtLSBzcGFjZXMgaGFkICIrIiBpbnN0ZWFkIG9mIHNwYWNlLgp3ZWIv
+bWFzdC5qc3A6IHBlcmNlbnQgZGVjb2RlIHRoZSBwYXRoLgogICAgICAgICAgICAgIEZpeCByYXcg
+ZmlsZSBkb3dubG9hZHMgLS0gc3BhY2VzIGhhZCAiKyIgaW5zdGVhZCBvZiBzcGFjZS4Kd2ViL3Jz
+cy5qc3A6IHBlcmNlbnQgZGVjb2RlIHRoZSBwYXRoLgoKZGlmZiAtciBhNzkzMWZmYmZlNzEgLXIg
+OTAxMTU1MjExMjcwIHdlYi9oaXN0b3J5LmpzcAotLS0gYS93ZWIvaGlzdG9yeS5qc3AJRnJpIEph
+biAxMSAxNTo1NTozMSAyMDA4IC0wNzAwCisrKyBiL3dlYi9oaXN0b3J5LmpzcAlGcmkgSmFuIDEx
+IDE1OjU1OjQxIDIwMDggLTA3MDAKQEAgLTEzMiw2ICsxMzIsNiBAQCBpZihmaWxlcyAhPSBudWxs
+KSB7JT48YnIvPjwlCiAgICAgICAgIGlmKHN0cmlrZWQpIHsKICAgICAgICAgICAgICU+PHA+PGI+
+Tm90ZTo8L2I+IE5vIGFzc29jaWF0ZWQgZmlsZSBjaGFuZ2VzIGFyZSBhdmFpbGFibGUgZm9yIHJl
+dmlzaW9ucyB3aXRoIHN0cmlrZS10aHJvdWdoIG51bWJlcnMgKGVnLiA8c3RyaWtlPjEuNDU8L3N0
+cmlrZT4pPC9wPjwlCiAgICAgICAgIH0KLSAgICAgICAgJT48cCBjbGFzcz0icnNzYmFkZ2UiPjxh
+IGhyZWY9IjwlPWNvbnRleHQlPi9yc3M8JT1wYXRoJT4iPjxpbWcgc3JjPSI8JT1jb250ZXh0JT4v
+PCU9ZW52aXJvbm1lbnQuZ2V0V2ViYXBwTEFGKCklPi9pbWcvcnNzLnBuZyIgd2lkdGg9IjgwIiBo
+ZWlnaHQ9IjE1IiBhbHQ9IlJTUyBYTUwgRmVlZCIgdGl0bGU9IlJTUyBYTUwgRmVlZCBvZiBsYXRl
+c3QgY2hhbmdlcyIvPjwvYT48L3A+PCUKKyAgICAgICAgJT48cCBjbGFzcz0icnNzYmFkZ2UiPjxh
+IGhyZWY9IjwlPWNvbnRleHQlPi9yc3M8JT1VdGlsLlVSSUVuY29kZVBhdGgocGF0aCklPiI+PGlt
+ZyBzcmM9IjwlPWNvbnRleHQlPi88JT1lbnZpcm9ubWVudC5nZXRXZWJhcHBMQUYoKSU+L2ltZy9y
+c3MucG5nIiB3aWR0aD0iODAiIGhlaWdodD0iMTUiIGFsdD0iUlNTIFhNTCBGZWVkIiB0aXRsZT0i
+UlNTIFhNTCBGZWVkIG9mIGxhdGVzdCBjaGFuZ2VzIi8+PC9hPjwvcD48JQogfQogJT48JUBpbmNs
+dWRlIGZpbGU9ImZvb3QuanNwZiIlPgpkaWZmIC1yIGE3OTMxZmZiZmU3MSAtciA5MDExNTUyMTEy
+NzAgd2ViL2xpc3QuanNwCi0tLSBhL3dlYi9saXN0LmpzcAlGcmkgSmFuIDExIDE1OjU1OjMxIDIw
+MDggLTA3MDAKKysrIGIvd2ViL2xpc3QuanNwCUZyaSBKYW4gMTEgMTU6NTU6NDEgMjAwOCAtMDcw
+MApAQCAtMTM5LDcgKzEzOSw3IEBAIGlmICh2YWxpZCkgewogICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgIGcgPSBBbmFseXplckd1cnUuZ2V0R2VucmUoYSk7CiAgICAgICAgICAgICAgICAgICAg
+ICAgICB9CiAgICAgICAgICAgICAgICAgICAgICAgICBpZiAoZyA9PSBHZW5yZS5EQVRBIHx8IGcg
+PT0gR2VucmUuWFJFRkFCTEUgfHwgZyA9PSBudWxsKSB7Ci0JCSU+IDxkaXYgaWQ9InNyYyI+Qmlu
+YXJ5IGZpbGUgW0NsaWNrIDxhIGhyZWY9IjwlPWNvbnRleHQlPi9yYXc8JT11cmlFbmNvZGVkTmFt
+ZSU+P3I9PCU9cmV2JT4iPmhlcmU8L2E+IHRvIGRvd25sb2FkXSA8L2Rpdj48JQorCQklPiA8ZGl2
+IGlkPSJzcmMiPkJpbmFyeSBmaWxlIFtDbGljayA8YSBocmVmPSI8JT1jb250ZXh0JT4vcmF3PCU9
+cGF0aCU+P3I9PCU9cmV2JT4iPmhlcmU8L2E+IHRvIGRvd25sb2FkXSA8L2Rpdj48JQogICAgICAg
+ICAgICAgICAgICAgICAgICAgfSBlbHNlIHsKIAkJJT48ZGl2IGlkPSJzcmMiPjxzcGFuIGNsYXNz
+PSJwYWdldGl0bGUiPjwlPWJhc2VuYW1lJT4gcmV2aXNpb24gPCU9cmV2JT4gPC9zcGFuPjxwcmU+
+CiA8JQpAQCAtMjE5LDcgKzIxOSw3IEBAIGlmIChnID09IEdlbnJlLlBMQUlOKSB7CiAgICAgICAg
+ICAgICBBbmFseXplckd1cnUud3JpdGVYcmVmKGEsIGJpbiwgb3V0LCBhbm5vdGF0aW9uKTsKICAg
+ICAgICAgICAgICU+PC9wcmU+PC9kaXY+PCUKICAgICAgICAgICAgIH0gZWxzZSB7Ci0JICAgICU+
+IENsaWNrIDxhIGhyZWY9IjwlPWNvbnRleHQlPi9yYXc8JT11cmlFbmNvZGVkTmFtZSU+Ij5kb3du
+bG9hZCA8JT1iYXNlbmFtZSU+PC9hPjwlCisJICAgICU+IENsaWNrIDxhIGhyZWY9IjwlPWNvbnRl
+eHQlPi9yYXc8JT1wYXRoJT4iPmRvd25sb2FkIDwlPWJhc2VuYW1lJT48L2E+PCUKICAgICAgICAg
+fQogICAgICAgICB9CiAgICAgfQpkaWZmIC1yIGE3OTMxZmZiZmU3MSAtciA5MDExNTUyMTEyNzAg
+d2ViL21hc3QuanNwCi0tLSBhL3dlYi9tYXN0LmpzcAlGcmkgSmFuIDExIDE1OjU1OjMxIDIwMDgg
+LTA3MDAKKysrIGIvd2ViL21hc3QuanNwCUZyaSBKYW4gMTEgMTU6NTU6NDEgMjAwOCAtMDcwMApA
+QCAtMjYsNiArMjYsNyBAQCBqYXZheC5zZXJ2bGV0Lmh0dHAuKiwKIGphdmF4LnNlcnZsZXQuaHR0
+cC4qLAogamF2YS51dGlsLiosCiBqYXZhLmlvLiosCitqYXZhLm5ldC5VUkxEZWNvZGVyLAogb3Jn
+Lm9wZW5zb2xhcmlzLm9wZW5ncm9rLmluZGV4LiosCiBvcmcub3BlbnNvbGFyaXMub3Blbmdyb2su
+Y29uZmlndXJhdGlvbi4qCiAiCkBAIC0zNSw2ICszNiwxMiBAQCBTdHJpbmcgcmVxVVJJID0gcmVx
+dWVzdC5nZXRSZXF1ZXN0VVJJKCk7CiBTdHJpbmcgcmVxVVJJID0gcmVxdWVzdC5nZXRSZXF1ZXN0
+VVJJKCk7CiBTdHJpbmcgcGF0aCA9IHJlcXVlc3QuZ2V0UGF0aEluZm8oKTsKIGlmIChwYXRoID09
+IG51bGwpIHBhdGggPSAiIjsKK2Vsc2UgeworICAgICB0cnkgeworICAgICAgIHBhdGggPSBVUkxE
+ZWNvZGVyLmRlY29kZShwYXRoLCAiSVNPLTg4NTktMSIpOworICAgICB9IGNhdGNoIChVbnN1cHBv
+cnRlZEVuY29kaW5nRXhjZXB0aW9uIGUpIHsKKyAgICAgfQorfQogUnVudGltZUVudmlyb25tZW50
+IGVudmlyb25tZW50ID0gUnVudGltZUVudmlyb25tZW50LmdldEluc3RhbmNlKCk7CiBlbnZpcm9u
+bWVudC5zZXRVcmxQcmVmaXgoY29udGV4dCArICIvcz8iKTsKIGVudmlyb25tZW50LnJlZ2lzdGVy
+KCk7CkBAIC0xODIsOSArMTg5LDkgQEAgdG9nZ2xlX3NzLnN0eWxlLmRpc3BsYXkgPSAnbm9uZSc7
+CiAgICAgICAgIGlmICghaXNEaXIpIHsKICAgICAgICAgICAgU3RyaW5nIHJldiA9IHJlcXVlc3Qu
+Z2V0UGFyYW1ldGVyKCJyIik7CiAgICAgICAgICAgIGlmIChyZXYgPT0gbnVsbCB8fCByZXYuZXF1
+YWxzKCIiKSkgewotJT4gPGEgaWQ9ImRvd25sb2FkIiBocmVmPSI8JT1jb250ZXh0JT4vcmF3PCU9
+dXJpRW5jb2RlZE5hbWUlPiI+RG93bmxvYWQ8L2E+IHwgPCUKKyU+IDxhIGlkPSJkb3dubG9hZCIg
+aHJlZj0iPCU9Y29udGV4dCU+L3JhdzwlPXBhdGglPiI+RG93bmxvYWQ8L2E+IHwgPCUKICAgICAg
+ICAgICAgfSBlbHNlIHsKLSU+IDxhIGlkPSJkb3dubG9hZCIgaHJlZj0iPCU9Y29udGV4dCU+L3Jh
+dzwlPXVyaUVuY29kZWROYW1lJT4/cj08JT1yZXYlPiI+RG93bmxvYWQ8L2E+IHwgPCUKKyU+IDxh
+IGlkPSJkb3dubG9hZCIgaHJlZj0iPCU9Y29udGV4dCU+L3JhdzwlPXBhdGglPj9yPTwlPXJldiU+
+Ij5Eb3dubG9hZDwvYT4gfCA8JQogICAgICAgICAgICB9CiAgICAgICAgIH0KIApkaWZmIC1yIGE3
+OTMxZmZiZmU3MSAtciA5MDExNTUyMTEyNzAgd2ViL3Jzcy5qc3AKLS0tIGEvd2ViL3Jzcy5qc3AJ
+RnJpIEphbiAxMSAxNTo1NTozMSAyMDA4IC0wNzAwCisrKyBiL3dlYi9yc3MuanNwCUZyaSBKYW4g
+MTEgMTU6NTU6NDEgMjAwOCAtMDcwMApAQCAtMjYsNiArMjYsNyBAQCBqYXZheC5zZXJ2bGV0Lmh0
+dHAuKiwKIGphdmF4LnNlcnZsZXQuaHR0cC4qLAogamF2YS51dGlsLiosCiBqYXZhLmlvLiosCitq
+YXZhLm5ldC5VUkxEZWNvZGVyLAogb3JnLm9wZW5zb2xhcmlzLm9wZW5ncm9rLmFuYWx5c2lzLios
+CiBvcmcub3BlbnNvbGFyaXMub3Blbmdyb2sud2ViLiosCiBvcmcub3BlbnNvbGFyaXMub3Blbmdy
+b2suaGlzdG9yeS4qLApAQCAtNDMsNiArNDQsMTIgQEAgU3RyaW5nIHJlcVVSSSA9IHJlcXVlc3Qu
+Z2V0UmVxdWVzdFVSSSgpOwogU3RyaW5nIHJlcVVSSSA9IHJlcXVlc3QuZ2V0UmVxdWVzdFVSSSgp
+OwogU3RyaW5nIHBhdGggPSByZXF1ZXN0LmdldFBhdGhJbmZvKCk7CiBpZihwYXRoID09IG51bGwp
+IHBhdGggPSAiIjsKK2Vsc2UgeworICAgICB0cnkgeworICAgICAgIHBhdGggPSBVUkxEZWNvZGVy
+LmRlY29kZShwYXRoLCAiSVNPLTg4NTktMSIpOworICAgICB9IGNhdGNoIChVbnN1cHBvcnRlZEVu
+Y29kaW5nRXhjZXB0aW9uIGUpIHsKKyAgICAgfQorfQogUnVudGltZUVudmlyb25tZW50IGVudiA9
+IFJ1bnRpbWVFbnZpcm9ubWVudC5nZXRJbnN0YW5jZSgpOwogZW52LnNldFVybFByZWZpeChjb250
+ZXh0ICsgIi9zPyIpOwogZW52LnJlZ2lzdGVyKCk7Cg==
+</data>
+
+          </attachment>
+      
+
+    </bug>
+
+</bugzilla>

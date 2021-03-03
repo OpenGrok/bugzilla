@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>3267</bug_id>
+          
+          <creation_ts>2008-09-05 08:58:00 +0000</creation_ts>
+          <short_desc>excluding file path doesn&apos;t work when using &quot;File Path&quot; searchbox - &quot;File Path&quot; should allow to specify paths to exclude</short_desc>
+          <delta_ts>2008-09-05 08:58:54 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>webapp</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>NEW</bug_status>
+          
+          
+          
+          
+          
+          
+          <priority>P4</priority>
+          <bug_severity>minor</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Christian Lohmaier">cloph</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>11844</commentid>
+            <who name="Christian Lohmaier">cloph</who>
+            <bug_when>2008-09-05 08:58:54 +0000</bug_when>
+            <thetext>Opengrok does allow for flexible queries, but only if you craft them manually
+
+Searching for &quot;foobar&quot; in all but the directory &quot;excludeme&quot; doesn&apos;t work as expected when typing &quot;foobar&quot; into the full search box and -excludeme into the file path box.
+
+It combines the two to &quot;+full:foobar +(-path:excludeme)&quot; and that doesn&apos;t yield any results. 
+
+typing &quot;foobar -path:excludeme&quot; into the full-search box works as expected.
+
+Not sure what category to blame here - web for creating a suboptimal query or blame the search-enginge for not supporting +(-id:term)....</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

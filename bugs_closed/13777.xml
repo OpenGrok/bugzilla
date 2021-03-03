@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>13777</bug_id>
+          
+          <creation_ts>2010-01-11 09:29:00 +0000</creation_ts>
+          <short_desc>Indexer should print &quot;Adding: ...&quot; before it adds a file</short_desc>
+          <delta_ts>2010-07-29 12:28:57 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>indexer</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXED</resolution>
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>normal</bug_severity>
+          <target_milestone>0.9</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Knut Anders Hatlen">knut.hatlen</reporter>
+          <assigned_to name="Lubos Kosco">Lubos.Kosco</assigned_to>
+          <cc>Lubos.Kosco</cc>
+    
+    <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>61821</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2010-01-11 09:29:31 +0000</bug_when>
+            <thetext>Currently, the indexer prints &quot;Adding:&quot; and the name of the file after it has added a file. It would be easier to diagnose problems if it printed this before it attempted to add the file. Currently, if the indexing of a file hangs or fails, the user is led to believe that the problem is with the previous file.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>71515</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2010-04-16 09:31:50 +0000</bug_when>
+            <thetext>changeset:   983:67a5f1e1fad4</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>75900</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2010-07-26 18:20:45 +0000</bug_when>
+            <thetext>Reopening this bug report. The fix made the indexer print &quot;Added&quot; instead of &quot;Adding&quot;, which was an improvement since it made the output more correct. But this bug was filed to get the &quot;Adding&quot; message printed before the file was added, so that it would be easier to debug problems where analyzing a file fails or hangs.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>75915</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2010-07-27 08:48:55 +0000</bug_when>
+            <thetext>(In reply to comment #2)
+&gt; Reopening this bug report. The fix made the indexer print &quot;Added&quot; instead of
+&gt; &quot;Adding&quot;, which was an improvement since it made the output more correct. But
+&gt; this bug was filed to get the &quot;Adding&quot; message printed before the file was
+&gt; added, so that it would be easier to debug problems where analyzing a file
+&gt; fails or hangs.
+
+there are actually both outputs, but adding will be printed only if FINER log level is set up ... (which with default logger properties only goes to opengrok.log and obviously you will get the exception there too ... the output only prints successful additions ...)
+
+we need to somehow set the expectations for normal and logging output and set some rules around it ...
+
+https://defect.opensolaris.org/bz/show_bug.cgi?id=15468
+is another one I own from this category ... so lets set up logging / output rules</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>75991</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2010-07-29 12:28:57 +0000</bug_when>
+            <thetext>changeset:   1054:8c74a4f29837</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

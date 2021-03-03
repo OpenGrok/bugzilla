@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>13952</bug_id>
+          
+          <creation_ts>2010-01-18 13:09:00 +0000</creation_ts>
+          <short_desc>size output not correct ( , not interpreted correctly)</short_desc>
+          <delta_ts>2010-01-21 09:55:18 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>webapp</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXED</resolution>
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>minor</bug_severity>
+          <target_milestone>0.9</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Lubos Kosco">Lubos.Kosco</reporter>
+          <assigned_to name="Knut Anders Hatlen">knut.hatlen</assigned_to>
+          <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>62740</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2010-01-18 13:09:22 +0000</bug_when>
+            <thetext>http://khepri25.norway.sun.com/source/xref/opengrok/src/org/opensolaris/opengrok/index/
+
+if you look at the same page on a system where web app container isn&apos;t configured for UTF-8 you get a ? character instead of &apos;,&apos;
+
+we should make sure all streams we use are UTF-8 encoded no matter what webapp container uses ...</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>62756</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2010-01-18 15:17:24 +0000</bug_when>
+            <thetext>relevant system properties:
+system is Windows Vista 64bit (latest)
+user.language=cs
+user.country=CZ
+file.encoding=Cp1250
+file.encoding.pkg=sun.io
+file.separator=\
+sun.io.unicode.encoding=UnicodeLittle
+sun.java.launcher=SUN_STANDARD
+sun.jnu.encoding=Cp1250
+sun.cpu.endian=little
+sun.cpu.isalist=amd64
+
+the decimal separator is: ,</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>62762</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2010-01-18 16:29:04 +0000</bug_when>
+            <thetext>I&apos;m able to reproduce this problem with Tomcat on OpenSolaris when the system locale uses ISO-8859-* encoding. I don&apos;t see this with GlassFish, though.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>62772</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2010-01-18 19:21:39 +0000</bug_when>
+            <thetext>The file size is formatted with this code:
+
+    public static String redableSize(long num) {
+        float l = (float) num;
+        NumberFormat formatter = new DecimalFormat(&quot;#,###,###,###.#&quot;);
+        if (l &lt; 1024) {
+            return formatter.format(l);
+        } else if (l &lt; 1048576) {
+            return (formatter.format(l / 1024) + &quot;K&quot;);
+        } else {
+            return (&quot;&lt;b&gt;&quot; + formatter.format(l / 1048576) + &quot;M&lt;/b&gt;&quot;);
+        }
+    }
+
+Now, it turns out that with *.UTF-8 locale, the group separator is , (comma) which is encoded in the same way in UTF-8 and ISO-8859-* so mixing those encodings should not cause any problems in this particular case. However, in *.ISO8859-* locales, the above code uses non-breaking space (code point 0xA0), which is encoded differently in UTF-8 and ISO8859-*.
+
+We need some more encoding headers in the JSP files.
+
+Fixed in changeset 9af66ef87351191aad590adc73b766cb693b9a78.</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

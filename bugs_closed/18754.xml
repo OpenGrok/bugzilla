@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>18754</bug_id>
+          
+          <creation_ts>2011-07-28 14:53:00 +0000</creation_ts>
+          <short_desc>opensearch does not work with HTTPS</short_desc>
+          <delta_ts>2011-12-14 08:41:51 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>webapp</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXINSOURCE</resolution>
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>critical</bug_severity>
+          <target_milestone>0.11</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Vladimir Kotal">vladimir.kotal</reporter>
+          <assigned_to name="Lubos Kosco">Lubos.Kosco</assigned_to>
+          <cc>jel+osbugs</cc>
+    
+    <cc>knut.hatlen</cc>
+    
+    <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>84543</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2011-07-28 14:53:04 +0000</bug_when>
+            <thetext>If OpenGrok instance is converted to HTTPS-only, Opensearch searches stop working because they switch to http:// instead of keeping https://
+
+web/opensearch.jsp:
+
+     44 	url.append(&quot;http://&quot;).append(request.getServerName());</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>85911</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2011-12-13 12:09:19 +0000</bug_when>
+            <thetext>changeset:   1278:e5415cfaa3db
+
+needs verification though ...</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>85912</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2011-12-13 12:37:07 +0000</bug_when>
+            <thetext>--- a/web/opensearch.jsp        Tue Nov 29 17:49:56 2011 +0100
++++ b/web/opensearch.jsp        Tue Dec 13 13:08:28 2011 +0100
+@@ -41,6 +41,8 @@
+        cfg = PageConfig.get(request);
+ 
+        StringBuilder url = new StringBuilder(128);
++        String protocol=&quot;http://&quot;;
++        if (request.getProtocol().toUpperCase().startsWith(&quot;HTTPS&quot;)) protocol=&quot;https://&quot;;
+        url.append(&quot;http://&quot;).append(request.getServerName());
+
+Should have been url.append(protocol).append(....), I suppose?</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>85913</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2011-12-13 12:57:39 +0000</bug_when>
+            <thetext>changeset:   1279:904a803c5169</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>85916</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2011-12-13 14:12:17 +0000</bug_when>
+            <thetext>Do we need to change this part too, perhaps?
+
+	int port = request.getServerPort();
+	if (port != 80) {
+		url.append(&apos;:&apos;).append(request.getServerPort());
+	}
+
+We should probably only strip away port 80 from the URL if the protocol is HTTP, and we could strip away port 443 if it&apos;s HTTPS.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>85924</commentid>
+            <who name="Jens Elkner">jel+osbugs</who>
+            <bug_when>2011-12-13 22:30:37 +0000</bug_when>
+            <thetext>(In reply to comment #4)
+...
+&gt; We should probably only strip away port 80 from the URL if the protocol is
+&gt; HTTP, and we could strip away port 443 if it&apos;s HTTPS.
+
+Yepp.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>85925</commentid>
+            <who name="Jens Elkner">jel+osbugs</who>
+            <bug_when>2011-12-13 23:07:41 +0000</bug_when>
+            <thetext>(In reply to comment #1)
+&gt; changeset:   1278:e5415cfaa3db
+&gt; 
+&gt; needs verification though ...
+
+--- opensearch.jsp.orig Tue Dec 13 23:36:05 2011
++++ opensearch.jsp      Wed Dec 14 00:06:27 2011
+@@ -41,12 +41,13 @@
+        cfg = PageConfig.get(request);
+ 
+        StringBuilder url = new StringBuilder(128);
+-        String protocol=&quot;http://&quot;;
+-        if (request.getProtocol().toUpperCase().startsWith(&quot;HTTPS&quot;)) protocol=&quot;https://&quot;;
+-       url.append(protocol).append(request.getServerName());
++        String scheme = request.getScheme();
+        int port = request.getServerPort();
+-       if (port != 80) {
+-               url.append(&apos;:&apos;).append(request.getServerPort());
++       url.append(scheme).append(&quot;://&quot;).append(request.ServerName());
++       if ((scheme.equals(&quot;http&quot;) &amp;&amp; port != 80) ||
++               (scheme.equals(&quot;https&quot;) &amp;&amp; port != 443))
++       {
++               url.append(&apos;:&apos;).append(port);
+        }
+        port = url.length();    // mark
+        String img = url.append(cfg.getCssDir()).append(&quot;/img/icon.png&quot;).toString();
+
+should be correct.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>85930</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2011-12-14 08:23:56 +0000</bug_when>
+            <thetext>thnx Jens
+I guess I&apos;ll just go and apply your patch
+changeset:   1280:80fec285c57d</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>85931</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2011-12-14 08:41:51 +0000</bug_when>
+            <thetext>Thanks for fixing this bug, Jens and Ľuboš. I pulled the latest sources and ran a quick test on a GlassFish instance with HTTPS enabled. Seems to be working as expected now.</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

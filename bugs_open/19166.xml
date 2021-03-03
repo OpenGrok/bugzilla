@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>19166</bug_id>
+          
+          <creation_ts>2012-02-10 09:54:00 +0000</creation_ts>
+          <short_desc>Java DB warning in OpenGrok shell script should be backed by real check</short_desc>
+          <delta_ts>2012-02-10 17:32:13 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>indexer</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>NEW</bug_status>
+          
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>minor</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Vladimir Kotal">vladimir.kotal</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          <cc>jel+osbugs</cc>
+    
+    <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>86174</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2012-02-10 09:54:23 +0000</bug_when>
+            <thetext>OpenGrok shell script currently gives this plain warning about potentially missing derbyclient.jar:
+
+$ OPENGROK_DERBY=true $DIST_DIR/bin/OpenGrok index $WS_DIR           
+Loading the default instance configuration ...
+WARNING: CHECK: derbyclient.jar needs to be in where the rest of opengrok used jars are and in unpacked source.war in WEB-INF/lib !!!           
+Logging filehandler pattern: /opengrok-0.11/log/opengrok%g.%u.log           
+
+This warning is just informative as we can see in the script (ValidateConfiguration()):
+
+    611     if [ -n &quot;${OPENGROK_DERBY}&quot; ]
+    612     then
+    613         Warning &quot;CHECK: derbyclient.jar needs to be in where the rest of opengrok used jars are and in unpacked source.war in WEB-INF/lib !!!&quot;
+    614     fi
+
+
+The script should prform real check and error should be given only if the file is not present.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86175</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2012-02-10 15:11:52 +0000</bug_when>
+            <thetext>Also, given that derbyclient.jar should be in the lib directory for the indexer *and* the lib directory for the web app, the deploy command could be altered to perform the copying of derbyclient.jar there (if it finds it present on the system).</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86176</commentid>
+            <who name="Jens Elkner">jel+osbugs</who>
+            <bug_when>2012-02-10 17:32:13 +0000</bug_when>
+            <thetext>Just in case: have a look at http://iws.cs.uni-magdeburg.de/~elkner/s11/opengrok.html ...</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

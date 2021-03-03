@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>437</bug_id>
+          
+          <creation_ts>2008-01-30 13:20:00 +0000</creation_ts>
+          <short_desc>RFE: OpenGrok should support source files with multibyte characters (e.g. japanese etc.)</short_desc>
+          <delta_ts>2011-07-10 14:29:35 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>misc</component>
+          <version>unspecified</version>
+          <rep_platform>Other</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>ACCEPTED</bug_status>
+          
+          
+          
+          
+          
+          
+          <priority>P4</priority>
+          <bug_severity>enhancement</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          <blocked>3033</blocked>
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Roland Mainz">roland.mainz</reporter>
+          <assigned_to name="Knut Anders Hatlen">knut.hatlen</assigned_to>
+          <cc>bronk.m</cc>
+    
+    <cc>Lubos.Kosco</cc>
+    
+    <cc>matthieu.fereyre</cc>
+    
+    <cc>mauricitoia</cc>
+    
+    <cc>roland.mainz</cc>
+    
+    <cc>trond.norbye</cc>
+    
+    <cc>veryfurryfur</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>1277</commentid>
+            <who name="Roland Mainz">roland.mainz</who>
+            <bug_when>2008-01-30 13:20:52 +0000</bug_when>
+            <thetext>RFE: OpenGrok should support source files with multibyte characters (e.g. japanese etc.), for example for C code encoded in ja_JP.UTF-8 (Sun Studio supports this via the &quot;-xcsi&quot; option) or shell scripts in such languages (for example ksh93 support function-, variable-etc.-names with multibyte characters).
+
+Notes for the implementation:
+- This isn&apos;t very hard - technically you have to define the character encoding to the matching java stream converter and you&apos;re done (figuring out the encoding may not always be easy, see below).
+- Figuring out a source file&apos;s character encoding should work like this (ordered in the way how the lookup code should work):
+1. There should be a way to define the character encoding on a per-file basis
+2. Some SCM systems like Subversion support extra properties like &quot;mimetype&quot; and &quot;charset&quot;, AFAIK it may be a good idea to grab these values if possible
+3. If no specific information is available use the character encoding of the systems current default locale (or alternatively assume UTF-8 encoding since ASCII can be treated as a subset of UTF-8 (e.g. at least UTF-8 encoded source files would work and it won&apos;t break existing source files))</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>1618</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2008-02-13 01:07:49 +0000</bug_when>
+            <thetext>*** Bug 508 has been marked as a duplicate of this bug. ***</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>8145</commentid>
+            <who name="Matthieu FEREYRE">matthieu.fereyre</who>
+            <bug_when>2008-06-17 01:57:20 +0000</bug_when>
+            <thetext>This bug is still present in the OPengrok version 0.6.1.
+Could you give an estimate of the resolution&apos;s date ?</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>8146</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2008-06-17 02:17:02 +0000</bug_when>
+            <thetext>No one has volunteered to implement this yet. Feel free to post a patch! :)</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>15043</commentid>
+            <who name="">mauricitoia</who>
+            <bug_when>2008-10-16 13:28:04 +0000</bug_when>
+            <thetext>Would this work? http://mail.opensolaris.org/pipermail/opengrok-discuss/2007-June/000834.html</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>15056</commentid>
+            <who name="Roland Mainz">roland.mainz</who>
+            <bug_when>2008-10-16 13:49:20 +0000</bug_when>
+            <thetext>(In reply to comment #4)
+&gt; Would this work?
+&gt; http://mail.opensolaris.org/pipermail/opengrok-discuss/2007-June/000834.html
+
+No, &quot;multibyte&quot; means more than Unicode/UTF-8. And not all UTF-8 encoded files have a BOM or similar identifiers.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>15073</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2008-10-16 15:09:01 +0000</bug_when>
+            <thetext>I think we need to do something like this (each step could be done separately):
+
+1) Make the analyzers use Readers instead of InputStreams to move away from the assumption that char==byte, and use the system&apos;s default encoding for all files
+
+2) Teach all the analyzers that they shouldn&apos;t ignore characters whose code-point is &gt;=127 (something similar to what&apos;s described in bug #508, comment #1)
+
+3) Provide ways to specify encoding (per project, per file, auto-detected, etc...)</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>15086</commentid>
+            <who name="Roland Mainz">roland.mainz</who>
+            <bug_when>2008-10-16 16:07:39 +0000</bug_when>
+            <thetext>(In reply to comment #6)
+[snip]
+&gt; 2) Teach all the analyzers that they shouldn&apos;t ignore characters whose
+&gt; code-point is &gt;=127 (something similar to what&apos;s described in bug #508, comment
+&gt; #1)
+
+Erm... this is not correct for shell scripts. At least ksh93 explicitly supports non-ASCII variable and function names.
+And Sun&apos;s Studio compiler supports non-ASCII identifiers using the -xcsi option, allowing multibyte charactes in ISO C code.
+
+AFAIK in both cases you want to use &quot;character classes&quot; (e.g. see ksh93(1), tr(1) or egrep(1)) in the parser code to determinate the character class (e.g. &quot;alpha&quot;, &quot;alnum&quot;, &quot;punct&quot;) of a character.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>63977</commentid>
+            <who name="pooh">veryfurryfur</who>
+            <bug_when>2010-01-27 14:35:34 +0000</bug_when>
+            <thetext>Please note that contrary to what the Description suggests, this affects many more natural languages than &quot;just&quot; those using Unicode (&gt;255). In fact, only 7-bit English and possibly a few other natural languages are currently supported, because ASCII codes &gt;127 are unceremoniously thrown away. This affects most European languages with diacritics.
+
+Not just that, but also some *programming* languages (e.g. APL and some derivatives) also use operators in the (128-255) range, which makes not only comments, but also code unreadable.
+
+To me it looks like point 2) as described in Comment #6 is a low-hanging fruit that would make many people happy
+
+&gt; 2) Teach all the analyzers that they shouldn&apos;t ignore characters whose
+&gt; code-point is &gt;=127
+
+Finally, I don&apos;t understand comment #7.
+
+Thanks.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>70434</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2010-03-30 18:52:38 +0000</bug_when>
+            <thetext>The change suggested as step 1 in comment #6 was performed a while ago as part of another fix. I just now checked in code for step 2 (changeset efff150e83ce). Now non-ascii characters should be visible in the xrefs. However, nothing is (yet) done to recognize symbols with non-ascii characters. Also, text files are still assumed to be encoded with the default system encoding (whatever java.util.Locale.getDefault() returns).</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

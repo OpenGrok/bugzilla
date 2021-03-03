@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>19167</bug_id>
+          
+          <creation_ts>2012-02-13 06:22:00 +0000</creation_ts>
+          <short_desc>update eclipse settings</short_desc>
+          <delta_ts>2012-02-14 09:41:44 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>build</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXINSOURCE</resolution>
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>minor</bug_severity>
+          <target_milestone>next</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Jens Elkner">jel+osbugs</reporter>
+          <assigned_to name="Lubos Kosco">Lubos.Kosco</assigned_to>
+          <cc>Lubos.Kosco</cc>
+    
+    <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>86178</commentid>
+              <attachid>4621</attachid>
+            <who name="Jens Elkner">jel+osbugs</who>
+            <bug_when>2012-02-13 06:22:54 +0000</bug_when>
+            <thetext>Created attachment 4621
+eclipse support
+
+update eclipse settings wrt. the new lucene version</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86189</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2012-02-14 09:41:33 +0000</bug_when>
+            <thetext>changeset:   1323:82579830a2a2
+tag:         tip
+user:        jel+opengrok@cs.uni-magdeburg.de
+date:        Sat Feb 11 04:46:42 2012 +0100
+summary:     satisfy eclipse project requirements (use &apos;ant eclipse&apos;)</thetext>
+          </long_desc>
+      
+          <attachment
+              isobsolete="0"
+              ispatch="1"
+              isprivate="0"
+              isurl="0"
+          >
+            <attachid>4621</attachid>
+            <date>2012-02-13 06:22:00 +0000</date>
+            <delta_ts>2012-02-13 06:23:17 +0000</delta_ts>
+            <desc>eclipse support</desc>
+            <filename>eclipse.patch</filename>
+            <type>text/plain</type>
+            <size>2196</size>
+            <attacher>jel+osbugs</attacher>
+            
+              <data encoding="base64">IyBIRyBjaGFuZ2VzZXQgcGF0Y2gKIyBVc2VyIGplbCtvcGVuZ3Jva0Bjcy51bmktbWFnZGVidXJn
+LmRlCiMgRGF0ZSAxMzI4OTMyMDAyIC0zNjAwCiMgTm9kZSBJRCA4MjU3OTgzMGEyYTI2ZmMzZDcw
+M2IwYWI0ZmEzOTg3NmE1ZDkwMzA1CiMgUGFyZW50ICAzMjllY2FhYzE4MzJhZWYyMmE2Njk2Nzg0
+ZGY0ZmE0Zjg4N2ZmMmRhCnNhdGlzZnkgZWNsaXBzZSBwcm9qZWN0IHJlcXVpcmVtZW50cyAodXNl
+ICdhbnQgZWNsaXBzZScpCgpkaWZmIC1yIDMyOWVjYWFjMTgzMiAtciA4MjU3OTgzMGEyYTIgLmNs
+YXNzcGF0aAotLS0gYS8uY2xhc3NwYXRoCUZyaSBGZWIgMTAgMTc6MzM6MjMgMjAxMiArMDEwMAor
+KysgYi8uY2xhc3NwYXRoCVNhdCBGZWIgMTEgMDQ6NDY6NDIgMjAxMiArMDEwMApAQCAtNiwxMyAr
+NiwxMyBAQAogCTxjbGFzc3BhdGhlbnRyeSBraW5kPSJzcmMiIHBhdGg9ImdlbmVyYXRlZHNyYyIv
+PgogCTxjbGFzc3BhdGhlbnRyeSBraW5kPSJzcmMiIHBhdGg9ImJ1aWxkL3NyYy9qc3AiLz4KIAk8
+Y2xhc3NwYXRoZW50cnkga2luZD0iY29uIiBwYXRoPSJvcmcuZWNsaXBzZS5qZHQubGF1bmNoaW5n
+LkpSRV9DT05UQUlORVIvb3JnLmVjbGlwc2UuamR0LmludGVybmFsLmRlYnVnLnVpLmxhdW5jaGVy
+LlN0YW5kYXJkVk1UeXBlL0phdmFTRS0xLjYiLz4KLQk8Y2xhc3NwYXRoZW50cnkga2luZD0ibGli
+IiBwYXRoPSJsaWIvbHVjZW5lLWNvcmUtMy4wLjIuamFyIi8+Ci0JPGNsYXNzcGF0aGVudHJ5IGtp
+bmQ9ImxpYiIgcGF0aD0ibGliL2x1Y2VuZS1zcGVsbGNoZWNrZXItMy4wLjIuamFyIi8+CiAJPGNs
+YXNzcGF0aGVudHJ5IGtpbmQ9ImxpYiIgcGF0aD0iL2xvY2FsL3NoYXJlL2FudC9saWIvYW50Lmph
+ciIvPgogCTxjbGFzc3BhdGhlbnRyeSBraW5kPSJsaWIiIHBhdGg9ImxpYi9iY2VsLTUuMi5qYXIi
+Lz4KIAk8Y2xhc3NwYXRoZW50cnkga2luZD0iY29uIiBwYXRoPSJvcmcuZWNsaXBzZS5qZHQuVVNF
+Ul9MSUJSQVJZL0phc3BlciBHRjMiLz4KIAk8Y2xhc3NwYXRoZW50cnkga2luZD0ibGliIiBwYXRo
+PSJidWlsZC9qcmNzIi8+CiAJPGNsYXNzcGF0aGVudHJ5IGtpbmQ9ImNvbiIgcGF0aD0ib3JnLmVj
+bGlwc2UuamR0Lmp1bml0LkpVTklUX0NPTlRBSU5FUi80Ii8+CiAJPGNsYXNzcGF0aGVudHJ5IGtp
+bmQ9ImxpYiIgcGF0aD0iYnVpbGQvdGVzdC9jbGFzc2VzIi8+CisJPGNsYXNzcGF0aGVudHJ5IGtp
+bmQ9ImxpYiIgcGF0aD0ibGliL2x1Y2VuZS1jb3JlLTMuNS4wLmphciIvPgorCTxjbGFzc3BhdGhl
+bnRyeSBraW5kPSJsaWIiIHBhdGg9ImxpYi9sdWNlbmUtc3BlbGxjaGVja2VyLTMuNS4wLmphciIv
+PgogCTxjbGFzc3BhdGhlbnRyeSBraW5kPSJvdXRwdXQiIHBhdGg9ImJ1aWxkL2NsYXNzZXMiLz4K
+IDwvY2xhc3NwYXRoPgpkaWZmIC1yIDMyOWVjYWFjMTgzMiAtciA4MjU3OTgzMGEyYTIgYnVpbGQu
+eG1sCi0tLSBhL2J1aWxkLnhtbAlGcmkgRmViIDEwIDE3OjMzOjIzIDIwMTIgKzAxMDAKKysrIGIv
+YnVpbGQueG1sCVNhdCBGZWIgMTEgMDQ6NDY6NDIgMjAxMiArMDEwMApAQCAtMjM2LDYgKzIzNiw4
+IEBACiAgICAgICAgIAogICAgIDxwcm9wZXJ0eSBuYW1lPSJjb3ZlcmFnZS5kaXIiIHZhbHVlPSIk
+e2Jhc2VkaXJ9L2NvdmVyYWdlIi8+CiAgICAgPHRhcmdldCBuYW1lPSItcHJlLWNvbXBpbGUiIGRl
+cGVuZHM9ImpyY3MsamZsZXgsZG93bmxvYWQtbHVjZW5lIi8+CisJPHRhcmdldCBuYW1lPSJlY2xp
+cHNlIiBkZXBlbmRzPSItcHJlLWNvbXBpbGUiIAorCQlkZXNjcmlwdGlvbj0ic2F0aXNmeSBlY2xp
+cHNlIGRlcGVuZGVuY2llcyIvPgogICAgIDx0YXJnZXQgbmFtZT0iLXBvc3QtY2xlYW4iPgogICAg
+ICAgICA8ZGVsZXRlIGRpcj0iJHtzcmMuZ2VuZXJhdGVkc3JjLmRpcn0iLz4KICAgICAgICAgPGRl
+bGV0ZSBmaWxlPSIke21hbmlmZXN0LmZpbGV9Ii8+CkBAIC0yNzEsNiArMjczLDggQEAKICAgICAg
+ICAgICAgIDxmbGF0dGVubWFwcGVyLz4KICAgICAgICAgICAgIDxtYXAgZnJvbT0iIiB0bz0ibGli
+LyIvPgogICAgICAgICA8L3BhdGhjb252ZXJ0PgorICAgIAk8bWtkaXIgZGlyPSIke2J1aWxkLnRl
+c3QuY2xhc3Nlcy5kaXJ9Ii8+CisgICAgCTxta2RpciBkaXI9IiR7YnVpbGQuZGlyfS9zcmMvanNw
+Ii8+CiAgICAgPC90YXJnZXQ+CiAKICAgICA8IS0tIFVwZGF0ZSB0aGUgbWFuaWZlc3QgZmlsZSB3
+aXRoIGEgY2xhc3NwYXRoIGF0dHJpYnV0ZSAtLT4K
+</data>
+
+          </attachment>
+      
+
+    </bug>
+
+</bugzilla>

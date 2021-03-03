@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>19169</bug_id>
+          
+          <creation_ts>2012-02-13 06:39:00 +0000</creation_ts>
+          <short_desc>avoid eftar file test and exception on every page access</short_desc>
+          <delta_ts>2012-02-17 09:02:41 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>webapp</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXINSOURCE</resolution>
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>normal</bug_severity>
+          <target_milestone>next</target_milestone>
+          
+          <blocked>19178</blocked>
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Jens Elkner">jel+osbugs</reporter>
+          <assigned_to name="Lubos Kosco">Lubos.Kosco</assigned_to>
+          <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>86181</commentid>
+              <attachid>4624</attachid>
+            <who name="Jens Elkner">jel+osbugs</who>
+            <bug_when>2012-02-13 06:39:34 +0000</bug_when>
+            <thetext>Created attachment 4624
+patch
+
+cache eftar lookup result</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86191</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2012-02-14 09:59:55 +0000</bug_when>
+            <thetext>changeset:   1325:7e1ab5c8cadf
+tag:         tip
+user:        jel+opengrok@cs.uni-magdeburg.de
+date:        Sun Feb 12 04:37:36 2012 +0100
+summary:     avoid eftar file test and exception on every page access</thetext>
+          </long_desc>
+      
+          <attachment
+              isobsolete="0"
+              ispatch="1"
+              isprivate="0"
+              isurl="0"
+          >
+            <attachid>4624</attachid>
+            <date>2012-02-13 06:39:00 +0000</date>
+            <delta_ts>2012-02-13 06:39:46 +0000</delta_ts>
+            <desc>patch</desc>
+            <filename>eftar.patch</filename>
+            <type>text/plain</type>
+            <size>4467</size>
+            <attacher>jel+osbugs</attacher>
+            
+              <data encoding="base64">IyBIRyBjaGFuZ2VzZXQgcGF0Y2gKIyBVc2VyIGplbCtvcGVuZ3Jva0Bjcy51bmktbWFnZGVidXJn
+LmRlCiMgRGF0ZSAxMzI5MDE3ODU2IC0zNjAwCiMgTm9kZSBJRCA2MTU0OTAyNmFhZmVmOTE2OTkz
+MDdjYTAwNzNlODAwMzNiZDZlNGQwCiMgUGFyZW50ICAxMDUxY2QwNWNkOGQ2YTA5MDBiODNlNTg5
+OWQwMDIyY2Q4NDkxNWNjCmF2b2lkIGVmdGFyIGZpbGUgdGVzdCBhbmQgZXhjZXB0aW9uIG9uIGV2
+ZXJ5IHBhZ2UgYWNjZXNzCgpkaWZmIC1yIDEwNTFjZDA1Y2Q4ZCAtciA2MTU0OTAyNmFhZmUgc3Jj
+L29yZy9vcGVuc29sYXJpcy9vcGVuZ3Jvay9jb25maWd1cmF0aW9uL0NvbmZpZ3VyYXRpb24uamF2
+YQotLS0gYS9zcmMvb3JnL29wZW5zb2xhcmlzL29wZW5ncm9rL2NvbmZpZ3VyYXRpb24vQ29uZmln
+dXJhdGlvbi5qYXZhCVN1biBGZWIgMTIgMDA6NDI6NTQgMjAxMiArMDEwMAorKysgYi9zcmMvb3Jn
+L29wZW5zb2xhcmlzL29wZW5ncm9rL2NvbmZpZ3VyYXRpb24vQ29uZmlndXJhdGlvbi5qYXZhCVN1
+biBGZWIgMTIgMDQ6Mzc6MzYgMjAxMiArMDEwMApAQCAtMTA4LDcgKzEwOCw3IEBACiAgICAgcHJp
+dmF0ZSBib29sZWFuIGNoYXR0eVN0YXR1c1BhZ2U7CiAgICAgcHJpdmF0ZSBmaW5hbCBNYXA8U3Ry
+aW5nLFN0cmluZz4gY21kczsKICAgICBwcml2YXRlIGludCB0YWJTaXplOwotICAgIHByaXZhdGUg
+c3RhdGljIGZpbmFsIExvZ2dlciBsb2dnZXIgPSBMb2dnZXIuZ2V0TG9nZ2VyKCJvcmcub3BlbnNv
+bGFyaXMub3Blbmdyb2siKTsKKyAgICBwcml2YXRlIHN0YXRpYyBmaW5hbCBMb2dnZXIgbG9nZ2Vy
+ID0gTG9nZ2VyLmdldExvZ2dlcihDb25maWd1cmF0aW9uLmNsYXNzLmdldE5hbWUoKSk7CiAKICAg
+ICAvKioKICAgICAgKiBHZXQgdGhlIGRlZmF1bHQgdGFiIHNpemUgKG51bWJlciBvZiBzcGFjZSBj
+aGFyYWN0ZXJzIHBlciB0YWIgY2hhcmFjdGVyKQpAQCAtNTkxLDYgKzU5MSwyOSBAQAogICAgIAly
+ZXR1cm4gaGVhZGVyOwogICAgIH0KIAorICAgIC8qKgorICAgICAqIFRoZSBuYW1lIG9mIHRoZSBl
+ZnRhciBmaWxlIHJlbGF0aXZlIHRvIHRoZSA8dmFyPkRBVEFfUk9PVDwvdmFyPiwgd2hpY2ggCisg
+ICAgICogY29udGFpbnMgZGVmaW5pdGlvbiB0YWdzLgorICAgICAqLworICAgIHB1YmxpYyBzdGF0
+aWMgZmluYWwgU3RyaW5nIEVGVEFSX0RUQUdTX0ZJTEUgPSAiaW5kZXgvZHRhZ3MuZWZ0YXIiOwor
+CisgICAgcHJpdmF0ZSB0cmFuc2llbnQgU3RyaW5nIGR0YWdzRWZ0YXIgPSBudWxsOyAKKyAgICAv
+KioKKyAgICAgKiBHZXQgdGhlIGVmdGFyIGZpbGUsIHdoaWNoIGNvbnRhaW5zIGRlZmluaXRpb24g
+dGFncy4KKyAgICAgKiBAcmV0dXJuIHtAY29kZSBudWxsfSBpZiB0aGVyZSBpcyBubyBzdWNoIGZp
+bGUsIHRoZSBmaWxlIG90aGVyd2lzZS4KKyAgICAgKi8KKyAgICBwdWJsaWMgRmlsZSBnZXREdGFn
+c0VmdGFyKCkgeworICAgICAgICBpZiAoZHRhZ3NFZnRhciA9PSBudWxsKSB7CisgICAgICAgICAg
+ICBGaWxlIHRtcCA9IG5ldyBGaWxlKGdldERhdGFSb290KCkgKyAiLyIgKyBFRlRBUl9EVEFHU19G
+SUxFKTsKKyAgICAgICAgICAgIGlmICh0bXAuY2FuUmVhZCgpKSB7CisgICAgICAgICAgICAgICAg
+ZHRhZ3NFZnRhciA9IHRtcC5nZXROYW1lKCk7CisgICAgICAgICAgICB9IGVsc2UgeworICAgICAg
+ICAgICAgICAgIGR0YWdzRWZ0YXIgPSAiIjsKKyAgICAgICAgICAgIH0KKyAgICAgICAgfQorICAg
+ICAgICByZXR1cm4gZHRhZ3NFZnRhci5pc0VtcHR5KCkgPyBudWxsIDogbmV3IEZpbGUoZHRhZ3NF
+ZnRhcik7CisgICAgfQorICAgIAogICAgIHB1YmxpYyBTdHJpbmcgZ2V0RGF0YWJhc2VEcml2ZXIo
+KSB7CiAgICAgICAgIHJldHVybiBkYXRhYmFzZURyaXZlcjsKICAgICB9CmRpZmYgLXIgMTA1MWNk
+MDVjZDhkIC1yIDYxNTQ5MDI2YWFmZSBzcmMvb3JnL29wZW5zb2xhcmlzL29wZW5ncm9rL3dlYi9F
+ZnRhckZpbGVSZWFkZXIuamF2YQotLS0gYS9zcmMvb3JnL29wZW5zb2xhcmlzL29wZW5ncm9rL3dl
+Yi9FZnRhckZpbGVSZWFkZXIuamF2YQlTdW4gRmViIDEyIDAwOjQyOjU0IDIwMTIgKzAxMDAKKysr
+IGIvc3JjL29yZy9vcGVuc29sYXJpcy9vcGVuZ3Jvay93ZWIvRWZ0YXJGaWxlUmVhZGVyLmphdmEJ
+U3VuIEZlYiAxMiAwNDozNzozNiAyMDEyICswMTAwCkBAIC0xMzUsNiArMTM1LDkgQEAKICAgICB9
+CiAKICAgICBwdWJsaWMgRWZ0YXJGaWxlUmVhZGVyKFN0cmluZyBmaWxlKSB0aHJvd3MgRmlsZU5v
+dEZvdW5kRXhjZXB0aW9uIHsKKyAgICAgICAgdGhpcyhuZXcgRmlsZShmaWxlKSk7CisgICAgfQor
+ICAgIHB1YmxpYyBFZnRhckZpbGVSZWFkZXIoRmlsZSBmaWxlKSB0aHJvd3MgRmlsZU5vdEZvdW5k
+RXhjZXB0aW9uIHsKICAgICAgICAgZiA9IG5ldyBSYW5kb21BY2Nlc3NGaWxlKGZpbGUsICJyIik7
+CiAgICAgICAgIGlzT3BlbiA9IHRydWU7CiAgICAgfQpkaWZmIC1yIDEwNTFjZDA1Y2Q4ZCAtciA2
+MTU0OTAyNmFhZmUgc3JjL29yZy9vcGVuc29sYXJpcy9vcGVuZ3Jvay93ZWIvUGFnZUNvbmZpZy5q
+YXZhCi0tLSBhL3NyYy9vcmcvb3BlbnNvbGFyaXMvb3Blbmdyb2svd2ViL1BhZ2VDb25maWcuamF2
+YQlTdW4gRmViIDEyIDAwOjQyOjU0IDIwMTIgKzAxMDAKKysrIGIvc3JjL29yZy9vcGVuc29sYXJp
+cy9vcGVuZ3Jvay93ZWIvUGFnZUNvbmZpZy5qYXZhCVN1biBGZWIgMTIgMDQ6Mzc6MzYgMjAxMiAr
+MDEwMApAQCAtNDczLDExICs0NzMsMTUgQEAKICAgICAgKi8KICAgICBwdWJsaWMgRWZ0YXJGaWxl
+UmVhZGVyIGdldEVmdGFyUmVhZGVyKCkgewogICAgICAgICBpZiAoZWZ0YXJSZWFkZXIgPT0gbnVs
+bCB8fCBlZnRhclJlYWRlci5pc0Nsb3NlZCgpKSB7Ci0gICAgICAgICAgICB0cnkgewotICAgICAg
+ICAgICAgICAgIGVmdGFyUmVhZGVyID0gbmV3IEVmdGFyRmlsZVJlYWRlcihnZXRFbnYoKS5nZXRE
+YXRhUm9vdFBhdGgoKQotICAgICAgICAgICAgICAgICAgICAgICAgKyAiL2luZGV4L2R0YWdzLmVm
+dGFyIik7Ci0gICAgICAgICAgICB9IGNhdGNoIChFeGNlcHRpb24gZSkgewotICAgICAgICAgICAg
+ICAgIGxvZy5sb2coTGV2ZWwuSU5GTywgIkZhaWxlZCB0byBjcmVhdGUgRWZ0YXJGaWxlUmVhZGVy
+OiAiLCBlKTsKKyAgICAgICAgICAgIEZpbGUgZiA9IGdldEVudigpLmdldENvbmZpZ3VyYXRpb24o
+KS5nZXREdGFnc0VmdGFyKCk7CisgICAgICAgICAgICBpZiAoZiA9PSBudWxsKSB7CisgICAgICAg
+ICAgICAgICAgZWZ0YXJSZWFkZXIgPSBudWxsOworICAgICAgICAgICAgfSBlbHNlIHsKKyAgICAg
+ICAgICAgICAgICB0cnkgeworICAgICAgICAgICAgICAgICAgICBlZnRhclJlYWRlciA9IG5ldyBF
+ZnRhckZpbGVSZWFkZXIoZik7CisgICAgICAgICAgICAgICAgfSBjYXRjaCAoRXhjZXB0aW9uIGUp
+IHsKKyAgICAgICAgICAgICAgICAgICAgbG9nLmxvZyhMZXZlbC5GSU5FLCAiRmFpbGVkIHRvIGNy
+ZWF0ZSBFZnRhckZpbGVSZWFkZXI6ICIsIGUpOworICAgICAgICAgICAgICAgIH0KICAgICAgICAg
+ICAgIH0KICAgICAgICAgfQogICAgICAgICByZXR1cm4gZWZ0YXJSZWFkZXI7CmRpZmYgLXIgMTA1
+MWNkMDVjZDhkIC1yIDYxNTQ5MDI2YWFmZSB0ZXN0L29yZy9vcGVuc29sYXJpcy9vcGVuZ3Jvay93
+ZWIvRWZ0YXJGaWxlVGVzdC5qYXZhCi0tLSBhL3Rlc3Qvb3JnL29wZW5zb2xhcmlzL29wZW5ncm9r
+L3dlYi9FZnRhckZpbGVUZXN0LmphdmEJU3VuIEZlYiAxMiAwMDo0Mjo1NCAyMDEyICswMTAwCisr
+KyBiL3Rlc3Qvb3JnL29wZW5zb2xhcmlzL29wZW5ncm9rL3dlYi9FZnRhckZpbGVUZXN0LmphdmEJ
+U3VuIEZlYiAxMiAwNDozNzozNiAyMDEyICswMTAwCkBAIC0yNiw2ICsyNiw5IEBACiBpbXBvcnQg
+amF2YS5pby5GaWxlOwogaW1wb3J0IGphdmEuaW8uRmlsZVdyaXRlcjsKIGltcG9ydCBqYXZhLmlv
+LlByaW50V3JpdGVyOworCitpbXBvcnQganVuaXQuZnJhbWV3b3JrLkFzc2VydDsKKwogaW1wb3J0
+IG9yZy5qdW5pdC5BZnRlcjsKIGltcG9ydCBvcmcuanVuaXQuQWZ0ZXJDbGFzczsKIGltcG9ydCBv
+cmcuanVuaXQuQmVmb3JlOwpAQCAtMTA3LDcgKzExMCw4IEBACiAgICAgICovCiAgICAgQFRlc3QK
+ICAgICBwdWJsaWMgdm9pZCBzZWFyY2hFZnRhckZpbGUoKSB0aHJvd3MgRXhjZXB0aW9uIHsKLSAg
+ICAgICAgRWZ0YXJGaWxlUmVhZGVyIGVyID0gbmV3IEVmdGFyRmlsZVJlYWRlcihlZnRhci5nZXRB
+YnNvbHV0ZVBhdGgoKSk7CisgICAgICAgIGFzc2VydE5vdE51bGwoIkNyZWF0ZSBmcm9tIHN0cmlu
+ZyIsIG5ldyBFZnRhckZpbGVSZWFkZXIoZWZ0YXIuZ2V0QWJzb2x1dGVQYXRoKCkpKTsKKyAgICAg
+ICAgRWZ0YXJGaWxlUmVhZGVyIGVyID0gbmV3IEVmdGFyRmlsZVJlYWRlcihlZnRhcik7CiAgICAg
+ICAgIFN0cmluZ0J1aWxkZXIgc2IgPSBuZXcgU3RyaW5nQnVpbGRlcigpOwogICAgICAgICBTdHJp
+bmdCdWlsZGVyIG1hdGNoID0gbmV3IFN0cmluZ0J1aWxkZXIoKTsKICAgICAgICAgbWF0Y2guYXBw
+ZW5kKCJEZXNjcmlwdGlvbiAiKTsK
+</data>
+
+          </attachment>
+      
+
+    </bug>
+
+</bugzilla>

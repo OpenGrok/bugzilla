@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>2047</bug_id>
+          
+          <creation_ts>2008-05-27 01:48:00 +0000</creation_ts>
+          <short_desc>Safe heal yourself from  org.apache.lucene.store.LockObtainFailedException: Lock obtain timed out</short_desc>
+          <delta_ts>2008-06-01 14:24:28 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>indexer</component>
+          <version>unspecified</version>
+          <rep_platform>SPARC/sun4u</rep_platform>
+          <op_sys>Solaris</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXED</resolution>
+          
+          
+          
+          
+          
+          <priority>P4</priority>
+          <bug_severity>enhancement</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Lubos Kosco">Lubos.Kosco</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>7328</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2008-05-27 01:48:10 +0000</bug_when>
+            <thetext>I sometimes break indexing and my index has an old lock
+This however breaks the next instance of indexing and giving me
+
+org.apache.lucene.store.LockObtainFailedException: Lock obtain timed out: SimpleFSLock@/somewhere/in/my/sources/write.lock         at org.apache.lucene.store.Lock.obtain(Lock.java:70)         at org.apache.lucene.index.IndexWriter.init(IndexWriter.java:598)
+        at org.apache.lucene.index.IndexWriter.init(IndexWriter.java:579)         at org.apache.lucene.index.IndexWriter.&lt;init&gt;(IndexWriter.java:473)         at org.opensolaris.opengrok.index.IndexDatabase.update(IndexDatabase.java:208)         at org.opensolaris.opengrok.index.IndexDatabase$1.run(IndexDatabase.java:123)         at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:417)         at java.util.concurrent.FutureTask$Sync.innerRun(FutureTask.java:269)         at java.util.concurrent.FutureTask.run(FutureTask.java:123)         at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:650)         at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:675)         at java.lang.Thread.run(Thread.java:595) 
+
+
+It seems lucene folks hit the same problem in solr:
+http://www.mail-archive.com/solr-user@lucene.apache.org/msg06797.html
+
+I think that we can safely assume that use case where only 1 indexer is running (that&apos;s why we have projects, hmm ? ;) ) is the most prevaliant one so we shall 
+probably change locking , hmm ?
+Or don&apos;t use locking at all ?
+http://lucene.apache.org/java/2_2_0/api/org/apache/lucene/store/NoLockFactory.html</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>7553</commentid>
+            <who name="Trond Norbye">trond.norbye</who>
+            <bug_when>2008-06-01 14:24:28 +0000</bug_when>
+            <thetext>Fixed in changeset:   296:054dca198144
+
+Added command line option -l on/off to enable / disable Lucene locks</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

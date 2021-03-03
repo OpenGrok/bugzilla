@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>16004</bug_id>
+          
+          <creation_ts>2010-05-19 07:19:00 +0000</creation_ts>
+          <short_desc>README.* should be recognized as plain text</short_desc>
+          <delta_ts>2010-11-09 09:50:10 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>analyzer</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>DUPLICATE</resolution>
+          <dup_id>6163</dup_id>
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>minor</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Knut Anders Hatlen">knut.hatlen</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>73180</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2010-05-19 07:19:45 +0000</bug_when>
+            <thetext>We should recognize files that match the pattern README.* as plain text files.
+
+See for example this file, which is rendered as a shell script:
+
+http://src.opensolaris.org/source/xref/onnv/onnv-gate/usr/src/README.license-files</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>79053</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2010-11-09 09:50:10 +0000</bug_when>
+            <thetext>
+
+*** This bug has been marked as a duplicate of bug 6163 ***</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

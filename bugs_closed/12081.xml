@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>12081</bug_id>
+          
+          <creation_ts>2009-10-19 13:01:00 +0000</creation_ts>
+          <short_desc>History not returned for uncached repositories when using JDBCHistoryCache</short_desc>
+          <delta_ts>2009-10-24 20:41:40 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>scm</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXED</resolution>
+          
+          
+          
+          
+          
+          <priority>P4</priority>
+          <bug_severity>normal</bug_severity>
+          <target_milestone>0.8</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Knut Anders Hatlen">knut.hatlen</reporter>
+          <assigned_to name="Knut Anders Hatlen">knut.hatlen</assigned_to>
+          
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>53287</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2009-10-19 13:01:57 +0000</bug_when>
+            <thetext>JDBCHistoryCache only stores history for repositories whose hasHistoryForDirectories() method returns true. When attempting to get history from other types of repositories (e.g., RCS, CVS, SCCS, Razor) an empty history object is returned. Instead, we should fall back to calling Repository.getHistory() for these repositories.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>54067</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2009-10-24 20:41:40 +0000</bug_when>
+            <thetext>Fixed in changeset 887:4a3e2f0c2081.</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

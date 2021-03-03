@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>15912</bug_id>
+          
+          <creation_ts>2010-05-08 20:56:00 +0000</creation_ts>
+          <short_desc>Too long phrase highlighted in result summary</short_desc>
+          <delta_ts>2010-05-08 20:56:16 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>webapp</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>NEW</bug_status>
+          
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>minor</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Knut Anders Hatlen">knut.hatlen</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>72700</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2010-05-08 20:56:16 +0000</bug_when>
+            <thetext>If a file contains the following line:
+
+a b c c d e e
+
+and a search for &quot;c d e&quot; is performed (including the double quotes around the search string), the result summary will display the line and show the phrase &quot;c c d e&quot; in bold font. Note: two c&apos;s are highlighted, even though the search phrase only had one c.</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

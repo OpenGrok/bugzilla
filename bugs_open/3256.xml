@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>3256</bug_id>
+          
+          <creation_ts>2008-09-05 02:55:00 +0000</creation_ts>
+          <short_desc>provide indexes for tags and allow to search and browse them</short_desc>
+          <delta_ts>2008-09-05 02:55:06 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>indexer</component>
+          <version>unspecified</version>
+          <rep_platform>Other</rep_platform>
+          <op_sys>Solaris</op_sys>
+          <bug_status>NEW</bug_status>
+          
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>enhancement</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Vladimir Kotal">vladimir.kotal</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>11813</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2008-09-05 02:55:06 +0000</bug_when>
+            <thetext>Most of the projects tag their repository, highlighting milestones
+of development, builds or releases. For example:
+
+vk199839:b4u-v490b-prg06:/ws-local/onnv-clone$ hg tags | head
+tip                             7493:fa13d4714c0e
+onnv_98                         7473:fad192e9bc57
+onnv_97                         7367:57a71b725a3b
+onnv_96                         7295:0a40d4215127
+onnv_95                         7152:4575049c1ae7
+onnv_94                         7055:acb6f058a5df
+onnv_93                         6948:28788c8a03a8
+onnv_92                         6837:19fa19265701
+onnv_91                         6740:ca05a6828ae6
+onnv_90                         6626:ab06cdf4885a
+vk199839:b4u-v490b-prg06:/ws-local/onnv-clone$ cd ../opengrok-trunk 
+vk199839:b4u-v490b-prg06:/ws-local/opengrok-trunk$ hg tags
+tip                              551:e083ecda31ba
+OpenGrok-0.6.1                   278:6ff328517647
+OpenGrok-0.6                     248:7165903c1a07
+OpenGrok-0.5                     121:39d481523f29
+OpenGrok-0.4-final                20:69f8d73bbc06
+opengrok_0.4                      17:06caf5c465cd
+vk199839:b4u-v490b-prg06:/ws-local/opengrok-trunk$ 
+
+OpenGrok should leverage the presence of tags and could:
+  - create separate index for each tagged tree
+  - allow to limit a search for given tag only
+    (say I&apos;d like to search for a symbol in ONNV build 30 and below;
+     this is handy because given symbol could have been renamed/removed
+     in build 31)
+  - allow to browse tagged tree
+    (say I&apos;d like to browse source tree as it appeared at time of ONNV build 11)
+
+This can be used not only for Mercurial but also for other SCMs which have tags.</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

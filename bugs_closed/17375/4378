@@ -1,0 +1,35 @@
+# HG changeset patch
+# Parent 38729468800828ecc392e0794550ac49fccc3de9
+
+This patch fixes a problem I was having with the annotate link
+displayed in mast.jsp.  The problem was that the link itself
+was not percent encoded, so directories named 'C#' would fail to go to the right
+place generating a 404.
+
+This patch assumes that <https://defect.opensolaris.org/bz/attachment.cgi?id=4376>
+has been applied (for mast.jsp). 
+
+ldavis@fonix.com
+SCA OS0110
+
+diff -r 387294688008 web/mast.jsp
+--- a/web/mast.jsp	Mon Nov 08 19:07:58 2010 -0700
++++ b/web/mast.jsp	Mon Nov 08 20:57:46 2010 -0700
+@@ -191,7 +191,7 @@
+             <a href="#" onclick="javascript:toggle_annotations(); return false;" title="Show or hide line annotation(commit revisions,authors)." >Annotate</a>
+         </span>
+         <span id="toggle-annotate">
+-            <a href="<%=context+Constants.xrefP+path%><%
++            <a href="<%=context+Constants.xrefP+uriEncodedName%><%
+                if (rev.length() > 0) { 
+                %>?<%=rev%><% 
+            } %>">Annotate</a></span>
+@@ -205,7 +205,7 @@
+             // -->
+         </script> <%
+         } else {
+-        %> | <a href="<%=context+Constants.xrefP+path%>?a=true<%=rev%>">Annotate</a><%
++        %> | <a href="<%=context+Constants.xrefP+uriEncodedName%>?a=true<%=rev%>">Annotate</a><%
+         }
+     }    
+             if (!isDir) {

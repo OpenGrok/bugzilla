@@ -1,0 +1,109 @@
+# HG changeset patch
+# User jel+opengrok@cs.uni-magdeburg.de
+# Date 1329017856 -3600
+# Node ID 61549026aafef91699307ca0073e80033bd6e4d0
+# Parent  1051cd05cd8d6a0900b83e5899d0022cd84915cc
+avoid eftar file test and exception on every page access
+
+diff -r 1051cd05cd8d -r 61549026aafe src/org/opensolaris/opengrok/configuration/Configuration.java
+--- a/src/org/opensolaris/opengrok/configuration/Configuration.java	Sun Feb 12 00:42:54 2012 +0100
++++ b/src/org/opensolaris/opengrok/configuration/Configuration.java	Sun Feb 12 04:37:36 2012 +0100
+@@ -108,7 +108,7 @@
+     private boolean chattyStatusPage;
+     private final Map<String,String> cmds;
+     private int tabSize;
+-    private static final Logger logger = Logger.getLogger("org.opensolaris.opengrok");
++    private static final Logger logger = Logger.getLogger(Configuration.class.getName());
+ 
+     /**
+      * Get the default tab size (number of space characters per tab character)
+@@ -591,6 +591,29 @@
+     	return header;
+     }
+ 
++    /**
++     * The name of the eftar file relative to the <var>DATA_ROOT</var>, which 
++     * contains definition tags.
++     */
++    public static final String EFTAR_DTAGS_FILE = "index/dtags.eftar";
++
++    private transient String dtagsEftar = null; 
++    /**
++     * Get the eftar file, which contains definition tags.
++     * @return {@code null} if there is no such file, the file otherwise.
++     */
++    public File getDtagsEftar() {
++        if (dtagsEftar == null) {
++            File tmp = new File(getDataRoot() + "/" + EFTAR_DTAGS_FILE);
++            if (tmp.canRead()) {
++                dtagsEftar = tmp.getName();
++            } else {
++                dtagsEftar = "";
++            }
++        }
++        return dtagsEftar.isEmpty() ? null : new File(dtagsEftar);
++    }
++    
+     public String getDatabaseDriver() {
+         return databaseDriver;
+     }
+diff -r 1051cd05cd8d -r 61549026aafe src/org/opensolaris/opengrok/web/EftarFileReader.java
+--- a/src/org/opensolaris/opengrok/web/EftarFileReader.java	Sun Feb 12 00:42:54 2012 +0100
++++ b/src/org/opensolaris/opengrok/web/EftarFileReader.java	Sun Feb 12 04:37:36 2012 +0100
+@@ -135,6 +135,9 @@
+     }
+ 
+     public EftarFileReader(String file) throws FileNotFoundException {
++        this(new File(file));
++    }
++    public EftarFileReader(File file) throws FileNotFoundException {
+         f = new RandomAccessFile(file, "r");
+         isOpen = true;
+     }
+diff -r 1051cd05cd8d -r 61549026aafe src/org/opensolaris/opengrok/web/PageConfig.java
+--- a/src/org/opensolaris/opengrok/web/PageConfig.java	Sun Feb 12 00:42:54 2012 +0100
++++ b/src/org/opensolaris/opengrok/web/PageConfig.java	Sun Feb 12 04:37:36 2012 +0100
+@@ -473,11 +473,15 @@
+      */
+     public EftarFileReader getEftarReader() {
+         if (eftarReader == null || eftarReader.isClosed()) {
+-            try {
+-                eftarReader = new EftarFileReader(getEnv().getDataRootPath()
+-                        + "/index/dtags.eftar");
+-            } catch (Exception e) {
+-                log.log(Level.INFO, "Failed to create EftarFileReader: ", e);
++            File f = getEnv().getConfiguration().getDtagsEftar();
++            if (f == null) {
++                eftarReader = null;
++            } else {
++                try {
++                    eftarReader = new EftarFileReader(f);
++                } catch (Exception e) {
++                    log.log(Level.FINE, "Failed to create EftarFileReader: ", e);
++                }
+             }
+         }
+         return eftarReader;
+diff -r 1051cd05cd8d -r 61549026aafe test/org/opensolaris/opengrok/web/EftarFileTest.java
+--- a/test/org/opensolaris/opengrok/web/EftarFileTest.java	Sun Feb 12 00:42:54 2012 +0100
++++ b/test/org/opensolaris/opengrok/web/EftarFileTest.java	Sun Feb 12 04:37:36 2012 +0100
+@@ -26,6 +26,9 @@
+ import java.io.File;
+ import java.io.FileWriter;
+ import java.io.PrintWriter;
++
++import junit.framework.Assert;
++
+ import org.junit.After;
+ import org.junit.AfterClass;
+ import org.junit.Before;
+@@ -107,7 +110,8 @@
+      */
+     @Test
+     public void searchEftarFile() throws Exception {
+-        EftarFileReader er = new EftarFileReader(eftar.getAbsolutePath());
++        assertNotNull("Create from string", new EftarFileReader(eftar.getAbsolutePath()));
++        EftarFileReader er = new EftarFileReader(eftar);
+         StringBuilder sb = new StringBuilder();
+         StringBuilder match = new StringBuilder();
+         match.append("Description ");

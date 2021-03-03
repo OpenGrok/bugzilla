@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>19181</bug_id>
+          
+          <creation_ts>2012-02-21 11:58:00 +0000</creation_ts>
+          <short_desc>ignored list should not contain bin,lib entries</short_desc>
+          <delta_ts>2012-02-22 09:46:02 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>indexer</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXINSOURCE</resolution>
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>critical</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Vladimir Kotal">vladimir.kotal</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          <cc>jel+osbugs</cc>
+    
+    <cc>Lubos.Kosco</cc>
+    
+    <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>86226</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2012-02-21 11:58:24 +0000</bug_when>
+            <thetext>Thanks to the way how Filter class works, the default list in IgnoredNames after changeset 1275:affabbacf51c (bug 18655) causes breakage for some source code trees, namely for these which contain stuff like &apos;bin&apos; and &apos;usr.lib&apos; in their paths.
+
+Therefore the entries for bin and .lib should be removed until proper fix (19180) is in place (still, the &apos;bin&apos; entry should be removed forever because commonly such directories are used to store shell scripts, for example).</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86233</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2012-02-21 13:08:01 +0000</bug_when>
+            <thetext>and remove tags please, too :)</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86234</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2012-02-21 13:27:32 +0000</bug_when>
+            <thetext>Fixed with:
+
+changeset:   1335:ec5484dfd6bf
+tag:         tip
+user:        Vladimir Kotal &lt;Vladimir.Kotal@oracle.com&gt;
+date:        Tue Feb 21 14:26:57 2012 +0100
+
+description:
+	Bug 19181 - ignored list should not contain bin,lib entries
+
+modified:
+   src/org/opensolaris/opengrok/index/IgnoredNames.java
+   test/org/opensolaris/opengrok/index/IgnoredNamesTest.java
+
+
+
+reviewed by Lubos Kosco.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86235</commentid>
+            <who name="Jens Elkner">jel+osbugs</who>
+            <bug_when>2012-02-21 15:45:40 +0000</bug_when>
+            <thetext>Sorry, but what kind of fix is this?
+If this is really the intention, than defaultPatterns[] needs to be cleared completely ...</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86236</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2012-02-21 16:51:57 +0000</bug_when>
+            <thetext>I think 18601 19180 should take care of proper fix
+this is temporary changeset for 0.11.1
+
+also all those 3 entries had nothing to do in that list and most probably slipped through the review</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86257</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2012-02-21 21:02:44 +0000</bug_when>
+            <thetext>(In reply to comment #3)
+&gt; Sorry, but what kind of fix is this?
+&gt; If this is really the intention, than defaultPatterns[] needs to be cleared
+&gt; completely ...
+
+This is a desperate fix for 0.11.1 to make the users stop screaming that their favourite piece of code is gone ;-) More complete fix/rewrite will follow in 0.12.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86258</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2012-02-21 21:03:18 +0000</bug_when>
+            <thetext>(In reply to comment #5)
+&gt; (In reply to comment #3)
+&gt; &gt; Sorry, but what kind of fix is this?
+&gt; &gt; If this is really the intention, than defaultPatterns[] needs to be cleared
+&gt; &gt; completely ...
+&gt; 
+&gt; This is a desperate fix for 0.11.1 to make the users stop screaming that their
+&gt; favourite piece of code is gone ;-) More complete fix/rewrite will follow in
+&gt; 0.12.
+
+And yes, this is a regression from 0.10.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86280</commentid>
+            <who name="Jens Elkner">jel+osbugs</who>
+            <bug_when>2012-02-22 05:40:26 +0000</bug_when>
+            <thetext>Hmmm, haven&apos;t seen anybody screaming. May be just fixing the internal version next time is sufficient?</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86283</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2012-02-22 09:46:02 +0000</bug_when>
+            <thetext>(In reply to comment #7)
+&gt; Hmmm, haven&apos;t seen anybody screaming. May be just fixing the internal version
+&gt; next time is sufficient?
+
+We have a policy of running only stable builds, so no.</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

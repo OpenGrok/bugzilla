@@ -1,0 +1,23 @@
+# HG changeset patch
+# User jel+opengrok@cs.uni-magdeburg.de
+# Date 1333762183 -7200
+# Node ID e0c28a5f46ab386e5764254014efb25e08b264be
+# Parent  04e4831c7e728427d98bc91470eb2be86df86cb1
+fix JSON backslash problem
+
+diff -r 04e4831c7e72 -r e0c28a5f46ab src/org/opensolaris/opengrok/history/Annotation.java
+--- a/src/org/opensolaris/opengrok/history/Annotation.java	Sat Apr 07 03:28:11 2012 +0200
++++ b/src/org/opensolaris/opengrok/history/Annotation.java	Sat Apr 07 03:29:43 2012 +0200
+@@ -182,8 +182,11 @@
+             for (int i = 0; i < s.length(); i++ ) {
+                 char c = s.charAt(i);
+                 switch (c) {
++                    case '\\':
++                        sb.append("&#92;");
++                        break;
+                     case '"':
+-                        sb.append('\'');
++                        sb.append("&quot;");
+                         break; // \\\"
+                     case '&':
+                         sb.append("&amp;");

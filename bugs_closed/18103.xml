@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>18103</bug_id>
+          
+          <creation_ts>2011-03-31 04:40:00 +0000</creation_ts>
+          <short_desc>RFE: repository CLI cmds - better error reporting</short_desc>
+          <delta_ts>2011-05-08 05:57:27 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>webapp</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXINSOURCE</resolution>
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>major</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Jens Elkner">jel+osolbugs</reporter>
+          <assigned_to name="Lubos Kosco">Lubos.Kosco</assigned_to>
+          <cc>jel+osbugs</cc>
+    
+    <cc>jel+osolbugs</cc>
+    
+    <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>82100</commentid>
+              <attachid>4504</attachid>
+            <who name="Jens Elkner">jel+osolbugs</who>
+            <bug_when>2011-03-31 04:40:29 +0000</bug_when>
+            <thetext>Created attachment 4504
+Better error reporting
+
+Since opengrok silently chomps any errors in ScmChecker, the user gets no real indication what&apos;s going wrong but a generic message like &quot;$RepoClassname not working (missing binaries?): $repoPath&quot;.
+
+So the user may wonders why, because it is working @CLI.
+
+Other issues are related and filed later.
+
+The attached patch solves that problem.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>82105</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2011-03-31 07:48:32 +0000</bug_when>
+            <thetext>Hallo Jens
+
+can you please get an OCA #?
+process is here: http://hub.opensolaris.org/bin/view/Main/oracle_contributor_agreement
+
+after that I can commit the patches with your name as commiter
+(obviously me or Knut will do a review and eventually give advice, or just fix ourselves, depends on our spare time ...)
+
+from a quick look the diff looks fine
+alas I am a bit confused on the message size limit ... most scm binaries don&apos;t print out long messages as errors - I cannot think of an use case where I got a message longer than 2-3 lines - if you can, I don&apos;t have a problem with this check, if you don&apos;t I don&apos;t see why we should put this size limiter in ...
+
+--
+L</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>82107</commentid>
+            <who name="Jens Elkner">jel+osbugs</who>
+            <bug_when>2011-03-31 15:05:22 +0000</bug_when>
+            <thetext>Wrt. OCA: No problem. Hopefully contrib-faxes AT sun DOT com is still the correct address to use.
+
+Wrt. msg size: It&apos;s just a &quot;not sure - 5-6 lines on a std terminal should be sufficient&quot; value. So actually I would not really care as long as it is &gt;= 240,
+but since it is an important _exception_ temp. allocating some more bytes if neccessary shouldn&apos;t hurt, I think. I size limit needs to be there, since we do not know in advance what the scm makers come up with/have the time to test every new scm release in deep...
+
+BTW: I subscribed to the opengrok mailing lists. So we can move the discussion there if you like.
+
+jel.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>82757</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2011-05-08 05:57:27 +0000</bug_when>
+            <thetext>changeset:   1175:c7b300ca1ebd</thetext>
+          </long_desc>
+      
+          <attachment
+              isobsolete="0"
+              ispatch="1"
+              isprivate="0"
+              isurl="0"
+          >
+            <attachid>4504</attachid>
+            <date>2011-03-31 04:40:00 +0000</date>
+            <delta_ts>2011-03-31 04:41:39 +0000</delta_ts>
+            <desc>Better error reporting</desc>
+            <filename>Executor.patch</filename>
+            <type>text/plain</type>
+            <size>2969</size>
+            <attacher>jel+osolbugs</attacher>
+            
+              <data encoding="base64">ZGlmZiAtciBiZmU4MjhjYmNjODQgc3JjL29yZy9vcGVuc29sYXJpcy9vcGVuZ3Jvay91dGlsL0V4
+ZWN1dG9yLmphdmEKLS0tIGEvc3JjL29yZy9vcGVuc29sYXJpcy9vcGVuZ3Jvay91dGlsL0V4ZWN1
+dG9yLmphdmEJU2F0IEZlYiAyNiAxOToxNjo1OCAyMDExICswMTAwCisrKyBiL3NyYy9vcmcvb3Bl
+bnNvbGFyaXMvb3Blbmdyb2svdXRpbC9FeGVjdXRvci5qYXZhCVRodSBNYXIgMzEgMDY6MzQ6Mjgg
+MjAxMSArMDIwMApAQCAtMTA2LDYgKzEwNiw3IEBACiAgICAgICovCiAgICAgcHVibGljIGludCBl
+eGVjKGZpbmFsIGJvb2xlYW4gcmVwb3J0RXhjZXB0aW9ucywgU3RyZWFtSGFuZGxlciBoYW5kbGVy
+KSB7CiAgICAgICAgIGludCByZXQgPSAtMTsKKyAgICAgICAJU3RyaW5nIGVycm9yID0gbnVsbDsK
+IAogICAgICAgICBQcm9jZXNzQnVpbGRlciBwcm9jZXNzQnVpbGRlciA9IG5ldyBQcm9jZXNzQnVp
+bGRlcihjbWRMaXN0KTsKICAgICAgICAgaWYgKHdvcmtpbmdEaXJlY3RvcnkgIT0gbnVsbCkgewpA
+QCAtMTU0LDI5ICsxNTUsNTEgQEAKICAgICAgICAgICAgIGlmIChyZXBvcnRFeGNlcHRpb25zKSB7
+CiAgICAgICAgICAgICAgICAgT3Blbkdyb2tMb2dnZXIuZ2V0TG9nZ2VyKCkubG9nKExldmVsLlNF
+VkVSRSwKICAgICAgICAgICAgICAgICAgICAgICAgICJGYWlsZWQgdG8gcmVhZCBmcm9tIHByb2Nl
+c3M6ICIgKyBjbWRMaXN0LmdldCgwKSwgZSk7CisgICAgICAgICAgICB9IGVsc2UgeworICAgICAg
+ICAgICAgICAgIGVycm9yID0gZS5nZXRMb2NhbGl6ZWRNZXNzYWdlKCk7CiAgICAgICAgICAgICB9
+CiAgICAgICAgIH0gY2F0Y2ggKEludGVycnVwdGVkRXhjZXB0aW9uIGUpIHsKICAgICAgICAgICAg
+IGlmIChyZXBvcnRFeGNlcHRpb25zKSB7CiAgICAgICAgICAgICAgICAgT3Blbkdyb2tMb2dnZXIu
+Z2V0TG9nZ2VyKCkubG9nKExldmVsLlNFVkVSRSwKICAgICAgICAgICAgICAgICAgICAgICAgICJX
+YWl0aW5nIGZvciBwcm9jZXNzIGludGVycnVwdGVkOiAiICsgY21kTGlzdC5nZXQoMCksIGUpOwor
+ICAgICAgICAgICAgfSBlbHNlIHsKKyAgICAgICAgICAgICAgICBlcnJvciA9IGUuZ2V0TG9jYWxp
+emVkTWVzc2FnZSgpOwogICAgICAgICAgICAgfQogICAgICAgICB9IGZpbmFsbHkgewotICAgICAg
+ICAgICAgdHJ5IHsKLSAgICAgICAgICAgICAgICBpZiAocHJvY2VzcyAhPSBudWxsKSB7Ci0gICAg
+ICAgICAgICAgICAgICAgIHJldCA9IHByb2Nlc3MuZXhpdFZhbHVlKCk7Ci0gICAgICAgICAgICAg
+ICAgfQotICAgICAgICAgICAgfSBjYXRjaCAoSWxsZWdhbFRocmVhZFN0YXRlRXhjZXB0aW9uIGUp
+IHsKLSAgICAgICAgICAgICAgICBwcm9jZXNzLmRlc3Ryb3koKTsKKyAgICAgICAgICAgIGlmIChw
+cm9jZXNzICE9IG51bGwpIHsKKwkgICAgICAgICAgICB0cnkgeworCSAgICAgICAgICAgICAgICBy
+ZXQgPSBwcm9jZXNzLmV4aXRWYWx1ZSgpOworCSAgICAgICAgICAgIH0gY2F0Y2ggKElsbGVnYWxU
+aHJlYWRTdGF0ZUV4Y2VwdGlvbiBlKSB7CisJICAgICAgICAgICAgICAgIHByb2Nlc3MuZGVzdHJv
+eSgpOworCSAgICAgICAgICAgIH0KICAgICAgICAgICAgIH0KICAgICAgICAgfQogCiAgICAgICAg
+IGlmIChyZXQgIT0gMCkgewotICAgICAgICAgICAgT3Blbkdyb2tMb2dnZXIuZ2V0TG9nZ2VyKCku
+bG9nKAotICAgICAgICAgICAgICAgIHJlcG9ydEV4Y2VwdGlvbnMgPyBMZXZlbC5TRVZFUkUgOiBM
+ZXZlbC5GSU5FLAotICAgICAgICAgICAgICAgICJOb24temVybyBleGl0IHN0YXR1cyB7MH0gZnJv
+bSBjb21tYW5kIHsxfSBpbiBkaXJlY3RvcnkgezJ9IiwKLSAgICAgICAgICAgICAgICBuZXcgT2Jq
+ZWN0W10gewotICAgICAgICAgICAgICAgICAgICByZXQsIHByb2Nlc3NCdWlsZGVyLmNvbW1hbmQo
+KSwgcHJvY2Vzc0J1aWxkZXIuZGlyZWN0b3J5KCkKLSAgICAgICAgICAgICAgICB9KTsKKyAgICAg
+ICAgCWlmIChlcnJvciAhPSBudWxsKSB7CisgICAgICAgIAkJT3Blbkdyb2tMb2dnZXIuZ2V0TG9n
+Z2VyKCkubG9nKExldmVsLldBUk5JTkcsIGVycm9yKTsKKyAgICAgICAgCX0gZWxzZSB7CisgICAg
+ICAgIAkJaW50IE1BWF9NU0dfU1ogPSA1MTI7IC8qIGxpbWl0IHRvIGF2b2lkIGZsb29kZGluZyB0
+aGUgbG9ncyAqLworICAgICAgICAJCVN0cmluZ0J1aWxkZXIgbXNnID0gbmV3IFN0cmluZ0J1aWxk
+ZXIoIk5vbi16ZXJvIGV4aXQgc3RhdHVzICIpCisgICAgICAgIAkJCS5hcHBlbmQocmV0KS5hcHBl
+bmQoIiBmcm9tIGNvbW1hbmQgIikKKyAgICAgICAgCQkJLmFwcGVuZChwcm9jZXNzQnVpbGRlci5j
+b21tYW5kKCkudG9TdHJpbmcoKSkKKyAgICAgICAgCQkJLmFwcGVuZCgiIGluIGRpcmVjdG9yeSAi
+KTsKKwkgICAgICAgIAlGaWxlIGN3ZCA9IHByb2Nlc3NCdWlsZGVyLmRpcmVjdG9yeSgpOworCSAg
+ICAgICAgCWlmIChjd2QgIT0gbnVsbCkgeworCSAgICAgICAgCQltc2cuYXBwZW5kKGN3ZC50b1N0
+cmluZygpKTsKKwkgICAgICAgIAl9IGVsc2UgeworCSAgICAgICAgCQltc2cuYXBwZW5kKFN5c3Rl
+bS5nZXRQcm9wZXJ0eSgidXNlci5kaXIiKSk7CisJICAgICAgICAJfQorCSAgICAgICAgCWlmIChz
+dGRlcnIgIT0gbnVsbCAmJiBzdGRlcnIubGVuZ3RoID4gMCkgeworCSAgICAgICAgCQltc2cuYXBw
+ZW5kKCI6ICIpOworCSAgICAgICAgCQlpZiAoc3RkZXJyLmxlbmd0aCA+IE1BWF9NU0dfU1opIHsK
+KwkgICAgICAgIAkJCW1zZy5hcHBlbmQobmV3IFN0cmluZyhzdGRlcnIsIDAsIE1BWF9NU0dfU1op
+KS5hcHBlbmQoIi4uLiIpOworCSAgICAgICAgCQl9IGVsc2UgeworCSAgICAgICAgCQkJbXNnLmFw
+cGVuZChuZXcgU3RyaW5nKHN0ZGVycikpOworCSAgICAgICAgCQl9CisJICAgICAgICAJfQorCSAg
+ICAgICAgICAgIE9wZW5Hcm9rTG9nZ2VyLmdldExvZ2dlcigpLmxvZyhMZXZlbC5XQVJOSU5HLCBt
+c2cudG9TdHJpbmcoKSk7CisgICAgICAgIAl9CiAgICAgICAgIH0KIAogICAgICAgICByZXR1cm4g
+cmV0Owo=
+</data>
+
+          </attachment>
+      
+
+    </bug>
+
+</bugzilla>

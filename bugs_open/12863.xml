@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>12863</bug_id>
+          
+          <creation_ts>2009-11-24 18:15:00 +0000</creation_ts>
+          <short_desc>RFE: provide RESTful or web-services</short_desc>
+          <delta_ts>2009-11-25 04:52:28 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>misc</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>NEW</bug_status>
+          
+          
+          
+          
+          
+          
+          <priority>P4</priority>
+          <bug_severity>enhancement</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Hemang Lavana">HemangLavana</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          <cc>Lubos.Kosco</cc>
+    
+    <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>57317</commentid>
+            <who name="Hemang Lavana">HemangLavana</who>
+            <bug_when>2009-11-24 18:15:53 +0000</bug_when>
+            <thetext>It would be great to have RESTful or web-services provided by the backend for search, xref, etc so that this tool can be easily integrated into other applications.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>57379</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2009-11-25 04:52:28 +0000</bug_when>
+            <thetext>version 0.8 (or 0.8.1) have all the pages conforming to XHTML strict (I made sure they all pass validator.w3.org ...) ... meaning that you can easily parse the data from direct http requests, since they come back as xml valid documents (hence you can just consume it like it is ;) ). The structure is obvious and we plan to stick with it (if it will be changed, we will announce it) ...
+
+what more would we gain by implementing REST or web service ?</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

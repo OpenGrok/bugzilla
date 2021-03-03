@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>644</bug_id>
+          
+          <creation_ts>2008-02-27 02:21:00 +0000</creation_ts>
+          <short_desc>java.io.FileNotFoundException: (Too many open files)</short_desc>
+          <delta_ts>2008-02-29 23:44:34 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>indexer</component>
+          <version>unspecified</version>
+          <rep_platform>Other</rep_platform>
+          <op_sys>Linux</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXED</resolution>
+          
+          
+          
+          
+          
+          <priority>P4</priority>
+          <bug_severity>major</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Lubomir Rintel">lkundrak</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>2111</commentid>
+            <who name="Lubomir Rintel">lkundrak</who>
+            <bug_when>2008-02-27 02:21:57 +0000</bug_when>
+            <thetext>See Summary.
+
+Error: [ main ] java.io.FileNotFoundException: /pool/results/RHEL-2.1/tetex-1.0.7-38.4.src.rpm/teTeX-1.0/texmf/fonts/tfm/public/cmcyr/wcmbx8.tfm (Too many open files)
+java.io.FileNotFoundException: /pool/results/RHEL-2.1/tetex-1.0.7-38.4.src.rpm/teTeX-1.0/texmf/fonts/tfm/public/cmcyr/wcmbx8.tfm (Too many open files)
+        at java.io.FileInputStream.open(Native Method)
+        at java.io.FileInputStream.&lt;init&gt;(FileInputStream.java:138)
+        at org.opensolaris.opengrok.index.Index.addFile(Index.java:432)
+        at org.opensolaris.opengrok.index.Index.indexDown(Index.java:420)
+        at org.opensolaris.opengrok.index.Index.indexDown(Index.java:388)
+        at org.opensolaris.opengrok.index.Index.indexDown(Index.java:388)
+        at org.opensolaris.opengrok.index.Index.indexDown(Index.java:388)
+        at org.opensolaris.opengrok.index.Index.indexDown(Index.java:388)
+        at org.opensolaris.opengrok.index.Index.indexDown(Index.java:388)
+        at org.opensolaris.opengrok.index.Index.indexDown(Index.java:388)
+        at org.opensolaris.opengrok.index.Index.indexDown(Index.java:388)
+        at org.opensolaris.opengrok.index.Index.indexDown(Index.java:388)
+        at org.opensolaris.opengrok.index.Index.startIndexing(Index.java:345)
+        at org.opensolaris.opengrok.index.Index.runIndexer(Index.java:269)
+        at org.opensolaris.opengrok.index.Indexer.main(Indexer.java:406)
+
+I hit this every once in a while. From the file names you can conclude that I index all the RHEL source code, so it&apos;s pretty much a lot of code. Works awesome, except for that during initial indexing I need to run opengrok in a loop because of the above. Seems like OpenGrok never closes file descriptors?
+
+Reproducible with opengrok-0.5 binary distribution as well as with snapshot just before introduction of multiple lucene indexes for projects, self-compiled with dependencies updated from Fedora (there&apos;s ongoing effort to get OpenGrok&apos;s dependencies in shape in Fedora so that it can be packaged for Fedora 9) [1]
+
+[1] http://people.redhat.com/lkundrak/opengrok/</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>2112</commentid>
+            <who name="Lubomir Rintel">lkundrak</who>
+            <bug_when>2008-02-27 02:22:50 +0000</bug_when>
+            <thetext>My open file descriptor limit is currently 655360.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>2113</commentid>
+            <who name="Trond Norbye">trond.norbye</who>
+            <bug_when>2008-02-27 02:59:59 +0000</bug_when>
+            <thetext>Could you please update the issue with the command line you started opengrok with?</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>2114</commentid>
+            <who name="Lubomir Rintel">lkundrak</who>
+            <bug_when>2008-02-27 03:05:17 +0000</bug_when>
+            <thetext>(In reply to comment #2)
+&gt; Could you please update the issue with the command line you started opengrok
+&gt; with?
+
+Sure. This time it was:
+
+# opengrok -v -R /etc/opengrok/configuration.xml
+
+with /etc/opengrok/configuration.xml containing a couple of projects (~6) and source and data directory specifications, I think it was generated like
+
+# opengrok -P -s /pool/results -d /pool/index -W /etc/opengrok/configuration.xml
+
+or something like that.
+That&apos;s pretty irrelevant anyways, if I recall correctly I could reproduce that with plain
+
+# opengrok -s /pool/results -d /pool/index</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>2215</commentid>
+            <who name="Trond Norbye">trond.norbye</who>
+            <bug_when>2008-02-29 23:44:34 +0000</bug_when>
+            <thetext>The FileInputStream opened in addFile must be closed when we are done using the file. Fixed in: bc2860a4e451</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

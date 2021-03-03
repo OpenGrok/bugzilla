@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>14937</bug_id>
+          
+          <creation_ts>2010-03-01 04:10:00 +0000</creation_ts>
+          <short_desc>Unable to search for IP addresses in repos</short_desc>
+          <delta_ts>2010-03-01 04:13:02 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>indexer</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>NEW</bug_status>
+          
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>normal</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Jason Cash">jason.cash</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          <cc>jason.cash</cc>
+    
+    <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>67975</commentid>
+            <who name="Jason Cash">jason.cash</who>
+            <bug_when>2010-03-01 04:10:43 +0000</bug_when>
+            <thetext>When attempting to locate specific octet&apos;s of an IP address, the search is successfull only under the following:
+
+** Example search is to locate IP Address (192.168.1.254)
+
+When search is performed on two (2) octets, a valid respons is returned.  However, when a third octet is specified, the following error is returned:
+
+Your search full:&quot;192.168 . 1&quot; did not match any files
+
+When all four (4) octets are supplied, the query is valid and no problem is returned:
+
+it seems to stick in a space before and after the second period, but not if you do a 4 octet search:
+
+Searched full:&quot;192.168 . 1.254&quot; (Results 1 - 1 of 1) sorted by null
+
+
+The following thread addresses the issue:
+
+http://opensolaris.org/jive/thread.jspa?messageID=462364&amp;tstart=0
+
+Please let me know what should be supplied with this bug filing as I have not done this before.  The basics I can supply are:
+
+OpenGrok v0.8.1 running on Ubuntu server.</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

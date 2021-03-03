@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>3143</bug_id>
+          
+          <creation_ts>2008-08-28 06:48:00 +0000</creation_ts>
+          <short_desc>in-code view full link is a dead link</short_desc>
+          <delta_ts>2008-08-28 08:35:48 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>webapp</component>
+          <version>unspecified</version>
+          <rep_platform>Other</rep_platform>
+          <op_sys>Solaris</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXED</resolution>
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>minor</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Vladimir Kotal">vladimir.kotal</reporter>
+          <assigned_to name="vita">vitezslav.batrla</assigned_to>
+          <cc>vitezslav.batrla</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>11357</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2008-08-28 06:48:06 +0000</bug_when>
+            <thetext>&apos;view full&apos; link in History/diff view contained in the the code is a dead link.
+
+To reproduce:
+  - search path:e1000g0_debug.c on http://src.opensolaris.org/source/
+  - display history view
+  - select diff between revisions 7133 and 7426
+  - click on &apos;view full&apos; in the code
+
+The &apos;view full&apos; link in the tabs contains the following link:
+
+http://src.opensolaris.org/source/diff/onnv/onnv-gate/usr/src/uts/common/io/e1000g/e1000g_debug.c?r1=/onnv/onnv-gate/usr/src/uts/common/io/e1000g/e1000g_debug.c@7133&amp;r2=/onnv/onnv-gate/usr/src/uts/common/io/e1000g/e1000g_debug.c@7426&amp;format=s&amp;full=1
+
+However, the &apos;view full&apos; link inside the source code points to:
+
+http://src.opensolaris.org/source/diff/onnv/onnv-gate/usr/src/uts/common/io/e1000g/e1000g_debug.c?r1=7133&amp;r2=7426&amp;format=s&amp;full=1#25</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>11364</commentid>
+            <who name="vita">vitezslav.batrla</who>
+            <bug_when>2008-08-28 07:36:21 +0000</bug_when>
+            <thetext>diff.jsp expects r1 and r2 parameters in format &lt;path&gt;@revision
+
+Fix replaces few bad links to diff.jsp:
+- &lt;%=reqURI%&gt;?r1=&lt;%=r1%&gt;&amp;r2=&lt;%=r2%&gt;
++ &lt;%=reqURI%&gt;?r1=&lt;%=rp1%&gt;&amp;r2=&lt;%=rp2%&gt;
+
+In variable (don&apos;t confuse with parameter) rp1 we have &lt;path&gt;@revision
+In variable (don&apos;t confuse with parameter) r1  we have only revision number.
+
+Webrev was posted to:
+http://cr.opensolaris.org/~vita78/grok/webrev/</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>11366</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2008-08-28 07:45:46 +0000</bug_when>
+            <thetext>Looks good. It matches the line in diff.jsp which displays the &apos;full&apos; link in tab:
+
+%&gt;&lt;span class=&quot;tab&quot;&gt;&lt;a href=&quot;&lt;%=reqURI%&gt;?r1=&lt;%=rp1%&gt;&amp;r2=&lt;%=rp2%&gt;&amp;format=&lt;%=format%&gt;&amp;full=1&quot;&gt;&amp;nbsp; &amp;nbsp; full &amp;nbsp; &amp;nbsp;&lt;/a&gt;&lt;/span&gt; &lt;span class=&quot;tabsel&quot;&gt;&lt;b&gt;compact&lt;/b&gt;&lt;/span&gt;&lt;%</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>11376</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2008-08-28 08:35:48 +0000</bug_when>
+            <thetext>Fixed in changeset 488:a5a3016090ba.</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

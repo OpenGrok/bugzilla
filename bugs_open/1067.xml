@@ -1,0 +1,341 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>1067</bug_id>
+          
+          <creation_ts>2008-04-09 11:30:00 +0000</creation_ts>
+          <short_desc>RFE: provide google suggest like feature</short_desc>
+          <delta_ts>2012-02-09 17:33:15 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>webapp</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>ACCEPTED</bug_status>
+          
+          
+          
+          
+          
+          
+          <priority>P4</priority>
+          <bug_severity>enhancement</bug_severity>
+          <target_milestone>0.9</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Hemang Lavana">HemangLavana</reporter>
+          <assigned_to name="Lubos Kosco">Lubos.Kosco</assigned_to>
+          <cc>cremick</cc>
+    
+    <cc>Lubos.Kosco</cc>
+    
+    <cc>vladimir.kotal</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>3476</commentid>
+            <who name="Hemang Lavana">HemangLavana</who>
+            <bug_when>2008-04-09 11:30:15 +0000</bug_when>
+            <thetext>Google suggest is a very useful feature. It would be nice to have a similar feature for opengrok. I remember seeing a firefox extension which provided such capability but it would be nice to integrate it and make it available with opengrok itself.
+
+Hemang.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>7470</commentid>
+            <who name="Cory Remick">cremick</who>
+            <bug_when>2008-05-29 12:37:34 +0000</bug_when>
+            <thetext>(In reply to comment #0)
+&gt; Google suggest is a very useful feature. It would be nice to have a similar
+&gt; feature for opengrok. I remember seeing a firefox extension which provided such
+&gt; capability but it would be nice to integrate it and make it available with
+&gt; opengrok itself.
+&gt; Hemang.
+
+I took the Grease Monkey Firefox script and converted it over to the httpheader.jspf file. The benefits are it works in browsers other than Firefox and you don&apos;t have to install Grease Monkey.
+
+Download the javascript library from http://script.aculo.us/downloads
+Copy the prototype.js, controls.js, and effects.js files into the default, polished, and offwhite directories in the webapp
+
+Update your httpheader.jspf file with the javascript below. I included Wilson&apos;s license.
+
+&lt;%-- 
+CDDL HEADER START
+
+The contents of this file are subject to the terms of the
+Common Development and Distribution License (the &quot;License&quot;).  
+You may not use this file except in compliance with the License.
+
+See LICENSE.txt included in this distribution for the specific
+language governing permissions and limitations under the License.
+
+When distributing Covered Code, include this CDDL HEADER in each
+file and include the License file at LICENSE.txt.
+If applicable, add the following below this CDDL HEADER, with the
+fields enclosed by brackets &quot;[]&quot; replaced with your own identifying
+information: Portions Copyright [yyyy] [name of copyright owner]
+
+CDDL HEADER END
+
+Copyright 2007 Sun Microsystems, Inc.  All rights reserved.
+Use is subject to license terms.
+
+// OpenGrok Autocomplete GM User Script
+// version 0.1
+// 2006-10-10
+// Copyright (c) 2006, Jim R. Wilson (wilson.jim.r at gmail)
+// Released under The MIT License (http://www.opensource.org/licenses/mit-license.php)
+//
+// Purpose:
+//    This userscript addes autocomplete drop-down lists for OpenGrok search pages.
+//
+// Example:
+//     To see an example of this script in action, visit the OpenSolaris source browser:
+//         http://cvs.opensolaris.org/source/
+//     Just start typing in any of the first four fields to see the drop-down
+//     Please note that not all queries will return results.
+//
+// Copyright (c) 2006 Jim R. Wilson
+// 
+// Permission is hereby granted, free of charge, to any person 
+// obtaining a copy of this software and associated documentation 
+// files (the &quot;Software&quot;), to deal in the Software without 
+// restriction, including without limitation the rights to use, 
+// copy, modify, merge, publish, distribute, sublicense, and/or 
+// sell copies of the Software, and to permit persons to whom the 
+// Software is furnished to do so, subject to the following conditions:
+// 
+// The above copyright notice and this permission notice shall be 
+// included in all copies or substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, 
+// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES 
+// OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND 
+// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT 
+// HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, 
+// WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING 
+// FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR 
+// OTHER DEALINGS IN THE SOFTWARE.
+// --------------------------------------------------------------------
+
+--%&gt;&lt;%@ page import=&quot;org.opensolaris.opengrok.configuration.*&quot;%&gt;&lt;%
+String laf = environment.getWebappLAF();
+String httpHeaderContext = request.getContextPath();
+%&gt;&lt;?xml version=&quot;1.0&quot; encoding=&quot;iso-8859-1&quot;?&gt;
+&lt;!DOCTYPE html PUBLIC &quot;-//W3C//DTD XHTML 1.0 Strict//EN&quot; &quot;http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd&quot;&gt;
+&lt;html xmlns=&quot;http://www.w3.org/1999/xhtml&quot; xml:lang=&quot;en-US&quot; lang=&quot;en-US&quot;&gt;
+&lt;head&gt;
+    &lt;meta name=&quot;robots&quot; content=&quot;noindex,nofollow&quot;&gt;
+    &lt;meta http-equiv=&quot;Content-Type&quot; content=&quot;text/html; charset=iso-8859-1&quot;/&gt;
+    &lt;meta name=&quot;generator&quot; content=&quot;&lt;%=org.opensolaris.opengrok.Info.getVersion()%&gt; (&lt;%=org.opensolaris.opengrok.Info.getRevision()%&gt;)&quot;/&gt;
+    &lt;link rel=&quot;icon&quot; href=&quot;&lt;%=httpHeaderContext%&gt;/&lt;%=laf%&gt;/img/icon.png&quot; type=&quot;image/png&quot;/&gt;
+    &lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;&lt;%=httpHeaderContext%&gt;/&lt;%=laf%&gt;/style.css&quot;/&gt;
+    &lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;&lt;%=httpHeaderContext%&gt;/&lt;%=laf%&gt;/print.css&quot; media=&quot;print&quot; /&gt;
+    &lt;link rel=&quot;alternate stylesheet&quot; type=&quot;text/css&quot; media=&quot;all&quot; title=&quot;Paper White&quot; href=&quot;&lt;%=httpHeaderContext%&gt;/&lt;%=laf%&gt;/print.css&quot;/&gt;
+    &lt;script src=&quot;&lt;%=httpHeaderContext%&gt;/&lt;%=laf%&gt;/prototype.js&quot; type=&quot;text/javascript&quot;&gt;&lt;/script&gt;
+    &lt;script src=&quot;&lt;%=httpHeaderContext%&gt;/&lt;%=laf%&gt;/effects.js&quot; type=&quot;text/javascript&quot;&gt;&lt;/script&gt;
+    &lt;script src=&quot;&lt;%=httpHeaderContext%&gt;/&lt;%=laf%&gt;/controls.js&quot; type=&quot;text/javascript&quot;&gt;&lt;/script&gt;
+    &lt;title&gt;&lt;%=pageTitle%&gt;&lt;/title&gt;
+
+&lt;style&gt;
+    div.autocomplete {
+      position:absolute;
+      width:250px;
+      background-color:white;
+      border:1px solid #888;
+      margin:0px;
+      padding:0px;
+    }
+    div.autocomplete ul {
+      list-style-type:none;
+      margin:0px;
+      padding:0px;
+    }
+    div.autocomplete ul li.selected { background-color: #ffb;}
+    div.autocomplete ul li {
+      list-style-type:none;
+      display:block;
+      margin:0;
+      cursor:pointer;
+    }
+&lt;/style&gt;
+
+&lt;script type=&quot;text/javascript&quot;&gt;
+
+function toggle_annotations() {
+   var spans = document.getElementsByTagName(&quot;span&quot;);
+
+   for (var i = 0; i &lt; spans.length; i++) {
+      var span = spans[i];
+      if (span.className == &apos;blame&apos;) {
+         span.className = &apos;blame-hidden&apos;;
+      } else if (span.className == &apos;blame-hidden&apos;) {
+         span.className = &apos;blame&apos;;
+      }
+   }
+}
+
+OpenGrokAutocompleter = Class.create();
+Object.extend(Object.extend(OpenGrokAutocompleter.prototype, Ajax.Autocompleter.prototype), { 
+
+      getUpdatedChoices: function() {
+	   this.startIndicator();
+
+         entry = encodeURIComponent(this.options.paramName) + &quot;=&quot; + encodeURIComponent(this.getToken()+&quot;*&quot;);
+         this.options.parameters = this.options.callback ? this.options.callback(this.element, entry) : entry;
+         if(this.options.defaultParams) {
+           this.options.parameters += &quot;&amp;&quot; + this.options.defaultParams;
+	   }
+         new Ajax.Request(this.url, this.options);
+      },
+      onComplete: function(request) {
+        if (request.responseText.length &gt; 500000) return;
+
+        var doc = document.createElement(&quot;div&quot;);
+        var text = request.responseText;
+        text = text.replace(new RegExp(&apos;[\\\\s\\\\S]*&lt;table&apos;,&quot;im&quot;),&quot;&lt;table&quot;);
+        text = text.replace(new RegExp(&apos;&lt;/table&gt;[\\\\s\\\\S]*&apos;,&quot;im&quot;),&quot;&lt;/table&gt;&quot;);
+        doc.innerHTML = text;
+       // var tab = doc.firstChild;
+        var list = new Array();
+        if (this.options.pathSearch) {
+            var tds = doc.getElementsByTagName(&quot;td&quot;);
+            var lim = (this.options.limit ? this.options.limit : anchs.length);
+            for (var i = j = 0; i&lt;tds.length &amp;&amp; j&lt;lim; i++) {
+                var td = tds[i];
+                if (td.className == &quot;f&quot;) {
+                    var a = td.getElementsByTagName(&quot;a&quot;)[0].innerHTML.toLowerCase();
+                    if (!list.include(a) &amp;&amp;
+                        (new RegExp(this.getToken(),&quot;i&quot;)).test(a)) {
+                        list.push(a);
+                        j++;
+                    }
+                }
+            }
+        } else {
+            var anchs = doc.getElementsByTagName(&quot;a&quot;);
+            var lim = (this.options.limit ? this.options.limit : anchs.length);
+            for (var i = j = 0; i&lt;anchs.length &amp;&amp; j&lt;lim; i++) {
+                var a = anchs[i];
+                if (a.className == &quot;s&quot;) {
+                    var b = a.getElementsByTagName(&quot;b&quot;)[0].innerHTML.replace(/\\W/g,&quot;&quot;).toLowerCase();
+                    if (!list.include(b)) {
+                        list.push(b);
+                        j++;
+                    }
+                }
+            }
+        }
+        list = list.sort( 
+		function (x,y) {
+            	var a = String(x).toUpperCase(); 
+            	var b = String(y).toUpperCase(); 
+            	if (a &gt; b) return 1 
+            	if (a &lt; b) return -1 
+           		return 0;
+        	}
+	  );
+
+        if (!list.length) return;
+
+        var tokenRE = new RegExp(&quot;(&quot;+this.getToken()+&quot;)&quot;,&quot;i&quot;);
+        list = list.invoke( &quot;replace&quot;, tokenRE, &quot;&lt;b&gt;$1&lt;/b&gt;&quot; );
+        list = list.join(&quot;&lt;/li&gt;&lt;li style=&apos;height:1.15em;&apos;&gt;&quot;);
+        list = &quot;&lt;ul&gt;&lt;li style=&apos;height:1.15em;&apos;&gt;&quot; + list + &quot;&lt;/li&gt;&lt;/ul&gt;&quot;;
+        this.updateChoices(list);
+      }
+    });
+
+function addLoadEvent(func) {
+  var oldonload = window.onload;
+
+  if (typeof window.onload != &apos;function&apos;) {
+    window.onload = func;
+  } else {
+    window.onload = function() {
+      if (oldonload) {
+        oldonload();
+      }
+      func();
+    }
+  }
+}
+    function wireUpAutoComplete() {
+
+    // Gank the OpenGrokAutocompleter which we added to the page previously.
+    // Note: Since we created this class ourselves, it&apos;s *ok* that we&apos;re grabbing it here, though
+    //   it would still be preferable if there were a way to inline the whole business in this GM userscript.
+    //OpenGrokAutocompleter = unsafeWindow[&apos;OpenGrokAutocompleter&apos;];
+
+    // Adding the OpenGrok Autocomplete functionality
+    var fields = [&apos;q&apos;,&apos;defs&apos;,&apos;refs&apos;,&apos;path&apos;];
+    var inputs = document.getElementsByTagName(&apos;input&apos;);
+    for (var i=0; i&lt;inputs.length; i++) {
+        var q = inputs[i];
+        if (/^(q|defs|refs|path)$/.test(q.name)) {
+            q.id = q.name + &apos;_query&apos;;
+            var td = q.parentNode;
+            var div = document.createElement(&apos;div&apos;);
+            div.id = q.id + &apos;_auto_complete&apos;;
+            div.className = &apos;autocomplete&apos;;
+            div.style.display = &apos;none&apos;;
+            td.appendChild(div);
+            new OpenGrokAutocompleter(
+                q.id,
+                div.id,
+                &apos;&lt;%=httpHeaderContext%&gt;/search&apos;,
+                { tokens: &apos; &apos;, limit: &apos;30&apos;, pathSearch: (q.name==&apos;path&apos;) });
+        }
+    }
+    }
+
+/**
+ * When the window is finished loading, finish out the DOM and hook in the autocompleters.
+ */
+
+    addLoadEvent(wireUpAutoComplete); 
+
+
+&lt;/script&gt;
+
+
+&lt;/head&gt;</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>52605</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2009-10-14 14:04:15 +0000</bug_when>
+            <thetext>we have jquery now in opengrok, 
+I am wondering how feasible would it be to have autocomplete like this in opengrok</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>74736</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2010-06-24 09:32:36 +0000</bug_when>
+            <thetext>ok, so I understand that along with autocomplete
+it would be nice to have a &quot;search higlighting&quot; (e.g. you search for something then click on the hit and the word will still be highlighted ...)</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

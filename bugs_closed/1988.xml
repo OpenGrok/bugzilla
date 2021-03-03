@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>1988</bug_id>
+          
+          <creation_ts>2008-05-20 01:20:00 +0000</creation_ts>
+          <short_desc>Simplified End-User Wrapper for UNIX folks</short_desc>
+          <delta_ts>2008-05-31 00:21:15 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>misc</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>Solaris</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXED</resolution>
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>normal</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Peter Bray">pdb_ml</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>7071</commentid>
+              <attachid>300</attachid>
+            <who name="Peter Bray">pdb_ml</who>
+            <bug_when>2008-05-20 01:20:54 +0000</bug_when>
+            <thetext>Created attachment 300
+OpenGrok - A Shell Wrapper for OpenGrok
+
+Greetings All,
+
+  Attached is a re-implementation of the two UNIX wrapper scripts, run.sh and run-quietly.sh, as a more generic single wrapper for OpenGrok users and administrators. The idea is to provide a single wrapper with all required command line functionality, in a simple for the user to understand way. The script takes a single argument as shown by the usage output:
+
+   Usage: OpenGrok &lt;update|updateQuietly|updateConfiguration|usage|gui&gt;
+
+  The script also supports the idea of external configuration, so that a site can upgrade OpenGrok without needing to manually edit back in the local configuration.
+
+  My hope is that over time, such a script, will be easier to maintain and easier for new users to understand. Unfortunately, my skill&apos;s don&apos;t extend to the DOS scripting environment, so I have not been able to provide a similar capability to that user base.
+
+Regards,
+
+Peter
+Sydney, Australia
+
+PS: This code is hereby donated without reservation to the OpenGrok source base, should the developers wish to accept it, failing that it can be considered public domain. Should you require a Sun Contributor Agreement, I&apos;d be more than willing to go down that route.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>7329</commentid>
+            <who name="Trond Norbye">trond.norbye</who>
+            <bug_when>2008-05-27 02:11:53 +0000</bug_when>
+            <thetext>This seems like a good idea :-)</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>7547</commentid>
+              <attachid>312</attachid>
+            <who name="Peter Bray">pdb_ml</who>
+            <bug_when>2008-05-30 23:21:06 +0000</bug_when>
+            <thetext>Created attachment 312
+A Zip&apos;d Mercurial Export of the Updated Script previous atteched to this bug
+
+As requested the patch has been provided as a Mercurial Exported Change-Set.
+
+Since the initial submission I have improved some of the comments and spell-checked the code.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>7549</commentid>
+            <who name="Trond Norbye">trond.norbye</who>
+            <bug_when>2008-05-31 00:21:15 +0000</bug_when>
+            <thetext>Fixed in changeset:   294:8b44cf4fe8d4</thetext>
+          </long_desc>
+      
+          <attachment
+              isobsolete="1"
+              ispatch="0"
+              isprivate="0"
+              isurl="0"
+          >
+            <attachid>300</attachid>
+            <date>2008-05-20 01:20:00 +0000</date>
+            <delta_ts>2008-05-30 23:21:06 +0000</delta_ts>
+            <desc>OpenGrok - A Shell Wrapper for OpenGrok</desc>
+            <filename>OpenGrok</filename>
+            <type>text/plain</type>
+            <size>3773</size>
+            <attacher>pdb_ml</attacher>
+            
+              <data encoding="base64">IyEvYmluL3NoCiMKIyBPcGVuR3JvayBXcmFwcGVyIChJbnRlcmFjdGl2ZSBHVUksIEluaXRpYWwg
+R2VuZXJhdGlvbiBhbmQgQ3JvbiBKb2IgVXBkYXRpbmcpCiMKIyAkSWQkCiMKIyBCYXNlZCBvbiB0
+aGUgaWRlYXMgYW5kIGNvZGUgaW4gcnVuLnNoICYgcnVuLXF1aWV0LnNoCiMKCiMKIyBVc2FnZQoj
+CgpVc2FnZSgpCnsKICAgIGVjaG8gMT4mMgogICAgZWNobyAiVXNhZ2U6ICR7MH0gPHVwZGF0ZXx1
+cGRhdGVRdWlldGx5fHVwZGF0ZUNvbmZpZ3VyYXRpb258dXNhZ2V8Z3VpPiIgMT4mMgogICAgZWNo
+byAxPiYyCiAgICBleGl0IDEKfQoKIwojIENvbmZpZ3VyYXRpb24KIwppZiBbIC1uICIke09QRU5H
+Uk9LX0NPTkZJR1VSQVRJT059IiAtYSAtZiAiJHtPUEVOR1JPS19DT05GSUdVUkFUSU9OfSIgXQp0
+aGVuCiAgICAjIExvYWQgdGhlIGxvY2FsIE9wZW5Hcm9rIENvbmZpZ3VyYXRpb24gRW52aXJvbm1l
+bnQKICAgIC4gIiR7T1BFTkdST0tfQ09ORklHVVJBVElPTn0iCmVsc2UKICAgICMgVXNlIHRoZSBi
+dWlsdC1pbiBkZWZhdWx0cy4gVGhpcyBzZWN0aW9uIGNhbiBiZSBjb3BpZWQgdG8gaXRzIG93bgog
+ICAgIyBmaWxlIGFuZCB0YWlsb3JlZCB0byB5b3VyIGxvY2FsIHJlcXVpcmVtZW50cy4gVGhlbiBz
+aW1wbHkgc2V0IAogICAgIyBPUEVOR1JPS19DT05GSUdVUkFUSU9OPS9wYXRoL3RvL3lvdXIvY29u
+ZmlndXJhdGlvbiwgYmVmb3JlIHVzaW5nCiAgICAjIHRoaXMgd3JhcHBlci4gSXQgd2lsbCBzYXZl
+IHlvdSBoYW5kIGVkaXR0aW5nIGluIHlvdXIgc2V0dGluZ3MKICAgICMgb24gZWFjaCBuZXcgcmVs
+ZWFzZS4gU2FtcGxlIENyb24gRW50cnkgbWlnaHQgbG9vayBsaWtlOgogICAgIyAxNSAwICogKiAq
+IE9QRU5HUk9LX0NPTkZJR1VSQVRJT049L3BrZ3MvZXRjL09wZW5Hcm9rLnNoIC9wa2dzL3NiaW4v
+T3Blbkdyb2sgdXBkYXRlUXVpZXRseQoKICAgICMgU2V0dXAgYSBzdGFuZGFyZCBleGVjdXRpb24g
+ZW52aXJvbm1lbnQKICAgIGlmIFsgLWYgL3BrZ3Mvc2Jpbi9Dcm9uRXhlY3V0aW9uRW52aXJvbm1l
+bnQuc2ggXQogICAgdGhlbgoJLiAvcGtncy9zYmluL0Nyb25FeGVjdXRpb25FbnZpcm9ubWVudC5z
+aAogICAgZmkKCiAgICAjIFNvdXJjZSBDb2RlL1JlcG9zaXRvcnkgUm9vdAogICAgU1JDX1JPT1Q9
+Ii9kYXRhL29wZW5ncm9rL3NyYyIKCiAgICAjIE9wZW5Hcm9rIERhdGEgUm9vdCAoZm9yIEx1Y2Vu
+ZSBpbmRleCBhbmQgaHlwZXJ0ZXh0IGNyb3NzLXJlZmVyZW5jZXMpCiAgICBEQVRBX1JPT1Q9Ii9k
+YXRhL29wZW5ncm9rL2RhdGEiCgogICAgIyBPcHRpb25hbCBQYXRoIHRvIERlc2NyaXB0aW9uIE1h
+cHBpbmcgKFRhYiBTZXBhcmF0ZWQgVmFsdWUpCiAgICBQQVRIX0RFU0M9Ii9kYXRhL29wZW5ncm9r
+L2V0Yy9wYXRocy50c3YiCgogICAgIyBYTUwgQ29uZmlndXJhdGlvbgogICAgWE1MX0NPTkZJR1VS
+QVRJT049Ii9kYXRhL29wZW5ncm9rL2NvbmZpZ3VyYXRpb24ueG1sIgoKICAgICMgSmF2YSBBcmNo
+aXZlIG9mIE9wZW5Hcm9rCiAgICBPUEVOR1JPS19KQVI9Ii9kYXRhL29wZW5ncm9rL29wZW5ncm9r
+LmphciIKCiAgICAjIEV4dWJyYW50IENUYWdzIChodHRwOi8vY3RhZ3Muc2YubmV0KQogICAgRVhV
+QlJBTlRfQ1RBR1M9Ii9wa2dzLzY0LWJpdC9yZWxlYXNlL2N0YWdzLTUuNy9iaW4vY3RhZ3MiCgog
+ICAgIyBKYXZhIEhvbWUKICAgIEpBVkFfSE9NRT0iL3Vzci9qZGsvaW5zdGFuY2VzL2pkazEuNi4w
+IgogICAgZXhwb3J0IEpBVkFfSE9NRQoKICAgICMgSmF2YSBWaXJ0dWFsIE1hY2hpbmUKICAgIEpB
+VkE9IiR7SkFWQV9IT01FfS9iaW4vamF2YSIKCiAgICAjIFVuY29tbWVudCB0aGUgZm9sbG93aW5n
+IGxpbmUgaWYgeW91ciBzb3VyY2UgY29udGFpbnMgTWVyY3VyaWFsIHJlcG9zaXRvcmllcy4KICAg
+IFNDQU5fRk9SX1JFUE9TSVRPUlk9Ii1TIgoKICAgICMgUHJvcGVydGllcwogICAgUFJPUEVSVElF
+Uz0iLURvcmcub3BlbnNvbGFyaXMub3Blbmdyb2suaGlzdG9yeS5NZXJjdXJpYWw9L3BrZ3MvNjQt
+Yml0L2Jpbi9oZyIKCiAgICAjIEpWTSBPcHRpb25zCiAgICAjSkFWQV9PUFRTPSItc2VydmVyIC1Y
+bXgxMDI0bSIKCiAgICAjIEFuIHVwZGF0ZSBwcm9ncmFtIGZvciBFZnRhckZpbGUKICAgICMgVXNh
+Z2U6IDxjbGFzcz4gaW5wdXRGaWxlIFtpbnB1dEZpbGUgLi4uXSBvdXRwdXRGaWxlCiAgICAjIEVm
+dGFyRmlsZSA9PSBBbiBFeHRyZW1lbHkgRmFzdCBUYWdnZWQgQXR0cmlidXRlIFJlYWQtb25seSBG
+aWxlIFN5c3RlbQogICAgRUZUQVJfVVBEQVRFPSJvcmcub3BlbnNvbGFyaXMub3Blbmdyb2sud2Vi
+LkVmdGFyRmlsZSIKCiAgICAjIEdlbmVyYXRlZCBFZnRhckZpbGUKICAgIEVGVEFSX09VVFBVVF9G
+SUxFPSIke0RBVEFfUk9PVH0vaW5kZXgvZHRhZ3MuZWZ0YXIiCgogICAgIyBCZSBRdWlldD8gKHNl
+dCBpbmRpcmVjdGx5IGJ5IGNvbW1hbmQgbGluZSBhcmd1bWVudHMgaW4gdGhlIG1haW4gcHJvZ3Jh
+bSkKICAgIFFVSUVUPQoKICAgICMgb3IgYWx0ZXJuYXRpdmVseSwgQmUgVmVyYm9zZSEKICAgIFZF
+UkJPU0U9Ii12IgpmaQoKIwojIEltcGxlbWVudGF0aW9uCiMKCiMgVGhlIHZhcmlhYmxlICJETyIg
+Y2FuIHVzZWZ1bGx5IGJlIHNldCB0byAiZWNobyIgdG8gYWlkIGluIHNjcmlwdCBkZWJ1Z2dpbmcK
+ClN0ZEludm9jYXRpb24oKQp7CiAgICAke0RPfSAke0pBVkF9ICR7SkFWQV9PUFRTfSAke1BST1BF
+UlRJRVN9CQkJXAoJLWphciAke09QRU5HUk9LX0pBUn0JCQkJCVwKCSR7U0NBTl9GT1JfUkVQT1NJ
+VE9SWX0gJHtWRVJCT1NFfSAke1FVSUVUfQkJXAoJJHtFWFVCUkFOVF9DVEFHUzorLWN9ICR7RVhV
+QlJBTlRfQ1RBR1N9CQkJXAoJLXMgJHtTUkNfUk9PVH0gLWQgJHtEQVRBX1JPT1R9CQkJCVwKCSIk
+e0B9Igp9CgpVcGRhdGVHZW5lcmF0ZWRDb25maWd1cmF0aW9uKCkKewogICAgU3RkSW52b2NhdGlv
+biAtVyAke1hNTF9DT05GSUdVUkFUSU9OfQp9CgpVcGRhdGVHZW5lcmF0ZWREYXRhKCkKewogICAg
+U3RkSW52b2NhdGlvbiAtSAp9CgpVcGRhdGVEZXNjcmlwdGlvbkNhY2hlKCkKewogICAgIyBPUFRJ
+T05BTCA6IFVwZGF0ZSB0aGUgRWZ0YXJGaWxlIGRhdGEKIAogICAgaWYgWyAtbiAiJHtQQVRIX0RF
+U0N9IiAtbyAtcyAiJHtQQVRIX0RFU0N9IiBdCiAgICB0aGVuCgkke0RPfSAke0pBVkF9IC1jbGFz
+c3BhdGggJHtPUEVOR1JPS19KQVJ9CQlcCgkgICAgJHtFRlRBUl9VUERBVEV9ICR7UEFUSF9ERVND
+fSAke0VGVEFSX09VVFBVVF9GSUxFfQogICAgZmkKfQoKSW52b2tlR1VJKCkKewogICAgJHtET30g
+JHtKQVZBfSAke0pBVkFfT1BUU30gLWphciAke09QRU5HUk9LX0pBUn0gJgp9CgpPcGVuR3Jva1Vz
+YWdlKCkKewogICAgJHtET30gJHtKQVZBfSAke0pBVkFfT1BUU30gLWphciAke09QRU5HUk9LX0pB
+Un0gJy0/Jwp9CgojCiMgTWFpbiBQcm9ncmFtCiMKCmlmIFsgJCMgLW5lIDEgXQp0aGVuCiAgICBV
+c2FnZQpmaQoKY2FzZSAiJHsxfSIgaW4KCiAgICB1cGRhdGUpCglVcGRhdGVHZW5lcmF0ZWREYXRh
+CglVcGRhdGVEZXNjcmlwdGlvbkNhY2hlCgk7OwoKICAgIHVwZGF0ZVF1aWV0bHkpCglRVUlFVD0i
+LXEiCglWRVJCT1NFPSIiCglVcGRhdGVHZW5lcmF0ZWREYXRhCglVcGRhdGVEZXNjcmlwdGlvbkNh
+Y2hlCgk7OwoKICAgIHVwZGF0ZUNvbmZpZ3VyYXRpb24pCglVcGRhdGVHZW5lcmF0ZWRDb25maWd1
+cmF0aW9uCgk7OwoKICAgIHVzYWdlKQogICAgICAgIE9wZW5Hcm9rVXNhZ2UKCTs7CgogICAgZ3Vp
+KQoJSW52b2tlR1VJCgk7OwoKICAgICopCiAgICAgICAgVXNhZ2UKCTs7Cgplc2FjCgojCiMgRW5k
+IG9mIEZpbGUKIwo=
+</data>
+
+          </attachment>
+          <attachment
+              isobsolete="0"
+              ispatch="0"
+              isprivate="0"
+              isurl="0"
+          >
+            <attachid>312</attachid>
+            <date>2008-05-30 23:21:00 +0000</date>
+            <delta_ts>2008-05-30 23:21:06 +0000</delta_ts>
+            <desc>A Zip&apos;d Mercurial Export of the Updated Script previous atteched to this bug</desc>
+            <filename>bug-1988.zip</filename>
+            <type>application/zip</type>
+            <size>2542</size>
+            <attacher>pdb_ml</attacher>
+            
+              <data encoding="base64">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
+</data>
+
+          </attachment>
+      
+
+    </bug>
+
+</bugzilla>

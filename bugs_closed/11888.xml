@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>11888</bug_id>
+          
+          <creation_ts>2009-10-12 15:08:00 +0000</creation_ts>
+          <short_desc>ctags parser is not properly recognizing redefined functions/variables</short_desc>
+          <delta_ts>2010-02-21 11:02:15 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>analyzer</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>DUPLICATE</resolution>
+          <dup_id>3435</dup_id>
+          
+          
+          
+          
+          <priority>P4</priority>
+          <bug_severity>minor</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Lubos Kosco">Lubos.Kosco</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          <cc>knut.hatlen</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>52330</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2009-10-12 15:08:47 +0000</bug_when>
+            <thetext>In http://src.opensolaris.org/source/xref/onnv/onnv-gate/usr/src/uts/common/io/scsi/targets/sd.c
+
+we have e.g. http://src.opensolaris.org/source/xref/onnv/onnv-gate/usr/src/uts/common/io/scsi/targets/sd.c#31571
+
+sd_ssc_assessment which is a function/variable and there is no link generated for it
+
+we did some investigation and ctags are generated correctly, it seems when xref is cached on disk, it&apos;s already wrong, but if it generated xref on the fly it works (?!?)
+
+needs more investigation and testing</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>67005</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2010-02-21 11:02:15 +0000</bug_when>
+            <thetext>
+
+*** This bug has been marked as a duplicate of bug 3435 ***</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

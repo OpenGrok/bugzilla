@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>4556</bug_id>
+          
+          <creation_ts>2008-11-05 11:19:00 +0000</creation_ts>
+          <short_desc>ClearCase does not find repository vite view.dat file</short_desc>
+          <delta_ts>2008-11-05 11:27:02 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>indexer</component>
+          <version>unspecified</version>
+          <rep_platform>Other</rep_platform>
+          <op_sys>Windows</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXED</resolution>
+          
+          
+          
+          
+          
+          <priority>P4</priority>
+          <bug_severity>normal</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Jørgen Austvik">jaustvik</reporter>
+          <assigned_to name="Jorgen Austvik">jorgen.austvik</assigned_to>
+          
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>17586</commentid>
+            <who name="Jørgen Austvik">jaustvik</who>
+            <bug_when>2008-11-05 11:19:54 +0000</bug_when>
+            <thetext>Mike Brocious wrote: 
+
+I&apos;m also having trouble getting history from ClearCase repository.  I&apos;ve tried many combinations of -S, -H, and -r on, all using -W to generate the config xml.  Can you list the exact options required to pull the history for ClearCase files?
+
+I&apos;m using a dynamic view, and am pointing SRC_ROOT to one of the top level directories (VOB) in the view.
+
+Jørgen Austvik wrote:
+Hmm, the comment does not correspond to the code (the isDirectory check if view.dat exists). Could you check if you have a file named view.dat in your ClearCase repository? Is it spelled with only lower case? 
+
+Mike Brocious wrote: 
+
+I agree, that logic doesn&apos;t look right.  &quot;view.dat&quot; is a file, not a directory so the first &apos;if&apos; will always fail.  And I&apos;m not aware of any file or directory called &quot;vobs&quot;.
+
+There is a &quot;view.dat&quot; file at the root of the snapshot view.  In my case, it is all lowercase.  &quot;view.dat&quot; does not exist anywhere (that I can find) for a dynamic view.
+
+The workaround above appears to work for both snapshot and dynamic views.
+
+Workaround (Thanks to Scott Rankin):
+
+I&apos;ve found that the -S parameter, which is supposed to search for external repositories, doesn&apos;t always work with ClearCase.  At least it didn&apos;t for me.  I had to manually add them to my configuration.xml like so:
+
+&amp;lt;void property=&quot;repositories&quot;&amp;gt;
+            &amp;lt;void method=&quot;put&quot;&amp;gt;
+                &amp;lt;string&amp;gt;/path/to/vob&amp;lt;/string&amp;gt;
+                &amp;lt;object class=&quot;org.opensolaris.opengrok.history.ClearCaseRepository&quot;&amp;gt;
+                    &amp;lt;void property=&quot;directoryName&quot;&amp;gt;&amp;lt;string&amp;gt;/path/to/vob&amp;lt;/string&amp;gt;&amp;lt;/void&amp;gt;
+                &amp;lt;/object&amp;gt;
+            &amp;lt;/void&amp;gt;
+    &amp;lt;/void&amp;gt;</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>17588</commentid>
+            <who name="Jørgen Austvik">jaustvik</who>
+            <bug_when>2008-11-05 11:27:02 +0000</bug_when>
+            <thetext>changeset:   660:eeba5ac93e98
+tag:         tip
+user:        Jorgen Austvik &lt;jorgen.austvik@sun.com&gt;
+date:        Wed Nov 05 19:25:19 2008 +0100
+summary:     bug 4556: view.dat in ClearCase is a file, not a directory.</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

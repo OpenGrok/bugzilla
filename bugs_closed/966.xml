@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>966</bug_id>
+          
+          <creation_ts>2008-04-03 00:45:00 +0000</creation_ts>
+          <short_desc>fails on directory names that contain a plus (+) character</short_desc>
+          <delta_ts>2009-03-09 07:39:41 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>webapp</component>
+          <version>unspecified</version>
+          <rep_platform>Other</rep_platform>
+          <op_sys>Windows</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXED</resolution>
+          
+          
+          
+          
+          
+          <priority>P4</priority>
+          <bug_severity>minor</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          <blocked>7215</blocked>
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Peter De Wachter">peter.dewachter</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>3152</commentid>
+            <who name="Peter De Wachter">peter.dewachter</who>
+            <bug_when>2008-04-03 00:45:14 +0000</bug_when>
+            <thetext>The web interface can&apos;t show results in directories with names that contain a plus (+) character.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>3306</commentid>
+            <who name="Trond Norbye">trond.norbye</who>
+            <bug_when>2008-04-07 11:57:33 +0000</bug_when>
+            <thetext>It looks to me that this is because one can encode the space characters in two ways: as %20 or with a &apos;+&apos; character. So when the server tries to decode the link containing the &apos;+&apos; character, it replaces it with a space :-( (see http://www.permadi.com/tutorial/urlEncoding/ )
+
+We need to find a better way to encode and decode the URL to avoid this kind of ambiguity.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>3341</commentid>
+            <who name="Trond Norbye">trond.norbye</who>
+            <bug_when>2008-04-07 23:59:59 +0000</bug_when>
+            <thetext>This is a regression introduced in 218.
+
+Please see:
+http://java.sun.com/products/servlet/2.3/javadoc/javax/servlet/http/HttpServletRequest.html#getPathInfo()
+
+The string is already decoded by the web container, and decoding it again
+will cause the + to be replaced with &apos; &apos;.
+
+Fixed in: 273:d2c5a416f66f</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

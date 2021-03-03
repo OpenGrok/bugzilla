@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>859</bug_id>
+          
+          <creation_ts>2008-03-26 08:18:00 +0000</creation_ts>
+          <short_desc>Allow matching entire filenames</short_desc>
+          <delta_ts>2008-08-27 14:39:39 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>analyzer</component>
+          <version>unspecified</version>
+          <rep_platform>Other</rep_platform>
+          <op_sys>Mac OS</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXED</resolution>
+          
+          
+          
+          
+          
+          <priority>P4</priority>
+          <bug_severity>enhancement</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="leaf nunes">leaf.nunes</reporter>
+          <assigned_to name="Knut Anders Hatlen">knut.hatlen</assigned_to>
+          <cc>knut.hatlen</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>2819</commentid>
+            <who name="leaf nunes">leaf.nunes</who>
+            <bug_when>2008-03-26 08:18:54 +0000</bug_when>
+            <thetext>Analyzer ignores any file without a &quot;.&quot;, this happened as part of fixing bug 153.
+
+While i agree that indexing binaries accidentally as zip files should be avoided, not indexing Makefiles is a showstopper for many deployments. Perhaps suffixes for files that are explicitly expected to have &quot;.&quot; in them (.cpp, .zip, etc.) should include the &quot;.&quot;, while suffixes expected to match whole filenames (Makefile, configure, SConstruct) can be included plainly.
+
+I&apos;ll whip up a patch for review.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>11260</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2008-08-27 14:39:39 +0000</bug_when>
+            <thetext>Fixed in changeset 483:e008e083e0a7.</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

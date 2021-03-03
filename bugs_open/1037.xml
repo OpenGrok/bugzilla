@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>1037</bug_id>
+          
+          <creation_ts>2008-04-08 10:23:00 +0000</creation_ts>
+          <short_desc>Timeline functionality (see diffs &amp; detail for a changeset)</short_desc>
+          <delta_ts>2010-06-08 14:24:42 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>webapp</component>
+          <version>unspecified</version>
+          <rep_platform>Other</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>NEW</bug_status>
+          
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>enhancement</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Stephen Lau">stevel</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          <cc>vladimir.kotal</cc>
+    
+    <cc>will.murnane</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>3366</commentid>
+            <who name="Stephen Lau">stevel</who>
+            <bug_when>2008-04-08 10:23:52 +0000</bug_when>
+            <thetext>We&apos;d really like to be able to replace Trac&apos;s source browser/search with OpenGrok, but perhaps the last major feature we&apos;re missing is an equivalent to Trac&apos;s timeline functionality.  This presents a history view of the entire repo.  OpenGrok does this to the extent that /source/history/ works to display the changeset history for the entire repository.
+
+What&apos;s missing is a way to see the entire detail for a changeset, most importantly the diffs for all the files affected.  Right now, going to:
+http://hq.songbirdnest.com:8080/source/history/
+shows the whole repo... clicking on the individual files for a particular revision pulls up the file at that revision which is great, but what I&apos;d really like to see is two things:
+   * individual link should link to a diff at that rev and the rev prior
+   * the revision # should be a link that shows an aggregate diff for the entire changeset (e.g. all the files affected by that changeset, diff&apos;d for that rev and the rev prior)</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>3368</commentid>
+            <who name="Stephen Lau">stevel</who>
+            <bug_when>2008-04-08 10:26:56 +0000</bug_when>
+            <thetext>For an example:
+http://publicsvn.songbirdnest.com/changeset/8899</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>23061</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2008-12-09 03:25:10 +0000</bug_when>
+            <thetext>I&apos;d like to see this implemented as well, in particular as a mode when searching the History (say I&apos;d like to see the diffs for particular CR/bug). This would help tremendously when doing backports.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>23081</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2008-12-09 07:50:20 +0000</bug_when>
+            <thetext>Thinking about this feature more, this can also be done on a per-file basis,
+where a sequence of diffs for a particular file would be displayed.
+
+So, this tracks 3 features:
+  - per project timeline
+  - per CR timeline (or rather per History search)
+  - per file timeline
+
+where &apos;timeline&apos; means sequence of diffs. Obviously, those 3 could be split
+into 3 separate RFEs.
+
+Also, the diff view should be switchable at least between sdiff/udiff/text view.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>74088</commentid>
+            <who name="Will Murnane">will.murnane</who>
+            <bug_when>2010-06-08 14:24:42 +0000</bug_when>
+            <thetext>I&apos;m interested in seeing this implemented as well.  I would be interested in working on it, if someone else starts things off; I don&apos;t have any experience with JSP, so I can&apos;t get off the ground easily.</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

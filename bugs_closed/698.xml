@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>698</bug_id>
+          
+          <creation_ts>2008-03-07 07:59:00 +0000</creation_ts>
+          <short_desc>ant-tools.jar should be replaced with ant.jar</short_desc>
+          <delta_ts>2008-03-09 05:56:46 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>build</component>
+          <version>unspecified</version>
+          <rep_platform>Other</rep_platform>
+          <op_sys>Mac OS</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXED</resolution>
+          
+          
+          
+          
+          
+          <priority>P4</priority>
+          <bug_severity>minor</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Trond Norbye">trond.norbye</reporter>
+          <assigned_to name="Knut Anders Hatlen">knut.hatlen</assigned_to>
+          
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>2372</commentid>
+            <who name="Trond Norbye">trond.norbye</who>
+            <bug_when>2008-03-07 07:59:02 +0000</bug_when>
+            <thetext>ant-tools.jar is just a collection of some of the classes in ant.jar, but it is an old version. Since we know for sure that the user have ant during compile time it should be installed in lib as a build-step.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>2385</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2008-03-09 05:56:46 +0000</bug_when>
+            <thetext>Fixed in changeset 7b656b98c4cdae72d9b407559debcf6d424758f0.</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

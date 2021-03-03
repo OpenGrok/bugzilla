@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>12529</bug_id>
+          
+          <creation_ts>2009-11-06 13:44:00 +0000</creation_ts>
+          <short_desc>Show modified files should be per changesent</short_desc>
+          <delta_ts>2009-11-06 14:45:16 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>webapp</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>ACCEPTED</bug_status>
+          
+          
+          <see_also>http://defect.opensolaris.org/bz/show_bug.cgi?id=12324</see_also>
+          
+          
+          
+          <priority>P4</priority>
+          <bug_severity>normal</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Zdenek Kotala">zdenek.kotala</reporter>
+          <assigned_to name="Knut Anders Hatlen">knut.hatlen</assigned_to>
+          <cc>knut.hatlen</cc>
+    
+    <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>55566</commentid>
+            <who name="Zdenek Kotala">zdenek.kotala</who>
+            <bug_when>2009-11-06 13:44:15 +0000</bug_when>
+            <thetext>Show modified files feature in history is really cool, but it should be per selected changeset. Developer interest really on specific change. It solve problem also with initial commit which contains millions of files. See also Bug12324.</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

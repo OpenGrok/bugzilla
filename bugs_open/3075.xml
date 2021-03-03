@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>3075</bug_id>
+          
+          <creation_ts>2008-08-26 01:38:00 +0000</creation_ts>
+          <short_desc>categorize results in groups of filenames, functions and comments</short_desc>
+          <delta_ts>2008-08-26 01:38:37 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>webapp</component>
+          <version>unspecified</version>
+          <rep_platform>Other</rep_platform>
+          <op_sys>Windows</op_sys>
+          <bug_status>NEW</bug_status>
+          
+          
+          
+          
+          
+          
+          <priority>P4</priority>
+          <bug_severity>enhancement</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Atul Chavan">chavan_atul1</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>11092</commentid>
+            <who name="Atul Chavan">chavan_atul1</who>
+            <bug_when>2008-08-26 01:38:37 +0000</bug_when>
+            <thetext>Hi,
+ I have another requirement while customizing opengrok.
+ I wanted to categorize results in groups of filenames,functions and  
+ comments.
+ for ex -If someone wants to search as per the &quot;address&quot;
+
+ then it should group the results like
+
+ files -
+    Address.java
+    AddressBean.java
+
+ methods -
+    setAddress()
+    getAddress()
+
+ comments(full search)
+    /* set the address */
+
+
+ please guide me for customization of it..
+
+If search for &quot;address&quot;
+1) It should give me list of all filenames which contains &quot;address&quot; word.
+2) It should give me list of all functions which contains &quot;address&quot; word.
+likewise...
+
+Can you please help me in this search flow ??</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

@@ -1,0 +1,278 @@
+# HG changeset patch
+# User jel+opengrok@cs.uni-magdeburg.de
+# Date 1329281054 -3600
+# Node ID a8850f7d70172318837616eabd0b34ea379291e8
+# Parent  5c3aa4689e5c5581e6a9373eaee227ac6675ede6
+- new command line option -Z (enable status page)
+- fix Last-Modified HTTP headers/handling to support better/correct caching
+
+diff -r 5c3aa4689e5c -r a8850f7d7017 build.xml
+--- a/build.xml	Tue Feb 14 02:06:29 2012 +0100
++++ b/build.xml	Wed Feb 15 05:44:14 2012 +0100
+@@ -231,6 +231,8 @@
+             file="${build.classes.dir}/org/opensolaris/opengrok/info.properties">
+             <entry  key="version" value="${version}"/>
+             <entry  key="changeset" value="${changeset}"/>
++            <entry  key="lmdate"  value="now" pattern="dd MMM yyyy HH:mm:ss Z"
++                type="date" />
+         </propertyfile>        
+     </target>
+         
+diff -r 5c3aa4689e5c -r a8850f7d7017 src/org/opensolaris/opengrok/Info.java
+--- a/src/org/opensolaris/opengrok/Info.java	Tue Feb 14 02:06:29 2012 +0100
++++ b/src/org/opensolaris/opengrok/Info.java	Wed Feb 15 05:44:14 2012 +0100
+@@ -24,6 +24,10 @@
+ 
+ import java.io.IOException;
+ import java.io.InputStream;
++import java.text.ParseException;
++import java.text.SimpleDateFormat;
++import java.util.Date;
++import java.util.Locale;
+ import java.util.Properties;
+ import org.opensolaris.opengrok.util.IOUtils;
+ 
+@@ -38,6 +42,7 @@
+ 
+     private static final String VERSION;
+     private static final String REVISION;
++    private static final long LAST_MODIFIED;
+ 
+     static {
+         InputStream in = null;
+@@ -48,6 +53,15 @@
+             }
+             VERSION = properties.getProperty("version", "unknown");
+             REVISION = properties.getProperty("changeset", "unknown");
++            // RFC 8222 3.3 compliant
++            SimpleDateFormat df = new SimpleDateFormat("dd MMM yyyy HH:mm:ss Z", Locale.ENGLISH);
++            Date lmdate = null;
++            try {
++                lmdate = df.parse(properties.getProperty("lmdate"));
++            } catch (ParseException e) {
++                lmdate = new Date(); // now
++            }
++            LAST_MODIFIED = lmdate.getTime();
+         } catch (IOException ioe) {
+             throw new RuntimeException(ioe);
+         } finally {
+@@ -79,6 +93,15 @@
+         return REVISION;
+     }
+ 
++    /**
++     * Get the time, when this archive was built/last modified.
++     * @return time of last modification in milliseconds since 
++     *  January 1, 1970, 00:00:00 GMT
++     */
++    public static long getLastModified() {
++        return LAST_MODIFIED;
++    }
++
+     private Info() {
+     }
+ }
+diff -r 5c3aa4689e5c -r a8850f7d7017 src/org/opensolaris/opengrok/configuration/Configuration.java
+--- a/src/org/opensolaris/opengrok/configuration/Configuration.java	Tue Feb 14 02:06:29 2012 +0100
++++ b/src/org/opensolaris/opengrok/configuration/Configuration.java	Wed Feb 15 05:44:14 2012 +0100
+@@ -511,17 +511,41 @@
+         this.indexVersionedFilesOnly = indexVersionedFilesOnly;
+     }
+ 
+-    private transient Date lastModified;
++    private transient long lastModified;
++    /**
++     * Get the time, when this instance has been modified. If not explicitly set
++     * or set to {@code 0}, it gets initialized with the time of the first call 
++     * to this method after instantiation/de-serialization.
++     * 
++     * @return time in milliseconds since 1 Jan 1970 00:00:00 GMT
++     */
++    public long getLastModified() {
++        if (lastModified == 0) {
++            // since we use it for If-Last-Modified-Since evals, which has no 
++            // millis, we need to clear the milliseconds part
++            lastModified = System.currentTimeMillis()/1000 * 1000;
++        }
++        return lastModified;
++    }
++    /**
++     * Set the time, when this configuration has been modified for the last time.
++     * @param lastModified the time in milliseconds since 1 Jan 1970 00:00:00 GMT
++     */
++    public void setLastModified(long lastModified) {
++        this.lastModified = lastModified/1000 * 1000;
++    }
++
++    private transient Date indexLastModified;
+     /**
+      * Get the date of the last index update.
+      * @return the time of the last index update.
+      */
+     public Date getDateForLastIndexRun() {
+-    	if (lastModified == null) {
++    	if (indexLastModified == null) {
+     		File timestamp = new File(getDataRoot(), "timestamp");
+-        	lastModified = new Date(timestamp.lastModified());
++    		indexLastModified = new Date(timestamp.lastModified());
+     	}
+-    	return lastModified;
++    	return indexLastModified;
+     }
+ 
+     /**
+@@ -660,7 +684,7 @@
+     public void setChattyStatusPage(boolean chattyStatusPage) {
+         this.chattyStatusPage = chattyStatusPage;
+     }
+-
++    
+     /**
+      * Write the current configuration to a file
+      * @param file the file to write the configuration into
+diff -r 5c3aa4689e5c -r a8850f7d7017 src/org/opensolaris/opengrok/index/CommandLineOptions.java
+--- a/src/org/opensolaris/opengrok/index/CommandLineOptions.java	Tue Feb 14 02:06:29 2012 +0100
++++ b/src/org/opensolaris/opengrok/index/CommandLineOptions.java	Wed Feb 15 05:44:14 2012 +0100
+@@ -111,6 +111,7 @@
+         options.add(new Option('w', "webapp-context", "Context of webapp. Default is /source. If you specify a different name, make sure to rename source.war to that name."));
+         options.add(new Option('X', "url:suffix", "URL Suffix for the user Information provider. Default: \"\""));
+         options.add(new Option('z', NUMBER, "depth of scanning for repositories in directory structure relative to source root"));
++        options.add(new Option('Z', null, "allow printing the internal settings in /status.jsp. Per default it is disabled for security reasons."));
+     }
+ 
+     public String getCommandString() {
+diff -r 5c3aa4689e5c -r a8850f7d7017 src/org/opensolaris/opengrok/index/Indexer.java
+--- a/src/org/opensolaris/opengrok/index/Indexer.java	Tue Feb 14 02:06:29 2012 +0100
++++ b/src/org/opensolaris/opengrok/index/Indexer.java	Wed Feb 15 05:44:14 2012 +0100
+@@ -405,6 +405,9 @@
+                                 System.exit(1);
+                             }
+                             break;
++                        case 'Z':
++                            cfg.setChattyStatusPage(true);
++                            break;
+                         default:
+                             System.err.println("Internal Error - Unimplemented cmdline option: " + (char) cmd);
+                             System.exit(1);
+diff -r 5c3aa4689e5c -r a8850f7d7017 src/org/opensolaris/opengrok/web/Util.java
+--- a/src/org/opensolaris/opengrok/web/Util.java	Tue Feb 14 02:06:29 2012 +0100
++++ b/src/org/opensolaris/opengrok/web/Util.java	Wed Feb 15 05:44:14 2012 +0100
+@@ -37,6 +37,7 @@
+ import java.text.DecimalFormat;
+ import java.text.NumberFormat;
+ import java.util.Collection;
++import java.util.Date;
+ import java.util.LinkedList;
+ import java.util.logging.Level;
+ import java.util.logging.Logger;
+@@ -730,6 +731,10 @@
+             env.isAllowLeadingWildcard());
+         printTableRow(out, "History cache", HistoryGuru.getInstance()
+             .getCacheInfo());
++        printTableRow(out, "Version", Info.getVersion() + '@' + Info.getRevision()
++            + "  " + new Date(Info.getLastModified()));
++        printTableRow(out, "Last Modified", 
++            new Date(env.getConfiguration().getLastModified()));
+         out.append("</table>");
+     }
+ 
+diff -r 5c3aa4689e5c -r a8850f7d7017 web/help.jsp
+--- a/web/help.jsp	Tue Feb 14 02:06:29 2012 +0100
++++ b/web/help.jsp	Wed Feb 15 05:44:14 2012 +0100
+@@ -28,6 +28,12 @@
+ {
+     cfg = PageConfig.get(request);
+     cfg.setTitle("OpenGrok Help");
++    long lmdate = cfg.getEnv().getConfiguration().getLastModified();
++    if (request.getDateHeader("If-Modified-Since") >= lmdate) {
++        response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
++        return;
++    }
++    response.setDateHeader("Last-Modified", lmdate);
+ %><%@
+ 
+ include file="httpheader.jspf"
+diff -r 5c3aa4689e5c -r a8850f7d7017 web/index.jsp
+--- a/web/index.jsp	Tue Feb 14 02:06:29 2012 +0100
++++ b/web/index.jsp	Wed Feb 15 05:44:14 2012 +0100
+@@ -29,6 +29,13 @@
+ {
+     cfg = PageConfig.get(request);
+     cfg.setTitle("Search");
++    long lmdate = cfg.getEnv().getConfiguration().getLastModified();
++    if (request.getDateHeader("If-Modified-Since") >= lmdate) {
++        response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
++        return;
++    }
++    response.setDateHeader("Last-Modified", lmdate);
++
+ %><%@
+ 
+ include file="httpheader.jspf"
+diff -r 5c3aa4689e5c -r a8850f7d7017 web/mast.jsp
+--- a/web/mast.jsp	Tue Feb 14 02:06:29 2012 +0100
++++ b/web/mast.jsp	Wed Feb 15 05:44:14 2012 +0100
+@@ -47,8 +47,11 @@
+         }
+         return;
+     }
+-    // jel: hmmm - questionable for dynamic content
+-    long flast = cfg.getLastModified();
++    long flast = cfg.getLastModified()/1000 * 1000;
++    long lmdate = cfg.getEnv().getConfiguration().getLastModified();
++   	if (lmdate > flast) {
++   		flast = lmdate;
++   	}
+     if (request.getDateHeader("If-Modified-Since") >= flast) {
+         response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
+         return;
+diff -r 5c3aa4689e5c -r a8850f7d7017 web/raw.jsp
+--- a/web/raw.jsp	Tue Feb 14 02:06:29 2012 +0100
++++ b/web/raw.jsp	Wed Feb 15 05:44:14 2012 +0100
+@@ -62,14 +62,18 @@
+             in = HistoryGuru.getInstance().getRevision(f.getParent(),
+                 f.getName(), revision.substring(2));
+         } else {
+-            long flast = cfg.getLastModified();
++            long flast = f.lastModified()/1000 * 1000;
++            long lmdate = cfg.getEnv().getConfiguration().getLastModified();
++            if (lmdate > flast) {
++            	flast = lmdate;
++            }
+             if (request.getDateHeader("If-Modified-Since") >= flast) {
+                 response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
+                 return;
+             }
+             in = new FileInputStream(f);
+             response.setContentLength((int) f.length());
+-            response.setDateHeader("Last-Modified", f.lastModified());
++            response.setDateHeader("Last-Modified", flast);
+         }
+     } catch (Exception e) {
+         response.sendError(HttpServletResponse.SC_NOT_FOUND);
+diff -r 5c3aa4689e5c -r a8850f7d7017 web/status.jsp
+--- a/web/status.jsp	Tue Feb 14 02:06:29 2012 +0100
++++ b/web/status.jsp	Wed Feb 15 05:44:14 2012 +0100
+@@ -33,6 +33,12 @@
+ {
+     cfg = PageConfig.get(request);
+     cfg.setTitle("Status");
++    long lmdate = cfg.getEnv().getConfiguration().getLastModified();
++    if (request.getDateHeader("If-Modified-Since") >= lmdate) {
++        response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
++        return;
++    }
++    response.setDateHeader("Last-Modified", lmdate);
+ %><%@
+ 
+ include file="httpheader.jspf"
+@@ -60,7 +66,8 @@
+         %><p>
+ For security reasons, printing of internal settings is not enabled by
+ default. To enable, set the property <tt>chattyStatusPage</tt> to
+-<tt>true</tt> in <tt>configuration.xml</tt>.</p><%
++<tt>true</tt> in <tt>configuration.xml</tt> or use the commandline option 
++<tt>-Z</tt>.</p><%
+         }
+         %>
+         </div>

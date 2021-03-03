@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>3525</bug_id>
+          
+          <creation_ts>2008-09-22 06:05:00 +0000</creation_ts>
+          <short_desc>irritating &quot;Failed to remove obsolete xref-file&quot; even when using &quot;economic&quot; index</short_desc>
+          <delta_ts>2008-09-22 06:56:04 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>indexer</component>
+          <version>unspecified</version>
+          <rep_platform>Other</rep_platform>
+          <op_sys>Linux</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXED</resolution>
+          
+          
+          
+          
+          
+          <priority>P4</priority>
+          <bug_severity>minor</bug_severity>
+          <target_milestone>0.7</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Christian Lohmaier">cloph</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>12905</commentid>
+            <who name="Christian Lohmaier">cloph</who>
+            <bug_when>2008-09-22 06:05:43 +0000</bug_when>
+            <thetext>I&apos;m using opengrok with the economic option to not pre-create the xref files.
+Once a file is removed from the repository the index-run doesn&apos;t check whether the xref file exists before attempting to delete it and prints the 
+
+INFO: Failed to remove obsolete xref-file: &lt;filepath&gt;
+
+message. I find this quite irritating.
+
+opengrok should check whether the file exists at all before attempting to delete it/before it prints that logmessage.
+
+http://src.opensolaris.org/source/xref/opengrok/trunk/src/org/opensolaris/opengrok/index/IndexDatabase.java#434</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>12907</commentid>
+            <who name="Trond Norbye">trond.norbye</who>
+            <bug_when>2008-09-22 06:56:04 +0000</bug_when>
+            <thetext>This bug was introduced in revision 359, when findbugs complained about not checking the return value for the function. The error message should only be printed if the removal failed and the file still exists.
+
+Fixed in changeset:   602:06e04e48fadf</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

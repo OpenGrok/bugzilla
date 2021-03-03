@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>11265</bug_id>
+          
+          <creation_ts>2009-09-09 17:42:00 +0000</creation_ts>
+          <short_desc>Simplify search page to have a single form input.</short_desc>
+          <delta_ts>2009-10-20 15:51:16 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>webapp</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>ACCEPTED</bug_status>
+          
+          
+          
+          
+          
+          
+          <priority>P4</priority>
+          <bug_severity>enhancement</bug_severity>
+          <target_milestone>0.9</target_milestone>
+          <dependson>12004</dependson>
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Garen">garen</reporter>
+          <assigned_to name="Lubos Kosco">Lubos.Kosco</assigned_to>
+          <cc>Lubos.Kosco</cc>
+    
+    <cc>milan.jurik</cc>
+    
+    <cc>vladimir.kotal</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>49305</commentid>
+            <who name="Garen">garen</who>
+            <bug_when>2009-09-09 17:42:41 +0000</bug_when>
+            <thetext>Most people seem to be using &quot;Full Search&quot; 90% of the time.  For those that want to type in more stuff, suggest adding something like an &quot;advanced&quot; link to fold out more stuff.
+
+Just like the &apos;other&apos; guys do it:
+
+http://www.google.com/codesearch
+http://www.koders.com/
+http://www.krugle.org/</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>49987</commentid>
+            <who name="Milan Jurik">milan.jurik</who>
+            <bug_when>2009-09-16 13:22:15 +0000</bug_when>
+            <thetext>What is the point to remove the &quot;targeted search&quot;s from the main search? It is used for source code investigation, not fulltext search. Where is the point to have 10x longer help than 4 additional possibilities? Do not hide critical features if the amount of them is low.
+
+And keywords can be used in &quot;fulltext search&quot; also in OpenGrok.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>50009</commentid>
+            <who name="Garen">garen</who>
+            <bug_when>2009-09-16 17:32:55 +0000</bug_when>
+            <thetext>Am not advocating removing the features.  As in the URLs mentioned, they just hide them behind an advanced search page. And in addition, allow you to type in terms into the single full-text box e.g. lang:python instead of typing input into a separate language input field.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>50013</commentid>
+            <who name="Milan Jurik">milan.jurik</who>
+            <bug_when>2009-09-16 18:45:26 +0000</bug_when>
+            <thetext>(In reply to comment #2)
+&gt; Am not advocating removing the features.  As in the URLs mentioned, they just
+&gt; hide them behind an advanced search page. And in addition, allow you to type in
+&gt; terms into the single full-text box e.g. lang:python instead of typing input
+&gt; into a separate language input field.
+
+But you can use keywords in full text search if you want (e.g. hist:), all remaining boxes have equivalent in some keyword for full text (but OpenGrok does not need to waste space of main page with help as codesearch is doing).
+
+And &quot;advanced search page&quot; is hidding of features. What is not available by default the most of users will not use (we are people = lazy to click on advanced search page). Another point is that with e.g. search definition in some subdir it is better to split it in two different boxes than rolling through one text box.
+
+Leave the search as simple as it is. But yes, it is only my personal view.
+
+Btw. the question is what is benefit of keyword &quot;lang&quot; in tool like OpenGrok.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>51975</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2009-10-08 14:41:33 +0000</bug_when>
+            <thetext>hi guys
+I am doing some research on which queries are really used and according to that I will try to make the search page more simple.
+
+So far I have data from src.opensolaris.org and grok.czech
+if you have your own opengrok server with some traffic I&apos;d be interested in query logs (can be turned on in tomcat/glassfish, look up in the docs how to do it)
+
+this bug will be targeted against next release, since we shall introduce bigger changes to UI there and let everybody decide if they will stick with 0.8 or the new UI ...</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>52586</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2009-10-14 12:20:28 +0000</bug_when>
+            <thetext>got some preliminary results on how we use different fields from src.opensolaris.org : 
+
+interval 20.6.2009 - 29.9.2009
+~211242 total (nonunique) direct requests
+unique results on field usage:
+~22750 q
+~4720 defs
+~4330 path
+~2988 refs
+~236 hist
+
+nonunique:
+~55595 q
+~10923 path
+~8096 defs
+~4812 refs
+~519 hist
+
+in ~118 searched unique projects
+
+
+I am waiting for some more data from an Sun internal server, once I will have those, I will merge them and try to make a conclusion on what is used and what not, so far it seems full search is the most commonly used field, which would confirm the &quot;google&quot; theory ;)</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>52587</commentid>
+            <who name="Milan Jurik">milan.jurik</who>
+            <bug_when>2009-10-14 12:30:59 +0000</bug_when>
+            <thetext>So, all fields are heavilly used (&quot;hist&quot; is exception because of special usage, not so important for public site), I do not see how this confirms &quot;google theory&quot; ;-)</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>53441</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2009-10-20 15:51:16 +0000</bug_when>
+            <thetext>got some more results:
+
+grok.czech numbers:
+18.9.2009 - 20.10.2009
+~28351 total (nonunique) direct requests
+unique results on field usage:
+~2233 q
+~658 defs
+~637 path
+~281 refs
+~42 hist
+
+nonunique:
+~3980 q
+~1297 path
+~956 defs
+~437 refs
+~82 hist
+
+in ~61 searched unique projects
+
+
+so compared to full queries we have 20-30% of defs and path, but refs and hist are around or less than 10%
+
+according to this we would be able to hide refs and hist , since they are kinda special, seems like more simplification would harm the user a bit
+
+But then if you hide half and leave half around, you&apos;re still not &quot;google like&quot; and it&apos;s imho not worth the 20px of space
+
+so it seems to me we have to implement 12004 to fully get rid of defs and refs
+and we would need better detection of the path to be able to hide path
+
+I&apos;ll leave a bit time to this bug and I will try to gather other opinions on it, so far it really seems opengrok is not ready for such simplification (YET , beware though, we&apos;re gonna rule the world soon ! ;) )
+
+so ideas anyone ??? ;)
+(we got the facts now)</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

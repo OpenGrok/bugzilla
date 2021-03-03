@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>12004</bug_id>
+          
+          <creation_ts>2009-10-15 21:25:00 +0000</creation_ts>
+          <short_desc>provide caller/callee traversal</short_desc>
+          <delta_ts>2010-05-13 05:46:06 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>indexer</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>NEW</bug_status>
+          
+          
+          
+          
+          
+          
+          <priority>P4</priority>
+          <bug_severity>enhancement</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          <blocked>11265</blocked>
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Vladimir Kotal">vladimir.kotal</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          <cc>HemangLavana</cc>
+    
+    <cc>Lubos.Kosco</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>52878</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2009-10-15 21:25:46 +0000</bug_when>
+            <thetext>I always expected OpenGrok to be able to provide the same functionality as cscope, especially to be able to traverse function call flow. The functionality is kind of present as a side effect - if I click on a link to a function it often leads to function definition. But going in the opposite way (upwards) is not really possible and full text searches to get such data are tedious. It would be really beneficial if OpenGrok provided that functionality. The questions are: how it should look like and how it should be implemented.
+
+As for the visual appearance - the direct search is obvious (something like &apos;caller:function_foo&apos;) but how it should look like when clicking on the links is another matter. There could be a small link next to the function definition in the left column which would link to such search etc.
+
+The implementation itself should leverage the function/macro definitions as indexed with the help of ctags. AFAIK the cscope.out index does not stable representation so one possible way how to approach this would be to use the definitions from the index and index the caller/callee relationship by going through the code.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>72719</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2010-05-10 10:44:10 +0000</bug_when>
+            <thetext>I liked what I saw in sorcerer on this:
+
+http://weblogs.java.net/blog/kohsuke/archive/2006/09/sorcerer_a_bett.html</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

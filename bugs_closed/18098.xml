@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>18098</bug_id>
+          
+          <creation_ts>2011-03-29 06:32:00 +0000</creation_ts>
+          <short_desc>Error: directory &apos;&lt;directory-name&gt;&apos; exists and is a directory, but cannot be listed: list() returned null.</short_desc>
+          <delta_ts>2011-05-10 08:02:40 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>webapp</component>
+          <version>unspecified</version>
+          <rep_platform>Other</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>INVALID</resolution>
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>blocker</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Sreedhara Reddy D">dsreddy</reporter>
+          <assigned_to name="Lubos Kosco">Lubos.Kosco</assigned_to>
+          <cc>dsreddy</cc>
+    
+    <cc>opengrok-dev</cc>
+    
+    <cc>trond.norbye</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>82074</commentid>
+            <who name="Sreedhara Reddy D">dsreddy</who>
+            <bug_when>2011-03-29 06:32:59 +0000</bug_when>
+            <thetext>Once the open file limit is exceeded the following message is displayed to the user:
+
+Error: directory &apos;&lt;directory-name&gt;&apos; exists and is a directory, but cannot be listed: list() returned null.
+
+So the users are unable to make use of OpenGrok.
+
+I am running OpenGrok 0.10 release.
+
+OS and other configuration:
+&quot;uname -a&quot; command output.
+Linux opengrok 2.6.18-164.el5 #1 SMP Thu Sep 3 03:28:30 EDT 2009 x86_64 x86_64 x86_64 GNU/Linux
+
+What has to be done in this case? So that I can get rid of this issue immediately. Could you please help me out immediately.
+
+
+Regards
+Sreedhara Reddy D</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>82251</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2011-04-12 12:34:06 +0000</bug_when>
+            <thetext>have you tried e.g.
+http://www.cyberciti.biz/faq/linux-increase-the-maximum-number-of-open-files/
+
+?</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>82813</commentid>
+            <who name="Trond Norbye">trond.norbye</who>
+            <bug_when>2011-05-10 08:02:40 +0000</bug_when>
+            <thetext>Do you have a leakage of file-descriptors? (is it growing over time?), if so please reopen the bug. 
+
+If that isn&apos;t the case you need to set the allowed number of filedescriptor to match your deployment.</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

@@ -1,0 +1,303 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>19220</bug_id>
+          
+          <creation_ts>2012-07-03 13:05:00 +0000</creation_ts>
+          <short_desc>opengrok build fails due to lucene-core-3.6.0.jar in gzip format</short_desc>
+          <delta_ts>2012-07-04 08:54:20 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>build</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>INVALID</resolution>
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>critical</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Vladimir Kotal">vladimir.kotal</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          <cc>jel+osbugs</cc>
+    
+    <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>86503</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2012-07-03 13:05:59 +0000</bug_when>
+            <thetext>I just tried to build opengrok-trunk OOB and it failed:
+
+$ hg clone ssh://anon@hg.opensolaris.org/hg/opengrok/trunk opengrok-trunk
+requesting all changes
+adding changesets
+adding manifests
+adding file changes
+added 1401 changesets with 5582 changes to 1061 files (+1 heads)
+updating to branch default
+814 files updated, 0 files merged, 0 files removed, 0 files unresolved
+$ cd opengrok-trunk
+$ hg tip
+changeset:   1400:29d7772a7c16
+tag:         tip
+user:        Knut Anders Hatlen &lt;knut.hatlen@oracle.com&gt;
+date:        Wed Jun 27 13:00:54 2012 +0200
+description:
+	Log why cache creation is skipped when repository doesn&apos;t support history for directories
+
+$ cp /tmp/JFlex.jar lib
+$ ant
+Buildfile: build.xml
+
+
+...
+
+
+-check-lucene:
+
+download-lucene:
+      [get] Getting: http://repo1.maven.org/maven2/org/apache/lucene/lucene-core/3.6.0/lucene-core-3.6.0.jar
+      [get] To: /workspaces/opengrok-trunk/lib/lucene-core-3.6.0.jar
+      [get] ....................................................
+      [get] ....................................................
+      [get] ....................................................
+      [get] ...................................................
+      [get] last modified = Mon Apr 09 23:29:20 CEST 2012
+      [get] Getting: http://repo1.maven.org/maven2/org/apache/lucene/lucene-spellchecker/3.6.0/lucene-spellchecker-3.6.0.jar
+      [get] To: /workspaces/opengrok-trunk/lib/lucene-spellchecker-3.6.0.jar
+      [get] .................
+      [get] last modified = Mon Apr 09 23:24:43 CEST 2012
+
+-pre-compile:
+
+-compile-depend:
+
+-do-compile:
+    [mkdir] Created dir: /workspaces/opengrok-trunk/build/empty
+    [javac] Compiling 232 source files to /workspaces/opengrok-trunk/build/classes
+    [javac] error: error reading /workspaces/opengrok-trunk/lib/lucene-core-3.6.0.jar; error in opening zip file
+    [javac] 1 error
+
+BUILD FAILED
+/workspaces/opengrok-trunk/nbproject/build-impl.xml:415: The following error occurred while executing this line:
+/workspaces/opengrok-trunk/nbproject/build-impl.xml:201: Compile failed; see the compiler error output for details.
+
+Total time: 4 seconds
+$ file /workspaces/opengrok-trunk/lib/lucene-core-3.6.0.jar
+/workspaces/opengrok-trunk/lib/lucene-core-3.6.0.jar:	gzip compressed data - deflate method
+$ mv lib/lucene-core-3.6.0.jar lib/lucene-core-3.6.0.jar.gz
+$ gzip -d lib/lucene-core-3.6.0.jar.gz
+$ file lib/lucene-core-3.6.0.jar 
+lib/lucene-core-3.6.0.jar:	java archive file
+$ ant
+
+...
+
+jar:
+
+BUILD SUCCESSFUL
+Total time: 9 seconds</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86504</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2012-07-03 14:01:01 +0000</bug_when>
+            <thetext>This seems to be more generic problem. The file is sent compressed on the HTTP layer (Content-Encoding: gzip):
+
+$ wget -S http://repo1.maven.org/maven2/org/apache/lucene/lucene-core/3.6.0/lucene-core-3.6.0.jar
+--06:58:08--  http://repo1.maven.org/maven2/org/apache/lucene/lucene-core/3.6.0/lucene-core-3.6.0.jar
+           =&gt; `lucene-core-3.6.0.jar&apos;
+Resolving repo1.maven.org... 93.184.221.133
+Connecting to repo1.maven.org|93.184.221.133|:80... connected.
+HTTP request sent, awaiting response... 
+  HTTP/1.0 200 OK
+  Content-Encoding: gzip
+  Accept-Ranges: bytes
+  Content-Type: application/java-archive
+  Date: Tue, 03 Jul 2012 14:00:19 GMT
+  Last-Modified: Mon, 09 Apr 2012 21:29:20 GMT
+  Server: ECAcc (fra/D485)
+  X-Cache: HIT
+  Content-Length: 1406216
+  Connection: keep-alive
+Length: 1,406,216 (1.3M) [application/java-archive]
+
+100%[====================================&gt;] 1,406,216      1.53M/s             
+
+06:58:09 (1.53 MB/s) - `lucene-core-3.6.0.jar&apos; saved [1406216/1406216]</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86505</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2012-07-03 14:02:38 +0000</bug_when>
+            <thetext>(In reply to comment #1)
+&gt; This seems to be more generic problem. The file is sent compressed on the HTTP
+&gt; layer (Content-Encoding: gzip):
+&gt; 
+&gt; $ wget -S
+&gt; http://repo1.maven.org/maven2/org/apache/lucene/lucene-core/3.6.0/lucene-core-3.6.0.jar
+&gt; --06:58:08-- 
+&gt; http://repo1.maven.org/maven2/org/apache/lucene/lucene-core/3.6.0/lucene-core-3.6.0.jar
+&gt;            =&gt; `lucene-core-3.6.0.jar&apos;
+&gt; Resolving repo1.maven.org... 93.184.221.133
+&gt; Connecting to repo1.maven.org|93.184.221.133|:80... connected.
+&gt; HTTP request sent, awaiting response... 
+&gt;   HTTP/1.0 200 OK
+&gt;   Content-Encoding: gzip
+&gt;   Accept-Ranges: bytes
+&gt;   Content-Type: application/java-archive
+&gt;   Date: Tue, 03 Jul 2012 14:00:19 GMT
+&gt;   Last-Modified: Mon, 09 Apr 2012 21:29:20 GMT
+&gt;   Server: ECAcc (fra/D485)
+&gt;   X-Cache: HIT
+&gt;   Content-Length: 1406216
+&gt;   Connection: keep-alive
+&gt; Length: 1,406,216 (1.3M) [application/java-archive]
+&gt; 
+&gt; 100%[====================================&gt;] 1,406,216      1.53M/s             
+&gt; 
+&gt; 06:58:09 (1.53 MB/s) - `lucene-core-3.6.0.jar&apos; saved [1406216/1406216]
+
+and the actual file is gzip&apos;ed:
+
+$ file lucene-core-3.6.0.jar 
+lucene-core-3.6.0.jar: gzip compressed data, from Unix
+
+
+related wget post:
+
+http://lists.gnu.org/archive/html/bug-wget/2009-05/msg00013.html</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86506</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2012-07-03 14:50:53 +0000</bug_when>
+            <thetext>The problem is one can never know in what form the file arrives to disk. As Lubos found out in http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html some proxies might decompress and some might leave the contents intact:
+
+However, a non-transparent proxy MAY modify the content-coding if the    new coding is known to be acceptable to the recipient, unless the    &quot;no-transform&quot; cache-control directive is present in the message.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86507</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2012-07-03 15:00:32 +0000</bug_when>
+            <thetext>Ideally, this should be solved in ant&apos;s get task (http://ant.apache.org/manual/Tasks/get.html) as described here: https://issues.apache.org/bugzilla/show_bug.cgi?id=49453 (the status of this bug is still NEW, filed in 2010). This way the resulting file will be always in the same format.
+
+For reference here&apos;s relevant snippet of the build.xml file:
+
+   &lt;target name=&quot;download-lucene&quot; depends=&quot;-check-lucene&quot; if=&quot;lucene_not_downloaded&quot;&gt;
+        &lt;get src=&quot;http://repo1.maven.org/maven2/org/apache/lucene/lucene-core/${lucene.version}/${lucene-core.jar}&quot;
+        dest=&quot;lib/${lucene-core.jar}&quot; verbose=&quot;true&quot; usetimestamp=&quot;true&quot;/&gt;
+        &lt;get src=&quot;http://repo1.maven.org/maven2/org/apache/lucene/lucene-spellchecker/${lucene.version}/${lucene-spellchecker.jar}&quot;
+        dest=&quot;lib/${lucene-spellchecker.jar}&quot; verbose=&quot;true&quot; usetimestamp=&quot;true&quot;/&gt;
+    &lt;/target&gt;
+
+Until this is fixed in ant we might have to add a workaround.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86508</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2012-07-03 15:05:34 +0000</bug_when>
+            <thetext>(In reply to comment #4)
+
+&lt;snip&gt;
+
+&gt; Until this is fixed in ant we might have to add a workaround.
+
+By workaround I mean adding crude code which would check the format of the file on disk and optionally (if in gzip format) renaming to one with .gz suffix and running gzip -d on it.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86509</commentid>
+            <who name="Jens Elkner">jel+osbugs</who>
+            <bug_when>2012-07-03 16:50:01 +0000</bug_when>
+            <thetext>IMHO this is a site setup problem and needs to be reported to their owners. It is just impolite to encode content in a manner, which isn&apos;t supported by the client (the ant task doesn&apos;t send any &apos;Accept-Encoding&apos; header). Also it doesn&apos;t make much sense to compress an already compressed file (at least *.jar s should be) ...
+Last but not least, if opengrok builds a workaround, this needs to be a little bit clever than just gunzip, because if the site owner changes his mind (e.g. to enable compression if filesize &gt; N), it&apos;ll  break opengrok build again ... 
+So for now, I would just add a note to the readme ...</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86510</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2012-07-04 08:54:20 +0000</bug_when>
+            <thetext>(In reply to comment #6)
+&gt; IMHO this is a site setup problem and needs to be reported to their owners. It
+&gt; is just impolite to encode content in a manner, which isn&apos;t supported by the
+&gt; client (the ant task doesn&apos;t send any &apos;Accept-Encoding&apos; header). Also it
+&gt; doesn&apos;t make much sense to compress an already compressed file (at least *.jar
+&gt; s should be) ...
+
+No doubt about it.
+
+&gt; Last but not least, if opengrok builds a workaround, this needs to be a little
+&gt; bit clever than just gunzip, because if the site owner changes his mind (e.g.
+&gt; to enable compression if filesize &gt; N), it&apos;ll  break opengrok build again ... 
+&gt; So for now, I would just add a note to the readme ...
+
+Interestingly, today I am no longer getting gzipped content from the same server (identified in server HTTP headers as &apos;Server: ECAcc (fra/D485)&apos; so I can see this is the same backend server as yesterday since I have the terminal window from yesterday still open). It looks like they fixed the problem on server side.
+
+Yesterday I was getting:
+
+  HTTP/1.0 200 OK
+  Content-Encoding: gzip
+  Accept-Ranges: bytes
+  Content-Type: application/java-archive
+  Date: Tue, 03 Jul 2012 14:00:19 GMT
+  Last-Modified: Mon, 09 Apr 2012 21:29:20 GMT
+  Server: ECAcc (fra/D485)
+  X-Cache: HIT
+  Content-Length: 1406216
+  Connection: keep-alive
+Length: 1,406,216 (1.3M) [application/java-archive]
+
+
+Today I am getting:
+
+  HTTP/1.0 200 OK
+  Accept-Ranges: bytes
+  Content-Type: application/java-archive
+  Date: Wed, 04 Jul 2012 08:45:19 GMT
+  Last-Modified: Mon, 09 Apr 2012 21:29:20 GMT
+  Server: ECAcc (fra/D485)
+  X-Cache: HIT
+  Content-Length: 1535258
+  Connection: keep-alive
+Length: 1,535,258 (1.5M) [application/java-archive]
+
+
+Note: this is from machine which is not behind any proxy.
+
+I tried this from an environment which is behind proxy (one which does not do transparent decompression) and it got the reply from different server (ECAcc (lhr/4AB2)) so hopefully it was fixed on all backend servers.
+
+I am going to vote on the ant bug anyway just in case this problem reappears. Closin this bug.</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

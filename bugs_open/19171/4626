@@ -1,0 +1,92 @@
+# HG changeset patch
+# User jel+opengrok@cs.uni-magdeburg.de
+# Date 1329111890 -3600
+# Node ID 1f51a59fda801a5e753e998a8d2ba507e6273a70
+# Parent  261116507c7ae7e640a63cd43271988908d92c4f
+svn: allow to set a non-default user configuration directory (--config-dir)
+
+diff -r 261116507c7a -r 1f51a59fda80 src/org/opensolaris/opengrok/history/SubversionRepository.java
+--- a/src/org/opensolaris/opengrok/history/SubversionRepository.java	Mon Feb 13 06:12:47 2012 +0100
++++ b/src/org/opensolaris/opengrok/history/SubversionRepository.java	Mon Feb 13 06:44:50 2012 +0100
+@@ -61,10 +61,18 @@
+         "org.opensolaris.opengrok.history.Subversion";
+     /** The command to use to access the repository if none was given explicitly */
+     public static final String CMD_FALLBACK = "svn";
++    /** The system property name to obtain the subversion user configuration 
++     * directory to use, i.e. the value for the svn option --config-dir. Gets
++     * ignored, if not set.
++     */
++    public static final String CONFIG_DIRECTORY_KEY =
++        "org.opensolaris.opengrok.history.Subversion.configdir";
++    
+     private static final Logger logger = 
+         Logger.getLogger(SubversionRepository.class.getName());
+ 
+     protected String reposPath;
++    private String configDir;
+ 
+     public SubversionRepository() {
+         type = "Subversion";
+@@ -98,6 +106,9 @@
+             List<String> cmd = new ArrayList<String>();
+             cmd.add(this.cmd);
+             cmd.add("info");
++            if (configDir != null) {
++                cmd.add(configDir);
++            }
+             cmd.add("--xml");
+             File directory = new File(getDirectoryName());
+ 
+@@ -169,6 +180,9 @@
+         cmd.add("log");
+         cmd.add("--trust-server-cert");
+         cmd.add("--non-interactive");
++        if (configDir != null) {
++            cmd.add(configDir);
++        }
+         cmd.add("--xml");
+         cmd.add("-v");
+         if (sinceRevision != null) {
+@@ -198,6 +212,9 @@
+         ensureCommand(CMD_PROPERTY_KEY, CMD_FALLBACK);
+         cmd.add(this.cmd);
+         cmd.add("cat");
++        if (configDir != null) {
++            cmd.add(configDir);
++        }
+         cmd.add("-r");
+         cmd.add(rev);
+         cmd.add(escapeFileName(filename));
+@@ -290,6 +307,9 @@
+         argv.add("annotate");
+         argv.add("--trust-server-cert");
+         argv.add("--non-interactive");
++        if (configDir != null) {
++            argv.add(configDir);
++        }
+         argv.add("--xml");
+         if (revision != null) {
+             argv.add("-r");
+@@ -351,6 +371,9 @@
+         cmd.add("update");
+         cmd.add("--trust-server-cert");
+         cmd.add("--non-interactive");
++        if (configDir != null) {
++            cmd.add(configDir);
++        }
+         Executor executor = new Executor(cmd, directory);
+         if (executor.exec() != 0) {
+             throw new IOException(executor.getErrorString());
+@@ -370,7 +393,11 @@
+     public boolean isWorking() {
+         if (working == null) {
+             ensureCommand(CMD_PROPERTY_KEY, CMD_FALLBACK);
+-            working = checkCmd(cmd, "--help");
++            configDir = System.getProperty(CONFIG_DIRECTORY_KEY);
++            if (configDir != null) {
++                configDir = "--config-dir='" + configDir + "'";
++            }
++            working = checkCmd(cmd, configDir != null ? configDir + " --help" : "--help");
+         }
+         return working.booleanValue();
+     }

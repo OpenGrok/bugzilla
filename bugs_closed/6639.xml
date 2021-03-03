@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>6639</bug_id>
+          
+          <creation_ts>2009-02-13 08:37:00 +0000</creation_ts>
+          <short_desc>Failure to detect cvs/svn due to incorrect expected return value</short_desc>
+          <delta_ts>2010-02-17 12:35:01 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>scm</component>
+          <version>unspecified</version>
+          <rep_platform>Other</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXED</resolution>
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>minor</bug_severity>
+          <target_milestone>0.8</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Andrey">fedorov</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          <cc>knut.hatlen</cc>
+    
+    <cc>simex</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>27727</commentid>
+            <who name="Andrey">fedorov</who>
+            <bug_when>2009-02-13 08:37:41 +0000</bug_when>
+            <thetext>&quot;svn --help&quot; returns 1, which confuses ScmChecker.
+
+[andrey@beat trunk] cat test.sh
+#!/bin/bash
+/usr/bin/cvs --help &amp;&gt; /dev/null
+echo rv: $?
+[andrey@beat trunk] ./test.sh
+rv: 1
+[andrey@beat trunk] uname -a
+Linux beat 2.6.25.18-0.2-default #1 SMP 2008-10-21 16:30:26 +0200 x86_64 x86_64 x86_64 GNU/Linux</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>30817</commentid>
+            <who name="Simex">simex</who>
+            <bug_when>2009-03-12 19:10:49 +0000</bug_when>
+            <thetext>CVS on Windows also returns 1 with &quot;--help&quot;.
+For me &quot;--version&quot; returns 0... should we use this instead?
+
+
+Microsoft Windows XP [Version 5.1.2600]
+(C) Copyright 1985-2001 Microsoft Corp.
+
+C:\&gt;cvs --help
+Usage: cvs [cvs-options] command [command-options-and-arguments]
+  where cvs-options are -q, -n, etc.
+    (specify --help-options for a list of options)
+{{YADDA YADDA}}
+
+C:\&gt;echo %ERRORLEVEL%
+1
+
+C:\&gt;cvs --version
+
+Concurrent Versions System (CVS) 1.11.22 (client)
+
+Copyright (C) 2006 Free Software Foundation, Inc.
+
+{{YADDA YADDA}}
+
+C:\&gt;echo %ERRORLEVEL%
+0
+
+C:\&gt;</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>66511</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2010-02-17 12:35:01 +0000</bug_when>
+            <thetext>This problem was fixed in the following changeset:
+
+changeset:   751:77bf4916e908
+user:        Trond Norbye &lt;trond.norbye@sun.com&gt;
+date:        Sun Apr 19 07:42:40 2009 -0700
+summary:     CVS fixes
+
+It only addresses the CVS problem. The bug description mentions a problem with Subversion too, but I don&apos;t see that in my environment (svn version 1.6.2 on OpenSolaris). Andrey, if you think there still is a problem with svn, please reopen the bug and post which version of svn you&apos;re using.</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>16335</bug_id>
+          
+          <creation_ts>2010-06-20 03:51:00 +0000</creation_ts>
+          <short_desc>RFE: Add -I option to command line options to include only certain files</short_desc>
+          <delta_ts>2010-06-21 08:38:34 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>misc</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXINSOURCE</resolution>
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>minor</bug_severity>
+          <target_milestone>0.10</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="seadog">seadog1234567890</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          <cc>Lubos.Kosco</cc>
+    
+    <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>74572</commentid>
+            <who name="seadog">seadog1234567890</who>
+            <bug_when>2010-06-20 03:51:42 +0000</bug_when>
+            <thetext>The -I option would be like the current -i option except it is for including files instead of ignoring them
+
+See discussion: http://www.opensolaris.org/jive/thread.jspa?threadID=130662&amp;tstart=0
+
+Trond already committed the code to trunk. Thank you!</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>74583</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2010-06-21 08:38:34 +0000</bug_when>
+            <thetext>fixed in 
+changeset:   1026:e6d4b59f57e6
+and
+changeset:   1027:bcf28aab7ca6</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

@@ -1,0 +1,220 @@
+: rev.substring(2));
+         } catch (IOException e) {
+-            log.log(Level.WARNING, "Failed to get annotations: ", e);
++            log.warning("Failed to get annotations: " + e.getMessage());
++            log.log(Level.FINE, "getAnnotation", e);
+             /* ignore */
+         }
+         return annotation;
+diff -r 61549026aafe -r 261116507c7a src/org/opensolaris/opengrok/web/SearchHelper.java
+--- a/src/org/opensolaris/opengrok/web/SearchHelper.java	Sun Feb 12 04:37:36 2012 +0100
++++ b/src/org/opensolaris/opengrok/web/SearchHelper.java	Mon Feb 13 06:12:47 2012 +0100
+@@ -35,14 +35,23 @@
+ import java.util.logging.Level;
+ import java.util.logging.Logger;
+ import java.util.regex.Pattern;
++
+ import org.apache.lucene.document.Document;
+ import org.apache.lucene.index.IndexReader;
+ import org.apache.lucene.index.MultiReader;
+ import org.apache.lucene.queryParser.ParseException;
+-import org.apache.lucene.search.*;
++import org.apache.lucene.search.BooleanQuery;
++import org.apache.lucene.search.IndexSearcher;
++import org.apache.lucene.search.MultiSearcher;
++import org.apache.lucene.search.ParallelMultiSearcher;
++import org.apache.lucene.search.Query;
++import org.apache.lucene.search.ScoreDoc;
++import org.apache.lucene.search.Sort;
++import org.apache.lucene.search.SortField;
++import org.apache.lucene.search.TermQuery;
++import org.apache.lucene.search.TopFieldDocs;
+ import org.apache.lucene.search.spell.SpellChecker;
+ import org.apache.lucene.store.FSDirectory;
+-import org.opensolaris.opengrok.OpenGrokLogger;
+ import org.opensolaris.opengrok.analysis.CompatibleAnalyser;
+ import org.opensolaris.opengrok.analysis.Definitions;
+ import org.opensolaris.opengrok.search.QueryBuilder;
+@@ -59,7 +68,7 @@
+  * @version $Revision$
+  */
+ public class SearchHelper {
+-
++    private static final Logger log = Logger.getLogger(SearchHelper.class.getName());
+     /** opengrok's data root: used to find the search index file */
+     public File dataRoot;
+     /** context path, i.e. the applications context path (usually /source) to
+@@ -119,8 +128,6 @@
+     public HistoryContext historyContext;
+     /** Default query parse error message prefix */
+     public static final String PARSE_ERROR_MSG = "Unable to parse your query: ";
+-
+-    private static final Logger log = Logger.getLogger(SearchHelper.class.getName());
+     
+     /**
+      * Create the searcher to use wrt. to currently set parameters and the given
+@@ -358,7 +365,9 @@
+                     res.add(s);
+                 }
+             } catch (IOException e) {
+-                log.log(Level.WARNING, "Got excption while getting spelling suggestions: ", e);
++                log.warning("Got exception while getting spelling suggestions: " 
++                    + e.getMessage());
++                log.log(Level.FINE, "getSuggestions", e);
+             } finally {
+                 if (spellDirectory != null) {
+                     spellDirectory.close();
+@@ -367,7 +376,9 @@
+                     try {
+                         checker.close();
+                     } catch (Exception x) { 
+-                        log.log(Level.WARNING, "Got excption while closing spelling suggestions: ", x);
++                        log.warning("Got exception while closing spelling suggestions: " 
++                            + x.getMessage());
++                        log.log(Level.FINE, "getSuggestions", x);
+                     }
+                 }
+             }
+@@ -403,12 +414,12 @@
+             sourceContext = new Context(query, builder.getQueries());
+             summerizer = new Summarizer(query, new CompatibleAnalyser());
+         } catch (Exception e) {
+-            OpenGrokLogger.getLogger().log(Level.WARNING, "Summerizer: {0}", e.getMessage());
++            log.warning("Summerizer: " + e.getMessage());
+         }
+         try {
+             historyContext = new HistoryContext(query);
+         } catch (Exception e) {
+-            OpenGrokLogger.getLogger().log(Level.WARNING, "HistoryContext: {0}", e.getMessage());
++            log.warning("HistoryContext: " + e.getMessage());
+         }
+         return this;
+     }
+diff -r 61549026aafe -r 261116507c7a src/org/opensolaris/opengrok/web/Util.java
+--- a/src/org/opensolaris/opengrok/web/Util.java	Sun Feb 12 04:37:36 2012 +0100
++++ b/src/org/opensolaris/opengrok/web/Util.java	Mon Feb 13 06:12:47 2012 +0100
+@@ -45,7 +45,6 @@
+ import java.util.zip.GZIPInputStream;
+ 
+ import org.opensolaris.opengrok.Info;
+-import org.opensolaris.opengrok.OpenGrokLogger;
+ import org.opensolaris.opengrok.configuration.RuntimeEnvironment;
+ import org.opensolaris.opengrok.history.Annotation;
+ import org.opensolaris.opengrok.history.HistoryException;
+@@ -56,6 +55,7 @@
+  * Class for useful functions.
+  */
+ public final class Util {
++    private static final Logger logger = Logger.getLogger(Util.class.getName());
+     private Util() {
+         // singleton
+     }
+@@ -566,7 +566,8 @@
+             return q == null ? "" : URLEncoder.encode(q, "UTF-8");
+         } catch (UnsupportedEncodingException e) {
+             // Should not happen. UTF-8 must be supported by JVMs.
+-            Logger.getLogger(EftarFileReader.class.getName()).log(Level.WARNING, "Failed to URL-encode UTF-8: ", e);            
++            logger.warning("Failed to URL-encode UTF-8: " + e.getMessage());
++            logger.log(Level.FINE, "URIEncode", e);
+         }
+         return null;
+     }
+@@ -602,8 +603,8 @@
+             URI uri = new URI(null, null, path, null);
+             return uri.getRawPath();
+         } catch (URISyntaxException ex) {
+-            OpenGrokLogger.getLogger().log(Level.WARNING,
+-                "Could not encode path " + path, ex);
++            logger.warning("Could not encode path '" + path + "': " + ex.getMessage());
++            logger.log(Level.FINE, "URIEncodePath", ex);
+         }
+         return "";
+     }
+@@ -798,8 +799,9 @@
+             dump(out, in);
+             return true;
+         } catch(IOException e) {
+-            OpenGrokLogger.getLogger().log(Level.WARNING,
+-                "An error occured while piping file " + file + ": ", e);
++            logger.warning("An error occured while piping file '" + file + "': " 
++                + e.getMessage());
++            logger.log(Level.FINE, "dump", e);
+         } finally {
+             IOUtils.close(in);
+             IOUtils.close(gis);
+diff -r 61549026aafe -r 261116507c7a src/org/opensolaris/opengrok/web/WebappListener.java
+--- a/src/org/opensolaris/opengrok/web/WebappListener.java	Sun Feb 12 04:37:36 2012 +0100
++++ b/src/org/opensolaris/opengrok/web/WebappListener.java	Mon Feb 13 06:12:47 2012 +0100
+@@ -29,10 +29,12 @@
+ import java.net.SocketAddress;
+ import java.net.UnknownHostException;
+ import java.util.logging.Level;
++import java.util.logging.Logger;
++
+ import javax.servlet.ServletContext;
+ import javax.servlet.ServletContextEvent;
+ import javax.servlet.ServletContextListener;
+-import org.opensolaris.opengrok.OpenGrokLogger;
++
+ import org.opensolaris.opengrok.configuration.RuntimeEnvironment;
+ 
+ /**
+@@ -41,6 +43,7 @@
+  */
+ public final class WebappListener implements ServletContextListener {
+ 
++    private static final Logger logger = Logger.getLogger(WebappListener.class.getName());
+     @Override
+     public void contextInitialized(final ServletContextEvent servletContextEvent) {
+         ServletContext context = servletContextEvent.getServletContext();
+@@ -48,35 +51,42 @@
+ 
+         String config = context.getInitParameter("CONFIGURATION");
+         if (config == null) {
+-            OpenGrokLogger.getLogger().severe("CONFIGURATION section missing in web.xml");
++            logger.severe("CONFIGURATION section missing in web.xml");
+         } else {
+             try {
+                 env.readConfiguration(new File(config));
+             } catch (IOException ex) {
+-                OpenGrokLogger.getLogger().log(Level.WARNING, "OpenGrok Configuration error. Failed to read config file: ", ex);
++                logger.warning("OpenGrok Configuration error. Failed to read config file: " 
++                    + ex.getMessage());
++                logger.log(Level.FINE, "contextInitialized", ex);
+             }
+         }
+ 
+         String address = context.getInitParameter("ConfigAddress");
+         if (address != null && address.length() > 0) {
+-            OpenGrokLogger.getLogger().log(Level.CONFIG, "Will listen for configuration on [{0}]", address);
++            logger.log(Level.CONFIG, "Will listen for configuration on {0}", address);
+             String[] cfg = address.split(":");
+             if (cfg.length == 2) {
+                 try {
+                     SocketAddress addr = new InetSocketAddress(InetAddress.getByName(cfg[0]), Integer.parseInt(cfg[1]));
+                     if (!RuntimeEnvironment.getInstance().startConfigurationListenerThread(addr)) {
+-                        OpenGrokLogger.getLogger().log(Level.SEVERE, "OpenGrok: Failed to start configuration listener thread");
++                        logger.warning("Failed to start configuration listener thread");
+                     }
+                 } catch (NumberFormatException ex) {
+-                    OpenGrokLogger.getLogger().log(Level.SEVERE, "OpenGrok: Failed to start configuration listener thread:", ex);
++                    logger.warning("Failed to start configuration listener thread: " 
++                        + ex.getMessage());
++                    logger.log(Level.FINE, "contextInitialized", ex);
+                 } catch (UnknownHostException ex) {
+-                    OpenGrokLogger.getLogger().log(Level.SEVERE, "OpenGrok: Failed to start configuration listener thread:", ex);
++                    logger.warning("Failed to start configuration listener thread:" + ex.getMessage());
++                    logger.log(Level.FINE, "contextInitialized", ex);
+                 }
+             } else {
+-                OpenGrokLogger.getLogger().log(Level.SEVERE, "Incorrect format for the configuration address: ");
++                StringBuilder sb = new StringBuilder("Incorrect format for the configuration address - ");
+                 for (int i = 0; i < cfg.length; ++i) {
+-                    OpenGrokLogger.getLogger().log(Level.SEVERE, "[{0}]", cfg[i]);
++                    sb.append('[').append(cfg[i]).append("], ");
+                 }
++                sb.setLength(sb.length()-2);
++                logger.warning(sb.toString());
+             }
+         }
+     }

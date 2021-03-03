@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>3175</bug_id>
+          
+          <creation_ts>2008-08-31 01:27:00 +0000</creation_ts>
+          <short_desc>Add a statistics mechanism</short_desc>
+          <delta_ts>2008-08-31 01:27:00 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>misc</component>
+          <version>unspecified</version>
+          <rep_platform>Other</rep_platform>
+          <op_sys>OpenSolaris</op_sys>
+          <bug_status>ACCEPTED</bug_status>
+          
+          
+          
+          
+          
+          
+          <priority>P4</priority>
+          <bug_severity>enhancement</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Trond Norbye">trond.norbye</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>11515</commentid>
+            <who name="Trond Norbye">trond.norbye</who>
+            <bug_when>2008-08-31 01:27:00 +0000</bug_when>
+            <thetext>Add a statistics mechanism that outputs at least how many files were processed, and how long the indexing run took, because it&apos;s interesting to know, and because it could help catch any performance regressions</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

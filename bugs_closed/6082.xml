@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>6082</bug_id>
+          
+          <creation_ts>2009-01-12 15:34:00 +0000</creation_ts>
+          <short_desc>Source control configuration documentation is not adequate</short_desc>
+          <delta_ts>2012-01-27 13:22:45 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>doc</component>
+          <version>unspecified</version>
+          <rep_platform>Other</rep_platform>
+          <op_sys>Linux</op_sys>
+          <bug_status>INCOMPLETE</bug_status>
+          
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>major</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Curt Cox">curtcox</reporter>
+          <assigned_to name="Vladimir Kotal">vladimir.kotal</assigned_to>
+          <cc>vladimir.kotal</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>24974</commentid>
+            <who name="Curt Cox">curtcox</who>
+            <bug_when>2009-01-12 15:34:52 +0000</bug_when>
+            <thetext>I couldn&apos;t find any documentation telling how to set up OpenGrok to use a source control system.  If such documentation exists, it needs to be easier to find.  Ideally a running OpenGrok instance would have some sort of repository configuration screen that allowed authorized users to specify repository URLs.
+
+The documentation for running OpenGrok without using any source control repositories is also outdated and incomplete.  However, I was able to get that portion running relatively quickly, so in a certain sense it is good enough.
+
+The easier it is to get started, the more users you will get.
+
+Thanks,
+Curt</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86134</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2012-01-25 14:11:52 +0000</bug_when>
+            <thetext>(In reply to comment #0)
+&gt; I couldn&apos;t find any documentation telling how to set up OpenGrok to use a
+&gt; source control system.  If such documentation exists, it needs to be easier to
+&gt; find.  Ideally a running OpenGrok instance would have some sort of repository
+&gt; configuration screen that allowed authorized users to specify repository URLs.
+
+By itself OpenGrok does not perform the setup of the source code repositories. This is to be done by the user - both for the initial setup and also for periodic synchronization.
+
+The only point when OpenGrok needs to contact the repository is when the repository is remote (e.g. created by CVS checkout) and history lookup is performed.
+ 
+&gt; The documentation for running OpenGrok without using any source control
+&gt; repositories is also outdated and incomplete.  However, I was able to get that
+&gt; portion running relatively quickly, so in a certain sense it is good enough.
+
+Where is this documentation located ?</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86135</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2012-01-25 14:18:59 +0000</bug_when>
+            <thetext>I just pushed the following change which clarifies some of the SCM repository handling questions:
+
+changeset:   1298:5d1668919fb3
+tag:         tip
+user:        Vladimir Kotal &lt;Vladimir.Kotal@oracle.com&gt;
+date:        Wed Jan 25 15:17:01 2012 +0100
+
+description:
+	README needs some hairdresser attention
+
+
+Please take a look if the README is more helpful now.</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

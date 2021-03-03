@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>13961</bug_id>
+          
+          <creation_ts>2010-01-18 16:38:00 +0000</creation_ts>
+          <short_desc>no quick search box shown on windows (path separator problem in project names/IDs)</short_desc>
+          <delta_ts>2010-04-09 06:43:13 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>misc</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXED</resolution>
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>minor</bug_severity>
+          <target_milestone>0.9</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Lubos Kosco">Lubos.Kosco</reporter>
+          <assigned_to name="Lubos Kosco">Lubos.Kosco</assigned_to>
+          <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>62763</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2010-01-18 16:38:12 +0000</bug_when>
+            <thetext>http://src.opensolaris.org/source/xref/opengrok/trunk/src/org/opensolaris/opengrok/configuration/Project.java#124
+
+public static Project getProject(String path)
+
+is buggy and because of that the quick search box is not shown on Windows, we should be platform independent and fix such silly issues
+We should use file.separator  system property to correctly create index and record projects, or not use file paths for project tracking at all</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>62852</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2010-01-19 16:06:17 +0000</bug_when>
+            <thetext>I tried evaluating if we could change whole opengrok to use dynamic file separator , but this is not the case, because we would need to fix URL generation and lots of other classes to be fully dynamic, hence it would require a new CR/bug ...
+
+fixed in changeset:   937:3dcd5f662764</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

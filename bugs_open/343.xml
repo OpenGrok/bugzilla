@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>343</bug_id>
+          
+          <creation_ts>2008-01-04 12:19:00 +0000</creation_ts>
+          <short_desc>RFE: analyzer should also scan/analyze files found in compressed files</short_desc>
+          <delta_ts>2011-06-22 14:28:58 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>analyzer</component>
+          <version>unspecified</version>
+          <rep_platform>Other</rep_platform>
+          <op_sys>Windows</op_sys>
+          <bug_status>ACCEPTED</bug_status>
+          
+          
+          <see_also>https://defect.opensolaris.org/bz/show_bug.cgi?id=6443</see_also>
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>enhancement</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Hemang Lavana">HemangLavana</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          <cc>a22489001-opengrok</cc>
+    
+    <cc>Lubos.Kosco</cc>
+    
+    <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>946</commentid>
+            <who name="Hemang Lavana">HemangLavana</who>
+            <bug_when>2008-01-04 12:19:16 +0000</bug_when>
+            <thetext>Hi,
+
+I have compressed files like foo.zip or bar.tar.gz, etc in my SRC_ROOT. These files when uncompressed would contains files such as pdf, html, C, tcl, python source files. It would be great if the analyzer passed these files through their respective analyzers and index them (perhaps it already does this, I am not sure).
+
+On the xref side, I would like to see compressed files presented as a directory so that it can contain its internal files on the regular filesystem. For example, I should be able to load a specific file within a compressed file as:
+
+http://cvs.opensolaris.org/source/xref/opengrok/trunk/lib/lucene-core-2.2.0.jar/META-INF/MANIFEST.MF
+
+Currently, I can only see upto the lucene jar file on the web. I hope my feature request is clear enough.
+
+Thanks,
+Hemang.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>10339</commentid>
+            <who name="Rob_C">rob1weld</who>
+            <bug_when>2008-08-17 09:22:45 +0000</bug_when>
+            <thetext>We need something like the 7Zip GUI. 
+
+7Zip can view the directory structure of most compressed archives and view compressed archives within other compressed archives. 
+
+On the WinXP platform you can &quot;Right-Click&quot; on any file to perform a number of different operations on the file - including opening the file with it&apos;s associated application.
+
+See screenshot here: http://www.7zip.com/util/1/7Zip
+
+It is available as GNU LGPL sourcecode.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>81034</commentid>
+            <who name="opengrok-user">a22489001-opengrok</who>
+            <bug_when>2011-02-09 11:43:42 +0000</bug_when>
+            <thetext>Hi,
+
+This is certainly a required feature, as alternative to opengrok offer this such as Koders.
+
+However, I would rather have a the contents appear in a similar fashion to jar files than to have some 7zip gui function again similar to koders.
+
+We currently have scripts to troll the src_root directory, unpack into specific directories within the tree and reindex.  This costs time and disk space.
+
+Thanks,
+K</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>81412</commentid>
+            <who name="opengrok-user">a22489001-opengrok</who>
+            <bug_when>2011-02-25 17:39:51 +0000</bug_when>
+            <thetext>Which file extensions would this be able to cover in theory?
+
+The most common ones?:
+.tar
+.tar.gz
+.tar.bz2
+.tgz
+.gzip
+.gz
+.bz2
+.zip
+
+- K</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>81448</commentid>
+            <who name="Hemang Lavana">HemangLavana</who>
+            <bug_when>2011-02-26 21:12:10 +0000</bug_when>
+            <thetext>Yes, and I would add support for .jar and .war files as well. Any other extensions that we have missed to list?</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>81449</commentid>
+            <who name="opengrok-user">a22489001-opengrok</who>
+            <bug_when>2011-02-27 00:10:24 +0000</bug_when>
+            <thetext>(In reply to comment #4)
+&gt; Yes, and I would add support for .jar and .war files as well. Any other
+&gt; extensions that we have missed to list?
+
+I can&apos;t think of any, although jar files should already be handled appropriately in 0.10 by the Jar archive analyser along with the JavaAnalyser.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>82761</commentid>
+            <who name="opengrok-user">a22489001-opengrok</who>
+            <bug_when>2011-05-08 09:37:22 +0000</bug_when>
+            <thetext>(In reply to comment #5)
+&gt; (In reply to comment #4)
+&gt; &gt; Yes, and I would add support for .jar and .war files as well. Any other
+&gt; &gt; extensions that we have missed to list?
+&gt; 
+&gt; I can&apos;t think of any, although jar files should already be handled
+&gt; appropriately in 0.10 by the Jar archive analyser along with the JavaAnalyser.
+
+will these feature be in 0.11?</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>83803</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2011-06-22 14:28:17 +0000</bug_when>
+            <thetext>I will eventually get rid of static top menu (make it optional and disabled by default)
+
+so next release will not have it (unless I will figure out a way how to do it 100% working - and with proper anchor jumping)</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>83804</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2011-06-22 14:28:58 +0000</bug_when>
+            <thetext>(In reply to comment #7)
+&gt; I will eventually get rid of static top menu (make it optional and disabled by
+&gt; default)
+&gt; 
+&gt; so next release will not have it (unless I will figure out a way how to do it
+&gt; 100% working - and with proper anchor jumping)
+
+ignore, wrong comment, wrong bug to update</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

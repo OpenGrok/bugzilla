@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>17480</bug_id>
+          
+          <creation_ts>2010-11-25 14:51:00 +0000</creation_ts>
+          <short_desc>tooltip in annotate needs to be improved(faster) and it has to be w3c valid</short_desc>
+          <delta_ts>2010-11-25 14:51:31 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>webapp</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>NEW</bug_status>
+          
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>minor</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Lubos Kosco">Lubos.Kosco</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>79539</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2010-11-25 14:51:31 +0000</bug_when>
+            <thetext>click on annotate of any file
+
+tooltip is just too slow - use e.g. hashmaps in js to make it faster
+also contents of tooltip are not encoded, hence not w3c valid (js hashmap would solve this too)</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>15636</bug_id>
+          
+          <creation_ts>2010-04-15 15:21:00 +0000</creation_ts>
+          <short_desc>wildcard search for definitions does not work</short_desc>
+          <delta_ts>2010-04-17 13:47:18 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>indexer</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXED</resolution>
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>normal</bug_severity>
+          <target_milestone>0.9</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Vladimir Kotal">vladimir.kotal</reporter>
+          <assigned_to name="Knut Anders Hatlen">knut.hatlen</assigned_to>
+          <cc>knut.hatlen</cc>
+    
+    <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>71449</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2010-04-15 15:21:55 +0000</bug_when>
+            <thetext>subject says it all but here&apos;s concrete example:
+
+http://src.opensolaris.org/source/search?q=&amp;defs=C_GetMech*&amp;refs=&amp;path=&amp;hist=&amp;project=%2Fonnv
+
+This is broken in 0.7 and also in 0.9 (so new Lucene did not help :))</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>71455</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2010-04-15 16:44:57 +0000</bug_when>
+            <thetext>It looks like we transform the query text to lower case, even though the symbol and definition searches are case-sensitive.
+
+See the error message:
+
+  Your search defs:c_getmech* did not match any files.
+
+We should have created the query text &quot;defs:C_GetMech*&quot;, not &quot;defs:c_getmech*&quot;.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>71566</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2010-04-16 20:52:09 +0000</bug_when>
+            <thetext>We should call this method on the QueryParser to prevent it from automatically lower-casing the query terms that contain wildcards:
+
+http://lucene.apache.org/java/3_0_1/api/core/org/apache/lucene/queryParser/QueryParser.html#setLowercaseExpandedTerms(boolean)
+
+However, changing this may mean that we need to lower-case the search terms manually for the fields that are case-insensitive.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>71595</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2010-04-17 09:47:52 +0000</bug_when>
+            <thetext>In addition to calling setLowercaseExpandedTerms(false), I think we need to extend the org.apache.lucene.queryParser.QueryParser class and override getFuzzyQuery(), getPrefixQuery(), getRangeQuery() and getWildcardQuery() to only lower-case search strings for the case-insensitive fields.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>71598</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2010-04-17 13:47:18 +0000</bug_when>
+            <thetext>changeset:   985:a4587ed38918</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

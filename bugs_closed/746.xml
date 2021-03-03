@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>746</bug_id>
+          
+          <creation_ts>2008-03-12 03:10:00 +0000</creation_ts>
+          <short_desc>SQLAnalyzer should make definitions and symbols searchable</short_desc>
+          <delta_ts>2008-09-05 15:35:50 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>analyzer</component>
+          <version>unspecified</version>
+          <rep_platform>Other</rep_platform>
+          <op_sys>Solaris</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXED</resolution>
+          
+          
+          
+          
+          
+          <priority>P4</priority>
+          <bug_severity>enhancement</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Knut Anders Hatlen">knut.hatlen</reporter>
+          <assigned_to name="Knut Anders Hatlen">knut.hatlen</assigned_to>
+          <cc>trond.norbye</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>2502</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2008-03-12 03:10:44 +0000</bug_when>
+            <thetext>Currently, SQLAnalyzer only provides syntax highlighting for SQL files. PlainAnalyzer is used to make the symbols searchable. Instead, we should create a custom symbol tokenizer like the other analyzers do. Definitions (reported by ctags) are ignored, both in the index and in the xref. We should add the definitions to the index and also handle them in the xref.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>11882</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2008-09-05 15:35:50 +0000</bug_when>
+            <thetext>Fixed in changeset 561:0aee73d204fc.</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

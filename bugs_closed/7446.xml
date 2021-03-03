@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>7446</bug_id>
+          
+          <creation_ts>2009-03-17 04:10:00 +0000</creation_ts>
+          <short_desc>urlPrefix is not respected in source view for refs- and defs-links</short_desc>
+          <delta_ts>2009-03-18 01:59:50 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>webapp</component>
+          <version>unspecified</version>
+          <rep_platform>SPARC/sun4u</rep_platform>
+          <op_sys>Solaris</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>INVALID</resolution>
+          
+          
+          
+          
+          
+          <priority>P5</priority>
+          <bug_severity>minor</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter>nada</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          <cc>Lubos.Kosco</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>31298</commentid>
+            <who name="">nada</who>
+            <bug_when>2009-03-17 04:10:46 +0000</bug_when>
+            <thetext>I have changed the name of my WAR file to grok.war and have a configuration file with following entry:
+
+==
+...
+  &lt;void property=&quot;urlPrefix&quot;&gt;
+   &lt;string&gt;/grok/s?&lt;/string&gt;
+  &lt;/void&gt;
+...
+==
+
+I did a re-index from scratch with that configuration and restarted my tomcat.
+
+In the all links for refs, defs on the source view are still pointing to &quot;source/s?...&quot; instead of &quot;grok/s?...&quot;
+
+The opengrok version is 0.7.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>31299</commentid>
+            <who name="">nada</who>
+            <bug_when>2009-03-17 04:17:35 +0000</bug_when>
+            <thetext>EDIT:
+
+&gt;In the all links for refs, defs on the source view are still pointing to
+&quot;source/s?...&quot; instead of &quot;grok/s?...&quot;
+
+should be:
+
+&gt;In the webapp all links for refs and defs on the source view pages are still pointing to
+&quot;source/s?...&quot; instead of &quot;grok/s?...&quot;</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>31303</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2009-03-17 04:59:33 +0000</bug_when>
+            <thetext>according to http://src.opensolaris.org/source/xref/opengrok/trunk/src/org/opensolaris/opengrok/index/CommandLineOptions.java#69
+
+look at line #89
+
+you need to specify -w to change the webapp context from default /source to something else when you do indexing (that&apos;s when the xrefs are generated)
+
+-w will fix your problem
+(if it will please close this bug, thanks)</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>31305</commentid>
+            <who name="Trond Norbye">trond.norbye</who>
+            <bug_when>2009-03-17 05:37:45 +0000</bug_when>
+            <thetext>Please note that you must remove all files in $DATA_ROOT before you regenerate your index database (opengrok use incremental updates and will not regenerate the files just because you changed the webapp context)</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>31441</commentid>
+            <who name="">nada</who>
+            <bug_when>2009-03-18 01:59:50 +0000</bug_when>
+            <thetext>Ok, I see the problem. I thought that these links were generated in the JSP - but they are part of the index.
+
+After clearing the DATA_ROOT the re-index worked as expected.
+
+The command line option is not really necessary because I read the configuration from the XML file.</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

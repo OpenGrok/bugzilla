@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>17977</bug_id>
+          
+          <creation_ts>2011-03-07 16:50:00 +0000</creation_ts>
+          <short_desc>Compiler errors For SingleTokenMatcher.java</short_desc>
+          <delta_ts>2011-03-08 03:29:23 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>build</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>INVALID</resolution>
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>minor</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Dana">ultimav</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          <cc>knut.hatlen</cc>
+    
+    <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>81605</commentid>
+            <who name="Dana">ultimav</who>
+            <bug_when>2011-03-07 16:50:50 +0000</bug_when>
+            <thetext>I couldn&apos;t select the version, but I was trying to build .10 in eclipse/Rational Developer 7.5
+
+Had to adjust the constructor on the SingleTokenMatcher.java class to get it to compile
+
+From 
+    public SingleTokenMatcher(String token ) {
+        this.mt = token;
+    }
+
+To
+    public SingleTokenMatcher(String token, boolean caseInsensitive) {
+        super(caseInsensitive);
+        this.mt = token;
+    }
+
+I thought it was a typo, and seemed to follow TokenSetMatcher and WildCardMatcher constructors..</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>81621</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2011-03-07 21:57:36 +0000</bug_when>
+            <thetext>Where did you get the sources from? There is no source file called SingleTokenMatcher.java in OpenGrok 0.10.
+
+The file was removed in the following changeset:
+
+changeset:   1137:9115366f0494
+user:        Knut Anders Hatlen &lt;knut.hatlen@oracle.com&gt;
+date:        Wed Dec 15 20:59:49 2010 +0100
+summary:     Remove SingleTokenMatcher (the same functionality is provided by TokenSetMatcher)</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>81630</commentid>
+            <who name="Dana">ultimav</who>
+            <bug_when>2011-03-08 03:29:23 +0000</bug_when>
+            <thetext>Again I apologize.. When i merged the .10 release code with .9 release to make sure any small customizations were not lost it looks like I missed obsolete files.. That file was one of them...</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

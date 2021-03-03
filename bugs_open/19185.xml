@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>19185</bug_id>
+          
+          <creation_ts>2012-02-23 15:52:00 +0000</creation_ts>
+          <short_desc>Out of memory exception on searching all projects</short_desc>
+          <delta_ts>2012-02-23 15:52:50 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>webapp</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>NEW</bug_status>
+          
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>normal</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Jan Paul">jan.paul</reporter>
+          <assigned_to name="Lubos Kosco">Lubos.Kosco</assigned_to>
+          <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>86296</commentid>
+            <who name="Jan Paul">jan.paul</who>
+            <bug_when>2012-02-23 15:52:50 +0000</bug_when>
+            <thetext>While performing search for mod_jk on all projects the page hung and after very long while gave following exception :
+
+There was an error!
+
+Java heap space
+
+java.lang.OutOfMemoryError: Java heap space
+	at org.apache.lucene.store.IndexInput.readString(IndexInput.java:123)
+	at org.apache.lucene.index.CompoundFileReader.&lt;init&gt;(CompoundFileReader.java:74)
+	at org.apache.lucene.index.SegmentReader$CoreReaders.&lt;init&gt;(SegmentReader.java:114)
+	at org.apache.lucene.index.SegmentReader.get(SegmentReader.java:590)
+	at org.apache.lucene.index.SegmentReader.get(SegmentReader.java:568)
+	at org.apache.lucene.index.DirectoryReader.&lt;init&gt;(DirectoryReader.java:105)
+	at org.apache.lucene.index.ReadOnlyDirectoryReader.&lt;init&gt;(ReadOnlyDirectoryReader.java:27)
+	at org.apache.lucene.index.DirectoryReader$1.doBody(DirectoryReader.java:75)
+	at org.apache.lucene.index.SegmentInfos$FindSegmentsFile.run(SegmentInfos.java:677)
+	at org.apache.lucene.index.DirectoryReader.open(DirectoryReader.java:69)
+	at org.apache.lucene.index.IndexReader.open(IndexReader.java:316)
+	at org.apache.lucene.index.IndexReader.open(IndexReader.java:202)
+	at org.apache.lucene.search.IndexSearcher.&lt;init&gt;(IndexSearcher.java:63)
+	at org.opensolaris.opengrok.web.SearchHelper.prepareExec(SearchHelper.java:189)
+	at org.apache.jsp.search_jsp._jspService(search_jsp.java:153)
+	at org.apache.jasper.runtime.HttpJspBase.service(HttpJspBase.java:70)
+	at javax.servlet.http.HttpServlet.service(HttpServlet.java:717)
+	at org.apache.jasper.servlet.JspServletWrapper.service(JspServletWrapper.java:388)
+	at org.apache.jasper.servlet.JspServlet.serviceJspFile(JspServlet.java:313)
+	at org.apache.jasper.servlet.JspServlet.service(JspServlet.java:260)
+	at javax.servlet.http.HttpServlet.service(HttpServlet.java:717)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:290)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:206)
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:233)
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:191)
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:127)
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:102)
+	at org.apache.catalina.valves.AccessLogValve.invoke(AccessLogValve.java:589)
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:109)
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:291)
+	at org.apache.coyote.http11.Http11Processor.process(Http11Processor.java:859)
+	at org.apache.coyote.http11.Http11Protocol$Http11ConnectionHandler.process(Http11Protocol.java:602)</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

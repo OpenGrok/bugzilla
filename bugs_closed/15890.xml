@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>15890</bug_id>
+          
+          <creation_ts>2010-05-06 10:31:00 +0000</creation_ts>
+          <short_desc>Missing anchor in xref</short_desc>
+          <delta_ts>2010-05-29 18:28:36 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>analyzer</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXED</resolution>
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>minor</bug_severity>
+          <target_milestone>0.10</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Knut Anders Hatlen">knut.hatlen</reporter>
+          <assigned_to name="Knut Anders Hatlen">knut.hatlen</assigned_to>
+          <cc>Lubos.Kosco</cc>
+    
+    <cc>milan.jurik</cc>
+    
+    <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>72622</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2010-05-06 10:31:07 +0000</bug_when>
+            <thetext>Look at line 215 in this file:
+
+http://src.opensolaris.org/source/xref/onnv/onnv-gate/usr/src/cmd/cmd-inet/usr.sbin/in.ftpd/ftpd.c
+
+int Send(FILE *sockfp, char *format,...);
+
+Click on &quot;Send&quot;, and you&apos;ll be sent to
+
+http://src.opensolaris.org/source/xref/onnv/onnv-gate/usr/src/cmd/cmd-inet/usr.sbin/in.ftpd/ftpd.c#Send
+
+But there&apos;s no anchor named Send in that file.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>72914</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2010-05-13 18:47:56 +0000</bug_when>
+            <thetext>There&apos;s a definition of Send on line 7902 (correctly recognized by the ctags process), but the xref gives it line number 7903. This discrepancy probably explains why the anchor isn&apos;t added. The line numbers are one off starting around line 6930:
+
+   6927 }
+   6928 
+   6929 /*
+   6931    **  SETPROCTITLE -- set process title for ps
+
+There&apos;s a form feed character on line 6928. That might be a clue...</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>72916</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2010-05-13 19:37:09 +0000</bug_when>
+            <thetext>Yes, the form feed was indeed the problem. JFlex increases the line number when it sees a form feed. I don&apos;t know of a way to turn that off, but we can turn off line counting in JFlex altogether and keep track of the line number manually. This should be simple, since we already have code to print the line number for each new line. According to the JFlex user&apos;s manual, keeping track of the line number manually should also make the scanner faster. We&apos;ll have to make the change in all the Xref classes.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>73684</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2010-05-29 18:20:03 +0000</bug_when>
+            <thetext>changeset:   1020:c0c5e5e289a0</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

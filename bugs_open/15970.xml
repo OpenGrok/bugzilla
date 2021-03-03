@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>15970</bug_id>
+          
+          <creation_ts>2010-05-14 13:08:00 +0000</creation_ts>
+          <short_desc>Fortran is a case insensitive language</short_desc>
+          <delta_ts>2011-07-20 14:44:21 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>webapp</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>NEW</bug_status>
+          
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>minor</bug_severity>
+          <target_milestone>---</target_milestone>
+          <dependson>16444</dependson>
+          <blocked>15736</blocked>
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="njts">njts</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          <cc>cthart</cc>
+    
+    <cc>Lubos.Kosco</cc>
+    
+    <cc>opengrok-dev</cc>
+    
+    <cc>skywalker</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>72958</commentid>
+            <who name="njts">njts</who>
+            <bug_when>2010-05-14 13:08:15 +0000</bug_when>
+            <thetext>Fortran source code HTML view should recognize also uppercase keywords (like CALL, IF, INTEGER, etc...). Now uppercase keywords are shown as links to definition search. 
+
+Also the symbol and definition search for Fortran files should be case insensitive. Now it doesn&apos;t find function names which are defined in uppercase and searched in lowercase. This is a problem if the function is used somewhere in lowercase and the link from the source code view doesn&apos;t find the definition.
+
+Tested on OpenGrok 0.9 RC1 and Windows 7 64 bit.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>75033</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2010-07-02 11:41:56 +0000</bug_when>
+            <thetext>can you please point me to a lexical analysis(definition) of fortran?
+
+I&apos;ll adjust the fortran lexical analyzer we have in opengrok according to that
+
+for case sensitive/insensitive search I added a dependency bug</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>84433</commentid>
+            <who name="Charles T Hart">cthart</who>
+            <bug_when>2011-07-20 14:44:21 +0000</bug_when>
+            <thetext>Fortran is wholly case insensitive language and &quot;white space free&quot; to boot.  If you&apos;re the sun, ibm or gcc compiler, you would be down casing all the symbols and adding a &quot;_&quot; at the end of them.  For instance:
+      S ubRotin E  SM
+C An annoying comment in the middle of things that messes up lexers sometimes
+     +  ith
+
+Is the start of a subroutine named &quot;smith_&quot;.
+
+For more than you ever wanted to know about &quot;Sale&apos;s Algorithm&quot; for lexing fortran files, see some of the following:
+
+http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.50.8362&amp;rep=rep1&amp;type=pdf
+
+Google returns other results too, but section 2.2.1 of that paper and its appendix A tells you pretty much everything you need to know.
+
+-CTH</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

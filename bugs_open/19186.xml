@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>19186</bug_id>
+          
+          <creation_ts>2012-03-02 13:59:00 +0000</creation_ts>
+          <short_desc>Failed to create EftarFileReader</short_desc>
+          <delta_ts>2012-04-16 03:23:18 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>misc</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>Linux</op_sys>
+          <bug_status>NEW</bug_status>
+          
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>minor</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Runit Garg">runit.garg</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          <cc>jel+osbugs</cc>
+    
+    <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>86297</commentid>
+            <who name="Runit Garg">runit.garg</who>
+            <bug_when>2012-03-02 13:59:09 +0000</bug_when>
+            <thetext>I have setup opengrok 0.11. I am able fire search and get results. When I try to open the file, the file partially opens and I get this error.
+
+org.opensolaris.opengrok.web.PageConfig getEftarReader
+INFO: Failed to create EftarFileReader:
+java.io.FileNotFoundException: /home/gargru/droogle/index/index/dtags.eftar (No such file or directory)
+        at java.io.RandomAccessFile.open(Native Method)
+        at java.io.RandomAccessFile.&lt;init&gt;(RandomAccessFile.java:212)
+        at java.io.RandomAccessFile.&lt;init&gt;(RandomAccessFile.java:98)
+        at org.opensolaris.opengrok.web.EftarFileReader.&lt;init&gt;(EftarFileReader.java:138)
+        at org.opensolaris.opengrok.web.PageConfig.getEftarReader(PageConfig.java:477)
+        at org.opensolaris.opengrok.web.PageConfig.getDefineTagsIndex(PageConfig.java:494)
+        at org.apache.jsp.list_jsp._jspService(list_jsp.java:280)
+        at org.apache.jasper.runtime.HttpJspBase.service(HttpJspBase.java:70)
+        at javax.servlet.http.HttpServlet.service(HttpServlet.java:803)
+        at org.apache.jasper.servlet.JspServletWrapper.service(JspServletWrapper.java:393)
+        at org.apache.jasper.servlet.JspServlet.serviceJspFile(JspServlet.java:320)
+        at org.apache.jasper.servlet.JspServlet.service(JspServlet.java:266)
+        at javax.servlet.http.HttpServlet.service(HttpServlet.java:803)
+        at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:290)
+        at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:206)
+        at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:233)
+        at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:175)
+        at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:525)
+        at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:128)
+        at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:102)
+        at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:109)
+        at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:263)
+        at org.apache.coyote.http11.Http11Processor.process(Http11Processor.java:844)
+        at org.apache.coyote.http11.Http11Protocol$Http11ConnectionHandler.process(Http11Protocol.java:584)
+        at org.apache.tomcat.util.net.JIoEndpoint$Worker.run(JIoEndpoint.java:447)
+        at java.lang.Thread.run(Thread.java:662)
+
+Please let me know if there is solution for this problems.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86409</commentid>
+            <who name="Jens Elkner">jel+osbugs</who>
+            <bug_when>2012-04-16 03:23:18 +0000</bug_when>
+            <thetext>see http://defect.opensolaris.org/bz/show_bug.cgi?id=19199</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

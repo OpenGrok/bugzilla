@@ -1,0 +1,16 @@
+--- opengrok-0.9-src/src/org/opensolaris/opengrok/history/SubversionRepository.java     2010-07-06 14:18:18.000000000 +0100
++++ orig/opengrok-0.9-src/src/org/opensolaris/opengrok/history/SubversionRepository.java        2010-05-11 10:12:43.000000000 +0100
+@@ -145,11 +145,6 @@
+             filename = abs.substring(directoryName.length() + 1);
+         }
+
+-       if(filename.contains("@"))
+-        {
+-            filename = filename + "@";
+-        }
+-
+         List<String> cmd = new ArrayList<String>();
+         cmd.add(getCommand());
+         cmd.add("log");
+
+

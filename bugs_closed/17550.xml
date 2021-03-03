@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>17550</bug_id>
+          
+          <creation_ts>2010-12-06 07:54:00 +0000</creation_ts>
+          <short_desc>Malformed search for query with national chars</short_desc>
+          <delta_ts>2010-12-21 22:39:26 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>webapp</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXED</resolution>
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>minor</bug_severity>
+          <target_milestone>0.10</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Miroslav Osladil">mira</reporter>
+          <assigned_to name="Knut Anders Hatlen">knut.hatlen</assigned_to>
+          <cc>knut.hatlen</cc>
+    
+    <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>79760</commentid>
+            <who name="Miroslav Osladil">mira</who>
+            <bug_when>2010-12-06 07:54:35 +0000</bug_when>
+            <thetext>Steps to reproduce:
+1. Search for a query with a national chars, e.g. &quot;Ľuboš Koščo&quot;
+
+Expected result:
+All occurrences have been found.
+
+Actual result:
+Malformed &quot;Ä½uboÅ¡ KoÅ¡Äo&quot;, search did not match any files.
+
+Used software:
+OpenGrok 0.10-rc, Apache Tomcat 6.0.29, Sun Java 6 1.6.0_20-b02, Debian GNU/Linux 5.0</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>79761</commentid>
+            <who name="Miroslav Osladil">mira</who>
+            <bug_when>2010-12-06 07:55:06 +0000</bug_when>
+            <thetext>Typo correction in summary.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>80058</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2010-12-21 22:39:26 +0000</bug_when>
+            <thetext>Fixed in changeset:   1143:5b681015131e
+
+The analyzers don&apos;t actually store national characters in the indexes, so you may not always get the results you expect, but at least the query shouldn&apos;t be malformed now.</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<java version="1.6.0_21" class="java.beans.XMLDecoder"> 
+ <object class="org.opensolaris.opengrok.configuration.Configuration"> 
+  <void property="allowLeadingWildcard"> 
+   <boolean>true</boolean> 
+  </void> 
+  <void property="ctags"> 
+   <string>/usr/bin/exctags</string> 
+  </void> 
+  <void property="dataRoot"> 
+   <string>/var/opengrok/data</string> 
+  </void> 
+  <void property="projects"> 
+   <void method="add"> 
+    <object class="org.opensolaris.opengrok.configuration.Project"> 
+     <void property="description"> 
+      <string>build-scripts</string> 
+     </void> 
+     <void property="path"> 
+      <string>/build-scripts</string> 
+     </void> 
+    </object> 
+   </void> 
+   <void method="add"> 
+    <object class="org.opensolaris.opengrok.configuration.Project"> 
+     <void property="description"> 
+      <string>spec-files-extra</string> 
+     </void> 
+     <void property="path"> 
+      <string>/spec-files-extra</string> 
+     </void> 
+    </object> 
+   </void> 
+  </void> 
+  <void property="remoteScmSupported"> 
+   <boolean>true</boolean> 
+  </void> 
+  <void property="repositories"> 
+   <void method="add"> 
+    <object class="org.opensolaris.opengrok.history.RepositoryInfo"> 
+     <void property="datePattern"> 
+      <string>yyyy-MM-dd&apos;T&apos;HH:mm:ss.SSS&apos;Z&apos;</string> 
+     </void> 
+     <void property="directoryName"> 
+      <string>/var/opengrok/source/spec-files-extra</string> 
+     </void> 
+     <void property="remote"> 
+      <boolean>true</boolean> 
+     </void> 
+     <void property="type"> 
+      <string>Subversion</string> 
+     </void> 
+     <void property="working"> 
+      <boolean>true</boolean> 
+     </void> 
+    </object> 
+   </void> 
+   <void method="add"> 
+    <object class="org.opensolaris.opengrok.history.RepositoryInfo"> 
+     <void property="datePattern"> 
+      <string>yyyy-MM-dd hh:mm ZZZZ</string> 
+     </void> 
+     <void property="directoryName"> 
+      <string>/var/opengrok/source/build-scripts</string> 
+     </void> 
+     <void property="type"> 
+      <string>Mercurial</string> 
+     </void> 
+     <void property="working"> 
+      <boolean>true</boolean> 
+     </void> 
+    </object> 
+   </void> 
+  </void> 
+  <void property="sourceRoot"> 
+   <string>/var/opengrok/source</string> 
+  </void> 
+ </object> 
+</java> 

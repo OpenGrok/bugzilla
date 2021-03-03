@@ -1,0 +1,354 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>10276</bug_id>
+          
+          <creation_ts>2009-07-26 22:17:00 +0000</creation_ts>
+          <short_desc>History and Annotate links are coming as disabled</short_desc>
+          <delta_ts>2009-07-27 02:14:40 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>webapp</component>
+          <version>unspecified</version>
+          <rep_platform>i86pc/i386</rep_platform>
+          <op_sys>Solaris</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXED</resolution>
+          
+          
+          
+          
+          
+          <priority>P1</priority>
+          <bug_severity>normal</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Harshit">guntasg</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          <cc>Lubos.Kosco</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>45014</commentid>
+            <who name="Harshit">guntasg</who>
+            <bug_when>2009-07-26 22:17:16 +0000</bug_when>
+            <thetext>Hi,
+
+I just downloaded the latest opengrok (0.7). Checked out the code from the CVS and placed it under the SRC_ROOT directory. Ran the indexer to populate the DATA_ROOT directory.
+
+But when I deploy source.war (after modifying its web.xml to point to correct DATA_ROOT and SRC_ROOT) and move a particular file then the page shows the &quot;History&quot; and &quot;Annotate&quot; links as disabled.
+
+The History link was supposed to provide the cool diffs (m a big fan of that !) http://src.opensolaris.org/source/history/opengrok/trunk/src/org/opensolaris/opengrok/management/oga.properties and the &apos;Annotate&apos; link is supposed to provide the details that who last edited a particular line and in what revision.
+
+Please let me know if I missed something in the steps. And also note that this was a fresh checkout from the repository, but each folder has &apos;cvs&apos; folder inside it which is supposed to carry all the cvs meta-information.
+
+Thanks in advance,
+Guntas
+
+[Please check the attached screenshot]</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>45016</commentid>
+              <attachid>2315</attachid>
+            <who name="Harshit">guntasg</who>
+            <bug_when>2009-07-26 22:18:51 +0000</bug_when>
+            <thetext>Created attachment 2315
+Screenshot of the disabled History and Annotate link</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>45026</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2009-07-26 23:48:55 +0000</bug_when>
+            <thetext>Can you try this:
+
+http://blogs.sun.com/trond/entry/using_cvs_with_opengrok
+
+also note, that cvs has to be in the path of web container, otherwise you need to explicitly provide it to indexer so it will get to config.xml:
+http://src.opensolaris.org/source/xref/opengrok/trunk/OpenGrok#147
+
+thanks
+L</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>45056</commentid>
+            <who name="Harshit">guntasg</who>
+            <bug_when>2009-07-27 02:09:23 +0000</bug_when>
+            <thetext>(In reply to comment #2)
+&gt; Can you try this:
+&gt; 
+&gt; http://blogs.sun.com/trond/entry/using_cvs_with_opengrok
+&gt; 
+&gt; also note, that cvs has to be in the path of web container, otherwise you need
+&gt; to explicitly provide it to indexer so it will get to config.xml:
+&gt; http://src.opensolaris.org/source/xref/opengrok/trunk/OpenGrok#147
+&gt; 
+&gt; thanks
+&gt; L
+
+Thanks Lubos. The problem is not with the path but rather inability of the OpenGrok (0.7) to connect to remote CVS repositories. I read that this has been fixed in 0.7+ but the release is pending. For the time being I have installed opengrok so that repository is available locally.
+
+And secondly, the diffs which OpenGrok is showing are reverse. Say in &apos;Revision2&apos;f a file you added some method in a file which was not there in &apos;Revision1&apos;. OpenGrok is showing me that what should be *deleted* in &apos;Revision2&apos; of the file to get &apos;Revision1&apos;!! And also, it marking the latest revision as &apos;Old&apos; and the oldest as &apos;New&apos; while showing the tabs.
+
+Refer to this http://cvs.opensolaris.org/source/diff/opengrok/trunk/src/org/opensolaris/opengrok/management/AgentIndexRunner.java?r1=%252Fopengrok%252Ftrunk%252Fsrc%252Forg%252Fopensolaris%252Fopengrok%252Fmanagement%252FAgentIndexRunner.java%40654%3Ae5c593bd885e&amp;r2=%252Fopengrok%252Ftrunk%252Fsrc%252Forg%252Fopensolaris%252Fopengrok%252Fmanagement%252FAgentIndexRunner.java%40639%3A637aeb8fec5e to get an idea.
+
+- Is this expected?
+- How can I get the diff in such a way that it shows me that what should be *added* in &apos;Revision1&apos; to get the &apos;Revision2&apos;?
+
+Thanks,
+Guntas</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>45058</commentid>
+            <who name="Harshit">guntasg</who>
+            <bug_when>2009-07-27 02:14:40 +0000</bug_when>
+            <thetext>(In reply to comment #3)
+&gt; (In reply to comment #2)
+&gt; &gt; Can you try this:
+&gt; &gt; 
+&gt; &gt; http://blogs.sun.com/trond/entry/using_cvs_with_opengrok
+&gt; &gt; 
+&gt; &gt; also note, that cvs has to be in the path of web container, otherwise you need
+&gt; &gt; to explicitly provide it to indexer so it will get to config.xml:
+&gt; &gt; http://src.opensolaris.org/source/xref/opengrok/trunk/OpenGrok#147
+&gt; &gt; 
+&gt; &gt; thanks
+&gt; &gt; L
+&gt; 
+&gt; Thanks Lubos. The problem is not with the path but rather inability of the
+&gt; OpenGrok (0.7) to connect to remote CVS repositories. I read that this has been
+&gt; fixed in 0.7+ but the release is pending. For the time being I have installed
+&gt; opengrok so that repository is available locally.
+&gt; 
+&gt; And secondly, the diffs which OpenGrok is showing are reverse. Say in
+&gt; &apos;Revision2&apos;f a file you added some method in a file which was not there in
+&gt; &apos;Revision1&apos;. OpenGrok is showing me that what should be *deleted* in
+&gt; &apos;Revision2&apos; of the file to get &apos;Revision1&apos;!! And also, it marking the latest
+&gt; revision as &apos;Old&apos; and the oldest as &apos;New&apos; while showing the tabs.
+&gt; 
+&gt; Refer to this
+&gt; http://cvs.opensolaris.org/source/diff/opengrok/trunk/src/org/opensolaris/opengrok/management/AgentIndexRunner.java?r1=%252Fopengrok%252Ftrunk%252Fsrc%252Forg%252Fopensolaris%252Fopengrok%252Fmanagement%252FAgentIndexRunner.java%40654%3Ae5c593bd885e&amp;r2=%252Fopengrok%252Ftrunk%252Fsrc%252Forg%252Fopensolaris%252Fopengrok%252Fmanagement%252FAgentIndexRunner.java%40639%3A637aeb8fec5e
+&gt; to get an idea.
+&gt; 
+&gt; - Is this expected?
+&gt; - How can I get the diff in such a way that it shows me that what should be
+&gt; *added* in &apos;Revision1&apos; to get the &apos;Revision2&apos;?
+&gt; 
+&gt; Thanks,
+&gt; Guntas
+
+Ohhh.. my bad :-)
+Found that I was selecting the files to be diff in such a way that newest was selected first and then the oldest one.
+
+Sorry for the confusion.
+
+Thanks,
+Guntas</thetext>
+          </long_desc>
+      
+          <attachment
+              isobsolete="0"
+              ispatch="0"
+              isprivate="0"
+              isurl="0"
+          >
+            <attachid>2315</attachid>
+            <date>2009-07-26 22:18:00 +0000</date>
+            <delta_ts>2009-07-26 22:18:51 +0000</delta_ts>
+            <desc>Screenshot of the disabled History and Annotate link</desc>
+            <filename>opengrok.JPG</filename>
+            <type>image/jpeg</type>
+            <size>9381</size>
+            <attacher>guntasg</attacher>
+            
+              <data encoding="base64">/9j/4AAQSkZJRgABAQEAYABgAAD/2wBDAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0a
+HBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDL/2wBDAQkJCQwLDBgNDRgyIRwhMjIyMjIy
+MjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjL/wAARCAAmBFcDASIA
+AhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQA
+AAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3
+ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWm
+p6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEA
+AwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSEx
+BhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElK
+U1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3
+uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwD3q5uE
+tbdpnDFVxkL15OKzv+EgtP8AnnN/3yP8a1HRJEKOqsp6hhkGovsVp/z6w/8AfsVxYiGKlK9GaS81
+fU2pypJe+m2UP+EgtP8AnnN/3yP8aP8AhILT/nnN/wB8j/Gr/wBitP8An1h/79ij7Faf8+sP/fsV
+h7LMf+fkfuL5sP8Ayv7yh/wkFp/zzm/75H+NH/CQWn/POb/vkf41f+xWn/PrD/37FH2K0/59Yf8A
+v2KPZZj/AM/I/cHNh/5X95Q/4SC0/wCec3/fI/xo/wCEgtP+ec3/AHyP8av/AGK0/wCfWH/v2KPs
+Vp/z6w/9+xR7LMf+fkfuDmw/8r+8of8ACQWn/POb/vkf40f8JBaf885v++R/jV/7Faf8+sP/AH7F
+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
+2dh+Zd+E6TUdM+332k3PneX/AGfdtc7dufMzDLFtznj/AFuc8/dx3yM//hGP+JH/AGb9s/5iv9pe
+Z5X/AE+/atmM/wDAM598dqAIfHXiW78K+Hf7Qs7NLiRp44S8xIit1Y8yyFQTsXvgZ5FYFj8RL628
+Da1r+sQaVcDTVHlXOl3gkt7tmwAoyS6EMQpDDuCM113iPRZtc0wW1tqt5pdxHKs0Vzavghl7MvR0
+OeVPBrnLD4Z2o0LXrDWNRl1K51wILy5EKQjKLhCkajapXrnByQM5xQBz3h34uz6zpXiUFtJuL/TN
+Ll1G3ksxOIXChvkZZVRsqdmSODu4xWtbeMvE8Hg3TPFGrWmkRWVxLaPMsDSEpbSgB5CTgKQWVscg
+LkEk8jSg8FapJo2t2Wr+LL3U59SsnsY5JYlSO3RlYBhEpAZ/m5Y8nA6VrReGLf8A4QSHwrdS+fAu
+nLYPLt27wIwm7GeOmcZ49aAOE+IPiaTUPBHjhpLCxvNI025trOFJTJieUSRmUsyOpwrMAApHKnJP
+StzWvFXie58Tano3hDTtMupNHihlvvt0ro0jSBmWKPGAGKgHcxxzzS3Pw2Sf4Vy+Cl1Vw8xV5dQe
+Eu0knnCVnKlu5GPvd+9WNc8C3Woa7daro/iO80STUIkh1EWsKMbhUBClWPKOA2Nw5wBQBi+PPihN
+4UudKsFTT7G+urUXdwNSaV1hGQPLxArksTvG77o2967Twn4hi8VeFdO1yGMRrdxb2jDbtjAkMue+
+GBH4Vl694Ln1DULLVNH1250jVbW2NmbsQpcGaAkEq4fqcjIOeCSea6HSrD+y9KtbE3VzdmCMIbi6
+kMkshHVmY9SaALlFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUU
+UAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQ
+AUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFAB
+RRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFIqhVCqAFAwAOgoooAWiiigAooooAKKKKA
+CiiigAooooAKKKKACiiigAooooAKQIocuFG4gAtjkgZwP1P50UUAVf7K07/nwtf+/K/4Uf2Vp3/P
+ha/9+V/woop3YrIP7K07/nwtf+/K/wCFH9lad/z4Wv8A35X/AAooouwsg/srTv8Anwtf+/K/4Uf2
+Vp3/AD4Wv/flf8KKKLsLIP7K07/nwtf+/K/4VaRFjRURQqqMBQMAD0oopXHYWiiigAooooAKKKKA
+CiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAK
+KKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAoo
+ooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKAP//Z
+</data>
+
+          </attachment>
+      
+
+    </bug>
+
+</bugzilla>

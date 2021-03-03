@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>19142</bug_id>
+          
+          <creation_ts>2012-01-19 10:49:00 +0000</creation_ts>
+          <short_desc>allow searches according to file type</short_desc>
+          <delta_ts>2012-01-19 11:55:48 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>webapp</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>NEW</bug_status>
+          
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>enhancement</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Vladimir Kotal">vladimir.kotal</reporter>
+          <assigned_to name="Lubos Kosco">Lubos.Kosco</assigned_to>
+          <cc>konrad.karczewski</cc>
+    
+    <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>86086</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2012-01-19 10:49:46 +0000</bug_when>
+            <thetext>It would be nice to be able to constrain searches not only by file name or path but also by file type. E.g. I&apos;d like to be able to search only files containing C source code.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86088</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2012-01-19 11:01:15 +0000</bug_when>
+            <thetext>This could actually be killer feature. We can have a extra selector in the main form with a menu listing all file types known to OpenGrok (similar to the project selector) so multiple file types can be selected.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86089</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2012-01-19 11:25:24 +0000</bug_when>
+            <thetext>workaround is to put the extension to the path input box
+
+I agree it would be cool to have a selector of all supported extensions (this would make the current analyzers more obvious - in terms of supported searching)</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86090</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2012-01-19 11:27:49 +0000</bug_when>
+            <thetext>so having a list of analyzers as a limiter
+and some field showing what analyzer was used for which file could be a nice limiter
+
+e.g. search only in C sources, or java sources, ...
+
+afaik kroogle has it for a long time already</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

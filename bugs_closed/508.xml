@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>508</bug_id>
+          
+          <creation_ts>2008-02-11 02:54:00 +0000</creation_ts>
+          <short_desc>Accent problems in xref</short_desc>
+          <delta_ts>2008-02-13 01:07:49 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>analyzer</component>
+          <version>unspecified</version>
+          <rep_platform>i86pc/i386</rep_platform>
+          <op_sys>Linux</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>DUPLICATE</resolution>
+          <dup_id>437</dup_id>
+          
+          
+          
+          
+          <priority>P4</priority>
+          <bug_severity>normal</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Matthieu FEREYRE">matthieu.fereyre</reporter>
+          <assigned_to name="Knut Anders Hatlen">knut.hatlen</assigned_to>
+          <cc>knut.hatlen</cc>
+    
+    <cc>roland.mainz</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>1514</commentid>
+            <who name="Matthieu FEREYRE">matthieu.fereyre</who>
+            <bug_when>2008-02-11 02:54:44 +0000</bug_when>
+            <thetext>I am using Linux Red hat 9, Opengrok 0.5, ctags 5.7, tomcat 6.0.14, java jdk 6u2, Apache 1.3 and mod_jk 1.2.26.
+I use opengrok on C/C++/C#/Perl files with french comments in them, so
+there is accents.
+
+When I browse the files with xref and open one wich contains accents,
+the accentuated character is just suppressed. The character is just not present in the HTML source.
+
+But when you download the file, it is fine.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>1516</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2008-02-11 06:15:59 +0000</bug_when>
+            <thetext>I think this may be fixed by going through the *Xref.lex files and replace
+
+ .	{ }
+
+with
+
+ . {
+      char c = yycharat(0);
+      if (!Character.isISOControl(c)) {
+          out.append(&quot;&amp;#&quot;).append((int) c).append(&apos;;&apos;);
+      }
+   }</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>1539</commentid>
+            <who name="Roland Mainz">roland.mainz</who>
+            <bug_when>2008-02-12 12:09:13 +0000</bug_when>
+            <thetext>AFAIK this bug is a duplicate of bug #437 (&quot;RFE: OpenGrok should support source files with multibyte characters (e.g. japanese etc.)&quot;) - see the description there about further issues with detecting the encoding of a source file...</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>1617</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2008-02-13 01:07:49 +0000</bug_when>
+            <thetext>You&apos;re right, those bugs seem to describe the same problem.
+
+I think the solution I sketched above is roughly equivalent to
+
+&gt; 3. If no specific information is available use the character encoding of the
+&gt; systems current default locale
+
+mentioned in bug #437.
+
+*** This bug has been marked as a duplicate of bug 437 ***</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

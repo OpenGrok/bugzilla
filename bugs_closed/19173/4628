@@ -1,0 +1,57 @@
+# HG changeset patch
+# User jel+opengrok@cs.uni-magdeburg.de
+# Date 1329181589 -3600
+# Node ID 5c3aa4689e5c5581e6a9373eaee227ac6675ede6
+# Parent  1f51a59fda801a5e753e998a8d2ba507e6273a70
+remove "ghost" option x handling
+
+diff -r 1f51a59fda80 -r 5c3aa4689e5c src/org/opensolaris/opengrok/index/Indexer.java
+--- a/src/org/opensolaris/opengrok/index/Indexer.java	Mon Feb 13 06:44:50 2012 +0100
++++ b/src/org/opensolaris/opengrok/index/Indexer.java	Tue Feb 14 02:06:29 2012 +0100
+@@ -145,11 +145,6 @@
+                 getopt.reset();
+                 while ((cmd = getopt.getOpt()) != -1) {
+                     switch (cmd) {
+-                        case 'x':
+-                            createDict = true;
+-                            runIndex = false;
+-                            break;
+-
+                         case 'q':
+                             cfg.setVerbose(false);
+                             OpenGrokLogger.setOGConsoleLogLevel(Level.WARNING);
+@@ -552,7 +547,7 @@
+             long start = System.currentTimeMillis();
+             HistoryGuru.getInstance().addRepositories(env.getSourceRootPath());
+             long time = (System.currentTimeMillis() - start) / 1000;
+-            log.log(Level.INFO, "Done scanning for repositories {0}s", time);
++            log.log(Level.INFO, "Done ({0}s)", time);
+             if (listRepoPathes || !zapCache.isEmpty()) {
+                 List<RepositoryInfo> repos = env.getRepositories();
+                 String prefix =  env.getSourceRootPath();
+@@ -688,7 +683,7 @@
+             IndexChangedListener progress)
+             throws IOException {
+         RuntimeEnvironment env = RuntimeEnvironment.getInstance().register();
+-        log.info("Starting indexing ...");
++        log.info("Start indexing ...");
+ 
+         ExecutorService executor = Executors.newFixedThreadPool(noThreads);
+ 
+@@ -762,6 +757,7 @@
+                 log.log(Level.FINE, "doIndexerExecution", exp);
+             }
+        }
++       log.info("Done.");
+     }
+ 
+     public void sendToConfigHost(RuntimeEnvironment env, String configHost) {
+@@ -787,7 +783,7 @@
+                 sb.setLength(sb.length()-2);
+                 log.warning(sb.toString());
+             }
+-            log.info("Configuration update routine done, check log output for errors.");
++            log.info("Done.");
+         }
+     }
+ 

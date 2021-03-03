@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>17609</bug_id>
+          
+          <creation_ts>2010-12-15 22:40:00 +0000</creation_ts>
+          <short_desc>path assumptions &amp; binary names used by installer script need modifications.</short_desc>
+          <delta_ts>2011-01-06 09:33:14 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>misc</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>Linux</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXINSOURCE</resolution>
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>minor</bug_severity>
+          <target_milestone>0.11</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Anish Bhatt">anish.7</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          <cc>knut.hatlen</cc>
+    
+    <cc>Lubos.Kosco</cc>
+    
+    <cc>opengrok-dev</cc>
+    
+    <cc>trond.norbye</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>79986</commentid>
+            <who name="Anish Bhatt">anish.7</who>
+            <bug_when>2010-12-15 22:40:14 +0000</bug_when>
+            <thetext>The opengrok script assumes the path /var/lib/tomcat5.5 &amp; the binary name ctags-exuberant for ctags. on RHEL, this is /var/lib/tomcat5 &amp; &apos;ctags&apos;. Most linux distros have ctags, not ctags-exuberant and the installer script needs to handle these cases</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>80281</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2011-01-05 08:37:04 +0000</bug_when>
+            <thetext>Resetting target milestone since this won&apos;t make it into 0.10.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>80324</commentid>
+            <who name="Trond Norbye">trond.norbye</who>
+            <bug_when>2011-01-06 09:33:14 +0000</bug_when>
+            <thetext>1155:0d4b219e7716</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>13529</bug_id>
+          
+          <creation_ts>2009-12-21 16:27:00 +0000</creation_ts>
+          <short_desc>listing of a file (in xref) might take a LONG time</short_desc>
+          <delta_ts>2009-12-22 12:58:58 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>webapp</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXED</resolution>
+          
+          
+          
+          
+          
+          <priority>P2</priority>
+          <bug_severity>major</bug_severity>
+          <target_milestone>0.9</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Lubos Kosco">Lubos.Kosco</reporter>
+          <assigned_to name="Lubos Kosco">Lubos.Kosco</assigned_to>
+          <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>60542</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2009-12-21 16:27:42 +0000</bug_when>
+            <thetext>happens because of http://src.opensolaris.org/source/xref/opengrok/trunk/web/mast.jsp#152
+
+seems annotate tooltip check is done always, which is a bug :(
+
+I will add a check which will append this part of code ONLY when annotate mode is turned on ...</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>60637</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2009-12-22 12:58:58 +0000</bug_when>
+            <thetext>fixed in 
+changeset:   925:63bdbfe0c804</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>3077</bug_id>
+          
+          <creation_ts>2008-08-26 02:34:00 +0000</creation_ts>
+          <short_desc>Project not added to configuration</short_desc>
+          <delta_ts>2008-08-26 14:09:26 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>indexer</component>
+          <version>unspecified</version>
+          <rep_platform>Other</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXED</resolution>
+          
+          
+          
+          
+          
+          <priority>P2</priority>
+          <bug_severity>major</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Knut Anders Hatlen">knut.hatlen</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          <cc>jorgen.austvik</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>11098</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2008-08-26 02:34:42 +0000</bug_when>
+            <thetext>Saw this error when running the indexer:
+
+---
+Writing configuration to conf/config.xml
+java.lang.InstantiationException: org.opensolaris.opengrok.configuration.Project
+Continuing ...
+java.lang.Exception: XMLEncoder: discarding statement ArrayList.add(Project);
+Continuing ...
+Done...
+---
+
+Probably a missing empty constructor in the Project class preventing the Project instances from being serialized (regression caused by changeset 458:45fed3f31990?). When I try to search the code with the webapp, I&apos;m told that the index database cannot be found.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>11099</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2008-08-26 02:37:39 +0000</bug_when>
+            <thetext>We should add back the empty constructors that are needed for serialization/deserialization. If PMD complains that they are unused, we should add @SuppressWarnings and a comment saying that this constructor is needed for serialization.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>11146</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2008-08-26 14:09:26 +0000</bug_when>
+            <thetext>Fixed in changeset 479:8efb65d0b8da.</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

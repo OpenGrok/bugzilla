@@ -1,0 +1,684 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>10424</bug_id>
+          
+          <creation_ts>2009-08-02 23:21:00 +0000</creation_ts>
+          <short_desc>OpenGrok processes not getting completed.</short_desc>
+          <delta_ts>2009-08-12 03:03:28 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>indexer</component>
+          <version>unspecified</version>
+          <rep_platform>i86pc/i386</rep_platform>
+          <op_sys>Solaris</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>INVALID</resolution>
+          
+          
+          
+          
+          
+          <priority>P2</priority>
+          <bug_severity>major</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Harshit">guntasg</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          <cc>knut.hatlen</cc>
+    
+    <cc>Lubos.Kosco</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>45649</commentid>
+            <who name="Harshit">guntasg</who>
+            <bug_when>2009-08-02 23:21:45 +0000</bug_when>
+            <thetext>Hi, 
+
+I have daily cron job which does the following things:
+1. cvs update the ${SRC_ROOT}
+2. Run the indexer: java -jar ${PROGDIR}/opengrok.jar -S -W ${PROGDIR}/opengrok-configuration.xml -c ${EXUB_CTAGS} -s ${SRC_ROOT} -d ${DATA_ROOT} -P -v
+3. Pushes the new configuration to the web app: java -jar ${PROGDIR}/opengrok.jar -U ${WEBAPP_URL} -R ${PROGDIR}/opengrok-configuration.xml -n
+
+But I am seeing that the opengrok processes are never getting terminated. Please see the process details of the user (&quot;my_user&quot;) using which the cron job is started.
+=============PROCESS DETAILS====================
+/user/my_user&gt; ps -ef | grep my_user
+my_user 16568 15336   0 01:17:30 ?           0:00 /usr/local/bin/exuberant-ctags --c-kinds=+l --java-kinds=+l --sql-kinds=+l --Fo
+my_user 15336  4469   0 01:16:14 ?           5:28 java -jar opengrok.jar -S -W config.xml
+my_user 16414 15336   0 01:16:40 ?           0:00 /usr/local/bin/exuberant-ctags --c-kinds=+l --java-kinds=+l --sql-kinds=+l --Fo
+my_user 27338 21569   0 02:10:38 pts/40      0:00 ps -ef
+my_user 16549 15336   0 01:17:18 ?           0:00 /usr/local/bin/exuberant-ctags --c-kinds=+l --java-kinds=+l --sql-kinds=+l --Fo
+my_user 18096 15336  13 01:20:18 ?          50:15 /usr/local/bin/exuberant-ctags --c-kinds=+l --java-kinds=+l --sql-kinds=+l --Fo
+my_user 16745 15336   0 01:17:40 ?           0:00 /usr/local/bin/exuberant-ctags --c-kinds=+l --java-kinds=+l --sql-kinds=+l --Fo
+my_user 16770 15336   0 01:18:02 ?           0:00 /usr/local/bin/exuberant-ctags --c-kinds=+l --java-kinds=+l --sql-kinds=+l --Fo
+my_user 21569 21567   0 01:28:04 pts/40      0:00 -tcsh
+my_user 16746 15336   0 01:17:40 ?           0:00 /usr/local/bin/exuberant-ctags --c-kinds=+l --java-kinds=+l --sql-kinds=+l --Fo
+my_user 16780 15336   0 01:18:31 ?           0:00 /usr/local/bin/exuberant-ctags --c-kinds=+l --java-kinds=+l --sql-kinds=+l --Fo
+my_user 23994     1   0   Aug 02 ?           0:57 /usr/local/java/jdk/bin/java -Djava.util.logging.config.file=config.xml
+my_user 16775 15336   0 01:18:15 ?           0:00 /usr/local/bin/exuberant-ctags --c-kinds=+l --java-kinds=+l --sql-kinds=+l --Fo
+my_user  4442 15582   0 00:00:01 ?           0:00 sh -c opengrok-0.7/run.sh &gt; /tmp/logs/logfile.log 2&gt;&amp;1
+my_user 16747 15336   0 01:17:41 ?           0:00 /usr/local/bin/exuberant-ctags --c-kinds=+l --java-kinds=+l --sql-kinds=+l --Fo
+my_user 27339 21569   0 02:10:38 pts/40      0:00 grep opengrok
+my_user  4469  4442   0 00:00:01 ?           0:00 /usr/bin/sh opengrok-0.7/run.sh
+my_user 17221 15336   0 01:19:15 ?           0:00 /usr/local/bin/exuberant-ctags --c-kinds=+l --java-kinds=+l --sql-kinds=+l --Fo
+=================================================
+
+Could you please help me know why the above processes are always running? Please check the cmds above which I am running using the cronjob.
+
+Thanks.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>45655</commentid>
+            <who name="Trond Norbye">trond.norbye</who>
+            <bug_when>2009-08-03 03:02:22 +0000</bug_when>
+            <thetext>This is most likely caused by an exception in the thread reading the configurations in the web server. Please run /usr/jdk/latest/bin/jstack &lt;pid of the webserver&gt; and add the output here...</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>45657</commentid>
+            <who name="Harshit">guntasg</who>
+            <bug_when>2009-08-03 03:36:08 +0000</bug_when>
+            <thetext>(In reply to comment #1)
+&gt; This is most likely caused by an exception in the thread reading the
+&gt; configurations in the web server. Please run /usr/jdk/latest/bin/jstack &lt;pid of
+&gt; the webserver&gt; and add the output here...
+
+This is how the jstack output looks like:
+
+=========JSTACK OUTPUT=======
+2009-08-03 06:18:08
+Full thread dump Java HotSpot(TM) Server VM (14.0-b16 mixed mode):
+
+&quot;Attach Listener&quot; daemon prio=3 tid=0x084a9000 nid=0x20 waiting on condition [0x00000000]
+   java.lang.Thread.State: RUNNABLE
+
+&quot;http-8888-5&quot; daemon prio=3 tid=0x08778800 nid=0x1f in Object.wait() [0xb60dd000]
+   java.lang.Thread.State: WAITING (on object monitor)
+        at java.lang.Object.wait(Native Method)
+        - waiting on &lt;0xf6b4e0e0&gt; (a org.apache.tomcat.util.net.JIoEndpoint$Worker)
+        at java.lang.Object.wait(Object.java:485)
+        at org.apache.tomcat.util.net.JIoEndpoint$Worker.await(JIoEndpoint.java:423)
+        - locked &lt;0xf6b4e0e0&gt; (a org.apache.tomcat.util.net.JIoEndpoint$Worker)
+        at org.apache.tomcat.util.net.JIoEndpoint$Worker.run(JIoEndpoint.java:449)        at java.lang.Thread.run(Thread.java:619)
+
+&quot;http-8888-4&quot; daemon prio=3 tid=0x08265000 nid=0x1e in Object.wait() [0xb612e000]
+   java.lang.Thread.State: WAITING (on object monitor)
+        at java.lang.Object.wait(Native Method)
+        - waiting on &lt;0xf6b50068&gt; (a org.apache.tomcat.util.net.JIoEndpoint$Worker)
+        at java.lang.Object.wait(Object.java:485)
+        at org.apache.tomcat.util.net.JIoEndpoint$Worker.await(JIoEndpoint.java:423)
+        - locked &lt;0xf6b50068&gt; (a org.apache.tomcat.util.net.JIoEndpoint$Worker)
+        at org.apache.tomcat.util.net.JIoEndpoint$Worker.run(JIoEndpoint.java:449)        at java.lang.Thread.run(Thread.java:619)
+
+&quot;http-8888-3&quot; daemon prio=3 tid=0x0876ac00 nid=0x1d runnable [0xb61b4000]
+   java.lang.Thread.State: RUNNABLE
+        at java.net.SocketInputStream.socketRead0(Native Method)
+        at java.net.SocketInputStream.read(SocketInputStream.java:129)
+        at org.apache.coyote.http11.InternalInputBuffer.fill(InternalInputBuffer.java:735)
+        at org.apache.coyote.http11.InternalInputBuffer.parseRequestLine(InternalInputBuffer.java:366)
+        at org.apache.coyote.http11.Http11Processor.process(Http11Processor.java:808)
+        at org.apache.coyote.http11.Http11Protocol$Http11ConnectionHandler.process(Http11Protocol.java:583)
+        at org.apache.tomcat.util.net.JIoEndpoint$Worker.run(JIoEndpoint.java:454)        at java.lang.Thread.run(Thread.java:619)
+
+&quot;http-8888-2&quot; daemon prio=3 tid=0x088bd400 nid=0x1c in Object.wait() [0xb6205000]
+   java.lang.Thread.State: WAITING (on object monitor)
+        at java.lang.Object.wait(Native Method)
+        - waiting on &lt;0xbae048d0&gt; (a org.apache.tomcat.util.net.JIoEndpoint$Worker)
+        at java.lang.Object.wait(Object.java:485)
+        at org.apache.tomcat.util.net.JIoEndpoint$Worker.await(JIoEndpoint.java:423)
+        - locked &lt;0xbae048d0&gt; (a org.apache.tomcat.util.net.JIoEndpoint$Worker)
+        at org.apache.tomcat.util.net.JIoEndpoint$Worker.run(JIoEndpoint.java:449)        at java.lang.Thread.run(Thread.java:619)
+
+&quot;http-8888-1&quot; daemon prio=3 tid=0x08749800 nid=0x1b in Object.wait() [0xb6256000]
+   java.lang.Thread.State: WAITING (on object monitor)
+        at java.lang.Object.wait(Native Method)
+        - waiting on &lt;0xbae05068&gt; (a org.apache.tomcat.util.net.JIoEndpoint$Worker)
+        at java.lang.Object.wait(Object.java:485)
+        at org.apache.tomcat.util.net.JIoEndpoint$Worker.await(JIoEndpoint.java:423)
+        - locked &lt;0xbae05068&gt; (a org.apache.tomcat.util.net.JIoEndpoint$Worker)
+        at org.apache.tomcat.util.net.JIoEndpoint$Worker.run(JIoEndpoint.java:449)        at java.lang.Thread.run(Thread.java:619)
+
+&quot;TP-Monitor&quot; daemon prio=3 tid=0x08886c00 nid=0x1a in Object.wait() [0xb62a7000]
+   java.lang.Thread.State: TIMED_WAITING (on object monitor)
+        at java.lang.Object.wait(Native Method)
+        - waiting on &lt;0xbae05080&gt; (a org.apache.tomcat.util.threads.ThreadPool$MonitorRunnable)
+        at org.apache.tomcat.util.threads.ThreadPool$MonitorRunnable.run(ThreadPool.java:565)
+        - locked &lt;0xbae05080&gt; (a org.apache.tomcat.util.threads.ThreadPool$MonitorRunnable)
+        at java.lang.Thread.run(Thread.java:619)
+
+&quot;TP-Processor4&quot; daemon prio=3 tid=0x0874c000 nid=0x19 runnable [0xb62f8000]
+   java.lang.Thread.State: RUNNABLE
+        at java.net.PlainSocketImpl.socketAccept(Native Method)
+        at java.net.PlainSocketImpl.accept(PlainSocketImpl.java:390)
+        - locked &lt;0xbae00120&gt; (a java.net.SocksSocketImpl)
+        at java.net.ServerSocket.implAccept(ServerSocket.java:453)
+        at java.net.ServerSocket.accept(ServerSocket.java:421)
+        at org.apache.jk.common.ChannelSocket.accept(ChannelSocket.java:307)
+        at org.apache.jk.common.ChannelSocket.acceptConnections(ChannelSocket.java:661)
+        at org.apache.jk.common.ChannelSocket$SocketAcceptor.runIt(ChannelSocket.java:872)
+        at org.apache.tomcat.util.threads.ThreadPool$ControlRunnable.run(ThreadPool.java:690)
+        at java.lang.Thread.run(Thread.java:619)
+
+&quot;TP-Processor3&quot; daemon prio=3 tid=0x08347c00 nid=0x18 in Object.wait() [0xb6349000]
+   java.lang.Thread.State: WAITING (on object monitor)
+        at java.lang.Object.wait(Native Method)
+        - waiting on &lt;0xbae007f8&gt; (a org.apache.tomcat.util.threads.ThreadPool$ControlRunnable)
+        at java.lang.Object.wait(Object.java:485)
+        at org.apache.tomcat.util.threads.ThreadPool$ControlRunnable.run(ThreadPool.java:662)
+        - locked &lt;0xbae007f8&gt; (a org.apache.tomcat.util.threads.ThreadPool$ControlRunnable)
+        at java.lang.Thread.run(Thread.java:619)
+
+&quot;TP-Processor2&quot; daemon prio=3 tid=0x08ac9000 nid=0x17 in Object.wait() [0xb639a000]
+   java.lang.Thread.State: WAITING (on object monitor)
+        at java.lang.Object.wait(Native Method)
+        - waiting on &lt;0xbae003c8&gt; (a org.apache.tomcat.util.threads.ThreadPool$ControlRunnable)
+        at java.lang.Object.wait(Object.java:485)
+        at org.apache.tomcat.util.threads.ThreadPool$ControlRunnable.run(ThreadPool.java:662)
+        - locked &lt;0xbae003c8&gt; (a org.apache.tomcat.util.threads.ThreadPool$ControlRunnable)
+        at java.lang.Thread.run(Thread.java:619)
+
+&quot;TP-Processor1&quot; daemon prio=3 tid=0x088b1800 nid=0x16 in Object.wait() [0xb63eb000]
+   java.lang.Thread.State: WAITING (on object monitor)
+        at java.lang.Object.wait(Native Method)
+        - waiting on &lt;0xbae00468&gt; (a org.apache.tomcat.util.threads.ThreadPool$ControlRunnable)
+        at java.lang.Object.wait(Object.java:485)
+        at org.apache.tomcat.util.threads.ThreadPool$ControlRunnable.run(ThreadPool.java:662)
+        - locked &lt;0xbae00468&gt; (a org.apache.tomcat.util.threads.ThreadPool$ControlRunnable)
+        at java.lang.Thread.run(Thread.java:619)
+
+&quot;http-8888-Acceptor-0&quot; daemon prio=3 tid=0x08ac8800 nid=0x15 runnable [0xb643c000]   java.lang.Thread.State: RUNNABLE
+        at java.net.PlainSocketImpl.socketAccept(Native Method)
+        at java.net.PlainSocketImpl.accept(PlainSocketImpl.java:390)
+        - locked &lt;0xbae020f8&gt; (a java.net.SocksSocketImpl)
+        at java.net.ServerSocket.implAccept(ServerSocket.java:453)
+        at java.net.ServerSocket.accept(ServerSocket.java:421)
+        at org.apache.tomcat.util.net.DefaultServerSocketFactory.acceptSocket(DefaultServerSocketFactory.java:61)
+        at org.apache.tomcat.util.net.JIoEndpoint$Acceptor.run(JIoEndpoint.java:317)
+        at java.lang.Thread.run(Thread.java:619)
+
+&quot;ContainerBackgroundProcessor[StandardEngine[Catalina]]&quot; daemon prio=3 tid=0x08429c00 nid=0x14 waiting on condition [0xb648d000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+        at java.lang.Thread.sleep(Native Method)
+        at org.apache.catalina.core.ContainerBase$ContainerBackgroundProcessor.run(ContainerBase.java:1579)
+        at java.lang.Thread.run(Thread.java:619)
+
+&quot;Thread-1&quot; prio=3 tid=0x08613400 nid=0x13 runnable [0xb64de000]
+   java.lang.Thread.State: RUNNABLE
+        at java.net.PlainSocketImpl.socketAccept(Native Method)
+        at java.net.PlainSocketImpl.accept(PlainSocketImpl.java:390)
+        - locked &lt;0xbae02298&gt; (a java.net.SocksSocketImpl)
+        at java.net.ServerSocket.implAccept(ServerSocket.java:453)
+        at java.net.ServerSocket.accept(ServerSocket.java:421)
+        at org.opensolaris.opengrok.configuration.RuntimeEnvironment$2.run(RuntimeEnvironment.java:615)
+        at java.lang.Thread.run(Thread.java:619)
+
+&quot;Low Memory Detector&quot; daemon prio=3 tid=0x081ab000 nid=0x11 runnable [0x00000000]
+   java.lang.Thread.State: RUNNABLE
+
+&quot;CompilerThread1&quot; daemon prio=3 tid=0x081a8400 nid=0x10 waiting on condition [0x00000000]
+   java.lang.Thread.State: RUNNABLE
+
+&quot;CompilerThread0&quot; daemon prio=3 tid=0x081a6c00 nid=0xf waiting on condition [0x00000000]
+   java.lang.Thread.State: RUNNABLE
+
+&quot;Signal Dispatcher&quot; daemon prio=3 tid=0x081a5400 nid=0xe runnable [0x00000000]
+   java.lang.Thread.State: RUNNABLE
+
+&quot;Finalizer&quot; daemon prio=3 tid=0x0818c800 nid=0xd in Object.wait() [0xb6794000]
+   java.lang.Thread.State: WAITING (on object monitor)
+        at java.lang.Object.wait(Native Method)
+        - waiting on &lt;0xbae025d0&gt; (a java.lang.ref.ReferenceQueue$Lock)
+        at java.lang.ref.ReferenceQueue.remove(ReferenceQueue.java:118)
+        - locked &lt;0xbae025d0&gt; (a java.lang.ref.ReferenceQueue$Lock)
+        at java.lang.ref.ReferenceQueue.remove(ReferenceQueue.java:134)
+        at java.lang.ref.Finalizer$FinalizerThread.run(Finalizer.java:159)
+
+&quot;Reference Handler&quot; daemon prio=3 tid=0x0818b400 nid=0xc in Object.wait() [0xb67e5000]
+   java.lang.Thread.State: WAITING (on object monitor)
+        at java.lang.Object.wait(Native Method)
+        - waiting on &lt;0xbae02690&gt; (a java.lang.ref.Reference$Lock)
+        at java.lang.Object.wait(Object.java:485)
+        at java.lang.ref.Reference$ReferenceHandler.run(Reference.java:116)
+        - locked &lt;0xbae02690&gt; (a java.lang.ref.Reference$Lock)
+
+&quot;main&quot; prio=3 tid=0x08070400 nid=0x2 runnable [0xfe42e000]
+   java.lang.Thread.State: RUNNABLE
+        at java.net.PlainSocketImpl.socketAccept(Native Method)
+        at java.net.PlainSocketImpl.accept(PlainSocketImpl.java:390)
+        - locked &lt;0xbae027c0&gt; (a java.net.SocksSocketImpl)
+        at java.net.ServerSocket.implAccept(ServerSocket.java:453)
+        at java.net.ServerSocket.accept(ServerSocket.java:421)
+        at org.apache.catalina.core.StandardServer.await(StandardServer.java:389)
+        at org.apache.catalina.startup.Catalina.await(Catalina.java:647)
+        at org.apache.catalina.startup.Catalina.start(Catalina.java:607)
+        at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+        at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+        at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+        at java.lang.reflect.Method.invoke(Method.java:597)
+        at org.apache.catalina.startup.Bootstrap.start(Bootstrap.java:288)
+        at org.apache.catalina.startup.Bootstrap.main(Bootstrap.java:413)
+
+&quot;VM Thread&quot; prio=3 tid=0x08187800 nid=0xb runnable
+
+&quot;GC task thread#0 (ParallelGC)&quot; prio=3 tid=0x08076c00 nid=0x3 runnable
+
+&quot;GC task thread#1 (ParallelGC)&quot; prio=3 tid=0x08078000 nid=0x4 runnable
+
+&quot;GC task thread#2 (ParallelGC)&quot; prio=3 tid=0x08079400 nid=0x5 runnable
+
+&quot;GC task thread#3 (ParallelGC)&quot; prio=3 tid=0x0807a800 nid=0x6 runnable
+
+&quot;GC task thread#4 (ParallelGC)&quot; prio=3 tid=0x0807bc00 nid=0x7 runnable
+
+&quot;GC task thread#5 (ParallelGC)&quot; prio=3 tid=0x0807d000 nid=0x8 runnable
+
+&quot;GC task thread#6 (ParallelGC)&quot; prio=3 tid=0x0807e400 nid=0x9 runnable
+
+&quot;GC task thread#7 (ParallelGC)&quot; prio=3 tid=0x0807fc00 nid=0xa runnable
+
+&quot;VM Periodic Task Thread&quot; prio=3 tid=0x081ad000 nid=0x12 waiting on condition
+
+JNI global references: 1185
+=====================================
+
+Trond, before reading your update I actually killed all the lingering processes. Will this output be sufficient or do you want me to reproduce that state and send you the output?
+
+Please help me know how to go about this.
+
+Thanks.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>45658</commentid>
+            <who name="Harshit">guntasg</who>
+            <bug_when>2009-08-03 03:43:14 +0000</bug_when>
+            <thetext>After killing the lingering processes this is what I got in the logfile:
+
+=======Logs=======
+Killed
+Aug 3, 2009 6:16:17 AM org.opensolaris.opengrok.index.Indexer sendToConfigHost
+INFO: Send configuration to: my_host:2424
+Aug 3, 2009 6:16:17 AM org.opensolaris.opengrok.index.Indexer sendToConfigHost
+SEVERE: Failed to send configuration to my_host:2424
+java.net.ConnectException: Connection refused
+        at java.net.PlainSocketImpl.socketConnect(Native Method)
+        at java.net.PlainSocketImpl.doConnect(PlainSocketImpl.java:333)
+        at java.net.PlainSocketImpl.connectToAddress(PlainSocketImpl.java:195)
+        at java.net.PlainSocketImpl.connect(PlainSocketImpl.java:182)
+        at java.net.SocksSocketImpl.connect(SocksSocketImpl.java:366)
+        at java.net.Socket.connect(Socket.java:519)
+        at java.net.Socket.connect(Socket.java:469)
+        at java.net.Socket.&lt;init&gt;(Socket.java:366)
+        at java.net.Socket.&lt;init&gt;(Socket.java:208)
+        at org.opensolaris.opengrok.configuration.RuntimeEnvironment.writeConfiguration(RuntimeEnvironment.java:565)
+        at org.opensolaris.opengrok.index.Indexer.sendToConfigHost(Indexer.java:558)
+        at org.opensolaris.opengrok.index.Indexer.main(Indexer.java:349)
+Aug 3, 2009 6:16:17 AM org.opensolaris.opengrok.index.Indexer sendToConfigHost
+INFO: Configuration successfully updated
+================
+
+Thanks.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>45659</commentid>
+            <who name="Trond Norbye">trond.norbye</who>
+            <bug_when>2009-08-03 04:36:27 +0000</bug_when>
+            <thetext>What is the OpenGrok version you are using on your web server? Please look at the source for a web page, and you should find something like:
+&lt;meta name=&quot;generator&quot; content=&quot;0.7 (44d818e0b54e)&quot;/&gt;</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>45660</commentid>
+            <who name="Harshit">guntasg</who>
+            <bug_when>2009-08-03 05:08:11 +0000</bug_when>
+            <thetext>(In reply to comment #4)
+&gt; What is the OpenGrok version you are using on your web server? Please look at
+&gt; the source for a web page, and you should find something like:
+&gt; &lt;meta name=&quot;generator&quot; content=&quot;0.7 (44d818e0b54e)&quot;/&gt;
+
+Trond, I am using OpenGrok 0.7 released version. The one which is available for download from http://www.opensolaris.org/os/project/opengrok/ and I downloaded a week back from the above site.
+
+I actually could not find the &lt;meta tag&gt; which you were referring. Could you please point me to the exact file to open up in source.war&apos;s exploded version and look for the version?
+
+Thanks.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>45661</commentid>
+            <who name="Trond Norbye">trond.norbye</who>
+            <bug_when>2009-08-03 05:47:47 +0000</bug_when>
+            <thetext>Ok, I&apos;ll figure out the exact source revision you are using. For future references, just open any page from your opengrok server and select view source in the browser. You should find the meta tag in the page header :-)</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>45726</commentid>
+            <who name="Harshit">guntasg</who>
+            <bug_when>2009-08-03 21:22:01 +0000</bug_when>
+            <thetext>(In reply to comment #6)
+&gt; Ok, I&apos;ll figure out the exact source revision you are using. For future
+&gt; references, just open any page from your opengrok server and select view source
+&gt; in the browser. You should find the meta tag in the page header :-)
+
+Ohh.. I got the meta tag. Here are the details:
+
+&lt;meta name=&quot;generator&quot; content=&quot;0.7 (7d74ac38ae63)&quot;/&gt;
+
+Thanks Trond for helping.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>45731</commentid>
+            <who name="Trond Norbye">trond.norbye</who>
+            <bug_when>2009-08-04 00:56:53 +0000</bug_when>
+            <thetext>I just verified that the thread that is supposed to read the configuration request from the client is present. Is the problem still present (after you killed all of the old java processes), it could be that killing one of the process generated an IOException (when the socket is closed) in the webapp thread causing it to proceed.
+
+Anyway, we should modify this code to be more robust by adding a timer and running each connection in its own thread.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>45734</commentid>
+              <attachid>2362</attachid>
+            <who name="Harshit">guntasg</who>
+            <bug_when>2009-08-04 02:33:16 +0000</bug_when>
+            <thetext>Created attachment 2362
+OpenGrok cron job</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>45735</commentid>
+              <attachid>2363</attachid>
+            <who name="Harshit">guntasg</who>
+            <bug_when>2009-08-04 02:36:42 +0000</bug_when>
+            <thetext>Created attachment 2363
+run-modified.sh which is called daily by cron</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>45736</commentid>
+            <who name="Harshit">guntasg</who>
+            <bug_when>2009-08-04 02:38:23 +0000</bug_when>
+            <thetext>(In reply to comment #8)
+&gt; I just verified that the thread that is supposed to read the configuration
+&gt; request from the client is present. Is the problem still present (after you
+&gt; killed all of the old java processes), it could be that killing one of the
+&gt; process generated an IOException (when the socket is closed) in the webapp
+&gt; thread causing it to proceed.
+
+Yes the problem is still present. Today again when the cron job ran it left the
+processes (mostly, exuberant-tags related) running.
+
+And secondly, the problem is not with the IOException which got generated on
+killing. The problem is why on running the &quot;indexer&quot; and &quot;pushing the config to
+web app&quot; opengrok leaves so many processes running. Are the exuberant-tags
+related processes should always be running? Or I am missing something.
+
+I am attaching the cron and the run-modified script which it calls.
+
+Could you please check what is the problem here?
+
+Thanks for all the help.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>45748</commentid>
+            <who name="Harshit">guntasg</who>
+            <bug_when>2009-08-04 06:32:53 +0000</bug_when>
+            <thetext>Trond,
+
+Could you please check the attached run script? Is this the way that we should call the &quot;indexer&quot; and the &quot;config push&quot;?
+
+And any idea on how to get away with the lingering processes once the script is executed?
+
+Thanks.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>45752</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2009-08-04 07:19:05 +0000</bug_when>
+            <thetext>mhmm
+
+I don&apos;t want to interrupt your party guys , but I think we solved this issue in
+changeset 750	bdab6a143036
+
+Guntas, can you try out a trunk build ?
+(follow http://opensolaris.org/os/project/opengrok/manual/builddescription/ then e.g. $ ant package   to get a package of trunk build, or just use stuff from dist/ after the clean build)
+
+I seriously think you get errors in exctags and 0.7 doesn&apos;t consume them
+if you go and get stacks (pstack on opensolaris) from exctags stuck processes, they will all be in writing state and none in reading, but none of them move, since they wait.
+Wait in kernel for someone to consume their stderr ... which was fixed after 0.7 ...
+
+if your stacks of exctags show something different, then we shall go ahead with this bug, otherwise I seriously think you hit what Trond fixed in above changeset and this bug should be closed.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>45930</commentid>
+            <who name="Harshit">guntasg</who>
+            <bug_when>2009-08-05 23:09:28 +0000</bug_when>
+            <thetext>(In reply to comment #13)
+&gt; mhmm
+&gt; 
+&gt; I don&apos;t want to interrupt your party guys , but I think we solved this issue in
+&gt; changeset 750   bdab6a143036
+&gt; 
+&gt; Guntas, can you try out a trunk build ?
+&gt; (follow http://opensolaris.org/os/project/opengrok/manual/builddescription/
+&gt; then e.g. $ ant package   to get a package of trunk build, or just use stuff
+&gt; from dist/ after the clean build)
+&gt; 
+Thanks Lubos and Trond.
+
+I built opengrok from trunk and ran the indexer. But I am seeing that the exuberant-ctags process started by OpenGrok indexer gets stuck up on one of the files. (and it is been like this for the last 12 hrs. or so)
+
+This is the current state of the process:
+
+&gt; pstack 9440
+9440:   /usr/local/bin/exuberant-ctags --c-kinds=+l --java-kinds=+l --sql-kind
+ fef70eb7 _read    (808d750, 808d640, fef13490) + 7
+ 0806f5fd iFileGetc () + 3d
+
+List of files opened by this process
+&gt; pfiles 9440
+9440:   /usr/local/bin/exuberant-ctags --c-kinds=+l --java-kinds=+l --sql-kind
+  Current rlimit: 65536 file descriptors
+   0: S_IFIFO mode:0000 dev:278,0 ino:6219858 uid:23169 gid:10 size:0
+      O_RDWR
+   1: S_IFIFO mode:0000 dev:278,0 ino:6219859 uid:23169 gid:10 size:0
+      O_RDWR
+   2: S_IFIFO mode:0000 dev:278,0 ino:6219860 uid:23169 gid:10 size:0
+      O_RDWR
+   3: S_IFREG mode:0600 dev:274,2 ino:39192577 uid:23169 gid:10 size:0
+      O_RDWR|O_CREAT|O_EXCL
+      /tmp/tags.vybaCs
+   4: S_IFREG mode:0664 dev:284,17925 ino:17423762 uid:23169 gid:23169 size:383920
+      O_RDONLY
+      /the/path/to/file/my_sql_file.sql
+
+Any idea why exuberant-ctags is giving me this problem. The version of exuberant-ctags that we are using is 5.5.4
+
+Thanks.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>45932</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2009-08-05 23:21:57 +0000</bug_when>
+            <thetext>umh, giving that exctags are currently on 5.8
+and I never tested with less than 5.6 ...
+
+Can you try to fetch, build latest exctags and rerun please ?
+( http://ctags.sourceforge.net/ )
+
+from http://ctags.sourceforge.net/news.html I see a fix was done in 5.6 , but on the other hand our sql analyzer could have problems too, bringing kah to the party :)</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>46040</commentid>
+            <who name="Harshit">guntasg</who>
+            <bug_when>2009-08-06 21:04:56 +0000</bug_when>
+            <thetext>(In reply to comment #15)
+&gt; umh, giving that exctags are currently on 5.8
+&gt; and I never tested with less than 5.6 ...
+&gt; 
+&gt; Can you try to fetch, build latest exctags and rerun please ?
+&gt; ( http://ctags.sourceforge.net/ )
+&gt; 
+Sure.. but I had a tough time last when I tried building exctags from source. I wanted to use the latest exctags but lack of proper documentation is what made me to use the one which was there in my Solaris box (5.5.4).
+
+If you have any pointers on building them, please pass on.
+
+Thanks for all the help.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>46091</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2009-08-07 04:01:50 +0000</bug_when>
+            <thetext>$ uname -a
+SunOS helius 5.10 Generic_141414-07 sun4u sparc SUNW,Sun-Fire-V240
+#fully installed (whole package cluster)
+
+$ /usr/sfw/bin/wget http://downloads.sourceforge.net/project/ctags/ctags/5.8/ctags-5.8.tar.gz?use_mirror=puzzle
+
+# note that the zip file seems to be broken
+
+$ /usr/sfw/bin/gtar xzvf ctags-5.8.tar.gz
+
+$ cd ctags-5.8 ; ./configure
+#it found and started using /usr/sfw/bin/gcc
+
+$ make
+
+and local binaries ./ctags are there :)
+refer to INSTALL for more info
+
+for completeness, my path:
+PATH=/bin:/sbin:/usr/bin/:/usr/sfw/bin:/usr/sbin:/usr/ucb/:/usr/ccs/bin/:/usr/openwin/bin:/usr/java/bin</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>46094</commentid>
+            <who name="Trond Norbye">trond.norbye</who>
+            <bug_when>2009-08-07 04:24:16 +0000</bug_when>
+            <thetext>Why do you have /usr/ucb in your path???? :-O</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>46097</commentid>
+            <who name="Harshit">guntasg</who>
+            <bug_when>2009-08-07 04:52:06 +0000</bug_when>
+            <thetext>(In reply to comment #17)
+Thanks Lubos!
+
+I will give it a shot on Monday. Will update on how it goes.
+
+Thanks.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>46101</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2009-08-07 05:46:49 +0000</bug_when>
+            <thetext>(In reply to comment #18)
+&gt; Why do you have /usr/ucb in your path???? :-O
+
+:)
+
+ok, correction, my path:
+
+PATH=/opt/mercurial:/bin:/sbin:/usr/bin:/usr/sbin:/usr/bin:/opt/sfw/bin:/usr/sfw/bin:/usr/ccs/bin/:/usr/openwin/bin
+
+;)</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>46437</commentid>
+            <who name="Harshit">guntasg</who>
+            <bug_when>2009-08-12 03:03:28 +0000</bug_when>
+            <thetext>(In reply to comment #19)
+&gt; (In reply to comment #17)
+&gt; Thanks Lubos!
+&gt; 
+&gt; I will give it a shot on Monday. Will update on how it goes.
+&gt; 
+&gt; Thanks.
+
+Lubos/Trond,
+
+All is normal now.. We are seeing the processes getting terminated properly.
+I didn&apos;t even upgrade the exuberant-ctags nor did I change any configuration!
+
+Closing.
+
+Thanks for all the help.</thetext>
+          </long_desc>
+      
+          <attachment
+              isobsolete="0"
+              ispatch="0"
+              isprivate="0"
+              isurl="0"
+          >
+            <attachid>2362</attachid>
+            <date>2009-08-04 02:33:00 +0000</date>
+            <delta_ts>2009-08-04 02:33:16 +0000</delta_ts>
+            <desc>OpenGrok cron job</desc>
+            <filename>OpenGrok-Cron.txt</filename>
+            <type>text/plain</type>
+            <size>93</size>
+            <attacher>guntasg</attacher>
+            
+              <data encoding="base64">I09wZW5Hcm9rIENyb24gSm9iDQowIDAgKiAqICogL3VzZXIvb3Blbmdyb2stMC43L3J1bi1tb2Rp
+ZmllZC5zaCA+IC90bXAvbG9ncy9sb2dmaWxlLmxvZyAyPiYx
+</data>
+
+          </attachment>
+          <attachment
+              isobsolete="0"
+              ispatch="0"
+              isprivate="0"
+              isurl="0"
+          >
+            <attachid>2363</attachid>
+            <date>2009-08-04 02:36:00 +0000</date>
+            <delta_ts>2009-08-04 02:36:42 +0000</delta_ts>
+            <desc>run-modified.sh which is called daily by cron</desc>
+            <filename>run-modified.sh</filename>
+            <type>application/octet-stream</type>
+            <size>1399</size>
+            <attacher>guntasg</attacher>
+            
+              <data encoding="base64">IyEvdXNyL2Jpbi9zaA0KDQpQUk9HRElSPS91c2VyL29wZW5ncm9rLTAuNw0KDQojIFJFUVVJUkVE
+IFRoZSByb290IG9mIHlvdXIgc291cmNlIHRyZWUNClNSQ19ST09UPS91c2VyL29wZW5ncm9rL3Nv
+dXJjZV9yb290DQoNCiMgUkVRVUlSRUQgIFRoZSBkaXJlY3Rvcnkgd2hlcmUgdGhlIGRhdGEgZmls
+ZXMgbGlrZQ0KIyBMdWNlbmUgaW5kZXggYW5kIGh5cGVydGV4dCBjcm9zcy1yZWZlcmVuY2VzIGFy
+ZSBzdG9yZWQNCkRBVEFfUk9PVD0vdXNlci9vcGVuZ3Jvay9kYXRhX3Jvb3QNCg0KIyBPUFRJT05B
+TCBBIHRhYiBzZXBhcmF0ZWQgZmlsZXMgdGhhdCBjb250YWlucyBzbWFsbA0KIyBkZXNjcmlwdGlv
+bnMgZm9yIHBhdGhzIGluIHRoZSBzb3VyY2UgdHJlZQ0KUEFUSF9ERVNDPSR7UFJPR0RJUn0vcGF0
+aHMudHN2DQoNCiMgQSBtb2Rlcm4gRXh1YnJhbnQgQ3RhZ3MgcHJvZ3JhbQ0KIyBmcm9tIGh0dHA6
+Ly9jdGFncy5zZi5uZXQNCkVYVUJfQ1RBR1M9L3Vzci9sb2NhbC9iaW4vZXh1YmVyYW50LWN0YWdz
+DQoNCiNXRUIgQVBQIFVSTA0KV0VCQVBQX1VSTD0ibG9jYWxob3N0OjI0MjQiDQoNCiMgSWYgeW91
+IG5lZWQgdG8gc2V0IHByb3BlcnRpZXMgKEV4LiBvdmVycmlkZSB0aGUgbWVyY3VyaWFsIGJpbmFy
+eSkNCiNQUk9QRVJUSUVTPS1Eb3JnLm9wZW5zb2xhcmlzLm9wZW5ncm9rLmhpc3RvcnkuTWVyY3Vy
+aWFsPS9ob21lL3Ryb25kL2Jpbi9oZw0KDQojIFVuY29tbWVudCB0aGUgZm9sbG93aW5nIGxpbmUg
+aWYgeW91ciBzb3VyY2UgY29udGFpbnMgTWVyY3VyaWFsIHJlcG9zaXRvcmllcy4NCiMgU0NBTl9G
+T1JfUkVQT1M9Ii1TIg0KDQojIFlvdSBtaWdodCB3YW50IHRvIGFkZCBtb3JlIGF2YWlsYWJsZSBt
+ZW1vcnksIGFuZCBwZXJoYXBzIHVzZSBhIHNlcnZlciBqdm0/DQojSkFWQV9PUFRTPSItc2VydmVy
+IC1YbXgxMDI0bSINCg0KTE9HR0VSPSItRGphdmEudXRpbC5sb2dnaW5nLmNvbmZpZy5maWxlPWNv
+bmYvbG9nZ2luZy5wcm9wZXJ0aWVzIg0KY3ZzIHVwZGF0ZSAtZEEgJHtTUkNfUk9PVH0NCmphdmEg
+LWphciAke1BST0dESVJ9L29wZW5ncm9rLmphciAtUyAtVyAke1BST0dESVJ9L29wZW5ncm9rLWNv
+bmZpZ3VyYXRpb24ueG1sIC1jICR7RVhVQl9DVEFHU30gLXMgJHtTUkNfUk9PVH0gLWQgJHtEQVRB
+X1JPT1R9IC1QIC12DQpqYXZhIC1qYXIgJHtQUk9HRElSfS9vcGVuZ3Jvay5qYXIgLVUgJHtXRUJB
+UFBfVVJMfSAtUiAke1BST0dESVJ9L29wZW5ncm9rLWNvbmZpZ3VyYXRpb24ueG1sIC1uDQoNCiMg
+T1BUSU9OQUwNCiNqYXZhICR7TE9HR0VSfSAtY2xhc3NwYXRoICR7UFJPR0RJUn0vb3Blbmdyb2su
+amFyIG9yZy5vcGVuc29sYXJpcy5vcGVuZ3Jvay53ZWIuRWZ0YXJGaWxlICR7UEFUSF9ERVNDfSAk
+e0RBVEFfUk9PVH0vaW5kZXgvZHRhZ3MuZWZ0YXINCg==
+</data>
+
+          </attachment>
+      
+
+    </bug>
+
+</bugzilla>

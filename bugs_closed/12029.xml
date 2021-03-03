@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>12029</bug_id>
+          
+          <creation_ts>2009-10-16 13:13:00 +0000</creation_ts>
+          <short_desc>Search results contains &quot;[all...]&quot; when not needed</short_desc>
+          <delta_ts>2009-10-25 19:47:44 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>misc</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXED</resolution>
+          
+          
+          <bug_file_loc>http://src.opensolaris.org/source/search?q=MI4_NOCTO&amp;project=%2Fonnv</bug_file_loc>
+          
+          
+          <priority>P3</priority>
+          <bug_severity>normal</bug_severity>
+          <target_milestone>0.8</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Marcel Telka">marcel.telka</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>52980</commentid>
+            <who name="Marcel Telka">marcel.telka</who>
+            <bug_when>2009-10-16 13:13:42 +0000</bug_when>
+            <thetext>Try following link:
+
+http://src.opensolaris.org/source/search?q=MI4_NOCTO&amp;project=%2Fonnv
+
+You&apos;ll find several files found including the nfs4_clnt.h. The page shows two results:
+
+1046 * MI4_NOCTO no close-to-open consistency
+1078 #define MI4_NOCTO 0x2
+
+After that there is &quot;[all...]&quot; link. After click to &quot;[all...]&quot; you&apos;ll see:
+
+1046  *	MI4_NOCTO		 no close-to-open consistency
+1078 #define	MI4_NOCTO		 0x20
+
+Why do we need such &quot;[all...]&quot; link? It does not bring any additional value. It should be removed.
+
+
+Another case is at the same search results page. The &quot;nfs4_vnops.c&quot; file contains no direct results, there is just &quot;[all...]&quot; link. After click on it we&apos;ll get:
+
+2220 	if (VTOMI4(*vpp)-&gt;mi_flags &amp; MI4_NOCTO ||
+
+Just one(!) matching line.
+
+It would be more user friendly to have such results visible directly on search results page.
+
+
+I think elimination of &quot;[all...]&quot; link would improve usability.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>52982</commentid>
+            <who name="Trond Norbye">trond.norbye</who>
+            <bug_when>2009-10-16 13:29:16 +0000</bug_when>
+            <thetext>This is caused by the fact that the OpenGrok instance running on src.opensolaris.org doesn&apos;t read through the whole file looking for hits, but only the first &quot;n&quot; bytes. It _could_ therefore be more hits in the file, and that&apos;s why the link is there. If you look at the other hits you found, you will see that nfs4_common.c do not have the &quot;all&quot; link.
+
+I guess the question is: Should we always analyze the complete file, and only use the &quot;all&quot; link if we have more than &quot;n&quot; hits?</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>52984</commentid>
+            <who name="Marcel Telka">marcel.telka</who>
+            <bug_when>2009-10-16 13:34:30 +0000</bug_when>
+            <thetext>I think the answer should be: Exactly!</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>52986</commentid>
+            <who name="Marcel Telka">marcel.telka</who>
+            <bug_when>2009-10-16 13:51:10 +0000</bug_when>
+            <thetext>This is probably a side effect:
+
+The search results page contains this line:
+1078 #define MI4_NOCTO 0x2
+
+while the &quot;[all...]&quot; page contains:
+1078 #define	MI4_NOCTO		 0x20
+
+
+Please note missing &quot;0&quot;.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>52997</commentid>
+            <who name="Trond Norbye">trond.norbye</who>
+            <bug_when>2009-10-16 14:21:10 +0000</bug_when>
+            <thetext>Guess we should increase the analysis to the first 1MB of the file until we have &quot;n&quot; hits, then terminate the analysis and print out the [..all..] link. That should work in most normal cases (and avoid reading gigantic binary files if someone puts them into the repository...)</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>53000</commentid>
+            <who name="Marcel Telka">marcel.telka</who>
+            <bug_when>2009-10-16 14:26:30 +0000</bug_when>
+            <thetext>That sounds really reasonable.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>54103</commentid>
+            <who name="Trond Norbye">trond.norbye</who>
+            <bug_when>2009-10-25 19:47:44 +0000</bug_when>
+            <thetext>changeset:   890:d7bf134cd32c</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

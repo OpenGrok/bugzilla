@@ -1,0 +1,38 @@
+# HG changeset patch
+# Parent 34bb5d39ce6cd9b6c0baace00fc4803168524b77
+
+diff -r 34bb5d39ce6c src/org/opensolaris/opengrok/search/context/Context.java
+--- a/src/org/opensolaris/opengrok/search/context/Context.java	Wed Nov 03 23:57:07 2010 -0600
++++ b/src/org/opensolaris/opengrok/search/context/Context.java	Thu Nov 04 00:00:36 2010 -0600
+@@ -147,8 +147,8 @@
+                                     anything = true;
+                                 } else {
+                                     out.write("<a class=\"s\" href=\"");
+-                                    out.write(urlPrefix);
+-                                    out.write(path);
++                                    out.write(Util.URIEncodePath(urlPrefix));
++                                    out.write(Util.URIEncodePath(path));
+                                     out.write("#");
+                                     out.write(desc[1]);
+                                     out.write("\"><span class=\"l\">");
+@@ -213,9 +213,9 @@
+                 return anything;
+             }
+ 
+-            tokens.reInit(buffer, charsRead, out, urlPrefix + path + "#", matchingTags);
++            tokens.reInit(buffer, charsRead, out, Util.URIEncodePath(urlPrefix + path) + "#", matchingTags);
+         } else {
+-            tokens.reInit(in, out, urlPrefix + path + "#", matchingTags);
++            tokens.reInit(in, out, Util.URIEncodePath(urlPrefix + path) + "#", matchingTags);
+         }
+ 
+         if (hits != null) {
+@@ -246,7 +246,7 @@
+             anything = matchedLines > 0;
+             tokens.dumpRest();
+             if (lim && (truncated || matchedLines == 10) && out != null) {
+-                out.write("&nbsp; &nbsp; [<a href=\"" + morePrefix + path + "?" + queryAsURI + "\">all</a>...]");
++                out.write("&nbsp; &nbsp; [<a href=\"" + Util.URIEncodePath(morePrefix + path) + "?" + queryAsURI + "\">all</a>...]");
+             }
+         } catch (IOException e) {
+             OpenGrokLogger.getLogger().log(Level.WARNING, "Could not get context for " + path, e);

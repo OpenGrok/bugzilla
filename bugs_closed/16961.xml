@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>16961</bug_id>
+          
+          <creation_ts>2010-08-31 19:30:00 +0000</creation_ts>
+          <short_desc>Definitions should have serialVersionUID</short_desc>
+          <delta_ts>2010-08-31 20:32:50 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>analyzer</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXED</resolution>
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>minor</bug_severity>
+          <target_milestone>0.10</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Knut Anders Hatlen">knut.hatlen</reporter>
+          <assigned_to name="Knut Anders Hatlen">knut.hatlen</assigned_to>
+          <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>77192</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2010-08-31 19:30:24 +0000</bug_when>
+            <thetext>Definitions implements java.io.Serializable, but it does not have a serialVersionUID field.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>77193</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2010-08-31 19:31:11 +0000</bug_when>
+            <thetext>A recent change in some of the method signatures made the auto-generated serial version change so that version mismatch between the indexer and the webapp could cause exceptions like this in the webapp:
+
+java.io.InvalidClassException: org.opensolaris.opengrok.analysis.Definitions; local class incompatible: stream classdesc serialVersionUID = 1191703801007779489, local class serialVersionUID = 5600621898978982939
+	at java.io.ObjectStreamClass.initNonProxy(ObjectStreamClass.java:562)
+	at java.io.ObjectInputStream.readNonProxyDesc(ObjectInputStream.java:1583)
+	at java.io.ObjectInputStream.readClassDesc(ObjectInputStream.java:1496)
+	at java.io.ObjectInputStream.readOrdinaryObject(ObjectInputStream.java:1732)
+	at java.io.ObjectInputStream.readObject0(ObjectInputStream.java:1329)
+	at java.io.ObjectInputStream.readObject(ObjectInputStream.java:351)
+	at org.opensolaris.opengrok.analysis.Definitions.deserialize(Definitions.java:168)
+	at org.opensolaris.opengrok.search.Results.prettyPrintHTML(Results.java:107)
+	at org.apache.jsp.search_jsp._jspService(search_jsp.java:878)
+	at org.apache.jasper.runtime.HttpJspBase.service(HttpJspBase.java:70)
+	at javax.servlet.http.HttpServlet.service(HttpServlet.java:717)
+	at org.apache.jasper.servlet.JspServletWrapper.service(JspServletWrapper.java:377)
+	at org.apache.jasper.servlet.JspServlet.serviceJspFile(JspServlet.java:313)
+	at org.apache.jasper.servlet.JspServlet.service(JspServlet.java:260)
+	at javax.servlet.http.HttpServlet.service(HttpServlet.java:717)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:290)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:206)
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:233)
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:191)
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:127)
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:102)
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:109)
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:298)
+	at org.apache.coyote.http11.Http11Processor.process(Http11Processor.java:852)
+	at org.apache.coyote.http11.Http11Protocol$Http11ConnectionHandler.process(Http11Protocol.java:588)
+	at org.apache.tomcat.util.net.JIoEndpoint$Worker.run(JIoEndpoint.java:489)
+	at java.lang.Thread.run(Thread.java:619)</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>77194</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2010-08-31 20:32:50 +0000</bug_when>
+            <thetext>Fixed in changeset:   1089:292e410a5962
+
+Added serialVersionUID that matched the auto-generated in 0.9. Also enabled PMD rule to check that serializable classes have a serialVersionUID field.</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>557</bug_id>
+          
+          <creation_ts>2008-02-19 03:11:00 +0000</creation_ts>
+          <short_desc>Error: Cannot create directory: /net/oss-nfs1/main/opengrok/stage1/data/index/sfw /onnv</short_desc>
+          <delta_ts>2008-02-19 03:42:56 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>webapp</component>
+          <version>unspecified</version>
+          <rep_platform>Other</rep_platform>
+          <op_sys>Windows</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXED</resolution>
+          
+          
+          
+          
+          
+          <priority>P1</priority>
+          <bug_severity>minor</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Lubos Kosco">Lubos.Kosco</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>1718</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2008-02-19 03:11:37 +0000</bug_when>
+            <thetext>(11:56:41) Taz: OK, start up a new browser
+navigate to: http://src.opensolaris.org/source/xref/sfw/usr/src/pkgdefs/SUNWtcatr/Makefile
+(11:56:49) Taz: then click on Makefile.com
+(11:56:57) Taz: error:  Error: Cannot create directory: /net/oss-nfs1/main/opengrok/stage1/data/index/onnv /sfw
+(11:57:18) Taz: obviously after selecting the project it works fine (the search for Makefile.com)
+(11:58:06) Taz: so ... I think this is pretty major ... let me try in other projects
+(11:58:44) Taz: yep, same for other projects
+
+
+
+(12:04:34) Trond Norbye: but how did you find the file in the xref?
+(12:04:46) Trond Norbye: if you navigate to the file, the project will be set there?
+(12:04:47) Taz: I just clicked through the main page to xref
+(12:04:54) Taz: so I did:
+12:05
+(12:05:02) Taz: http://src.opensolaris.org/source/
+(12:05:11) Taz: then I clicked on http://src.opensolaris.org/source/xref/sfw/usr/src/
+(12:05:18) Taz: (it&apos;s a link on the home page)
+(12:05:23) Taz: then I found the file
+(12:05:31) Taz: then I clicked in the file on an xref
+(12:05:35) Taz: easy like that ...</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>1719</commentid>
+            <who name="Trond Norbye">trond.norbye</who>
+            <bug_when>2008-02-19 03:42:56 +0000</bug_when>
+            <thetext>The problem is caused by multiple projects in the cookie. Fixed in changeset: 242:e3806d642190</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

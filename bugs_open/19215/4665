@@ -1,0 +1,307 @@
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date: Mon, 11 Jun 2012 10:48:21 +0200
+From: Gustavo Lopes <glopes@nebm.ist.utl.pt>
+To: Jens Elkner <jel+opengrok@cs.uni-magdeburg.de>
+Cc: <opengrok-dev@opensolaris.org>
+Subject: Re: [opengrok-dev] [Bug 19215] OpenGrok leaks file descriptors
+Organization: =?UTF-8?Q?N=C3=BAcleo_de_Engenharia_Biom=C3=A9dica_do_Insti?=
+ =?UTF-8?Q?tuto_Superior_T=C3=A9cnico?=
+In-Reply-To: <20120611054144.GA13722@trex.cs.uni-magdeburg.de>
+References: <bug-19215-3032@http.defect.opensolaris.org/bz/>
+ <201206081424.q58EOW2b007803@lv-defect.opensolaris.org>
+ <20120611054144.GA13722@trex.cs.uni-magdeburg.de>
+Message-ID: <7fc24a336d88fa605f4cc6fba266817f@nebm.ist.utl.pt>
+X-Sender: glopes@nebm.ist.utl.pt
+User-Agent: RoundCube Webmail/0.5.3
+
+Hi, thanks for taking the time to review my changes.
+
+On Mon, 11 Jun 2012 07:41:44 +0200, Jens Elkner wrote:
+> Wrt. to the webrev/Gustvos patches:
+>
+> 1) src/org/opensolaris/opengrok/web/WebappListener.java:
+>   a) Shouldn't runtime related settings/instanca be fetched via the
+>      RuntimeEnvironment, e.g. like
+>
+> 
+> RuntimeEnvironment.getInstance()[.getConfiguration()].getSearchPool[Size]()
+>      Furthermore, even if obtained via RuntimeEnvironment, shouldn't 
+> lazy
+>      instantiation should be preferred?
+>      IMHO: no changes required here
+
+I'm not sure I understand. Lazy instantiation of an int? Plus, I'm 
+effectively using the method call chain you describe. I'm doing 
+env.getConfiguration.getSearchPoolSize(), where env is 
+RuntimeEnvironment.getInstance().
+
+> 2) web/search.jsp
+>   a) The SearchHelper should not have have any dependencies on a 
+> webapp/
+>      servlet context/its consumer - it should be usable in a 
+> "standalone"
+>      app in the same manner. As shown above, there is no need for 
+> such a
+>      reference.  So IMHO no changes required here as well.
+
+I agree. I'll pass the SearcherCache directly.
+
+>
+> 3) src/org/opensolaris/opengrok/web/PageConfig.java
+>   a) same thing - no changes required at all.
+
+Changes are definitely required, namely giving access to the 
+SearchCache. Unless, of course, you want to rely on global state.
+
+> 4) src/org/opensolaris/opengrok/configuration/RuntimeEnvironment.java
+>   a) line 41: import not needed - no changes required
+
+A leftover from the original change.
+
+>
+> 5) src/org/opensolaris/opengrok/configuration/Configuration.java:
+>   - line 195: a little nit - not required, since globals are always
+>     initialized to 0/null
+
+...
+
+> 6) src/org/opensolaris/opengrok/web/SearchHelper.java
+>   Changes look IMHO a little bit chaotic:
+>   a) "this." prefix == overhead - shouldn't be used if not required
+>      (readability, unwritten project code convention)
+
+I always prefer to qualify with this access to fields because it 
+distinguishes locals from fields immediately, but I'll remove them if 
+it's against the convention.
+
+>   b) Lines 103-108: Why public? IMHO there is no need/is dangerous to
+>      expose these impementation details ...
+
+An oversight.
+
+>   c) Lines 107,108: Why is this one needed? If programmed cleanly,
+>      doesn't this list contain one entry, only? the IndexSearcher 
+> which is
+>      equal to this.searcher - i.e. we already have a reference to it 
+> ?
+
+Not in the case of searching multiple projects. The index searchers are 
+cached once per directory. So one searching multiple projects, one needs 
+to get the index searchers for each project. But the index searchers 
+cannot be combined (MultiSearcher is deprecated), so the index readers 
+of the index searchers are combined instead.
+
+In any case, I agree this could be clearer and better encapsulated. The 
+problem is the Lucene API is not very clean. If IndexSearcher were an 
+interface, we could return an IndexSearcher decorator from SearcherCache 
+that would hide all these cleanup details.
+
+I'll refactor this to have the SearcherCache return an IndexSearcher in 
+all cases (including multiple projects) alongside with an object for 
+releasing the resources.
+
+>   d) Lines 103..105: Why is this needed here? SearcherManagers
+>      are acquired from the "SearcherCache" based on the index dir.
+>      Why is it not possible to aquire the needed Searcher directly 
+> from
+>      the "SearcherCache" based on the index dir?
+>      So IMHO, if such a list is needed, it should be part of the
+>      SearchManager. Isn't it pretty unclean/dangerous, to let an
+>      "outsider" manage/control the innards of the SearcherCache?
+>      IMHO better encapsulation is needed.
+>   e) Lines 133..143: not needed - see 1)
+>   f) Lines 184..227: as said in d) - any reference/occurance of
+>      SearcherManager looks like a design flaw - should go into
+>      "SearcherCache"
+
+See above.
+
+>   g) Lines 210..222: tribut to unclean design? Asking the
+>      SearcherCache for Searcher for certain dirs just to get a
+>      reference to its internally used IndexReaders to build a new
+>      Searcher from it - does this make any sense? Sounds for me from
+>      the back through the breast and also rises the question:
+>      Do we have a SearcherCache or not? Why does one need to bypass 
+> it
+>      from time to time?
+
+Well, there's no way to combine the IndexSearchers without using 
+deprecated functionality, so to search in multiple projects we need to 
+use the IndexReaders directly. We cannot cache IndexSearchers for 
+multiple projects. If we have 10 projects, we would potentially have to 
+store 1013 searchers for multiple project search -- 
+http://www.wolframalpha.com/input/?i=Sum%5BBinomial%5B10%2Ci%5D%2C+%7Bi%2C2%2C10%7D%5D 
+. The penalty for creating an IndexSearcher is small compared to that 
+of creating an Indexreader, so this is not a big issue.
+
+And sure, we *could* store the IndexReaders in a separate place and 
+don't fetch them via the IndexSearcher. It would be pointless IMO. Maybe 
+you'd feel a little cleaner, but it would complicate the book keeping 
+unnecessarily :p
+
+>   h) Line 227: similar to g) - Why does the SearchHelper need to know
+>      anything about an executor, when it doesn't need it - the 
+> obvious
+>      owner/user/manager seem to be the SearcherCache?
+>   i) Lines 460-472: as said, seems to be odd as well, since a
+>      SearchHelper has one aka this.searcher, only ...
+
+See above, I plan to address this.
+
+>
+> 7) src/org/opensolaris/opengrok/search/SearcherCache.java
+>   a) big flaw: there is no way to shutdown this Cache. So a restart
+>      of the web app may cause big leaks as well ...
+>      Also resources can't be freed, even if there are no consumers
+>      for a long time ...
+
+Very good point. Personally, I never restart or hot deploy 
+applications, but this must definitely be fixed.
+
+>   b) Lines 70-72: the internally used threadPool, which is essential
+>      for proper working, should not be exposed to outsiders.
+
+Once I do the refactoring I mentioned above this won't be needed.
+
+>   c) Lines 48-54: The current behavior is, that each request gets
+>      a new ThreadPool with max 2*(CPUs+1), if required. Obviously
+>      not that smart. However, with the suggested change there are
+>      max. only 2*(CPUs+1) threads available for all requests. 
+> Depending
+>      on the load (number of concurrent requests and queried 
+> projects),
+>      this may actually result in blocking requests (kind of 
+> sequential
+>      behavior) and lead to timeouts wrt. answers. Not sure, what the
+>      search threads are actually doing, but may be a FixedThreadPool
+>      may cause more problems, than it solves. Unless no deeper
+>      research/experience was gathered, for now I would probably 
+> prefer a
+>      dynamic Thread Pool Executor with a core pool size of 2*(CPUs+1) 
+> and a
+>      max. pool size of e.g. 128 or 256 threads (depending on the 
+> number of
+>      projects, machine, ...). JavaConsole/JMX might be used to find
+> out more ...
+
+Obviously, I haven't done any benchmarking on the appropriate size of 
+the thread pool. If the searches are not CPU bound it might (or it might 
+not) help to increase the pool substantially. I recognized the chosen 
+default could not be appropriate, which is why I added a configuration 
+option to have it set.
+
+>   d) Lines 58..63: synchronizing newThread just because of getting a
+>      unique int is a bad choice. It should be unsynced and use an
+>      AtomicInteger instead.
+
+This is nitpicking. Even if by chance some thread pool workers are 
+started by different threads at the same time, serializing the thread 
+creation would be a one time penalty as the threads are created once.
+
+>   e) Line 64: a tribute to the missing shutdown method? ;-)
+>   f) Line 77..84:
+>      1) Why is it necessary to create a new SearcherFactory for each
+>         index dir? Shouldn't factories be singletons a priori?
+
+Not the current behavior introduces a big penalty, but sure, we could 
+store an instance in a SearcherCache field and use it all the time.
+
+>      2) Does it make sense, that a http thread "forks" another thread
+>         and blocks until it has finished its work? I.e. the search
+>         within a single dir (project) should always be done by the
+>         [http] thread itself, w/o the use of another thread ...
+
+You have to several threads if you want to be able to search several 
+index segments at the same time.
+
+>      3) Since the whole thing is to avoid unnecessary Searcher/Reader
+>         creation, shouldn't be a more clever algorithm be used to 
+> obtain
+>         SearchManagers/maintain the map?
+>         I think it would be better to use a normal map and a
+>         ReentrantLock -> lookup again -> on fail create and add
+>         instead of blindly creating and eventuelly discarding a
+>         SM+Searcher+Reader ...
+
+If the planets align and two or more people search on the same project, 
+which mustn't have been searched on before, at the same time, it would 
+be possible that you would discard an IndexSearcher. What you're saying 
+is that you want to introduce a penalty (using a lock) on EVERY search 
+against a very unlikely one time hit (it is a one time hit because once 
+the IndexSearcher is cached, the condition cannot happen).
+
+>    g) Last but not least, what happens, if the configuration (data 
+> root)
+>       changes?
+
+Nothing catastrophic. The current searchers are leaked. We could 
+destroy the SearcherCache on configuration reload though. That would 
+also allow easily changing the thread pool size on runtime.
+
+> A better way to implement?
+>   a) SearcherCache: could be either a singleton -
+>      SearcherCache.getInstance() - or a "normal" Instance managed by 
+> the
+>      RuntimeEnvironment (RE) - the easy way wrt. management, e.g.:
+
+Well, there's a reason people don't use the singleton antipattern 
+anymore. Among other things, it's a violation of the separation of 
+concerns -- a class should not manage its instances. Since the lifetime 
+of the SearcherCache is associated with that of the application, the 
+instance is managed via WebappListener. It's also possible to have it 
+associated to the lifetime of the configuration, as you advocate. The 
+reason I didn't have RuntimeEnvironment manage the cache is because I 
+though it was to be used exclusively for dealing with the configuration 
+(being in the package it is and all).
+
+>      - RE.getSearcherCache() creates lazy a instance of the
+>        SearcherCache if not already done, keeps a ref to it and 
+> returns
+>        it
+>      - on RE.setConfiguration() [data root change] it may shutdown 
+> the
+>        SC and set the internal ref to null
+>      - there should be only one instance of a SearcherFactory be used
+>        by the SC
+>      - the SearcherFactory should create newSearcher with a 
+> threadpool
+>        arg only, if it has subreaders
+
+You're not considering the fact that using thread pools are 
+advantageous even with a single index, as several segments can be read 
+simultaneously if you use a thread pool.
+
+>      - the sm.maybeRefresh() part can be ommitted, if the cache gets
+>        shutdowned/a new one is used, when the RE.config gets changed
+
+I'm not sure I agree with this. When you're updating the indexes for 
+several projects it can take some time for it to finish and the 
+configuration to be reloaded. I wouldn't want to be using the old 
+indexes all that time.
+
+>      - implementation details like threadpool, SM usage should be 
+> kept
+>        private
+>      - misc bla mentioned above
+>    b) - SearchHelper should get a ref to the SC either via
+>         SearcherCache.getInstance() or RE.getSearcherCache()
+>       - the only thing it does, is sc.getSearcher(File ....) and
+>       - on destroy: sc.release(searcher)
+
+This is not really possible because the SearcherCache can't get to the 
+manager just by using the IndexSearcher. See above on how I plan to 
+address this.
+
+>       NOTE: The implementation details, whether the SC only caches
+>       readers and creates each time a new Searcher on 
+> getSearcher(...)
+>       or caches created searchers, is completely hidden from the
+>       consumer (e.g. SearchHelper) and thus can be changed/tuned 
+> without any
+>       trouble if necessary ...
+
+-- 
+Gustavo Lopes

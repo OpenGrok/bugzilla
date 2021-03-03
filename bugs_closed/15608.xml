@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>15608</bug_id>
+          
+          <creation_ts>2010-04-13 21:57:00 +0000</creation_ts>
+          <short_desc>Search field should not be active in file display</short_desc>
+          <delta_ts>2010-04-16 09:31:30 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>webapp</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>OpenSolaris</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXED</resolution>
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>major</bug_severity>
+          <target_milestone>0.9</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Vladimir Kotal">vladimir.kotal</reporter>
+          <assigned_to name="Lubos Kosco">Lubos.Kosco</assigned_to>
+          <cc>Lubos.Kosco</cc>
+    
+    <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>71324</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2010-04-13 21:57:33 +0000</bug_when>
+            <thetext>In 0.8 when a file was displayed (by clicking on the file link or line link from search results) it was possible to immediately navigate using keyboard (cursor keys or pgup/pgdn). This is no longer true in 0.9rc1 where the Search field is active so keyboard navigation scrolls in this field.
+
+The workaround is to mouse click in the displayed file but this is annoying.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>71508</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2010-04-16 09:11:07 +0000</bug_when>
+            <thetext>focusing the div &quot;page&quot; instead of search box now
+the problem is that e.g. Opera doesn&apos;t focus divs and I think safari will have the same problem with focus
+
+anyhow IE and FF should be OK</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>71513</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2010-04-16 09:31:30 +0000</bug_when>
+            <thetext>changeset:   983:67a5f1e1fad4</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

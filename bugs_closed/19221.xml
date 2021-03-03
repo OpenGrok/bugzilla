@@ -1,0 +1,533 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>19221</bug_id>
+          
+          <creation_ts>2012-07-04 11:28:00 +0000</creation_ts>
+          <short_desc>diff does not work for plaintext files with colon in their filename</short_desc>
+          <delta_ts>2012-07-11 08:58:11 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>webapp</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXINSOURCE</resolution>
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>minor</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Vladimir Kotal">vladimir.kotal</reporter>
+          <assigned_to name="Lubos Kosco">Lubos.Kosco</assigned_to>
+          <cc>jel+osbugs</cc>
+    
+    <cc>opengrok-dev</cc>
+    
+    <cc>zdenek.kotala</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>86513</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2012-07-04 11:28:51 +0000</bug_when>
+            <thetext>Filenames which contain colon cannot be diffed from History view. The resulting error message is: &apos;Diffs for binary files cannot be displayed!&apos;</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86514</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2012-07-04 14:07:36 +0000</bug_when>
+            <thetext>The problem lies in PageConfig:getDiffData() method:
+
+179        if (data.genre == null || txtGenres.contains(data.genre)) {
+180            InputStream[] in = new InputStream[2];
+181            BufferedReader br = null;
+182            try {
+183                for (int i = 0; i &lt; 2; i++) {
+184                    File f = new File(srcRoot + filepath[i]);
+185                    in[i] = HistoryGuru.getInstance().getRevision(f.getParent(), f.getName(), data.rev[i]);
+186                }
+187
+188                if (data.genre == null) {
+189                    try {
+190                        data.genre = AnalyzerGuru.getGenre(in[0]);
+191                    } catch (IOException e) {
+192                        data.errorMsg = &quot;Unable to determine the file type: &quot;
+193                                + Util.htmlize(e.getMessage());
+194                    }
+195                }
+196
+197                if (data.genre != Genre.PLAIN &amp;&amp; data.genre != Genre.HTML) {
+198                    return data;
+199                }
+
+The File object on line 184 is created with path which is already HTML escaped so the colons are substituted with &apos;%3A&apos;. As a result, the getGenre() on line 190 returns null. This is because find(InputStream) method in AnalyzerGuru failed to read the input data and returned null on line 461:
+
+455    public static FileAnalyzerFactory find(InputStream in) throws IOException {
+456        in.mark(8);
+457        byte[] content = new byte[8];
+458        int len = in.read(content);
+459        in.reset();
+460        if (len &lt; 4) {
+461            return null;
+462        }</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86515</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2012-07-04 14:23:32 +0000</bug_when>
+            <thetext>The fix is simple: use getResourceFile() to get the file object instead of constructing the full path using escaped file name.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86517</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2012-07-04 15:26:42 +0000</bug_when>
+            <thetext>Fixed with:
+
+changeset:   1401:4bad063b48d3
+tag:         tip
+user:        Vladimir Kotal &lt;Vladimir.Kotal@oracle.com&gt;
+date:        Wed Jul 04 17:17:14 2012 +0200
+
+description:
+	Bug 6163 - ShAnalyzer magic strings should be more strict to match only valid shell scripts
+	Bug 19221 - diff does not work for plaintext files with colon in their filename
+
+modified:
+   src/org/opensolaris/opengrok/analysis/AnalyzerGuru.java
+   src/org/opensolaris/opengrok/analysis/sh/ShAnalyzerFactory.java
+   src/org/opensolaris/opengrok/web/PageConfig.java</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86520</commentid>
+            <who name="Jens Elkner">jel+osbugs</who>
+            <bug_when>2012-07-04 17:42:41 +0000</bug_when>
+            <thetext>(In reply to comment #2)
+&gt; The fix is simple: use getResourceFile() to get the file object instead of
+&gt; constructing the full path using escaped file name.
+
+I&apos;m not sure, whether this works for all repos. Basically the request looks like http://$site/$webapp/diff/$resourceFile?r1=$fileA@$revA&amp;r2=$fileB@$revB
+
+If your fix works for all repo types, the params $fileA and $fileB (filepath[i]) would be redundant...
+
+But there is more: Actually I thought, request.getParameter() already decodes values. If so, the request generation might be bogus. Otherwise all getParameters() calls+context needs to be checked, whether decoding is needed.
+At least java doc says nothing about decoding - need to fetch the specs ...</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86524</commentid>
+            <who name="Jens Elkner">jel+osbugs</who>
+            <bug_when>2012-07-08 08:15:18 +0000</bug_when>
+            <thetext>Tried to verify it by creating+modifying a testdata/sources/bug19221/test:file.txt in a opengrok test repo. History/diffs work as expected.
+
+The only problem encountered is IMHO a browser bug: seem to interpret this relative path as an URI with schema &apos;test&apos;, even so there is no &apos;:/&apos;. Anyway, that&apos;s easy to fix by just prefixing the link with a &apos;./&apos; - browsers will normalize the URL (checked for FF/Chrome/Safari), i.e. strip &apos;./&apos; off in the request...
+
+Having a closer look at it, I&apos;m convinced, that the fix is wrong. If one wants to handle it really correctly, the $resourceFile shouldn&apos;t be involved at all:
+what matters are the params only, because there is no guarantee that $fileA@revN and fileB@revM both have the same genre or have the same genre as the current $resourceFile has... Furthermore the fix prevents comparing more or less unrelated files, e.g. if a file has been moved to a different dir ...
+
+PS: Had a look at servlet 3.0 specs: it doesn&apos;t mention, that one needs to decode getParameter*() values, just says &quot;the value of a request parameter as a String...&quot;. This and because decoding is explicitly is mentioned where needed, implies to me, that our getParameter() usage is correct, decoding values once more would be wrong.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86527</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2012-07-10 09:37:23 +0000</bug_when>
+            <thetext>(In reply to comment #5)
+&gt; Tried to verify it by creating+modifying a
+&gt; testdata/sources/bug19221/test:file.txt in a opengrok test repo. History/diffs
+&gt; work as expected.
+
+Not sure if you&apos;re referring to the state before changeset 1401:4bad063b48d3 or after.
+
+Anyhow, the problem can be reproduced before the changeset as follows for Mercurial:
+
+$ mkdir colon-test
+$ hg init
+$ touch foo:bar
+$ hg add foo:bar
+$ hg commit -m &quot;first&quot;
+$ echo &quot;blah&quot; &gt; foo\:bar 
+$ hg commit -m &quot;second&quot;
+
+This results in:
+
+$ hg log -v
+
+changeset:   1:d4dce3491f92
+tag:         tip
+user:        Vladimir Kotal &lt;Vladimir.Kotal@oracle.com&gt;
+date:        Tue Jul 10 11:32:52 2012 +0200
+
+description:
+        second
+
+modified:
+   foo:bar
+
+
+changeset:   0:6293c321ce21
+user:        Vladimir Kotal &lt;Vladimir.Kotal@oracle.com&gt;
+date:        Tue Jul 10 11:32:42 2012 +0200
+
+description:
+        first
+
+added:
+   foo:bar
+
+
+
+After that reindex and display the diff as follows:
+
+http://grok-test:8888/source/diff/colon-test/foo%3Abar?r2=%2Fcolon-test%2Ffoo%253Abar%401%3Ad4dce3491f92&amp;r1=%2Fcolon-test%2Ffoo%253Abar%400%3A6293c321ce21
+
+Indeed, it seems that it does not work with my current package version, not sure what went wrong.
+
+&gt; The only problem encountered is IMHO a browser bug: seem to interpret this
+&gt; relative path as an URI with schema &apos;test&apos;, even so there is no &apos;:/&apos;. Anyway,
+&gt; that&apos;s easy to fix by just prefixing the link with a &apos;./&apos; - browsers will
+&gt; normalize the URL (checked for FF/Chrome/Safari), i.e. strip &apos;./&apos; off in the
+&gt; request...
+
+This sounds like a kludge to me.
+
+I will try to investigate different SCM types. Anyhow, I am still very open to suggestions on how to fix this in the best possible way.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86528</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2012-07-10 11:40:34 +0000</bug_when>
+            <thetext>(In reply to comment #5)
+&gt; Tried to verify it by creating+modifying a
+&gt; testdata/sources/bug19221/test:file.txt in a opengrok test repo. History/diffs
+&gt; work as expected.
+&gt; 
+&gt; The only problem encountered is IMHO a browser bug: seem to interpret this
+&gt; relative path as an URI with schema &apos;test&apos;, even so there is no &apos;:/&apos;. Anyway,
+&gt; that&apos;s easy to fix by just prefixing the link with a &apos;./&apos; - browsers will
+&gt; normalize the URL (checked for FF/Chrome/Safari), i.e. strip &apos;./&apos; off in the
+&gt; request...
+
+I did this in PageConfig.java:
+
+
+diff --git a/src/org/opensolaris/opengrok/web/PageConfig.java b/src/org/opensolaris/opengrok/web/PageConfig.java
+--- a/src/org/opensolaris/opengrok/web/PageConfig.java
++++ b/src/org/opensolaris/opengrok/web/PageConfig.java
+@@ -155,6 +155,12 @@
+         data.rev = new String[2];
+         data.file = new String[2][];
+         data.param = new String[2];
++
++        /*
++         * Basically the request URL looks like this:
++         * http://$site/$webapp/diff/$resourceFile?r1=$fileA@$revA&amp;r2=$fileB@$revB
++	 * The code below extracts file path and revision from the URL.
++         */
+         for (int i = 1; i &lt;= 2; i++) {
+             String[] tmp = null;
+             String p = req.getParameter(&quot;r&quot; + i);
+@@ -163,6 +169,8 @@
+             }
+             if (tmp != null &amp;&amp; tmp.length == 2) {
+                 filepath[i - 1] = tmp[0];
++		/* XXX */
++                log.log(Level.WARNING, &quot;filepath: &quot; + i + &quot; = &quot; + filepath[i - 1]);
+                 data.rev[i - 1] = tmp[1];
+             }
+         }
+
+
+and tried to display the diff for the above mentioned &apos;colon-test&apos; Merucrial repository. In catalina.out log file I got this:
+
+Jul 10, 2012 1:38:07 PM org.opensolaris.opengrok.web.PageConfig getDiffData
+WARNING: filepath: 1 = /colon-test/foo%3Abar
+Jul 10, 2012 1:38:07 PM org.opensolaris.opengrok.web.PageConfig getDiffData
+WARNING: filepath: 2 = /colon-test/foo%3Abar
+
+
+So, the URL is certainly not fully decoded.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86529</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2012-07-10 11:58:28 +0000</bug_when>
+            <thetext>(In reply to comment #7)
+
+&lt;snip&gt;
+
+&gt; Jul 10, 2012 1:38:07 PM org.opensolaris.opengrok.web.PageConfig getDiffData
+&gt; WARNING: filepath: 1 = /colon-test/foo%3Abar
+&gt; Jul 10, 2012 1:38:07 PM org.opensolaris.opengrok.web.PageConfig getDiffData
+&gt; WARNING: filepath: 2 = /colon-test/foo%3Abar
+&gt; 
+&gt; 
+&gt; So, the URL is certainly not fully decoded.
+
+Actually the decoding was done correctly. The source was foo%253Abar which is &apos;foo&apos; + percent character + &apos;3A&apos; + &apos;bar&apos; so the result was foo%3Abar. Is this maybe a problem with double encoding ?</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86530</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2012-07-10 12:21:18 +0000</bug_when>
+            <thetext>(In reply to comment #8)
+&gt; (In reply to comment #7)
+&gt; 
+&gt; &lt;snip&gt;
+&gt; 
+&gt; &gt; Jul 10, 2012 1:38:07 PM org.opensolaris.opengrok.web.PageConfig getDiffData
+&gt; &gt; WARNING: filepath: 1 = /colon-test/foo%3Abar
+&gt; &gt; Jul 10, 2012 1:38:07 PM org.opensolaris.opengrok.web.PageConfig getDiffData
+&gt; &gt; WARNING: filepath: 2 = /colon-test/foo%3Abar
+&gt; &gt; 
+&gt; &gt; 
+&gt; &gt; So, the URL is certainly not fully decoded.
+&gt; 
+&gt; Actually the decoding was done correctly. The source was foo%253Abar which is
+&gt; &apos;foo&apos; + percent character + &apos;3A&apos; + &apos;bar&apos; so the result was foo%3Abar. Is this
+&gt; maybe a problem with double encoding ?
+
+The table generated by history.jsp has this:
+
+&lt;form action=&quot;/source/diff/colon-test/foo%3Abar&quot;&gt;
+&lt;table class=&quot;src&quot; id=&quot;revisions&quot;&gt;
+    &lt;caption&gt;History log of &lt;a href=&quot;/source/xref/colon-test/foo%3Abar&quot;&gt;/colon-test/foo:bar&lt;/a&gt;&lt;/caption&gt;
+
+    &lt;thead&gt;
+        &lt;tr&gt;
+            &lt;th&gt;Revision&lt;/th&gt;
+            &lt;th&gt;&lt;input type=&quot;submit&quot; value=&quot; Compare &quot;/&gt;&lt;/th&gt;
+            &lt;th&gt;Date&lt;/th&gt;
+            &lt;th&gt;Author&lt;/th&gt;
+            &lt;th&gt;Comments 
+            &lt;/th&gt;
+
+        &lt;/tr&gt;
+    &lt;/thead&gt;
+    &lt;tbody&gt;
+    
+        &lt;tr&gt;
+            &lt;td&gt;&lt;a name=&quot;1:d4dce3491f92&quot; href=&quot;/source/xref/colon-test/foo%3Abar?r=1%3Ad4dce3491f92&quot;&gt;1:d4dce3491f92&lt;/a&gt;&lt;/td&gt;
+            &lt;td&gt;
+                &lt;input type=&quot;radio&quot; disabled=&quot;disabled&quot; name=&quot;r1&quot; value=&quot;/colon-test/foo%3Abar@1:d4dce3491f92&quot;/&gt;
+                &lt;input type=&quot;radio&quot;
+                    name=&quot;r2&quot; checked=&quot;checked&quot; value=&quot;/colon-test/foo%3Abar@1:d4dce3491f92&quot;/&gt;&lt;/td&gt;
+
+            &lt;td&gt;10-Jul-2012&lt;/td&gt;
+            &lt;td&gt;&lt;a href=&quot;http://www.opensolaris.org/viewProfile.jspa?username=Vladimir.Kotal@oracle.com&quot;&gt;Vladimir Kotal &amp;lt;Vladimir.Kotal@oracle.com&amp;gt;&lt;/a&gt;&lt;/td&gt;
+            &lt;td&gt;second&lt;span class=&quot;filelist-hidden&quot;&gt;&lt;br/&gt;&lt;/span&gt;&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+            &lt;td&gt;&lt;a name=&quot;0:6293c321ce21&quot; href=&quot;/source/xref/colon-test/foo%3Abar?r=0%3A6293c321ce21&quot;&gt;0:6293c321ce21&lt;/a&gt;&lt;/td&gt;
+
+            &lt;td&gt;
+                &lt;input type=&quot;radio&quot; checked=&quot;checked&quot; name=&quot;r1&quot; value=&quot;/colon-test/foo%3Abar@0:6293c321ce21&quot;/&gt;
+                &lt;input type=&quot;radio&quot;
+                    name=&quot;r2&quot; value=&quot;/colon-test/foo%3Abar@0:6293c321ce21&quot;/&gt;&lt;/td&gt;
+            &lt;td&gt;10-Jul-2012&lt;/td&gt;
+            &lt;td&gt;&lt;a href=&quot;http://www.opensolaris.org/viewProfile.jspa?username=Vladimir.Kotal@oracle.com&quot;&gt;Vladimir Kotal &amp;lt;Vladimir.Kotal@oracle.com&amp;gt;&lt;/a&gt;&lt;/td&gt;
+            &lt;td&gt;first&lt;span class=&quot;filelist-hidden&quot;&gt;&lt;br/&gt;&lt;/span&gt;&lt;/td&gt;
+        &lt;/tr&gt;
+
+    &lt;/tbody&gt;
+&lt;/table&gt;
+&lt;/form&gt;
+
+
+The values are of interest, for example this one:
+
+  value=&quot;/colon-test/foo%3Abar@0:6293c321ce21&quot;
+
+It contains &apos;foo:bar&apos; with the colon already encoded. However, the colon which is part of the Merucial changeset ID is not encoded. The encoding (done when hitting the Compare button ?) converts the percent character to &apos;%25&apos; and leaves the &apos;3A&apos; intact, hence resulting in &apos;foo%253Abar&apos;.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86531</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2012-07-10 12:45:27 +0000</bug_when>
+            <thetext>(In reply to comment #9)
+
+&lt;snip&gt;
+
+&gt; It contains &apos;foo:bar&apos; with the colon already encoded. However, the colon which
+&gt; is part of the Merucial changeset ID is not encoded. The encoding (done when
+&gt; hitting the Compare button ?) converts the percent character to &apos;%25&apos; and
+&gt; leaves the &apos;3A&apos; intact, hence resulting in &apos;foo%253Abar&apos;.
+
+Assuming the chages to PageConfig.java are reverted to state before changeset 1401:4bad063b48d3 I think the fix should look like this:
+
+diff --git a/web/history.jsp b/web/history.jsp
+--- a/web/history.jsp
++++ b/web/history.jsp
+@@ -133,13 +133,13 @@
+                         } else if (count == 1) {
+                     %&gt; checked=&quot;checked&quot;&lt;%
+                         }
+-                    %&gt; name=&quot;r1&quot; value=&quot;&lt;%= rp %&gt;@&lt;%= rev%&gt;&quot;/&gt;
++                    %&gt; name=&quot;r1&quot; value=&quot;&lt;%= path %&gt;@&lt;%= rev%&gt;&quot;/&gt;
+                 &lt;input type=&quot;radio&quot;
+                     name=&quot;r2&quot;&lt;%
+                         if (count == 0) {
+                     %&gt; checked=&quot;checked&quot;&lt;%
+                         }
+-                    %&gt; value=&quot;&lt;%= rp %&gt;@&lt;%= rev %&gt;&quot;/&gt;&lt;/td&gt;&lt;%
++                    %&gt; value=&quot;&lt;%= path %&gt;@&lt;%= rev %&gt;&quot;/&gt;&lt;/td&gt;&lt;%
+                     } else {
+                         striked = true;
+                 %&gt;
+
+
+However, this is not a end of all troubles. There is a corner case bug which prevents this from working for the first changeset of the file.
+
+I&apos;ve recreated the test repository again so that the PlainAnalyzer will pick up the file (match on file suffix):
+
+$ mkdir colon-test
+$ hg init
+$ echo &quot;blah&quot; foo:bar.txt
+$ hg add foo:bar
+$ hg commit -m &quot;first&quot;
+$ echo &quot;hah&quot; &gt; foo\:bar 
+$ hg commit -m &quot;second&quot;
+$ echo &quot;ugh&quot; &gt; foo\:bar 
+$ hg commit -m &quot;third&quot;
+
+With above fix in history.jsp this works fine when diffing the 2nd and 3rd changeset. Howerver, it does not work when diffing 1st and 2nd changeset (or 1st and 3rd), resulting in the &apos;Diffs for binary files cannot be displayed!&apos; error message.
+
+Also, clicking on the revision ID displays the file contents for 2nd and 3rd changeset but not the 1st, resulting in &apos;Binary file [Click here to download]&apos; (which is moreover badly formatted because it is actually displayed below the footer).
+
+I added couple of additional changesets to make sure it is indeed just the 1st one which taints everything.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86545</commentid>
+            <who name="Jens Elkner">jel+osbugs</who>
+            <bug_when>2012-07-11 07:20:06 +0000</bug_when>
+            <thetext>(In reply to comment #10)
+&gt; (In reply to comment #9)
+...
+&gt; diff --git a/web/history.jsp b/web/history.jsp
+
+Yes. The value attribute should not contain encoded values, that&apos;s the real cause of the problem. However, using path instead of rp may work, because file moves are not tracked yet (but at least wrt. Mercurial it should be possible).
+
+So fixing this makes the previous changes to PageConfig wrt. diff/filepath obsolete, which are wrong anyway (just need a little bit time to show a real example, why ;-)).  
+
+&gt; However, this is not a end of all troubles. There is a corner case bug which
+&gt; prevents this from working for the first changeset of the file.
+
+Yes. Tried your first example - this hit another bug ;-)
+...
+&gt; $ echo &quot;ugh&quot; &gt; foo\:bar 
+&gt; $ hg commit -m &quot;third&quot;
+
+&gt; With above fix in history.jsp this works fine when diffing the 2nd and 3rd
+&gt; changeset.
+
+You used &gt;&gt; for 2nd and 3rd instead of &gt; , correct?
+
+&gt; Howerver, it does not work when diffing 1st and 2nd changeset (or
+&gt; 1st and 3rd), resulting in the &apos;Diffs for binary files cannot be displayed!&apos;
+&gt; error message.
+
+I guess you hit the bug:
+http://src.iws.cs.ovgu.de/source/xref/opengrok/src/org/opensolaris/opengrok/analysis/AnalyzerGuru.java#455
+http://src.iws.cs.ovgu.de/source/xref/opengrok/src/org/opensolaris/opengrok/analysis/plain/PlainAnalyzerFactory.java#55
+
+So a priori files with a size &lt; 4 are always treated as binaries and ascii files with a size &lt; 8 are also assumed to be binaries, because the &apos;\0&apos; char is not in the range accepted by the PlainAnalyzerFactory ...
+
+
+&gt; Also, clicking on the revision ID displays the file contents for 2nd and 3rd
+&gt; changeset but not the 1st, resulting in &apos;Binary file [Click here to download]&apos;
+&gt; (which is moreover badly formatted because it is actually displayed below the
+&gt; footer).
+
+Yes, same thing - no analyzer and thus no genre found ...</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86547</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2012-07-11 08:42:02 +0000</bug_when>
+            <thetext>(In reply to comment #11)
+&gt; (In reply to comment #10)
+&gt; &gt; (In reply to comment #9)
+&gt; ...
+&gt; &gt; diff --git a/web/history.jsp b/web/history.jsp
+&gt; 
+&gt; Yes. The value attribute should not contain encoded values, that&apos;s the real
+&gt; cause of the problem. However, using path instead of rp may work, because file
+&gt; moves are not tracked yet (but at least wrt. Mercurial it should be possible).
+&gt; 
+&gt; So fixing this makes the previous changes to PageConfig wrt. diff/filepath
+&gt; obsolete, which are wrong anyway (just need a little bit time to show a real
+&gt; example, why ;-)).  
+
+Yes, I will go ahead with this jsp fix.
+ 
+&gt; &gt; However, this is not a end of all troubles. There is a corner case bug which
+&gt; &gt; prevents this from working for the first changeset of the file.
+&gt; 
+&gt; Yes. Tried your first example - this hit another bug ;-)
+&gt; ...
+&gt; &gt; $ echo &quot;ugh&quot; &gt; foo\:bar 
+&gt; &gt; $ hg commit -m &quot;third&quot;
+&gt; 
+&gt; &gt; With above fix in history.jsp this works fine when diffing the 2nd and 3rd
+&gt; &gt; changeset.
+&gt; 
+&gt; You used &gt;&gt; for 2nd and 3rd instead of &gt; , correct?
+
+Yes, I did.
+ 
+&gt; &gt; Howerver, it does not work when diffing 1st and 2nd changeset (or
+&gt; &gt; 1st and 3rd), resulting in the &apos;Diffs for binary files cannot be displayed!&apos;
+&gt; &gt; error message.
+&gt; 
+&gt; I guess you hit the bug:
+&gt; http://src.iws.cs.ovgu.de/source/xref/opengrok/src/org/opensolaris/opengrok/analysis/AnalyzerGuru.java#455
+&gt; http://src.iws.cs.ovgu.de/source/xref/opengrok/src/org/opensolaris/opengrok/analysis/plain/PlainAnalyzerFactory.java#55
+
+We arrived with Lubos to the same conclusion yesterday, he has a fix ready. I filed bug 19228 to track it.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86548</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2012-07-11 08:58:11 +0000</bug_when>
+            <thetext>Fixed with:
+
+changeset:   1404:1f7713436643
+tag:         tip
+user:        Vladimir Kotal &lt;Vladimir.Kotal@oracle.com&gt;
+date:        Wed Jul 11 10:44:46 2012 +0200
+
+description:
+	Bug 19221 - diff does not work for plaintext files with colon in their filename (redo)
+
+modified:
+   src/org/opensolaris/opengrok/web/PageConfig.java
+   web/history.jsp</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

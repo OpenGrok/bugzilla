@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>17885</bug_id>
+          
+          <creation_ts>2011-02-14 15:07:00 +0000</creation_ts>
+          <short_desc>/**/ comments broke java xref</short_desc>
+          <delta_ts>2011-04-23 19:03:58 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>misc</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXED</resolution>
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>minor</bug_severity>
+          <target_milestone>0.11</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter>elrado</reporter>
+          <assigned_to name="Knut Anders Hatlen">knut.hatlen</assigned_to>
+          <cc>knut.hatlen</cc>
+    
+    <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>81131</commentid>
+            <who name="">elrado</who>
+            <bug_when>2011-02-14 15:07:59 +0000</bug_when>
+            <thetext>the rarely used empty java comments 
+typed as /**/ broke xref generation.
+
+In JavaXref.lex the rule
+ &quot;/**&quot;  { yybegin(JAVADOC);out.write(&quot;&lt;span class=\&quot;c\&quot;&gt;/**&quot;);}
+enters the JAVADOC state. All of the following text is rendered as comment until &quot;*/&quot; is reached;</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>82458</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2011-04-23 19:03:58 +0000</bug_when>
+            <thetext>I&apos;ve added a lookahead to the JAVADOC rule to prevent that it kicks in for empty comments.
+
+Fixed in changeset:   1167:49ed6e19af96</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

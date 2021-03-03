@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>16451</bug_id>
+          
+          <creation_ts>2010-07-02 23:32:00 +0000</creation_ts>
+          <short_desc>Tray app doesn&apos;t work with other protocols than jmxmp</short_desc>
+          <delta_ts>2010-07-05 20:43:51 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>trayapp</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXED</resolution>
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>minor</bug_severity>
+          <target_milestone>0.10</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Knut Anders Hatlen">knut.hatlen</reporter>
+          <assigned_to name="Knut Anders Hatlen">knut.hatlen</assigned_to>
+          <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>75052</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2010-07-02 23:32:53 +0000</bug_when>
+            <thetext>OGAgent allows you to specify which protocol to use on the server side with the org.opensolaris.opengrok.management.connection.protocol property. The client however always uses the jmxmp protocol.
+
+We should make the protocol on the client side configurable too. Also, we should make the default something else than jmxmp so that we don&apos;t depend on jmxremote_optional.jar in the default setup.
+
+Currently, this problems makes some of the JUnit tests fail because we have removed jmxremote_optional.jar from the source.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>75053</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2010-07-03 08:42:14 +0000</bug_when>
+            <thetext>I&apos;ve temporarily disabled the failing JUnit tests (OGAgentTest and AgentConnectionTest) in changeset 1040:c743cb71dc8b to reduce the level of noise. We should re-enable them once we&apos;ve resolved this bug.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>75093</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2010-07-05 20:40:46 +0000</bug_when>
+            <thetext>The RMI protocol, which is the only protocol that must be supported in
+all implementations, has a more tricky URL than the JMXMP protocol, in
+particular because it needs the address of a running RMI registry. We
+therefore need some small changes to how the agent and the client are
+configured.
+
+I will make the following modifications to the configuration
+properties (including a harmonization between the property names in
+the agent and the client):
+
+(ooom == org.opensolaris.opengrok.management)
+
+The properties ooom.connection.host (agent *and* client),
+ooom.connection.port (agent only), ooom.connection.jmxmp.port (client
+only) and ooom.connection.protocol (client only) are removed and
+replaced with the following properties that are used both by the agent
+and the client:
+
+* org.opensolaris.opengrok.management.host
+
+  - specifies the name of the host running the agent (default:
+    localhost)
+
+* org.opensolaris.opengrok.management.port
+
+  - specifies the port number the agent is bound to (default: 9292)
+
+* org.opensolaris.opengrok.management.rmi.port
+
+  - specifies the port number the RMI registry is bound to (default:
+    9293)
+
+* org.opensolaris.opengrok.management.url
+
+  - can be used to specify the full JMX URL of the agent (default:
+    service:jmx:rmi://&lt;host&gt;:&lt;port&gt;/jndi/rmi://&lt;host&gt;:&lt;rmiport&gt;/opengrok)
+
+In addition, the following property can be set on the agent:
+
+* org.opensolaris.opengrok.management.rmi.startRegistry
+
+  - specifies whether an embedded RMI registry should be started
+    before the RMI connector server is started (default: true)
+
+To revert to the old behaviour, using the JMXMP protocol, add
+jmxremote_optional.jar to the classpath and set
+org.opensolaris.opengrok.management.url to
+service:jmx://&lt;host&gt;:&lt;port&gt;/ when starting the agent and the client.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>75094</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2010-07-05 20:43:51 +0000</bug_when>
+            <thetext>changeset:   1043:e7c26fc2f084</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

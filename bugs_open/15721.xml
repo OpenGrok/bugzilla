@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>15721</bug_id>
+          
+          <creation_ts>2010-04-22 11:05:00 +0000</creation_ts>
+          <short_desc>parsing of hg history broken</short_desc>
+          <delta_ts>2010-04-23 07:55:46 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>scm</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>NEW</bug_status>
+          
+          
+          
+          
+          
+          
+          <priority>P2</priority>
+          <bug_severity>enhancement</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          <blocked>2966</blocked>
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Lubos Kosco">Lubos.Kosco</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          <cc>opengrok-dev</cc>
+    
+    <cc>vitezslav.batrla</cc>
+    
+    <cc>vladimir.kotal</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>71817</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2010-04-22 11:05:34 +0000</bug_when>
+            <thetext>http://src.opensolaris.org/source/history/onnv/onnv-gate/usr/src/cmd/cmd-inet/usr.sbin/ipsecutils/ipsecconf.c
+
+- happens with 0.9 rc1 too
+
+because of problem parsing changeset 3055 above files (and all touched with 3055 it seems) don&apos;t have the whole history ...</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>71829</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2010-04-22 14:14:22 +0000</bug_when>
+            <thetext>This is a problem with following name changes since ipseckey.c (and all files in the ipsecutils/ directory were introduced with changeset 4235:037e335b7d68.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>71830</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2010-04-22 14:25:18 +0000</bug_when>
+            <thetext>For a single file the difference can be seen by including or not including the -f option:
+
+hg log -f usr/src/cmd/cmd-inet/usr.sbin/ipsecutils/ipseckey.c
+hg log usr/src/cmd/cmd-inet/usr.sbin/ipsecutils/ipseckey.c</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>71832</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2010-04-22 15:25:43 +0000</bug_when>
+            <thetext>bug 2966 didn&apos;t fix this issue
+as the matter of fact it&apos;s still there, because we don&apos;t do per file hg history (performance reasons)
+
+a solution that can be implemented is a workaround of hg lack of proper logs for hg rename:
+
+use different template - we need:
+added:
+deleted:
+files
+
+than observe if there is the same file name in added and deleted (most probably this would be a rename, but it doesn&apos;t have to be 100% :( )
+
+according to above guess one can then continue adding the history to the renamed file in processStream parser - note that for diffs to work properly you&apos;d need to generate different file name since the changeset that did rename in value of the radio button when you generate history page</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>71882</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2010-04-23 07:55:46 +0000</bug_when>
+            <thetext>(In reply to comment #3)
+&gt; than observe if there is the same file name in added and deleted (most probably
+&gt; this would be a rename, but it doesn&apos;t have to be 100% :( )
+&gt; 
+&gt; according to above guess one can then continue adding the history to the
+&gt; renamed file in processStream parser - note that for diffs to work properly
+&gt; you&apos;d need to generate different file name since the changeset that did rename
+&gt; in value of the radio button when you generate history page
+
+Really, Mercurial&apos;s lack of rename data combined with the way how history index is generated (&apos;hg log -v&apos; in top directory of the repo) only gives us single possibility - to provide an incomplete hack to guess if a file was renamed or not.
+
+It would be nice if the history view for a renamed file can contain a warning that the history log is incomplete but that too is not possible without the additional query(ies) (comparing &apos;hg log&apos; and &apos;hg log -f&apos; for that file).
+
+The OpenGrok documentation should probably mention this limitation.</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

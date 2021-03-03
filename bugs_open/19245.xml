@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>19245</bug_id>
+          
+          <creation_ts>2012-10-22 20:48:00 +0000</creation_ts>
+          <short_desc>History builder bails on index and update using bzr project</short_desc>
+          <delta_ts>2012-10-22 20:48:24 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>indexer</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>Linux</op_sys>
+          <bug_status>NEW</bug_status>
+          
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>major</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Peter M. Petrakis">peter.petrakis</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>86638</commentid>
+            <who name="Peter M. Petrakis">peter.petrakis</who>
+            <bug_when>2012-10-22 20:48:24 +0000</bug_when>
+            <thetext>This is using 11.1 and java:
+
+# java -version
+java version &quot;1.6.0_24&quot;
+OpenJDK Runtime Environment (IcedTea6 1.11.4) (6b24-1.11.4-1ubuntu0.12.04.1)
+OpenJDK 64-Bit Server VM (build 20.0-b12, mixed mode)
+
+
+When running index|update with a single sandbox the update
+would fail very quickly with a cryptic &quot;error&quot;.
+
+root@juju-canonistack-instance-1:/opt/opengrok/bin# ./OpenGrok update 
+Loading the default instance configuration ...
+Logging filehandler pattern: /var/opengrok/log/opengrok%g.%u.log
+19:22:15 INFO: Scanning for repositories...
+19:22:16 INFO: Done scanning for repositories (1s)
+19:22:16 INFO: Writing configuration to /var/opengrok/etc/configuration.xml
+19:22:17 INFO: Done...
+19:22:17 INFO: Generating history cache for all repositories ...
+19:22:17 INFO: Create historycache for /var/opengrok/src/juju (BazaarRepository)
+Killed
+
+After bisecting the script I found the offender in StdInvocation
+
+root@juju-canonistack-instance-1:/opt/opengrok/bin# /usr/lib/jvm/java-6-openjdk-amd64/jre/bin/java -Xmx2048m -Dorg.opensolaris.opengrok.history.git=/usr/bin/git -Dorg.opensolaris.opengrok.history.Bazaar=/usr/bin/bzr -Djava.util.logging.config.file=/var/opengrok/logging.properties -jar /opt/opengrok/bin/../lib/opengrok.jar -P -S -r on -v -c /usr/bin/ctags-exuberant -a on -W /var/opengrok/etc/configuration.xml -U localhost:2424 -s /var/opengrok/src -d /var/opengrok/data -H
+
+
+It&apos;s the -H, which btw has no conditional operator. From the logs:
+2012-10-22 20:42:00.008+0000 INFO t10 Indexer.prepareIndexer: Generating history cache for all repositories ...
+2012-10-22 20:42:00.066+0000 INFO t11 HistoryGuru.createCache: Create historycache for /var/opengrok/src/juju (BazaarRepository)
+2012-10-22 20:42:00.068+0000 FINE t11 Executor.exec: Executing command [/usr/bin/bzr, log, -v, ] in directory /var/opengrok/src/juju
+
+That bzr cmd functions fine on it&apos;s own so I suspect there&apos;s some buffer
+problem in the java program itself that&apos;s going wrong.
+
+Removing the -H works around the problem though it&apos;s a major PITA to
+have to patch the main driver script in order to distrib this package, making this a conditional feature is in order.
+
+Offending source code information for reproduction.
+root@juju-canonistack-instance-1:/var/opengrok/src/juju# bzr info
+Standalone tree (format: 2a)
+Location:
+  branch root: .
+
+Related branches:
+  parent branch: http://bazaar.launchpad.net/~juju/juju/trunk/
+root@juju-canonistack-instance-1:/var/opengrok/src/juju# bzr log | head
+
+Complete steps for reproduction:
+juju-log &quot;Installing opengrok 11.1 JAR from tarball&quot;
+. /usr/share/charm-helper/sh/net.sh
+templocation=`ch_get_file ${grokjar} ${tarball_sha256}`
+tar xzf ${templocation} -C /opt
+ln -s /opt/opengrok-0.11.1 /opt/opengrok
+
+juju-log &quot;deploying opengrok war to servlet root&quot;
+# deploy script scans for common servlets and had hardcoded paths
+# should you use tomcat7 this will probably not work.
+cd /opt/opengrok/bin &amp;&amp; ./OpenGrok deploy
+
+juju-log &quot;creating opengrok src and data store&quot;
+mkdir -p /var/opengrok/src /var/opengrok/data
+
+juju-log &quot;acquiring example source code: juju&quot;
+bzr branch lp:juju /var/opengrok/src/juju 2&gt;/dev/null
+
+juju-log &quot;indexing...&quot;
+cd /opt/opengrok/bin &amp;&amp; ./OpenGrok index</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

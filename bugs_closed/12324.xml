@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>12324</bug_id>
+          
+          <creation_ts>2009-10-29 13:48:00 +0000</creation_ts>
+          <short_desc>history view should not contain lists of files</short_desc>
+          <delta_ts>2010-03-18 09:02:42 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>webapp</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXED</resolution>
+          
+          <see_also>http://defect.opensolaris.org/bz/show_bug.cgi?id=12529</see_also>
+          
+          
+          
+          <priority>P2</priority>
+          <bug_severity>blocker</bug_severity>
+          <target_milestone>0.8</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Vladimir Kotal">vladimir.kotal</reporter>
+          <assigned_to name="Knut Anders Hatlen">knut.hatlen</assigned_to>
+          <cc>knut.hatlen</cc>
+    
+    <cc>opengrok-dev</cc>
+    
+    <cc>trond.norbye</cc>
+    
+    <cc>zdenek.kotala</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>54638</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2009-10-29 13:48:29 +0000</bug_when>
+            <thetext>Trying recent build (pre-0.8) I discovered that the History view lists of files touched by given integration, e.g. http://lv-grok1.opensolaris.org:8080/source/history/onnv/onnv-gate/usr/src/lib/libc/port/threads/door_calls.c lists thousands of lines of output, the majority being the first push to OpenSolaris.
+
+The source code lines should not be in the History view by default - firstly, it hangs Firefox nicely, secondly it makes the history view incomprehensible (the other case being files with big number of changes and small numbers of files per change).</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>54733</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2009-10-29 21:54:26 +0000</bug_when>
+            <thetext>We should have a way of toggling the display of the file list on or off, with the default being off. Should be fixed before the 0.8 release.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>54894</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2009-10-31 16:42:40 +0000</bug_when>
+            <thetext>Fixed in changeset 893:fba450bedb13. File list is now hidden by default, but can be made visible by clicking &quot;show modified files&quot;.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>54930</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2009-11-01 20:32:31 +0000</bug_when>
+            <thetext>Cool stuff, thanks a lot.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>69562</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2010-03-18 09:02:42 +0000</bug_when>
+            <thetext>*** Bug 11196 has been marked as a duplicate of this bug. ***</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

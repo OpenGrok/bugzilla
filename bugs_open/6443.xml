@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>6443</bug_id>
+          
+          <creation_ts>2009-02-06 11:27:00 +0000</creation_ts>
+          <short_desc>Tar balls&apos; contents could be indexed as well</short_desc>
+          <delta_ts>2011-05-08 09:37:36 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>indexer</component>
+          <version>unspecified</version>
+          <rep_platform>Other</rep_platform>
+          <op_sys>Solaris</op_sys>
+          <bug_status>NEW</bug_status>
+          
+          
+          <see_also>https://defect.opensolaris.org/bz/show_bug.cgi?id=343</see_also>
+          
+          
+          
+          <priority>P4</priority>
+          <bug_severity>minor</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Vladimir Kotal">vladimir.kotal</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          <cc>a22489001-opengrok</cc>
+    
+    <cc>Lubos.Kosco</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>26828</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2009-02-06 11:27:31 +0000</bug_when>
+            <thetext>Some of the ON gates include .tar.gz files which have source files stored in them and are only expanded for compilation. It would be nice to index the contents of those files as well.
+
+This would help with security vulnerability analysis of inter-gate consumers of a library, for example.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>50239</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2009-09-18 13:38:39 +0000</bug_when>
+            <thetext>for what is worth, .tar.gz and .bz2 should be indexed, but their indexer is broken (seems like ant libraries we use for parsing them changed)
+hence changing this into a defect</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>82762</commentid>
+            <who name="opengrok-user">a22489001-opengrok</who>
+            <bug_when>2011-05-08 09:37:36 +0000</bug_when>
+            <thetext>(In reply to comment #1)
+&gt; for what is worth, .tar.gz and .bz2 should be indexed, but their indexer is
+&gt; broken (seems like ant libraries we use for parsing them changed)
+&gt; hence changing this into a defect
+
+will these feature be in 0.11?</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

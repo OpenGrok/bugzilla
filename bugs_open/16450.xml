@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>16450</bug_id>
+          
+          <creation_ts>2010-07-02 23:01:00 +0000</creation_ts>
+          <short_desc>Agent startup command in README.txt doesn&apos;t work</short_desc>
+          <delta_ts>2010-07-02 23:01:30 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>agent</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>NEW</bug_status>
+          
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>minor</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Knut Anders Hatlen">knut.hatlen</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>75049</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2010-07-02 23:01:30 +0000</bug_when>
+            <thetext>README.txt says:
+
+&gt; To start the indexer with configuration run:
+&gt; $ java -cp ./opengrok.jar org.opensolaris.opengrok.management.OGAgent \
+&gt; --config opengrok-agent.properties
+
+If I create a file called opengrok-agent.properties containing the following line
+
+agent=og://localhost:9292/home/kah/og
+
+and execute the command in README.txt, I see these messages:
+
+Logging to /var/opengrok/log
+OGAgent failed set up logging: java.io.IOException: logpath not writeable /var/opengrok/log
+
+So OGAgent is apparently not using my configuration file which says that the data should be written to /home/kah/og.
+
+It works as expected if I give the argument --config=opengrok-agent.properties (note the equals sign!) to OGAgent instead.
+
+We could fix this by changing the example in README.txt, but I think this also shows problems with OGAgent&apos;s handling of command line arguments:
+
+It would be nice if it accepted the argument without the equals sign. And, more importantly, it should raise an error if it found an argument that it didn&apos;t understand.</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

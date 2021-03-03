@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>156</bug_id>
+          
+          <creation_ts>2007-11-05 06:14:00 +0000</creation_ts>
+          <short_desc>Stale files not being removed from index on Windows</short_desc>
+          <delta_ts>2007-11-08 05:23:53 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>indexer</component>
+          <version>unspecified</version>
+          <rep_platform>i86pc/i386</rep_platform>
+          <op_sys>Windows</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXED</resolution>
+          
+          
+          
+          
+          
+          <priority>P4</priority>
+          <bug_severity>normal</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Jason Leonard">jason</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>347</commentid>
+            <who name="Jason Leonard">jason</who>
+            <bug_when>2007-11-05 06:14:49 +0000</bug_when>
+            <thetext>If I setup a source folder structure as follows
+src
+ &gt; MyProject
+    &gt; afile.txt
+
+I setup &apos;src&apos; as my source folder and tell the indexer to index &apos;MyProject&apos;.
+&apos;afile.txt&apos; gets indexed correctly. If I now delete &apos;afile.txt&apos; and rerun the indexer as before,  the indexer says &quot;Nothing changed since last run&quot;
+
+Looking at the code... startIndexing() in Index.java
+String startuid = Util.uid(parent + &apos;/&apos; + file.getName(), &quot;&quot;);
+
+It appears that the startuid has a null character at the end (generated from Util.uid). Looking at Util.uid, it&apos;s using File.separatorChar which is a &apos;/&apos; on unix and a &apos;\&apos; on windows. This is being checked against a path which always uses &apos;/&apos; seperators. 
+
+Therefore startuid on windows look something like this...
+/MyProject/afile.txt\0200709101512
+Where I guess on unix it will look something like this...
+\0MyProject\0afile.txt\0200709101512</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>471</commentid>
+            <who name="Trond Norbye">trond.norbye</who>
+            <bug_when>2007-11-08 05:23:53 +0000</bug_when>
+            <thetext>Generate all uids by replace &apos;/&apos; with \u0000, and replace all occurrences of \ with / before we start traversing directories.</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

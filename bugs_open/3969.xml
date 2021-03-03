@@ -1,0 +1,284 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>3969</bug_id>
+          
+          <creation_ts>2008-10-15 18:43:00 +0000</creation_ts>
+          <short_desc>Perforce history indexer not picking up file content (can&apos;t diff or annotate)</short_desc>
+          <delta_ts>2008-10-16 14:46:26 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>indexer</component>
+          <version>unspecified</version>
+          <rep_platform>i86pc/amd64</rep_platform>
+          <op_sys>Windows</op_sys>
+          <bug_status>INCOMPLETE</bug_status>
+          
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>normal</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Matthew Janulewicz">mattyj</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>14874</commentid>
+              <attachid>580</attachid>
+            <who name="Matthew Janulewicz">mattyj</who>
+            <bug_when>2008-10-15 18:43:17 +0000</bug_when>
+            <thetext>Created attachment 580
+Example historycache file.
+
+I have the Perforce history indexer scanning fine but it only seems to be picking up the metadata about the changes, not the content of the file itself.
+
+Therefore the history pane works but the annotate and diff functions do not.
+
+When I go to annotate I have a column with line numbers, two blank columns, then the file content.
+
+In the history view the revisions and numbers are listed correctly along with the author, date and checkin comment. However, when I click on any of the file revision numbers the result is a blank file. Therefore, any time I try to diff any revisions they come back as identical.
+
+This is the entire commandline I am using to create the index:
+
+java -jar opengrok.jar -v -c c:\ctags\ctags.exe -W d:\opengrok7\data\configuration.xml -P -H -w /source7 -S -s d:\mjanulewicz_code_windows -d d:\opengrok7\data
+
+Note that (obviously) I am running this on Windows with a Tomcat app server. 
+
+---------------------------------
+
+This is the output I get from the commandline:
+
+Scanning for repositories...
+Oct 15, 2008 6:23:52 PM org.opensolaris.opengrok.history.HistoryGuru addRepositories
+INFO: Adding &lt;org.opensolaris.opengrok.history.PerforceRepository&gt; repository: &lt;D:\mjanulewicz_code_windows\lal&gt;
+Done searching for repositories (45s)
+Writing configuration to d:\opengrok7\data\configuration.xml
+Done...
+Oct 15, 2008 6:23:52 PM org.opensolaris.opengrok.history.HistoryGuru createCache
+INFO: Create historycache for D:\mjanulewicz_code_windows\lal (PerforceRepository)
+Oct 15, 2008 6:23:53 PM org.opensolaris.opengrok.history.HistoryGuru createCache
+INFO: Creating historycache for D:\mjanulewicz_code_windows\lal took (906ms)
+Oct 15, 2008 6:23:53 PM org.opensolaris.opengrok.index.Indexer doIndexerExecution
+INFO: Starting indexExecution
+Adding: /lal/main/cw/gfx/bin/exrdod/exrdod.cpp (CAnalyzer)
+
+D:\opengrok7&gt;
+
+---------------------------------
+
+This is my resultant configuration.xml file (sorry, this won&apos;t let me attach more than one file):
+
+&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;java version=&quot;1.5.0_11&quot; class=&quot;java.beans.XMLDecoder&quot;&gt;
+ &lt;object class=&quot;org.opensolaris.opengrok.configuration.Configuration&quot;&gt;
+  &lt;void property=&quot;ctags&quot;&gt;
+   &lt;string&gt;c:\ctags\ctags.exe&lt;/string&gt;
+  &lt;/void&gt;
+  &lt;void property=&quot;dataRoot&quot;&gt;
+   &lt;string&gt;D:\opengrok7\data&lt;/string&gt;
+  &lt;/void&gt;
+  &lt;void property=&quot;projects&quot;&gt;
+   &lt;void method=&quot;add&quot;&gt;
+    &lt;object class=&quot;org.opensolaris.opengrok.configuration.Project&quot;&gt;
+     &lt;void property=&quot;description&quot;&gt;
+      &lt;string&gt;lal&lt;/string&gt;
+     &lt;/void&gt;
+     &lt;void property=&quot;path&quot;&gt;
+      &lt;string&gt;/lal&lt;/string&gt;
+     &lt;/void&gt;
+    &lt;/object&gt;
+   &lt;/void&gt;
+  &lt;/void&gt;
+  &lt;void property=&quot;repositories&quot;&gt;
+   &lt;void method=&quot;put&quot;&gt;
+    &lt;string&gt;D:\mjanulewicz_code_windows\lal&lt;/string&gt;
+    &lt;object class=&quot;org.opensolaris.opengrok.history.PerforceRepository&quot;&gt;
+     &lt;void property=&quot;directoryName&quot;&gt;
+      &lt;string&gt;D:\mjanulewicz_code_windows\lal&lt;/string&gt;
+     &lt;/void&gt;
+    &lt;/object&gt;
+   &lt;/void&gt;
+  &lt;/void&gt;
+  &lt;void property=&quot;sourceRoot&quot;&gt;
+   &lt;string&gt;D:\mjanulewicz_code_windows&lt;/string&gt;
+  &lt;/void&gt;
+  &lt;void property=&quot;urlPrefix&quot;&gt;
+   &lt;string&gt;/source7/s?&lt;/string&gt;
+  &lt;/void&gt;
+  &lt;void property=&quot;verbose&quot;&gt;
+   &lt;boolean&gt;true&lt;/boolean&gt;
+  &lt;/void&gt;
+ &lt;/object&gt;
+&lt;/java&gt;
+
+---------------------------------
+
+Attached is the historycache .gz file that corresponds to the one file I am testing this on.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>14877</commentid>
+            <who name="Trond Norbye">trond.norbye</who>
+            <bug_when>2008-10-15 18:55:45 +0000</bug_when>
+            <thetext>Could you post the web.xml in the source.war you are using?</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>15069</commentid>
+              <attachid>592</attachid>
+            <who name="Matthew Janulewicz">mattyj</who>
+            <bug_when>2008-10-16 14:46:26 +0000</bug_when>
+            <thetext>Created attachment 592
+My web.xml file</thetext>
+          </long_desc>
+      
+          <attachment
+              isobsolete="0"
+              ispatch="0"
+              isprivate="0"
+              isurl="0"
+          >
+            <attachid>580</attachid>
+            <date>2008-10-15 18:43:00 +0000</date>
+            <delta_ts>2008-10-15 18:43:17 +0000</delta_ts>
+            <desc>Example historycache file.</desc>
+            <filename>exrdod.cpp.gz</filename>
+            <type>application/x-gzip</type>
+            <size>442</size>
+            <attacher>mattyj</attacher>
+            
+              <data encoding="base64">H4sIAAAAAAAAAO2STWvcMBCGz82vGHRO5XXYLA3IGwpJSCGFHloovRTZnvUqK2uMpDVxf33H6/1y
+mtA09FKoL5Zm3nn0ajTq8qG20KIPhlwmUjkRgK6g0rgqE18+37x9Jy7ncKLudauPdedy8j1NBRRW
+h5CJPi1z1C7Irx/vrpAJ6AUXgqL8Hou4E5KvJDXoAlntTdisK08ruTQhku/k7fDf1IJqyZTQeFb5
+2GViK7p20RsMg+bxCRsr62isfO+97u64ZCvc4mqMSyozoctyl3ity95It4f8YlcX0bR4yIPKiSx3
+aR79GlWy2+3rkx7wPG7Nxv0xLnAfXDUPjfYr9CrZ7l/IK3UcmXuuj1djHShLfEiaXkzT84vZpP9U
+sokdWMkAe6mVGkPQFT5xN34lZCU1bIzqWrvSGofAe57EAAvyfbzxDODAKbBhhGB+4Cmwth/ZnIKJ
+nTx5w9R9Fkpc6LWNASLBbPowmw6CI9ZI8u3DJ8gtFatBtseORLRYyD99BI+t6U974upnv2E9avIo
++X/U/71RN85Eoy0USyxWxv3NUUpfP0qj1CFxFFZJ30Be/ATDAfM2TgYAAA==
+</data>
+
+          </attachment>
+          <attachment
+              isobsolete="0"
+              ispatch="0"
+              isprivate="0"
+              isurl="0"
+          >
+            <attachid>592</attachid>
+            <date>2008-10-16 14:46:00 +0000</date>
+            <delta_ts>2008-10-16 14:46:26 +0000</delta_ts>
+            <desc>My web.xml file</desc>
+            <filename>web.xml</filename>
+            <type>text/xml</type>
+            <size>4431</size>
+            <attacher>mattyj</attacher>
+            
+              <data encoding="base64">PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4NCjwhRE9DVFlQRSB3ZWItYXBw
+IFBVQkxJQyAiLS8vU3VuIE1pY3Jvc3lzdGVtcywgSW5jLi8vRFREIFdlYiBBcHBsaWNhdGlvbiAy
+LjMvL0VOIiAiaHR0cDovL2phdmEuc3VuLmNvbS9kdGQvd2ViLWFwcF8yXzMuZHRkIj4NCjx3ZWIt
+YXBwPg0KICA8ZGlzcGxheS1uYW1lPk9wZW5Hcm9rPC9kaXNwbGF5LW5hbWU+DQogIDxkZXNjcmlw
+dGlvbj5BIHdpY2tlZCBmYXN0IHNvdXJjZSBicm93c2VyPC9kZXNjcmlwdGlvbj4NCg0KICA8IS0t
+IA0KICAgICAgIFlvdSBtYXkgZWl0aGVyIHVzZSBhIGNvbmZpZ3VyYXRpb24gZmlsZSwgb3IganVz
+dCBzcGVjaWZ5IHlvdXINCiAgICAgICBkYXRhLXJvb3QgYW5kIHNvdXJjZSByb290LiBJZiBDT05G
+SUdVUkFUSU9OIGlzIHNwZWNpZmllZCwgaXQgd2lsbA0KICAgICAgIG92ZXJyaWRlIHRoZSB2YWx1
+ZXMgc2V0IGluIERBVEFfUk9PVCBhbmQgU1JDX1JPT1QuDQogIC0tPg0KICANCiAgPGNvbnRleHQt
+cGFyYW0+DQogICAgPHBhcmFtLW5hbWU+Q09ORklHVVJBVElPTjwvcGFyYW0tbmFtZT4NCiAgICA8
+cGFyYW0tdmFsdWU+ZDpcb3Blbmdyb2s3XGRhdGFcY29uZmlndXJhdGlvbi54bWw8L3BhcmFtLXZh
+bHVlPg0KICAgIDxkZXNjcmlwdGlvbj5GdWxsIHBhdGggdG8gdGhlIGNvbmZpZ3VyYXRpb24gZmls
+ZSB3aGVyZSBPcGVuR3JvayBjYW4gcmVhZCBpdCdzIGNvbmZpZ3VyYXRpb248L2Rlc2NyaXB0aW9u
+Pg0KICA8L2NvbnRleHQtcGFyYW0+DQogIA0KICA8Y29udGV4dC1wYXJhbT4NCiAgICA8cGFyYW0t
+bmFtZT5Db25maWdBZGRyZXNzPC9wYXJhbS1uYW1lPg0KICAgIDxwYXJhbS12YWx1ZT5sb2NhbGhv
+c3Q6MjQyNDwvcGFyYW0tdmFsdWU+DQogICAgPGRlc2NyaXB0aW9uPkFuIGFkZHJlc3Mgd2hlcmUg
+T3Blbkdyb2sgY2FuIHJlY2VpdmUgbmV3IGNvbmZpZ3VyYXRpb248L2Rlc2NyaXB0aW9uPg0KICA8
+L2NvbnRleHQtcGFyYW0+DQogIA0KICA8IS0tIGNvbnRleHQtcGFyYW0+DQogICAgPHBhcmFtLW5h
+bWU+REFUQV9ST09UPC9wYXJhbS1uYW1lPg0KICAgIDxwYXJhbS12YWx1ZT5kOlxvcGVuZ3Jvazdc
+ZGF0YTwvcGFyYW0tdmFsdWU+DQogICAgPGRlc2NyaXB0aW9uPlJFUVVJUkVEOiBGdWxsIHBhdGgg
+b2YgdGhlIGRpcmVjdG9yeSB3aGVyZSBkYXRhIGZpbGVzIGdlbmVyYXRlZCBieSBPcGVuR3JvayBh
+cmUgc3RvcmVkPC9kZXNjcmlwdGlvbj4NCiAgPC9jb250ZXh0LXBhcmFtPg0KDQogIDxjb250ZXh0
+LXBhcmFtPg0KICAgIDxwYXJhbS1uYW1lPlNSQ19ST09UPC9wYXJhbS1uYW1lPg0KICAgIDxwYXJh
+bS12YWx1ZT5kOlxtamFudWxld2ljel9jb2RlX3dpbmRvd3M8L3BhcmFtLXZhbHVlPg0KICAgIDxk
+ZXNjcmlwdGlvbj5SRVFVSVJFRDogRnVsbCBwYXRoIHRvIHNvdXJjZSB0cmVlPC9kZXNjcmlwdGlv
+bj4NCiAgPC9jb250ZXh0LXBhcmFtLS0+DQoNCiAgPGxpc3RlbmVyPg0KICAgPGxpc3RlbmVyLWNs
+YXNzPm9yZy5vcGVuc29sYXJpcy5vcGVuZ3Jvay53ZWIuV2ViYXBwTGlzdGVuZXI8L2xpc3RlbmVy
+LWNsYXNzPg0KICA8L2xpc3RlbmVyPg0KICAgIA0KICAgIDxzZXJ2bGV0Pg0KICAgIDxzZXJ2bGV0
+LW5hbWU+c2VhcmNoPC9zZXJ2bGV0LW5hbWU+DQogICAgPGRpc3BsYXktbmFtZT5Tb3VyY2UgRmlu
+ZGVyPC9kaXNwbGF5LW5hbWU+DQogICAgPGpzcC1maWxlPi9zZWFyY2guanNwPC9qc3AtZmlsZT4N
+CiAgPC9zZXJ2bGV0Pg0KICA8c2VydmxldD4NCiAgICA8c2VydmxldC1uYW1lPmhpc3Rvcnk8L3Nl
+cnZsZXQtbmFtZT4NCiAgICA8ZGlzcGxheS1uYW1lPlNvdXJjZSBIaXN0b3J5PC9kaXNwbGF5LW5h
+bWU+DQogICAgPGpzcC1maWxlPi9oaXN0b3J5LmpzcDwvanNwLWZpbGU+DQogIDwvc2VydmxldD4N
+CiAgPHNlcnZsZXQ+DQogICAgPHNlcnZsZXQtbmFtZT5saXN0ZXI8L3NlcnZsZXQtbmFtZT4NCiAg
+ICA8ZGlzcGxheS1uYW1lPlNvdXJjZSBsaXN0ZXI8L2Rpc3BsYXktbmFtZT4NCiAgICA8anNwLWZp
+bGU+L2xpc3QuanNwPC9qc3AtZmlsZT4NCiAgPC9zZXJ2bGV0Pg0KICA8c2VydmxldD4NCiAgICA8
+c2VydmxldC1uYW1lPmRpZmY8L3NlcnZsZXQtbmFtZT4NCiAgICA8ZGlzcGxheS1uYW1lPlNvdXJj
+ZSBkaWZmcyBiZXR3ZWVuIHJldmlzaW9uczwvZGlzcGxheS1uYW1lPg0KICAgIDxqc3AtZmlsZT4v
+ZGlmZi5qc3A8L2pzcC1maWxlPg0KICA8L3NlcnZsZXQ+DQogIDxzZXJ2bGV0Pg0KICAgIDxzZXJ2
+bGV0LW5hbWU+bW9yZTwvc2VydmxldC1uYW1lPg0KICAgIDxkaXNwbGF5LW5hbWU+U2hvd3MgbW9y
+ZSBtYXRjaGluZyBsaW5lczwvZGlzcGxheS1uYW1lPg0KICAgIDxqc3AtZmlsZT4vbW9yZS5qc3A8
+L2pzcC1maWxlPg0KICA8L3NlcnZsZXQ+DQogIDxzZXJ2bGV0Pg0KICAgIDxzZXJ2bGV0LW5hbWU+
+cnNzPC9zZXJ2bGV0LW5hbWU+DQogICAgPGRpc3BsYXktbmFtZT5Tb3VyY2UgQ2hhbmdlcyBpbiBS
+U1MgZm9ybWF0PC9kaXNwbGF5LW5hbWU+DQogICAgPGpzcC1maWxlPi9yc3MuanNwPC9qc3AtZmls
+ZT4NCiAgPC9zZXJ2bGV0Pg0KICA8c2VydmxldD4NCiAgICA8c2VydmxldC1uYW1lPnJhdzwvc2Vy
+dmxldC1uYW1lPg0KICAgIDxkaXNwbGF5LW5hbWU+UmF3IFNvdXJjZSBsaXN0ZXI8L2Rpc3BsYXkt
+bmFtZT4NCiAgICA8anNwLWZpbGU+L3Jhdy5qc3A8L2pzcC1maWxlPg0KICA8L3NlcnZsZXQ+DQog
+IDxzZXJ2bGV0Pg0KICAgIDxzZXJ2bGV0LW5hbWU+ZXJyb3I8L3NlcnZsZXQtbmFtZT4NCiAgICA8
+ZGlzcGxheS1uYW1lPkVycm9yIEhhbmRsZXI8L2Rpc3BsYXktbmFtZT4NCiAgICA8anNwLWZpbGU+
+L2Vycm9yLmpzcDwvanNwLWZpbGU+DQogIDwvc2VydmxldD4NCiAgPHNlcnZsZXQ+DQogICAgPHNl
+cnZsZXQtbmFtZT5lbm9lbnQ8L3NlcnZsZXQtbmFtZT4NCiAgICA8ZGlzcGxheS1uYW1lPkZpbGUg
+bm90IGZvdW5kIGhhbmRsZXI8L2Rpc3BsYXktbmFtZT4NCiAgICA8anNwLWZpbGU+L2Vub2VudC5q
+c3A8L2pzcC1maWxlPg0KICA8L3NlcnZsZXQ+DQogIDxzZXJ2bGV0LW1hcHBpbmc+DQogICAgPHNl
+cnZsZXQtbmFtZT5zZWFyY2g8L3NlcnZsZXQtbmFtZT4NCiAgICA8dXJsLXBhdHRlcm4+L3NlYXJj
+aDwvdXJsLXBhdHRlcm4+DQogIDwvc2VydmxldC1tYXBwaW5nPg0KICA8c2VydmxldC1tYXBwaW5n
+Pg0KICAgIDxzZXJ2bGV0LW5hbWU+aGlzdG9yeTwvc2VydmxldC1uYW1lPg0KICAgIDx1cmwtcGF0
+dGVybj4vaGlzdG9yeS8qPC91cmwtcGF0dGVybj4NCiAgPC9zZXJ2bGV0LW1hcHBpbmc+DQogIDxz
+ZXJ2bGV0LW1hcHBpbmc+DQogICAgPHNlcnZsZXQtbmFtZT5saXN0ZXI8L3NlcnZsZXQtbmFtZT4N
+CiAgICA8dXJsLXBhdHRlcm4+L3hyZWYvKjwvdXJsLXBhdHRlcm4+DQogIDwvc2VydmxldC1tYXBw
+aW5nPg0KICA8c2VydmxldC1tYXBwaW5nPg0KICAgIDxzZXJ2bGV0LW5hbWU+cmF3PC9zZXJ2bGV0
+LW5hbWU+DQogICAgPHVybC1wYXR0ZXJuPi9yYXcvKjwvdXJsLXBhdHRlcm4+DQogIDwvc2Vydmxl
+dC1tYXBwaW5nPg0KICA8c2VydmxldC1tYXBwaW5nPg0KICAgIDxzZXJ2bGV0LW5hbWU+c2VhcmNo
+PC9zZXJ2bGV0LW5hbWU+DQogICAgPHVybC1wYXR0ZXJuPi9zPC91cmwtcGF0dGVybj4NCiAgPC9z
+ZXJ2bGV0LW1hcHBpbmc+DQogIDxzZXJ2bGV0LW1hcHBpbmc+DQogICAgPHNlcnZsZXQtbmFtZT5k
+aWZmPC9zZXJ2bGV0LW5hbWU+DQogICAgPHVybC1wYXR0ZXJuPi9kaWZmLyo8L3VybC1wYXR0ZXJu
+Pg0KICA8L3NlcnZsZXQtbWFwcGluZz4NCiAgPHNlcnZsZXQtbWFwcGluZz4NCiAgICA8c2Vydmxl
+dC1uYW1lPm1vcmU8L3NlcnZsZXQtbmFtZT4NCiAgICA8dXJsLXBhdHRlcm4+L21vcmUvKjwvdXJs
+LXBhdHRlcm4+DQogIDwvc2VydmxldC1tYXBwaW5nPg0KICA8c2VydmxldC1tYXBwaW5nPg0KICAg
+IDxzZXJ2bGV0LW5hbWU+cnNzPC9zZXJ2bGV0LW5hbWU+DQogICAgPHVybC1wYXR0ZXJuPi9yc3Mv
+KjwvdXJsLXBhdHRlcm4+DQogIDwvc2VydmxldC1tYXBwaW5nPg0KICA8c2VydmxldC1tYXBwaW5n
+Pg0KICAgIDxzZXJ2bGV0LW5hbWU+ZXJyb3I8L3NlcnZsZXQtbmFtZT4NCiAgICA8dXJsLXBhdHRl
+cm4+L2Vycm9yPC91cmwtcGF0dGVybj4NCiAgPC9zZXJ2bGV0LW1hcHBpbmc+DQogIDxzZXJ2bGV0
+LW1hcHBpbmc+DQogICAgPHNlcnZsZXQtbmFtZT5lbm9lbnQ8L3NlcnZsZXQtbmFtZT4NCiAgICA8
+dXJsLXBhdHRlcm4+L2Vub2VudDwvdXJsLXBhdHRlcm4+DQogIDwvc2VydmxldC1tYXBwaW5nPg0K
+ICA8ZXJyb3ItcGFnZT4NCiAgICA8ZXJyb3ItY29kZT40MDQ8L2Vycm9yLWNvZGU+DQogICAgPGxv
+Y2F0aW9uPi9lbm9lbnQ8L2xvY2F0aW9uPg0KICA8L2Vycm9yLXBhZ2U+DQogIDxlcnJvci1wYWdl
+Pg0KICAgIDxlcnJvci1jb2RlPjUwMDwvZXJyb3ItY29kZT4NCiAgICA8bG9jYXRpb24+L2Vycm9y
+PC9sb2NhdGlvbj4NCiAgPC9lcnJvci1wYWdlPg0KPC93ZWItYXBwPg0K
+</data>
+
+          </attachment>
+      
+
+    </bug>
+
+</bugzilla>

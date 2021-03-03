@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>16736</bug_id>
+          
+          <creation_ts>2010-08-06 01:07:00 +0000</creation_ts>
+          <short_desc>Would like per-project useful metadata</short_desc>
+          <delta_ts>2012-02-20 13:16:16 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>indexer</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>NEW</bug_status>
+          
+          
+          
+          
+          
+          
+          <priority>P2</priority>
+          <bug_severity>enhancement</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Dan Price">daniel.price</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          <cc>Lubos.Kosco</cc>
+    
+    <cc>opengrok-dev</cc>
+    
+    <cc>vladimir.kotal</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>76262</commentid>
+            <who name="Dan Price">daniel.price</who>
+            <bug_when>2010-08-06 01:07:12 +0000</bug_when>
+            <thetext>I&apos;d like to see opengrok provide some metadata fields which could
+be filled out about each project.  There is an old thread about
+this which I think captures this reasonably well:
+
+http://www.mail-archive.com/opengrok-discuss@mail.opensolaris.org/msg00500.html
+
+Wasn&apos;t sure what category this should go in.</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

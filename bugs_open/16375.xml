@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>16375</bug_id>
+          
+          <creation_ts>2010-06-24 21:52:00 +0000</creation_ts>
+          <short_desc>build config (nbproject/project.properties) makes wrong assumptions about ant.jar location</short_desc>
+          <delta_ts>2010-06-25 13:52:15 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>build</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>NEW</bug_status>
+          
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>trivial</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Christian Lohmaier">cloph</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          <cc>Lubos.Kosco</cc>
+    
+    <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>74758</commentid>
+            <who name="Christian Lohmaier">cloph</who>
+            <bug_when>2010-06-24 21:52:07 +0000</bug_when>
+            <thetext>The netbeans-property file (nbproject/project.properties) makes a wrong assumption about the location of ant.jar, causing the build to fail.
+
+I need to override it like this:
+ant -Dfile.reference.ant.jar=/usr/share/java/ant.jar to succeed.
+
+without that override, the build complains
+&quot;package org.apache.tools.bzip2 does not exist&quot; (and others meant to be in ant.jar) for the code in src/org/opensolaris/opengrok/analysis/archive/
+
+I&apos;m not sure whether it really is necessary to copy the ant.jar into the sourcetree (gets copied to dist/lib) - so I suggest to add a blurp about this to the build documentation at http://hub.opensolaris.org/bin/view/Project+opengrok/builddescription
+(i.e. &quot;If you get errors like »package org.apache.tools.bzip2 does not exist«, pass the property file.reference.ant.jar pointing to the location of ant.jar on the commandline. For example: ant -Dfile.reference.ant.jar=/usr/share/java/ant.jar&quot; or something like that in better english)</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>74771</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2010-06-25 05:49:14 +0000</bug_when>
+            <thetext>weird
+again a thing that works for me well ;)
+
+let&apos;s do this - I am in swan, if your build machine is in swan, please contact me internally and I can login and test out building
+
+I am using ant 1.7.1 (lately 1.8.0) and JDK 1.6.20 to get the build done without any issues
+
+I build on latest OpenSolaris, Windows Vista, Debian stable. I also build on S10u3 patched to latest, but that involved a lot of manual setups so might not be trivial.
+
+(what is your env? or if you point me to your swan system I&apos;ll check it ...)
+
+Note that if you will not package ant.jar, then gzip/bzip/tgz analyzer will be broken and opengrok will just silently crash on analyzing these files ... (I think we had a bug on this, we just need to figure out a check on classloader, but it had low priority, since our builds just work(tm) ;) )
+
+hmm?
+L</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>74788</commentid>
+            <who name="Christian Lohmaier">cloph</who>
+            <bug_when>2010-06-25 11:58:04 +0000</bug_when>
+            <thetext>No swan - my system is Mandriva 2010 - I&apos;m not using netbeans (netbeans is not installed at all) 
+
+ant version is 1.7.1 JDK is 1.6.0_16
+
+&quot;ant -diagnostics |grep ant.jar&quot; results in
+
+java.class.path : /usr/share/java/ant.jar:/usr/share/java/ant-launcher.jar:/usr/share/java/ant/ant-nodeps.jar:/usr/lib/jvm/java/lib/tools.jar
+
+And that doesn&apos;t match netbean&apos;s assumption that it is below ANT_HOME/lib (ant.home is /usr/share/ant here)
+
+(for actually building opengrok, I additionally specify -lib /usr/share/java/JFlex.jar that then also is added to java.class.path)
+
+And I got no problem with packing it and overriding it on the commandline (before filing the issue, I did a google search and find some old posts on the opengrok lists, so such a hint might help others)</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>74792</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2010-06-25 13:26:19 +0000</bug_when>
+            <thetext>ah ... Mandriva ...
+wondering if RHEL will have the same prob
+
+both Debian, OpenSolaris and unpacked ant installations have ant.jar in lib, in /usr/share/java they have symlinks to jars (and ant run uses ant.home=/usr/share/ant which has lib)
+
+well, I&apos;ll try to think about some workaround, but till then just e.g. create a symlink lib which would point to the same dir
+( ln -s /usr/share/java/ /usr/share/java/lib )
+(I know, evil, but fast ;) )
+OR have a separate ant installation which fulfills this assumption
+
+(wondering if this is a packaging bug in Mandriva)
+
+
+I am not sure if it would make sense adding another reference to ant.home/ant.jar
+mhmmm ....
+(after all I hope we will move to maven soon ;) )</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>74793</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2010-06-25 13:35:39 +0000</bug_when>
+            <thetext>and you know what
+
+try running ant just like e.g.:
+
+opengrok_src_dir $ ant -lib /usr/share/java/  clean jar
+
+wondering if above will pickup correct ant dir ... since 
+and uses ant.library.dir and that should be correct and it should be set before we try to override it ... 
+and if nothing above will pickup all jars and they all should be in classpath now ... (it might work ;) )
+
+just a silly idea</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>74794</commentid>
+            <who name="Christian Lohmaier">cloph</who>
+            <bug_when>2010-06-25 13:43:44 +0000</bug_when>
+            <thetext>Oh no, rather than creating symlinks bypassing the package manager, I prefer passing the corresponding property to ant when building, overriding the netbeans.properties.
+
+That is also way better than installing a seperate ant just for building opengrok :-)
+
+another reference to ant.home/ant.jar won&apos;t help for my case, since it is not in ant.home (/usr/share/ant), but /usr/share/java/
+
+as for netbeans: 
+$ urpmf /ant.jar |grep netb
+netbeans-java2:/usr/share/netbeans/java2/ant/lib/ant.jar
+
+i.e. installing netbeans would bring its own ant.jar. And very likely then the netbeans.properties would set ant.home to the netbeans one, and then it would find ant.jar at the expected location.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>74795</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2010-06-25 13:46:33 +0000</bug_when>
+            <thetext>:)
+
+on debian it works even without netbeans
+so I tend to think it might be a packaging problem on Mandriva ;)</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>74796</commentid>
+            <who name="Christian Lohmaier">cloph</who>
+            <bug_when>2010-06-25 13:52:15 +0000</bug_when>
+            <thetext>And no, just specifying -lib /usr/share/java won&apos;t work (already tried before filing the bug) - it would pick up JFlex.jar, but the ant.jar still gets overridden - at least when using verbose I see &quot;dropping /usr/share/ant/lib/ant.jar from path as it doesn&apos;t exist&quot;
+
+Well, /might/ be a packaging problem, but so far opengrok is the first to trigger it :-) (OTOH I don&apos;t build that many ant based projects)</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

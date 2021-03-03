@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>19192</bug_id>
+          
+          <creation_ts>2012-03-09 17:42:00 +0000</creation_ts>
+          <short_desc>searching all projects can make the webapp to run out of heap space</short_desc>
+          <delta_ts>2012-03-28 11:32:33 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>webapp</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>NEW</bug_status>
+          
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>critical</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Vladimir Kotal">vladimir.kotal</reporter>
+          <assigned_to name="Lubos Kosco">Lubos.Kosco</assigned_to>
+          <cc>jel+osbugs</cc>
+    
+    <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>86330</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2012-03-09 17:42:11 +0000</bug_when>
+            <thetext>Search across all projects (e.g. path search or full text search) in 0.11 can result in the webapp running out of memory. This is permanent condition and the container server (in our case Tomcat) has to be restarted.
+
+/var/tomcat6/logs/catalina.out contains entries like:
+
+java.lang.OutOfMemoryError: GC overhead limit exceeded
+Mar 9, 2012 4:10:53 PM org.apache.tomcat.util.net.JIoEndpoint$Acceptor run
+SEVERE: Socket accept failed
+java.lang.OutOfMemoryError: Java heap space
+
+or
+
+Mar 9, 2012 4:11:08 PM unknown unknown
+SEVERE: Error reading request, ignored
+java.lang.OutOfMemoryError: GC overhead limit exceeded
+
+The localhost log contains these entries:
+
+/var/tomcat6/logs$ cat localhost.2012-03-09.log
+Mar 9, 2012 4:11:23 PM org.apache.catalina.core.ApplicationDispatcher invoke
+SEVERE: Servlet.service() for servlet jsp threw exception
+java.lang.OutOfMemoryError: GC overhead limit exceeded
+Mar 9, 2012 4:11:27 PM org.apache.catalina.core.StandardWrapperValve invoke
+SEVERE: Servlet.service() for servlet search threw exception
+java.lang.OutOfMemoryError: GC overhead limit exceeded
+Mar 9, 2012 4:11:27 PM org.apache.catalina.core.StandardWrapperValve invoke
+SEVERE: Servlet.service() for servlet search threw exception
+java.lang.OutOfMemoryError: GC overhead limit exceeded 
+/var/tomcat6/logs$</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86361</commentid>
+            <who name="Jens Elkner">jel+osbugs</who>
+            <bug_when>2012-03-24 06:28:06 +0000</bug_when>
+            <thetext>It would probably help to get a heap dump, when this happens - add the following JVM parameter: -XX:+HeapDumpOnOutOfMemoryError</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86364</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2012-03-26 08:59:11 +0000</bug_when>
+            <thetext>(In reply to comment #1)
+&gt; It would probably help to get a heap dump, when this happens - add the
+&gt; following JVM parameter: -XX:+HeapDumpOnOutOfMemoryError
+
+We got a dump using -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/var/tomcat6/logs/dumps/ and it&apos;s 800 MB file. Most probably it cannot be shared outside of the company but I believe Lubos can provide the data extracts from jhat.
+
+I think the overall conclusion from the jhat debugging session from last Friday is that there is some kind of memory leak of Lucene related data probably caused by OpenGrok itself.
+
+Some web searches based on the leaked objects got us to sites like http://sangosthi.blogspot.co.uk/2010/01/alfresco-is-taking-too-much-memory.html</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86365</commentid>
+            <who name="Jens Elkner">jel+osbugs</who>
+            <bug_when>2012-03-26 14:18:41 +0000</bug_when>
+            <thetext>&quot;cannot be shared outside&quot;: hmm, bad. Anyway, I usually find jhat not that useful. The standalone version of eclipse mat may give much more insights ...</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86366</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2012-03-26 14:39:06 +0000</bug_when>
+            <thetext>(In reply to comment #3)
+&gt; &quot;cannot be shared outside&quot;: hmm, bad. Anyway, I usually find jhat not that
+&gt; useful. The standalone version of eclipse mat may give much more insights ...
+
+mainly because of the size ;)
+
+I will use mat to have a look too
+but from rough jhat I&apos;ve seen
+
+objects org.apache.lucene.index.SegmentReader$Norm
+blocked like 80% of the heap
+
+so I will try to figure out if this is because of how are opengrok analyzers structured or how are search is done , or if this is lucene bug
+(to me it rather seems like lucene bug ... )
+
+I will also try to reproduce with current trunk with lucene 3.5 , it would be ideal, since 3.5 has some fixes in this area + multisearch now has more control over the thread pool</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86369</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2012-03-26 15:28:37 +0000</bug_when>
+            <thetext>(In reply to comment #4)
+&gt; (In reply to comment #3)
+&gt; &gt; &quot;cannot be shared outside&quot;: hmm, bad. Anyway, I usually find jhat not that
+&gt; &gt; useful. The standalone version of eclipse mat may give much more insights ...
+&gt; 
+&gt; mainly because of the size ;)
+&gt; 
+&gt; I will use mat to have a look too
+&gt; but from rough jhat I&apos;ve seen
+&gt; 
+&gt; objects org.apache.lucene.index.SegmentReader$Norm
+&gt; blocked like 80% of the heap
+&gt; 
+&gt; so I will try to figure out if this is because of how are opengrok analyzers
+&gt; structured or how are search is done , or if this is lucene bug
+&gt; (to me it rather seems like lucene bug ... )
+&gt; 
+&gt; I will also try to reproduce with current trunk with lucene 3.5 , it would be
+&gt; ideal, since 3.5 has some fixes in this area + multisearch now has more control
+&gt; over the thread pool
+
+ok
+so in the end this was all valid, we simply take 5MB per project
+on the internal server there are ~250 projects
+which needed like 2.2G of RAM for more complex queries and this hit the tomcats upper limit ... increasing the tomcat limit to 3G makes the queries work now ...
+
+now only address the url length bug ...
+
+guess this bug could make a suggestion that when indexer detects huge amount of projects it will complain and suggest increasing tomcat memory to satisfy multi searches ...
+(and I still think with lucene 3.5 in trunk the footprint will be smaller, we should try to test it)</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86377</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2012-03-28 11:30:30 +0000</bug_when>
+            <thetext>(In reply to comment #5)
+
+&lt;snip&gt;
+
+&gt; so in the end this was all valid, we simply take 5MB per project
+&gt; on the internal server there are ~250 projects
+&gt; which needed like 2.2G of RAM for more complex queries and this hit the tomcats
+&gt; upper limit ... increasing the tomcat limit to 3G makes the queries work now
+&gt; ...
+&gt; 
+
+I think the equation to get an estimate of heap size is:
+
+  ( 7 MB * number of projects ) + 300 MB for cache 
+
+This should be enough, at least works for our deployment.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86378</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2012-03-28 11:32:33 +0000</bug_when>
+            <thetext>(In reply to comment #5)
+
+&lt;snip&gt;
+
+&gt; now only address the url length bug ...
+
+This actually turned out to be caused by HTTP headers length limit in Tomcat. The Referer was too long (it contained list of all projects in the URL) which triggered the problem and Tomcat returned error code 400 as result. This can be easily fixed by adjusting the limit with maxHttpHeaderSize in server.xml:
+
+&lt;Connector port=&quot;8888&quot; protocol=&quot;HTTP/1.1&quot;
+               connectionTimeout=&quot;20000&quot;
+               maxHttpHeaderSize=&quot;65536&quot;
+               redirectPort=&quot;8443&quot; /&gt;</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

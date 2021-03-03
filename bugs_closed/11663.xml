@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>11663</bug_id>
+          
+          <creation_ts>2009-10-01 09:41:00 +0000</creation_ts>
+          <short_desc>Failure when commit message exceeds ~32K</short_desc>
+          <delta_ts>2009-10-02 12:12:36 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>scm</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXED</resolution>
+          
+          
+          
+          
+          
+          <priority>P4</priority>
+          <bug_severity>minor</bug_severity>
+          <target_milestone>0.8</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Knut Anders Hatlen">knut.hatlen</reporter>
+          <assigned_to name="Knut Anders Hatlen">knut.hatlen</assigned_to>
+          
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>51295</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2009-10-01 09:41:28 +0000</bug_when>
+            <thetext>JDBCHistoryCache fails to insert revision 40 from http://src.opensolaris.org/source/history/jds/time-slider/ into the database because the commit message exceeds the maximum size for a VARCHAR column.
+
+Caused by: java.sql.SQLException: An IOException was thrown when reading a &apos;java.sql.String&apos; from an InputStream.
+        at org.apache.derby.client.am.SQLExceptionFactory40.getSQLException(Unknown Source)
+        at org.apache.derby.client.am.SqlException.getSQLException(Unknown Source)
+        at org.apache.derby.client.am.PreparedStatement.executeUpdate(Unknown Source)
+        at org.opensolaris.opengrok.history.JDBCHistoryCache.storeHistory(JDBCHistoryCache.java:614)
+        at org.opensolaris.opengrok.history.JDBCHistoryCache.store(JDBCHistoryCache.java:520)
+        ... 10 more
+
+Caused by: org.apache.derby.client.am.SqlException: Java exception: &apos;A truncation error was encountered trying to shrink VARCHAR &apos;&lt;stream-value&gt;&apos; to length 32672.: org.apache.derby.iapi.services.io.DerbyIOException&apos;.
+        ... 21 more</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>51388</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2009-10-02 12:12:36 +0000</bug_when>
+            <thetext>Fixed in changeset 856:591076399c03.</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

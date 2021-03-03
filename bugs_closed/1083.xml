@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>1083</bug_id>
+          
+          <creation_ts>2008-04-10 07:17:00 +0000</creation_ts>
+          <short_desc>Indexing partial source tree without projects</short_desc>
+          <delta_ts>2008-06-04 05:40:01 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>indexer</component>
+          <version>unspecified</version>
+          <rep_platform>Other</rep_platform>
+          <op_sys>Linux</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXED</resolution>
+          
+          
+          
+          
+          
+          <priority>P4</priority>
+          <bug_severity>minor</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Bruce Furber">bruce30062</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>3514</commentid>
+            <who name="Bruce Furber">bruce30062</who>
+            <bug_when>2008-04-10 07:17:09 +0000</bug_when>
+            <thetext>I am not using -P to generate projects but I am using the option to only index a portion of the source tree. 
+This worked OK in 0.5. In the 0.6 it ignored the source trees. Now using opengrok.jar that I built this morning I get these messages. 
+
+Warning: Could not find a project for &quot;res/put03&quot;
+Warning: Could not find a project for &quot;ibm/put03&quot;
+Warning: Could not find a project for &quot;tpf41&quot;
+
+java -server -Xmx1024m -jar ./opengrok.jar -m 500000 -W ztpf-config.xml -a on -Q off -e -v -T 2 -w ztpfsrc -i *.o -i *.so -i *.Z -i *.gz -i *.bz2 -i *.gif -i *.jpg -c /usr/bin/ctags -s /tpfmnt/ztpf -d /tpfmnt/opengrok_ztpf6 res/put03 ibm/put03 tpf41</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>7662</commentid>
+            <who name="Trond Norbye">trond.norbye</who>
+            <bug_when>2008-06-04 05:40:01 +0000</bug_when>
+            <thetext>Fixed in changeset:   297:963db2bb756f</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

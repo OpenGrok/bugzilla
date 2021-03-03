@@ -1,0 +1,282 @@
+diff -r 09f0768a7ec1 build.xml
+--- a/build.xml	Fri May 06 21:41:59 2011 +0200
++++ b/build.xml	Sat May 07 06:17:58 2011 +0200
+@@ -23,6 +23,11 @@
+ -->
+ <project name="OpenGrok" default="jar" basedir=".">
+     <description>Builds, tests, and runs the project opengrok.</description>
++	<property name="build.sysclasspath" value="ignore"/>
++	<property file="${user.home}/config/ant/${ant.project.name}.properties" />
++	<property file="${user.home}/config/ant/global.properties" />
++	<property file="/local/share/javax/global.properties" />
++
+     <import file="nbproject/build-impl.xml"/>
+ 
+     <import file="nbproject/profiler-build-impl.xml"/>    <!--
+@@ -89,6 +94,8 @@
+ 
+     <property name="version" value="0.11-dev"/>
+     <property name="distname" value="opengrok"/>
++    <property name="src.dir" location="src"/>
++    <property name="src.generatedsrc.dir" location="generatedsrc"/>
+     
+     <property name="findbugs.home" value="${user.home}/.ant/lib/findbugs"/>
+     <property name="checkstyle.home" value="${user.home}/.ant/lib/checkstyle"/>
+@@ -642,4 +649,112 @@
+       </jar>
+     </target>
+ 
++
++	<!-- compile jsp - just to test -->
++	<property name="debug" value="on" />
++	<property name="jsdebug" value="off" />
++	<property name="compress" value=".gz" />
++	<property name="debuglevel" value="source,lines,vars" />
++	<property name="optimize" value="on" />
++	<property name="deprecation" value="on" />
++	<property name="listfiles" value="true" />
++
++	<property name="codebase"   	value="org/opensolaris/opengrok"/>
++	<property name="codebase.dot"   value="org.opensolaris.opengrok"/>
++	<property name="web.src.dir" location="web" />
++	
++	<patternset id="libs">
++		<include name="*.jar" />
++	</patternset>
++	<path id="classpath.base">
++		<fileset dir="lib">
++			<patternset refid="libs" />
++		</fileset>
++	</path>
++	<property name="AS_HOME" value="/opt/glassfish/v3.1/glassfish"/>
++	<path id="classpath.j2ee">
++		<fileset dir="${AS_HOME}/modules">
++			<include name="javaee.jar" />
++			<!-- for the **/auth/* stuff, only -->
++			<include name="appserv-rt.jar" />
++			<include name="appserv-deployment-client.jar" />
++		</fileset>
++	</path>
++	<path id="classpath.jspc">
++		<fileset dir="${AS_HOME}/modules">
++			<include name="javax.servlet.jar"/>
++			<include name="javax.servlet.jsp.jar"/>
++			<include name="jsp-impl.jar"/>
++			<include name="el-impl.jar"/>
++			<include name="javax.servlet.jsp.jstl.jar"/>
++			<include name="jstl-impl.jar"/>
++			<include name="jsf-api.jar"/>
++			<include name="jsf-impl.jar"/>
++			<include name="tools.jar"/>
++		</fileset>
++	</path>
++
++	<path id="classpath.web">
++		<path refid="classpath.j2ee"/>
++		<path refid="classpath.base"/>
++	</path>
++
++	<path id="classpath.jsp">
++		<path refid="classpath.jspc"/>
++		<path refid="classpath.web"/>
++	</path>
++
++	<target name="-jsp.check" depends="init">
++		<mkdir dir="${build.dir}/src/jsp/${codebase}/jsp" />
++		<uptodate property="jsp.not.changed">
++			<srcfiles dir="${web.src.dir}" includes="**/*.jsp,**/*.jspf"/>
++			<mapper type="glob" from="*.jsp" 
++				to="${build.dir}/src/jsp/${codebase}/jsp/*_jsp.java"/>
++		</uptodate>
++	</target>
++	
++	<target name="-jsp.generate" depends="-jsp.check" unless="jsp.not.changed">
++		<taskdef name="jasper" classname="org.apache.jasper.JspC"
++			classpathref="classpath.jsp" />
++		<mkdir dir="${build.dir}/src/web"/>
++		<copy todir="${build.dir}/src/web">			
++			<fileset dir="${web.src.dir}">
++				<include name="**/*.jsp"/>
++				<include name="**/*.jspf"/>
++				<include name="**/index_body.html"/>
++			</fileset>
++		</copy>
++		<jasper validateXml="false" 
++			outputdir="${build.dir}/src/jsp" 
++			javaencoding="UTF-8"
++			uriroot="${build.dir}/src/web"
++			package="${codebase.dot}.jsp"
++			compilersourcevm="1.6"
++			compilertargetvm="1.6"
++			smapsuppressed="false"
++			webxmlfragment="${build.dir}/src/servlets_web.xml"
++			/>
++		<loadfile property="wdd" srcfile="${build.dir}/src/servlets_web.xml"/>
++		<copy file="${web.src.dir}/WEB-INF/web.xml" todir="${build.dir}"
++			overwrite="true">
++			<filterset>
++				<filter token="generated servlet mappings" 
++					value=" generated start -->${wdd}&lt;!-- generated end " />
++			</filterset>
++		</copy>
++	</target>
++
++	<target name="compile.jsp" depends="compile,-jsp.generate"
++		description="--> compile java source code and jsp pages"
++	>
++		<javac srcdir="${build.dir}/src/jsp" destdir="${build.dir}/classes"
++			includes="**/*.java"
++			optimize="${optimize}" debug="${debug}" debuglevel="${debuglevel}"
++			deprecation="${deprecation}" classpathref="classpath.jsp"
++			encoding="UTF-8" listfiles="${listfiles}"
++			includeantruntime="false">
++			<compilerarg value="-Xlint:unchecked" compiler="javac1.6"/>
++		</javac>
++	</target>
++
+ </project>
+diff -r 09f0768a7ec1 web/WEB-INF/web.xml
+--- a/web/WEB-INF/web.xml	Fri May 06 21:41:59 2011 +0200
++++ b/web/WEB-INF/web.xml	Sat May 07 06:17:58 2011 +0200
+@@ -14,30 +14,42 @@
+     <param-value>localhost:2424</param-value>
+     <description>An address where OpenGrok can receive new configuration</description>
+   </context-param>
+-  
++
+   <listener>
+    <listener-class>org.opensolaris.opengrok.web.WebappListener</listener-class>
+   </listener>
+     
+-    <servlet>
++  <servlet>
+     <servlet-name>search</servlet-name>
+     <display-name>Source Finder</display-name>
+     <jsp-file>/search.jsp</jsp-file>
++<init-param>
++<param-name>keepgenerated</param-name><param-value>true</param-value>
++</init-param>  
+   </servlet>
+   <servlet>
+     <servlet-name>history</servlet-name>
+     <display-name>Source History</display-name>
+     <jsp-file>/history.jsp</jsp-file>
++<init-param>
++<param-name>keepgenerated</param-name><param-value>true</param-value>
++</init-param>  
+   </servlet>
+   <servlet>
+     <servlet-name>lister</servlet-name>
+     <display-name>Source lister</display-name>
+     <jsp-file>/list.jsp</jsp-file>
++<init-param>
++<param-name>keepgenerated</param-name><param-value>true</param-value>
++</init-param>  
+   </servlet>
+   <servlet>
+     <servlet-name>diff</servlet-name>
+     <display-name>Source diffs between revisions</display-name>
+     <jsp-file>/diff.jsp</jsp-file>
++<init-param>
++<param-name>keepgenerated</param-name><param-value>true</param-value>
++</init-param>  
+   </servlet>
+   <servlet>
+     <servlet-name>more</servlet-name>
+@@ -48,70 +60,85 @@
+     <servlet-name>rss</servlet-name>
+     <display-name>Source Changes in RSS format</display-name>
+     <jsp-file>/rss.jsp</jsp-file>
++<init-param>
++<param-name>keepgenerated</param-name><param-value>true</param-value>
++</init-param>  
+   </servlet>
+   <servlet>
+     <servlet-name>opensearch</servlet-name>
+     <display-name>OpenSearch link for current project</display-name>
+     <jsp-file>/opensearch.jsp</jsp-file>
++<init-param>
++<param-name>keepgenerated</param-name><param-value>true</param-value>
++</init-param>  
+   </servlet>
+   <servlet>
+     <servlet-name>raw</servlet-name>
+     <display-name>Raw Source lister</display-name>
+     <jsp-file>/raw.jsp</jsp-file>
++<init-param>
++<param-name>keepgenerated</param-name><param-value>true</param-value>
++</init-param>  
+   </servlet>
+   <servlet>
+     <servlet-name>error</servlet-name>
+     <display-name>Error Handler</display-name>
+     <jsp-file>/error.jsp</jsp-file>
++<init-param>
++<param-name>keepgenerated</param-name><param-value>true</param-value>
++</init-param>  
+   </servlet>
+   <servlet>
+     <servlet-name>enoent</servlet-name>
+     <display-name>File not found handler</display-name>
+     <jsp-file>/enoent.jsp</jsp-file>
++<init-param>
++<param-name>keepgenerated</param-name><param-value>true</param-value>
++</init-param>  
+   </servlet>
+   <servlet-mapping>
+     <servlet-name>search</servlet-name>
+-    <url-pattern>/search</url-pattern>
++    <url-pattern>/search</url-pattern>		<!-- SEARCH_P -->
+   </servlet-mapping>
+   <servlet-mapping>
+     <servlet-name>opensearch</servlet-name>
+-    <url-pattern>/opensearch</url-pattern>
++    <url-pattern>/opensearch</url-pattern>	<!-- SEARCH_O -->
+   </servlet-mapping>
+   <servlet-mapping>
+     <servlet-name>history</servlet-name>
+-    <url-pattern>/history/*</url-pattern>
++    <url-pattern>/history/*</url-pattern>	<!-- HIST_L -->
+   </servlet-mapping>
+   <servlet-mapping>
+     <servlet-name>lister</servlet-name>
+-    <url-pattern>/xref/*</url-pattern>
++    <url-pattern>/xref/*</url-pattern>		<!-- XREF_P -->
+   </servlet-mapping>
+   <servlet-mapping>
+     <servlet-name>raw</servlet-name>
+-    <url-pattern>/raw/*</url-pattern>
++    <url-pattern>/raw/*</url-pattern> 		<!-- RAW_P -->
+   </servlet-mapping>
+   <servlet-mapping>
+     <servlet-name>search</servlet-name>
+-    <url-pattern>/s</url-pattern>
++    <url-pattern>/s</url-pattern>			<!-- SEARCH_R -->
+   </servlet-mapping>
+   <servlet-mapping>
+     <servlet-name>diff</servlet-name>
+-    <url-pattern>/diff/*</url-pattern>
++    <url-pattern>/diff/*</url-pattern>		<!-- DIFF_P -->
+   </servlet-mapping>
+   <servlet-mapping>
+     <servlet-name>more</servlet-name>
+-    <url-pattern>/more/*</url-pattern>
++    <url-pattern>/more/*</url-pattern>		<!-- MORE_P -->
+   </servlet-mapping>
+   <servlet-mapping>
+     <servlet-name>rss</servlet-name>
+-    <url-pattern>/rss/*</url-pattern>
++    <url-pattern>/rss/*</url-pattern>		<!-- RSS_P -->
+   </servlet-mapping>
+   <servlet-mapping>
+     <servlet-name>error</servlet-name>
+-    <url-pattern>/error</url-pattern>
++    <url-pattern>/error</url-pattern>		<!-- ERROR -->
+   </servlet-mapping>
+   <servlet-mapping>
+     <servlet-name>enoent</servlet-name>
+-    <url-pattern>/enoent</url-pattern>
++    <url-pattern>/enoent</url-pattern>		<!-- NOT_FOUND -->
+   </servlet-mapping>
+   <error-page>
+     <error-code>404</error-code>

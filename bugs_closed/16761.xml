@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>16761</bug_id>
+          
+          <creation_ts>2010-08-09 22:36:00 +0000</creation_ts>
+          <short_desc>Perforce history reader would not use per-project clients (defined by P4CONFIG files)</short_desc>
+          <delta_ts>2010-08-13 19:21:17 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>scm</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXINSOURCE</resolution>
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>minor</bug_severity>
+          <target_milestone>0.10</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Yuriy Vasylchenko">yuriy.av</reporter>
+          <assigned_to name="Lubos Kosco">Lubos.Kosco</assigned_to>
+          <cc>Lubos.Kosco</cc>
+    
+    <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>76379</commentid>
+            <who name="Yuriy Vasylchenko">yuriy.av</who>
+            <bug_when>2010-08-09 22:36:26 +0000</bug_when>
+            <thetext>Full fix:
+
+
+
+--- src.ori/org/opensolaris/opengrok/history/PerforceRepository.java    2010-05-11 02:12:43.000000000 -0700
++++ src/org/opensolaris/opengrok/history/PerforceRepository.java        2010-08-09 12:55:46.342231663 -0700
+@@ -144,26 +144,40 @@
+      * @return true if the given file is in the depot, false otherwise
+      */
+     public static boolean isInP4Depot(File file) {
++        boolean status = false;
+         if (p4Binary.available) {
+             ArrayList&lt;String&gt; cmd = new ArrayList&lt;String&gt;();
+-            cmd.add(getCommand());
++            String name = file.getName();
++            File   dir  = file.getParentFile();
+             if (file.isDirectory()) {
++                dir = file;
++                name = &quot;*&quot;;
++                cmd.add(getCommand());
+                 cmd.add(&quot;dirs&quot;);
+-            } else {
+-                cmd.add(&quot;files&quot;);
++                cmd.add(name);
++                Executor executor = new Executor(cmd, dir);
++                executor.exec();
++            /* OUTPUT:
++            stdout: //depot_path/name
++            stderr: name - no such file(s). 
++             */
++                status = (executor.getOutputString().indexOf(&quot;//&quot;) != -1);
+             }
+-            cmd.add(file.getName());
+-            Executor executor = new Executor(cmd, file.getParentFile());
+-            executor.exec();
+-
++            if (!status) {
++                cmd.clear();
++                cmd.add(getCommand());
++                cmd.add(&quot;files&quot;);
++                cmd.add(name);
++                Executor executor = new Executor(cmd, dir);
++                executor.exec();
+             /* OUTPUT:
+             stdout: //depot_path/name
+             stderr: name - no such file(s). 
+              */
+-            return (executor.getOutputString().indexOf(&quot;//&quot;) != -1);
+-        } else {
+-            return false;
++                status = (executor.getOutputString().indexOf(&quot;//&quot;) != -1);
++            }
+         }
++        return status;
+     }
+ 
+     @Override</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>76557</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2010-08-13 13:34:48 +0000</bug_when>
+            <thetext>I don&apos;t have perforce, but this looks ok to me
+accepting
+changeset:   1075:da8c40f7212a
+
+have one concern though ... I hope this works with all kinds of repositories that perforce can have configured ...
+
+SCA#OS0465</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>76565</commentid>
+            <who name="Yuriy Vasylchenko">yuriy.av</who>
+            <bug_when>2010-08-13 19:21:17 +0000</bug_when>
+            <thetext>Thanks Lubos,
+I think I understand your concern.
+The changed implementation should take care of most situations I can think of.
+The issue with previous one was when the isInP4Depot() argument was a directory, $CWD for p4 commands&apos; execution was set to the parent directory. This did not allow perforce to read client configuration file under the client root. Moreover, the directory itself may have no direct repository mapping (this often happens for client root directories).
+Presence of children nodes is more reliable strategy to detect if directory is in repository. Since empty directories can not exist in perforce (even if they could, what value would it have for the code navigation tool?) so I can&apos;t see the problem here.
+The one problematic situation I can imagine is when the client is overconfigured in the way that there are two levels of directories that do not have repository mapping:
+client_root/
+           +some_repo_file
+           +1/
+             +2/
+               +repository_file
+Mapping looks like &quot;//depot/project/repository_file //client/1/2/repository_file&quot;
+In this case, for directory &quot;1&quot; results will be like:
+&gt; p4 dirs &apos;*&apos;
+Date 2010/08/13 11:12:49:
+Operation: user-dirs
+Operation &apos;user-dirs&apos; failed.
+Client map too twisted for directory list.
+&gt; p4 files &apos;*&apos;
+* - no such file(s).
+
+But this situation is pretty synthetic. Being a paranoid :), the problem can be fixed by adding third layer of detection using &quot;p4 files ...&quot; (if used at the first layer - performance impact for big projects is huge):
+
+--- src/org/opensolaris/opengrok/history/PerforceRepository.java    2010-08-09 12:55:46.342231000 -0700
++++ src.paranoid/org/opensolaris/opengrok/history/PerforceRepository.java        2010-08-13 11:38:43.979718416 -0700
+@@ -176,6 +176,15 @@
+              */
+                 status = (executor.getOutputString().indexOf(&quot;//&quot;) != -1);
+             }
++            if (!status &amp;&amp; file.isDirectory()) {
++                cmd.clear();
++                cmd.add(getCommand());
++                cmd.add(&quot;files&quot;);
++                cmd.add(&quot;...&quot;);
++                Executor executor = new Executor(cmd, dir);
++                executor.exec();
++                status = (executor.getOutputString().indexOf(&quot;//&quot;) != -1);
++            }
+         }
+         return status;
+     }</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>13960</bug_id>
+          
+          <creation_ts>2010-01-18 16:08:00 +0000</creation_ts>
+          <short_desc>Double slash in xref URL</short_desc>
+          <delta_ts>2010-01-19 12:35:44 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>webapp</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>NEW</bug_status>
+          
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>minor</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Knut Anders Hatlen">knut.hatlen</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          <cc>Lubos.Kosco</cc>
+    
+    <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>62760</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2010-01-18 16:08:02 +0000</bug_when>
+            <thetext>If I type http://src.opensolaris.org/source/xref in the browser&apos;s address field, the browser goes to the following URL:
+
+  http://src.opensolaris.org/source/xref//
+
+Note the two /&apos;s at the end. There should only be one /. I see this both in Firefox and in Opera.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>62830</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2010-01-19 12:35:44 +0000</bug_when>
+            <thetext>http://src.opensolaris.org/source/xref/opengrok/trunk/web/list.jsp#113
+
+might be the cause ...</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

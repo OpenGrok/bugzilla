@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>19171</bug_id>
+          
+          <creation_ts>2012-02-13 06:50:00 +0000</creation_ts>
+          <short_desc>svn --config-dir suport</short_desc>
+          <delta_ts>2012-02-13 06:50:35 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>indexer</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>NEW</bug_status>
+          
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>normal</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Jens Elkner">jel+osbugs</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>86183</commentid>
+              <attachid>4626</attachid>
+            <who name="Jens Elkner">jel+osbugs</who>
+            <bug_when>2012-02-13 06:50:21 +0000</bug_when>
+            <thetext>Created attachment 4626
+patch
+
+allow to set a non-default user configuration directory (--config-dir)</thetext>
+          </long_desc>
+      
+          <attachment
+              isobsolete="0"
+              ispatch="1"
+              isprivate="0"
+              isurl="0"
+          >
+            <attachid>4626</attachid>
+            <date>2012-02-13 06:50:00 +0000</date>
+            <delta_ts>2012-02-13 06:50:35 +0000</delta_ts>
+            <desc>patch</desc>
+            <filename>svndir.patch</filename>
+            <type>text/plain</type>
+            <size>3453</size>
+            <attacher>jel+osbugs</attacher>
+            
+              <data encoding="base64">IyBIRyBjaGFuZ2VzZXQgcGF0Y2gKIyBVc2VyIGplbCtvcGVuZ3Jva0Bjcy51bmktbWFnZGVidXJn
+LmRlCiMgRGF0ZSAxMzI5MTExODkwIC0zNjAwCiMgTm9kZSBJRCAxZjUxYTU5ZmRhODAxYTVlNzUz
+ZTk5OGE4ZDJiYTUwN2U2MjczYTcwCiMgUGFyZW50ICAyNjExMTY1MDdjN2FlN2U2NDBhNjNjZDQz
+MjcxOTg4OTA4ZDkyYzRmCnN2bjogYWxsb3cgdG8gc2V0IGEgbm9uLWRlZmF1bHQgdXNlciBjb25m
+aWd1cmF0aW9uIGRpcmVjdG9yeSAoLS1jb25maWctZGlyKQoKZGlmZiAtciAyNjExMTY1MDdjN2Eg
+LXIgMWY1MWE1OWZkYTgwIHNyYy9vcmcvb3BlbnNvbGFyaXMvb3Blbmdyb2svaGlzdG9yeS9TdWJ2
+ZXJzaW9uUmVwb3NpdG9yeS5qYXZhCi0tLSBhL3NyYy9vcmcvb3BlbnNvbGFyaXMvb3Blbmdyb2sv
+aGlzdG9yeS9TdWJ2ZXJzaW9uUmVwb3NpdG9yeS5qYXZhCU1vbiBGZWIgMTMgMDY6MTI6NDcgMjAx
+MiArMDEwMAorKysgYi9zcmMvb3JnL29wZW5zb2xhcmlzL29wZW5ncm9rL2hpc3RvcnkvU3VidmVy
+c2lvblJlcG9zaXRvcnkuamF2YQlNb24gRmViIDEzIDA2OjQ0OjUwIDIwMTIgKzAxMDAKQEAgLTYx
+LDEwICs2MSwxOCBAQAogICAgICAgICAib3JnLm9wZW5zb2xhcmlzLm9wZW5ncm9rLmhpc3Rvcnku
+U3VidmVyc2lvbiI7CiAgICAgLyoqIFRoZSBjb21tYW5kIHRvIHVzZSB0byBhY2Nlc3MgdGhlIHJl
+cG9zaXRvcnkgaWYgbm9uZSB3YXMgZ2l2ZW4gZXhwbGljaXRseSAqLwogICAgIHB1YmxpYyBzdGF0
+aWMgZmluYWwgU3RyaW5nIENNRF9GQUxMQkFDSyA9ICJzdm4iOworICAgIC8qKiBUaGUgc3lzdGVt
+IHByb3BlcnR5IG5hbWUgdG8gb2J0YWluIHRoZSBzdWJ2ZXJzaW9uIHVzZXIgY29uZmlndXJhdGlv
+biAKKyAgICAgKiBkaXJlY3RvcnkgdG8gdXNlLCBpLmUuIHRoZSB2YWx1ZSBmb3IgdGhlIHN2biBv
+cHRpb24gLS1jb25maWctZGlyLiBHZXRzCisgICAgICogaWdub3JlZCwgaWYgbm90IHNldC4KKyAg
+ICAgKi8KKyAgICBwdWJsaWMgc3RhdGljIGZpbmFsIFN0cmluZyBDT05GSUdfRElSRUNUT1JZX0tF
+WSA9CisgICAgICAgICJvcmcub3BlbnNvbGFyaXMub3Blbmdyb2suaGlzdG9yeS5TdWJ2ZXJzaW9u
+LmNvbmZpZ2RpciI7CisgICAgCiAgICAgcHJpdmF0ZSBzdGF0aWMgZmluYWwgTG9nZ2VyIGxvZ2dl
+ciA9IAogICAgICAgICBMb2dnZXIuZ2V0TG9nZ2VyKFN1YnZlcnNpb25SZXBvc2l0b3J5LmNsYXNz
+LmdldE5hbWUoKSk7CiAKICAgICBwcm90ZWN0ZWQgU3RyaW5nIHJlcG9zUGF0aDsKKyAgICBwcml2
+YXRlIFN0cmluZyBjb25maWdEaXI7CiAKICAgICBwdWJsaWMgU3VidmVyc2lvblJlcG9zaXRvcnko
+KSB7CiAgICAgICAgIHR5cGUgPSAiU3VidmVyc2lvbiI7CkBAIC05OCw2ICsxMDYsOSBAQAogICAg
+ICAgICAgICAgTGlzdDxTdHJpbmc+IGNtZCA9IG5ldyBBcnJheUxpc3Q8U3RyaW5nPigpOwogICAg
+ICAgICAgICAgY21kLmFkZCh0aGlzLmNtZCk7CiAgICAgICAgICAgICBjbWQuYWRkKCJpbmZvIik7
+CisgICAgICAgICAgICBpZiAoY29uZmlnRGlyICE9IG51bGwpIHsKKyAgICAgICAgICAgICAgICBj
+bWQuYWRkKGNvbmZpZ0Rpcik7CisgICAgICAgICAgICB9CiAgICAgICAgICAgICBjbWQuYWRkKCIt
+LXhtbCIpOwogICAgICAgICAgICAgRmlsZSBkaXJlY3RvcnkgPSBuZXcgRmlsZShnZXREaXJlY3Rv
+cnlOYW1lKCkpOwogCkBAIC0xNjksNiArMTgwLDkgQEAKICAgICAgICAgY21kLmFkZCgibG9nIik7
+CiAgICAgICAgIGNtZC5hZGQoIi0tdHJ1c3Qtc2VydmVyLWNlcnQiKTsKICAgICAgICAgY21kLmFk
+ZCgiLS1ub24taW50ZXJhY3RpdmUiKTsKKyAgICAgICAgaWYgKGNvbmZpZ0RpciAhPSBudWxsKSB7
+CisgICAgICAgICAgICBjbWQuYWRkKGNvbmZpZ0Rpcik7CisgICAgICAgIH0KICAgICAgICAgY21k
+LmFkZCgiLS14bWwiKTsKICAgICAgICAgY21kLmFkZCgiLXYiKTsKICAgICAgICAgaWYgKHNpbmNl
+UmV2aXNpb24gIT0gbnVsbCkgewpAQCAtMTk4LDYgKzIxMiw5IEBACiAgICAgICAgIGVuc3VyZUNv
+bW1hbmQoQ01EX1BST1BFUlRZX0tFWSwgQ01EX0ZBTExCQUNLKTsKICAgICAgICAgY21kLmFkZCh0
+aGlzLmNtZCk7CiAgICAgICAgIGNtZC5hZGQoImNhdCIpOworICAgICAgICBpZiAoY29uZmlnRGly
+ICE9IG51bGwpIHsKKyAgICAgICAgICAgIGNtZC5hZGQoY29uZmlnRGlyKTsKKyAgICAgICAgfQog
+ICAgICAgICBjbWQuYWRkKCItciIpOwogICAgICAgICBjbWQuYWRkKHJldik7CiAgICAgICAgIGNt
+ZC5hZGQoZXNjYXBlRmlsZU5hbWUoZmlsZW5hbWUpKTsKQEAgLTI5MCw2ICszMDcsOSBAQAogICAg
+ICAgICBhcmd2LmFkZCgiYW5ub3RhdGUiKTsKICAgICAgICAgYXJndi5hZGQoIi0tdHJ1c3Qtc2Vy
+dmVyLWNlcnQiKTsKICAgICAgICAgYXJndi5hZGQoIi0tbm9uLWludGVyYWN0aXZlIik7CisgICAg
+ICAgIGlmIChjb25maWdEaXIgIT0gbnVsbCkgeworICAgICAgICAgICAgYXJndi5hZGQoY29uZmln
+RGlyKTsKKyAgICAgICAgfQogICAgICAgICBhcmd2LmFkZCgiLS14bWwiKTsKICAgICAgICAgaWYg
+KHJldmlzaW9uICE9IG51bGwpIHsKICAgICAgICAgICAgIGFyZ3YuYWRkKCItciIpOwpAQCAtMzUx
+LDYgKzM3MSw5IEBACiAgICAgICAgIGNtZC5hZGQoInVwZGF0ZSIpOwogICAgICAgICBjbWQuYWRk
+KCItLXRydXN0LXNlcnZlci1jZXJ0Iik7CiAgICAgICAgIGNtZC5hZGQoIi0tbm9uLWludGVyYWN0
+aXZlIik7CisgICAgICAgIGlmIChjb25maWdEaXIgIT0gbnVsbCkgeworICAgICAgICAgICAgY21k
+LmFkZChjb25maWdEaXIpOworICAgICAgICB9CiAgICAgICAgIEV4ZWN1dG9yIGV4ZWN1dG9yID0g
+bmV3IEV4ZWN1dG9yKGNtZCwgZGlyZWN0b3J5KTsKICAgICAgICAgaWYgKGV4ZWN1dG9yLmV4ZWMo
+KSAhPSAwKSB7CiAgICAgICAgICAgICB0aHJvdyBuZXcgSU9FeGNlcHRpb24oZXhlY3V0b3IuZ2V0
+RXJyb3JTdHJpbmcoKSk7CkBAIC0zNzAsNyArMzkzLDExIEBACiAgICAgcHVibGljIGJvb2xlYW4g
+aXNXb3JraW5nKCkgewogICAgICAgICBpZiAod29ya2luZyA9PSBudWxsKSB7CiAgICAgICAgICAg
+ICBlbnN1cmVDb21tYW5kKENNRF9QUk9QRVJUWV9LRVksIENNRF9GQUxMQkFDSyk7Ci0gICAgICAg
+ICAgICB3b3JraW5nID0gY2hlY2tDbWQoY21kLCAiLS1oZWxwIik7CisgICAgICAgICAgICBjb25m
+aWdEaXIgPSBTeXN0ZW0uZ2V0UHJvcGVydHkoQ09ORklHX0RJUkVDVE9SWV9LRVkpOworICAgICAg
+ICAgICAgaWYgKGNvbmZpZ0RpciAhPSBudWxsKSB7CisgICAgICAgICAgICAgICAgY29uZmlnRGly
+ID0gIi0tY29uZmlnLWRpcj0nIiArIGNvbmZpZ0RpciArICInIjsKKyAgICAgICAgICAgIH0KKyAg
+ICAgICAgICAgIHdvcmtpbmcgPSBjaGVja0NtZChjbWQsIGNvbmZpZ0RpciAhPSBudWxsID8gY29u
+ZmlnRGlyICsgIiAtLWhlbHAiIDogIi0taGVscCIpOwogICAgICAgICB9CiAgICAgICAgIHJldHVy
+biB3b3JraW5nLmJvb2xlYW5WYWx1ZSgpOwogICAgIH0K
+</data>
+
+          </attachment>
+      
+
+    </bug>
+
+</bugzilla>

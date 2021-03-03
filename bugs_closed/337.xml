@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>337</bug_id>
+          
+          <creation_ts>2007-12-31 17:02:00 +0000</creation_ts>
+          <short_desc>Analyzers are not thread-safe because of static state variables</short_desc>
+          <delta_ts>2008-01-18 01:38:34 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>analyzer</component>
+          <version>unspecified</version>
+          <rep_platform>Other</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXED</resolution>
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>normal</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Knut Anders Hatlen">knut.hatlen</reporter>
+          <assigned_to name="Knut Anders Hatlen">knut.hatlen</assigned_to>
+          
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>935</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2007-12-31 17:02:56 +0000</bug_when>
+            <thetext>Many of the analyzers contain static state variables (in particular char arrays used to buffer file contents). This means that separate analyzer objects in separate threads may interfere with each other. Since the analyzer objects currently are used only by the indexer in a single-threaded context, this isn&apos;t a big issue yet, but it may become one if we try to parallelize the indexing, or if we use analyzers in the webapp.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>1091</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2008-01-18 01:38:34 +0000</bug_when>
+            <thetext>Fixed in changeset 225:a32074fea01d.</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>2969</bug_id>
+          
+          <creation_ts>2008-08-20 07:00:00 +0000</creation_ts>
+          <short_desc>add &quot;hxx&quot; as filename extension (for c++ headers) / allow to configure extensions</short_desc>
+          <delta_ts>2008-08-20 11:39:56 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>analyzer</component>
+          <version>unspecified</version>
+          <rep_platform>Other</rep_platform>
+          <op_sys>Linux</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXED</resolution>
+          
+          
+          
+          
+          
+          <priority>P5</priority>
+          <bug_severity>trivial</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Christian Lohmaier">cloph</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>10528</commentid>
+            <who name="Christian Lohmaier">cloph</who>
+            <bug_when>2008-08-20 07:00:17 +0000</bug_when>
+            <thetext>While you can force an analyzer for some files using the -A option, that configuration is not taken into account when xrefing the sourcecode itself.
+
+I used -A hxx:org.opensolaris.opengrok.analysis.c.CAnalyzerFactory and did use -e to save diskspace here, but the hxx files e.g. in include statements are not treated properly (file.hxx for example is only treated as file.h)
+
+Some of the hxx files are linked completely (those that are part of a path like dir/file.hxx), so it seems to me as if the -A option is not taken into account properly. As the -A options don&apos;t appear in the configuration.xml at all, this problem might only occur when not generating the HTML files while indexing.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>10531</commentid>
+            <who name="Christian Lohmaier">cloph</who>
+            <bug_when>2008-08-20 07:20:45 +0000</bug_when>
+            <thetext>Now I&apos;m sure: It is not the indexing part.
+
+I compiled opengrok from source and modified
+src/org/opensolaris/opengrok/analysis/c/CAnalyzerFactory.java
+and
+src/org/opensolaris/opengrok/analysis/c/CXref.lex
+
+to include hxx and did use it with the same index/configuration/data that was created with the binary distribution and the hxx files are now linked as expected.
+
+So please make the analyzer-commandline configuration persistent so that the xref generation can benefit from those hints as well.
+
+I reduce prio and severity since it is trivial to just modify the sources directly and recompile...</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>10567</commentid>
+            <who name="Trond Norbye">trond.norbye</who>
+            <bug_when>2008-08-20 11:39:56 +0000</bug_when>
+            <thetext>Added hxx to the list of file extensions to be handled by CAnalyzerFactory in changeset:   450:468fd0215e45</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

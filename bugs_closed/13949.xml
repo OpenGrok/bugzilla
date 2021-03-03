@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>13949</bug_id>
+          
+          <creation_ts>2010-01-18 12:28:00 +0000</creation_ts>
+          <short_desc>Missing line numbers in xref for XML file</short_desc>
+          <delta_ts>2010-01-19 09:07:32 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>analyzer</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXED</resolution>
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>minor</bug_severity>
+          <target_milestone>0.9</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Knut Anders Hatlen">knut.hatlen</reporter>
+          <assigned_to name="Lubos Kosco">Lubos.Kosco</assigned_to>
+          <cc>Lubos.Kosco</cc>
+    
+    <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>62734</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2010-01-18 12:28:26 +0000</bug_when>
+            <thetext>See: http://src.opensolaris.org/source/xref/opengrok/trunk/web/rss.xsl.xml
+
+Only the first line in the file is preceded by line number.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>62738</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2010-01-18 12:43:57 +0000</bug_when>
+            <thetext>According to http://en.wikipedia.org/wiki/Newline
+opengrok analyzers just generate a new line for \n , which when displaying files from other than local platform will provide wrong output
+
+hence we need to generate new line for \r too ...</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>62739</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2010-01-18 12:53:07 +0000</bug_when>
+            <thetext>We should only generate new line for \r if it&apos;s not followed by \n. Otherwise, we would get an empty line between each CRLF-terminated line.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>62741</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2010-01-18 13:12:28 +0000</bug_when>
+            <thetext>will check all code and fix all xref lexers ...</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>62754</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2010-01-18 15:04:53 +0000</bug_when>
+            <thetext>JFlex manual says:
+
+Please note that the \n escape sequence stands for the ASCII LF character - not for the end of
+line. If you would like to match the line terminator, you should use the expression \r|\n|\r\n
+if you want the Java conventions, or \r|\n|\r\n|\u2028|\u2029|\u000B|\u000C|\u0085 if
+you want to be fully Unicode compliant (see also [5]).
+
+most of our code uses either just \n or \r\n to figure out EOL
+will change all analyzers to be fully unicode compliant on EOL</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>62817</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2010-01-19 09:07:32 +0000</bug_when>
+            <thetext>fixed in
+changeset:   936:823baf58f250</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

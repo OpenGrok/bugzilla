@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>342</bug_id>
+          
+          <creation_ts>2008-01-04 12:02:00 +0000</creation_ts>
+          <short_desc>RFE: linking projects with muliple paths</short_desc>
+          <delta_ts>2008-08-31 03:06:22 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>indexer</component>
+          <version>unspecified</version>
+          <rep_platform>Other</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>ACCEPTED</bug_status>
+          
+          
+          
+          
+          
+          
+          <priority>P4</priority>
+          <bug_severity>enhancement</bug_severity>
+          <target_milestone>---</target_milestone>
+          <dependson>341</dependson>
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Hemang Lavana">HemangLavana</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>945</commentid>
+            <who name="Hemang Lavana">HemangLavana</who>
+            <bug_when>2008-01-04 12:02:23 +0000</bug_when>
+            <thetext>Hi,
+
+Currently you can only link one path to an opengrok project. I think of a project as one or more modules necessary for me to get my work done. In that sense, I may want to link multiple paths from multiple locations for my project. And, it is also possible that I may reference a single path in multiple projects.
+
+Consider the following directory structure of my SRC_ROOT (contrived example):
+
+
++ SRC_ROOT
+___+ linux
+______+ bin
+______+ docs
+______+ src
+___+ tcl
+______+ bin
+______+ docs
+______+ src
+
+I would like to create two projects say:
+(a) &quot;all-srcs&quot; which refers to everything under to linux/src and tcl/src,
+(b) &quot;tcl-srcs+docs&quot; which refers to everything under tcl/src and tcl/docs.
+
+Note that the &quot;tcl/srcs&quot; path is part of both the projects. If opengrok projects supports this, then I can see lot of benefits to it. I don&apos;t have to create toplevel directories under SRC_ROOT called &quot;all-srcs&quot; and &quot;tcl-srcs+docs&quot; and checkout a snapshot of corresponding paths one more time under these directories. So as a result my search queries will not return multiple results for the same entry and more additional diskspace will not be required for SRC_ROOT and DATA_ROOT.
+
+On the UI side, it should not only allow searches by selected one or more projects but it should also provide a xref link for each project. For example, clicking on xref link for &quot;all-srcs&quot; would load a page listing xref pages corresponding to linux/src and tcl/src paths. Similarly, on the xref pages, it should provide an additional checkbox to limit the search by project name with which the file or directory is associated.
+
+On the implementation side, I think that there could be a single global index for all the projects. The opengrok indexer should mark each path with corresponding project name if it doesn&apos;t already do that. And the spellchecker module can be modified to limit suggestions by specified project name. This way you still have a single master index and specifying the &quot;project:&lt;name&gt;&quot; term in the search criteria should make it behave like mini-opengrok instance.
+
+You can find the original discussion at:
+
+http://www.opensolaris.org/jive/thread.jspa?threadID=48378&amp;tstart=0
+
+It would be great if opengrok projects can provide these capabilities.
+
+Thanks,
+Hemang.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>11518</commentid>
+            <who name="Trond Norbye">trond.norbye</who>
+            <bug_when>2008-08-31 03:06:22 +0000</bug_when>
+            <thetext>We could add multiple projects for each file in the &quot;project-field&quot; for the file. I am not sure how this will affect the generated URLS for these symbols.. this needs more analysis to figure out.</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

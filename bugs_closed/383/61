@@ -1,0 +1,62 @@
+# HG changeset patch
+# User Leo Davis <ldavis@fonix.com>
+# Date 1200617373 25200
+# Node ID 2e21a144742d6a128005dddf56d1038d69fbbd4b
+# Parent  8216eda23e5ea17cf074918aa8a64b251c0cb1ff
+Fixes an ArrayOutOfBoundsException.
+
+src/org/opensolaris/opengrok/search/context/PlainLineTokenizer.lex
+(dumpRest): fix ArrayOutOfBoundsException, add minor formatting clue to show
+that output is being truncated.
+
+diff -r 8216eda23e5e -r 2e21a144742d src/org/opensolaris/opengrok/search/context/PlainLineTokenizer.lex
+--- a/src/org/opensolaris/opengrok/search/context/PlainLineTokenizer.lex	Mon Jan 14 21:40:19 2008 -0700
++++ b/src/org/opensolaris/opengrok/search/context/PlainLineTokenizer.lex	Thu Jan 17 17:49:33 2008 -0700
+@@ -304,20 +304,26 @@ import org.opensolaris.opengrok.search.H
+ 	rest = zzMarkedPos;
+   }
+   public void dumpRest() throws IOException {
+-	if(dumpRest) {
+-		for(int i=0; i<zzEndRead && i<100; i++) {
+-			if(zzBuffer[rest+i] == '\n') {
++        if(dumpRest) {
++                boolean cutoff = false;
++                for(int i=0; i<zzEndRead && !cutoff; i++) {
++                        boolean ellipsis = !(i < 100 && (rest+i) < zzBuffer.length);
++                        cutoff =  ellipsis || zzBuffer[rest+i] == '\n';
++                        if(cutoff) {
+                            if (out != null) {
+-				printWithNum(zzBuffer, rest, rest+i-1, markedLine);
+-				//out.write(zzBuffer, rest, i);
+-				out.write("</a>");
+-				if (prevHi) {
+-					out.write(" <i> ");
+-					String[] desc = tags.remove(prevLn);
+-					out.write(desc[2]);
+-					out.write(" </i>");
+-				}
+-				out.write("<br/>");
++                                printWithNum(zzBuffer, rest, rest+i-1, markedLine);
++                                //out.write(zzBuffer, rest, i);
++                                if (ellipsis) {
++                                    out.write("&hellip;");
++                                }
++                                out.write("</a>");
++                                if (prevHi) {
++                                        out.write(" <i> ");
++                                        String[] desc = tags.remove(prevLn);
++                                        out.write(desc[2]);
++                                        out.write(" </i>");
++                                }
++                                out.write("<br/>");
+                            } else {
+                                formatWithNum(zzBuffer, rest, rest+i-1, markedLine);
+                                hit.setLine(sb.toString());
+@@ -327,7 +333,6 @@ import org.opensolaris.opengrok.search.H
+ 			       }
+                                hits.add(hit);
+                            }
+-                           break;
+ 			}
+ 		}
+ 	}

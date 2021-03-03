@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>16354</bug_id>
+          
+          <creation_ts>2010-06-23 08:30:00 +0000</creation_ts>
+          <short_desc>provide context in the results</short_desc>
+          <delta_ts>2010-06-23 08:31:04 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>webapp</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>NEW</bug_status>
+          
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>enhancement</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Vladimir Kotal">vladimir.kotal</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>74654</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2010-06-23 08:30:43 +0000</bug_when>
+            <thetext>Currently, full search results only cover one line of code. So, for example when I am searching for function calls like tcp_xmit_mp() I do something like this:
+
+http://src.opensolaris.org/source/search?q=tcp_xmit_mp&amp;defs=&amp;refs=&amp;path=uts&amp;hist=&amp;project=%2Fonnv
+
+This will display hits in multiple files.
+
+First issue: For some number of hits the result for given file is truncated and ends with &quot;[all...]&quot;, e.g. like this:
+
+---
+ tcp_output.c 	2798 tcp_xmit_mp(tcp_t *tcp, mblk_t *mp, int32_t max_to_send, int32_t *offset,  function
+    [all...]
+---
+
+I&apos;d like to be able to expand the results for all the returned files (so it shows all the hits for all files).
+
+Second issue: even when clicking on the &quot;all...&quot;  I still get limited view of how the functions is called.
+
+http://src.opensolaris.org/source/more/onnv/onnv-gate/usr/src/uts/common/inet/tcp/tcp_output.c?t=%2Bfull%3Atcp_xmit_mp+%2Bpath%3Auts
+
+returns this:
+
+---
+1914 		 * Branch off to tcp_xmit_mp() if any of the VALID bits is
+1919 		 * as len may be further reduced in tcp_xmit_mp().  If len
+1939 			mp = tcp_xmit_mp(tcp, *xmit_tail, len, NULL, NULL,
+2252 		mp = tcp_xmit_mp(tcp, NULL, 0, NULL, NULL,
+2784  * tcp_xmit_mp is called to return a pointer to an mblk chain complete with
+2798 tcp_xmit_mp(tcp_t *tcp, mblk_t *mp, int32_t max_to_send, int32_t *offset,
+3330 		xmit_mp = tcp_xmit_mp(tcp, snxt_mp, seg_len, &amp;off,
+3408 			xmit_mp = tcp_xmit_mp(tcp, snxt_mp, cnt, &amp;off,
+---
+
+I&apos;d like to be able to set the size of context from the web page with the results (like plus minus n lines like in diff(1) with the -C option) so I can see the remaining arguments of the function calls, for all hits.
+
+The default context width should be also settable per project in OpenGrok configuration.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>74655</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2010-06-23 08:31:04 +0000</bug_when>
+            <thetext>After talking to Lubos, it seems this is dependent on summarizer refactoring.</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

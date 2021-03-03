@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>16691</bug_id>
+          
+          <creation_ts>2010-07-30 15:35:00 +0000</creation_ts>
+          <short_desc>Request Entity Too Large</short_desc>
+          <delta_ts>2010-08-03 14:02:21 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>webapp</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>NEW</bug_status>
+          
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>major</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Neil Bartley">neil.bartley</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          <cc>knut.hatlen</cc>
+    
+    <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>76045</commentid>
+            <who name="Neil Bartley">neil.bartley</who>
+            <bug_when>2010-07-30 15:35:50 +0000</bug_when>
+            <thetext>This is present in OpenGrok 0.9 as well as the current development version.
+
+I have a fairly large repository - around 125 files all configured as individual projects.
+
+When a user searches for a string over all of the projects (the most common search used) the results are presented, however if they click for the second page a 413 - Request Entity Too Large is returned. The &apos;&amp;project=xxx,yyy,&apos; section of the URL contains each project name and accounts for 2616 chars of the URL.
+
+The full error is:
+
+ Request Entity Too Large
+
+ The requested resource
+ /source/s
+ does not allow request data with GET requests, or the amount of data provided in the request exceeds the capacity limit. 
+
+I&apos;ve combated this in the meantime by making changes to search.jsp so the request is POSTed, this isn&apos;t ideal as the GET URL&apos;s are handy for passing between developers.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>76162</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2010-08-03 14:02:21 +0000</bug_when>
+            <thetext>Which servlet container are you running? I suppose the limits will vary between the different servlet containers, and some of them may even have a configuration parameter for this.</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

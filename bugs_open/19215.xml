@@ -1,0 +1,520 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>19215</bug_id>
+          
+          <creation_ts>2012-06-04 10:07:00 +0000</creation_ts>
+          <short_desc>OpenGrok leaks file descriptors</short_desc>
+          <delta_ts>2012-06-19 12:51:17 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>agent</component>
+          <version>unspecified</version>
+          <rep_platform>i86pc/i386</rep_platform>
+          <op_sys>Linux</op_sys>
+          <bug_status>NEW</bug_status>
+          
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>critical</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Gustavo Lopes">glopes</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          <cc>glopes</cc>
+    
+    <cc>jel+osbugs</cc>
+    
+    <cc>Lubos.Kosco</cc>
+    
+    <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>86445</commentid>
+            <who name="Gustavo Lopes">glopes</who>
+            <bug_when>2012-06-04 10:07:48 +0000</bug_when>
+            <thetext>Each search is leaking 6 additional five descriptors in the mrcurial tip ccc849159329. I haven&apos;t tested earlier versions. Forcing garbage collection doesn&apos;t close these file descriptors.
+
+The opened file descriptors look like this:
+
+lr-x------ 1 jetty nogroup 64 Jun  4 05:00 94 -&gt; /opt/opengrok-new/data/index/PHP_TRUNK/_9.frq
+lr-x------ 1 jetty nogroup 64 Jun  4 05:00 95 -&gt; /opt/opengrok-new/data/index/PHP_TRUNK/_9.prx
+lr-x------ 1 jetty nogroup 64 Jun  4 05:00 96 -&gt; /opt/opengrok-new/data/index/PHP_TRUNK/_9.fdt
+lr-x------ 1 jetty nogroup 64 Jun  4 05:00 97 -&gt; /opt/opengrok-new/data/index/PHP_TRUNK/_9.fdx
+lr-x------ 1 jetty nogroup 64 Jun  4 05:00 98 -&gt; /opt/opengrok-new/data/index/PHP_TRUNK/_9.nrm
+lr-x------ 1 jetty nogroup 64 Jun  4 05:00 99 -&gt; /opt/opengrok-new/data/index/PHP_TRUNK/_9.tis</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86446</commentid>
+            <who name="Gustavo Lopes">glopes</who>
+            <bug_when>2012-06-04 10:33:56 +0000</bug_when>
+            <thetext>This is 6 file descriptors per project. If you select 10 projects, it leaks 60 file descriptors.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86447</commentid>
+            <who name="Gustavo Lopes">glopes</who>
+            <bug_when>2012-06-04 11:31:38 +0000</bug_when>
+            <thetext>I did a binary search and this problem was introduced in 1b9fa840d93b when upgrading to lucene 3.5.0</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86448</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2012-06-04 12:47:05 +0000</bug_when>
+            <thetext>current trunk is on 3.6.0 , can you rebuild and retry?
+
+also release version is on older lucene than 3.5, so it seems you&apos;re somewhere between ;)
+
+hmm?
+L</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86449</commentid>
+            <who name="Gustavo Lopes">glopes</who>
+            <bug_when>2012-06-04 13:34:37 +0000</bug_when>
+            <thetext>I tried with lucene 3.6.0, as that&apos;s what&apos;s the development tip uses.
+
+Anyway, I would guess the problem is that the IndexReaders instantiated on each search request in SearchHelper are not closed.
+
+This commit fixes the issue for me:
+
+https://bitbucket.org/cataphract/opengrok/changeset/0b023ef9643e</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86450</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2012-06-04 13:47:18 +0000</bug_when>
+            <thetext>cool patch
+
+would you be willing to send it upstream?
+
+if you have an OCA# I can accept it immediately
+if not you can get a # by following the few steps http://hub.opensolaris.org/bin/view/Main/oracle_contributor_agreement
+(I know, more work, but it&apos;s just about sending a mail with a picture to Oracle, if you&apos;d agree to the terms our lawyers setup for external contributions to OpenSolaris projects ... )
+
+thanks in advance
+Lubos</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86451</commentid>
+            <who name="Gustavo Lopes">glopes</who>
+            <bug_when>2012-06-04 14:03:59 +0000</bug_when>
+            <thetext>(In reply to comment #5)
+&gt; cool patch
+&gt; 
+&gt; would you be willing to send it upstream?
+&gt; 
+&gt; if you have an OCA# I can accept it immediately
+&gt; if not you can get a # by following the few steps
+&gt; http://hub.opensolaris.org/bin/view/Main/oracle_contributor_agreement
+&gt; (I know, more work, but it&apos;s just about sending a mail with a picture to
+&gt; Oracle, if you&apos;d agree to the terms our lawyers setup for external
+&gt; contributions to OpenSolaris projects ... )
+&gt; 
+
+Very well, I&apos;ll sign it, but before merging this still needs some changes. For instance, the project appears to use spaces, not tabs and RuntimeEnvironment is not really the place where to have the pooled threads and cached IndexReaders because that class is about configuration (it&apos;s in the org.opensolaris.opengrok.configuration package). I was just trying to get the application server not to die owing to hitting file descriptor limit.
+
+So I&apos;ll clean up the patch and send the agreement.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86452</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2012-06-04 15:11:43 +0000</bug_when>
+            <thetext>thank you, Knut, me or Trond will review once you&apos;re done and push with your name</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86457</commentid>
+            <who name="Gustavo Lopes">glopes</who>
+            <bug_when>2012-06-07 20:48:19 +0000</bug_when>
+            <thetext>I&apos;ve cleaned it up on https://bitbucket.org/cataphract/opengrok/changeset/f7f76d48ef8c
+
+I&apos;ve also sent the documents, I&apos;ll notify you when I get a response.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86458</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2012-06-08 11:33:00 +0000</bug_when>
+            <thetext>(In reply to comment #8)
+&gt; I&apos;ve cleaned it up on
+&gt; https://bitbucket.org/cataphract/opengrok/changeset/f7f76d48ef8c
+&gt; 
+&gt; I&apos;ve also sent the documents, I&apos;ll notify you when I get a response.
+
+thank you for this, looks ok
+once you send me the OCA number I will accept this patch</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86459</commentid>
+            <who name="Jens Elkner">jel+osbugs</who>
+            <bug_when>2012-06-08 13:05:08 +0000</bug_when>
+            <thetext>+1 for the idea to share IndexReaders.
+
+However, AFAICS, the implementation is buggy and has IMHO other problems. 
+
+BTW: The given URL doesn&apos;t show all changes and doesn&apos;t provide a proper &quot;diff&quot; for the change wrt. the osol tip (prevents me from having a closer look at it ...).</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86460</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2012-06-08 13:11:53 +0000</bug_when>
+            <thetext>(In reply to comment #10)
+&gt; +1 for the idea to share IndexReaders.
+&gt; 
+&gt; However, AFAICS, the implementation is buggy and has IMHO other problems. 
+
+which ones in particular? 
+I am sure Gustavo can address them
+
+&gt; 
+&gt; BTW: The given URL doesn&apos;t show all changes and doesn&apos;t provide a proper &quot;diff&quot;
+&gt; for the change wrt. the osol tip (prevents me from having a closer look at it
+&gt; ...).
+
+I pulled his repo and did a diff between osol tip and latest change</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86461</commentid>
+            <who name="Gustavo Lopes">glopes</who>
+            <bug_when>2012-06-08 14:18:15 +0000</bug_when>
+            <thetext>I created a new branch with just the pertinent changes cherry picked:
+
+https://bitbucket.org/cataphract/opengrok/compare/bug19215..default</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86462</commentid>
+            <who name="Gustavo Lopes">glopes</who>
+            <bug_when>2012-06-08 14:24:28 +0000</bug_when>
+            <thetext>Make that
+
+https://bitbucket.org/cataphract/opengrok/compare/bug19215..ce0b759
+
+now that I&apos;ve updated the default branch.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86463</commentid>
+            <who name="Gustavo Lopes">glopes</who>
+            <bug_when>2012-06-11 13:27:27 +0000</bug_when>
+            <thetext>I have updated my branch on bitbucket to address several points raised on the code review.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86464</commentid>
+              <attachid>4665</attachid>
+            <who name="Gustavo Lopes">glopes</who>
+            <bug_when>2012-06-11 13:39:58 +0000</bug_when>
+            <thetext>Created attachment 4665
+Code review reply
+
+This is my reply to the code review. Unfortunately, Jens mail server rejected my e-mail (said it was spam) and the message to opengrok-dev was held in moderation.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86465</commentid>
+            <who name="Gustavo Lopes">glopes</who>
+            <bug_when>2012-06-12 07:29:06 +0000</bug_when>
+            <thetext>My Oracle Contributor Agreement number is OS0489.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86469</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2012-06-19 12:51:17 +0000</bug_when>
+            <thetext>
+Thank you Gustavo
+
+I spoke with Trond and Knut and we will take some more time to review
+
+for the time being I only pushed Jenses small change that somehow mitigates this problem
+( changeset:   1381:d2b04bc47598 , note that I didn&apos;t test it large scale, I hope Jens did ;) )
+
+
+We will try to tackle this patch request along others in the queue (e.g. Jenses about the jquery-&gt;yui and some more, Trond already started doing some justice :) )
+
+thanks for the patience
+Lubos
+
+(In reply to comment #16)
+&gt; My Oracle Contributor Agreement number is OS0489.</thetext>
+          </long_desc>
+      
+          <attachment
+              isobsolete="0"
+              ispatch="0"
+              isprivate="0"
+              isurl="0"
+          >
+            <attachid>4665</attachid>
+            <date>2012-06-11 13:39:00 +0000</date>
+            <delta_ts>2012-06-11 13:39:58 +0000</delta_ts>
+            <desc>Code review reply</desc>
+            <filename>message.eml</filename>
+            <type>text/plain</type>
+            <size>13513</size>
+            <attacher>glopes</attacher>
+            
+              <data encoding="base64">TUlNRS1WZXJzaW9uOiAxLjANCkNvbnRlbnQtVHlwZTogdGV4dC9wbGFpbjsgY2hhcnNldD1VVEYt
+ODsNCiBmb3JtYXQ9Zmxvd2VkDQpDb250ZW50LVRyYW5zZmVyLUVuY29kaW5nOiA3Yml0DQpEYXRl
+OiBNb24sIDExIEp1biAyMDEyIDEwOjQ4OjIxICswMjAwDQpGcm9tOiBHdXN0YXZvIExvcGVzIDxn
+bG9wZXNAbmVibS5pc3QudXRsLnB0Pg0KVG86IEplbnMgRWxrbmVyIDxqZWwrb3Blbmdyb2tAY3Mu
+dW5pLW1hZ2RlYnVyZy5kZT4NCkNjOiA8b3Blbmdyb2stZGV2QG9wZW5zb2xhcmlzLm9yZz4NClN1
+YmplY3Q6IFJlOiBbb3Blbmdyb2stZGV2XSBbQnVnIDE5MjE1XSBPcGVuR3JvayBsZWFrcyBmaWxl
+IGRlc2NyaXB0b3JzDQpPcmdhbml6YXRpb246ID0/VVRGLTg/UT9OPUMzPUJBY2xlb19kZV9Fbmdl
+bmhhcmlhX0Jpb209QzM9QTlkaWNhX2RvX0luc3RpPz0NCiA9P1VURi04P1E/dHV0b19TdXBlcmlv
+cl9UPUMzPUE5Y25pY28/PQ0KSW4tUmVwbHktVG86IDwyMDEyMDYxMTA1NDE0NC5HQTEzNzIyQHRy
+ZXguY3MudW5pLW1hZ2RlYnVyZy5kZT4NClJlZmVyZW5jZXM6IDxidWctMTkyMTUtMzAzMkBodHRw
+LmRlZmVjdC5vcGVuc29sYXJpcy5vcmcvYnovPg0KIDwyMDEyMDYwODE0MjQucTU4RU9XMmIwMDc4
+MDNAbHYtZGVmZWN0Lm9wZW5zb2xhcmlzLm9yZz4NCiA8MjAxMjA2MTEwNTQxNDQuR0ExMzcyMkB0
+cmV4LmNzLnVuaS1tYWdkZWJ1cmcuZGU+DQpNZXNzYWdlLUlEOiA8N2ZjMjRhMzM2ZDg4ZmE2MDVm
+NGNjNmZiYTI2NjgxN2ZAbmVibS5pc3QudXRsLnB0Pg0KWC1TZW5kZXI6IGdsb3Blc0BuZWJtLmlz
+dC51dGwucHQNClVzZXItQWdlbnQ6IFJvdW5kQ3ViZSBXZWJtYWlsLzAuNS4zDQoNCkhpLCB0aGFu
+a3MgZm9yIHRha2luZyB0aGUgdGltZSB0byByZXZpZXcgbXkgY2hhbmdlcy4NCg0KT24gTW9uLCAx
+MSBKdW4gMjAxMiAwNzo0MTo0NCArMDIwMCwgSmVucyBFbGtuZXIgd3JvdGU6DQo+IFdydC4gdG8g
+dGhlIHdlYnJldi9HdXN0dm9zIHBhdGNoZXM6DQo+DQo+IDEpIHNyYy9vcmcvb3BlbnNvbGFyaXMv
+b3Blbmdyb2svd2ViL1dlYmFwcExpc3RlbmVyLmphdmE6DQo+ICAgYSkgU2hvdWxkbid0IHJ1bnRp
+bWUgcmVsYXRlZCBzZXR0aW5ncy9pbnN0YW5jYSBiZSBmZXRjaGVkIHZpYSB0aGUNCj4gICAgICBS
+dW50aW1lRW52aXJvbm1lbnQsIGUuZy4gbGlrZQ0KPg0KPiANCj4gUnVudGltZUVudmlyb25tZW50
+LmdldEluc3RhbmNlKClbLmdldENvbmZpZ3VyYXRpb24oKV0uZ2V0U2VhcmNoUG9vbFtTaXplXSgp
+DQo+ICAgICAgRnVydGhlcm1vcmUsIGV2ZW4gaWYgb2J0YWluZWQgdmlhIFJ1bnRpbWVFbnZpcm9u
+bWVudCwgc2hvdWxkbid0IA0KPiBsYXp5DQo+ICAgICAgaW5zdGFudGlhdGlvbiBzaG91bGQgYmUg
+cHJlZmVycmVkPw0KPiAgICAgIElNSE86IG5vIGNoYW5nZXMgcmVxdWlyZWQgaGVyZQ0KDQpJJ20g
+bm90IHN1cmUgSSB1bmRlcnN0YW5kLiBMYXp5IGluc3RhbnRpYXRpb24gb2YgYW4gaW50PyBQbHVz
+LCBJJ20gDQplZmZlY3RpdmVseSB1c2luZyB0aGUgbWV0aG9kIGNhbGwgY2hhaW4geW91IGRlc2Ny
+aWJlLiBJJ20gZG9pbmcgDQplbnYuZ2V0Q29uZmlndXJhdGlvbi5nZXRTZWFyY2hQb29sU2l6ZSgp
+LCB3aGVyZSBlbnYgaXMgDQpSdW50aW1lRW52aXJvbm1lbnQuZ2V0SW5zdGFuY2UoKS4NCg0KPiAy
+KSB3ZWIvc2VhcmNoLmpzcA0KPiAgIGEpIFRoZSBTZWFyY2hIZWxwZXIgc2hvdWxkIG5vdCBoYXZl
+IGhhdmUgYW55IGRlcGVuZGVuY2llcyBvbiBhIA0KPiB3ZWJhcHAvDQo+ICAgICAgc2VydmxldCBj
+b250ZXh0L2l0cyBjb25zdW1lciAtIGl0IHNob3VsZCBiZSB1c2FibGUgaW4gYSANCj4gInN0YW5k
+YWxvbmUiDQo+ICAgICAgYXBwIGluIHRoZSBzYW1lIG1hbm5lci4gQXMgc2hvd24gYWJvdmUsIHRo
+ZXJlIGlzIG5vIG5lZWQgZm9yIA0KPiBzdWNoIGENCj4gICAgICByZWZlcmVuY2UuICBTbyBJTUhP
+IG5vIGNoYW5nZXMgcmVxdWlyZWQgaGVyZSBhcyB3ZWxsLg0KDQpJIGFncmVlLiBJJ2xsIHBhc3Mg
+dGhlIFNlYXJjaGVyQ2FjaGUgZGlyZWN0bHkuDQoNCj4NCj4gMykgc3JjL29yZy9vcGVuc29sYXJp
+cy9vcGVuZ3Jvay93ZWIvUGFnZUNvbmZpZy5qYXZhDQo+ICAgYSkgc2FtZSB0aGluZyAtIG5vIGNo
+YW5nZXMgcmVxdWlyZWQgYXQgYWxsLg0KDQpDaGFuZ2VzIGFyZSBkZWZpbml0ZWx5IHJlcXVpcmVk
+LCBuYW1lbHkgZ2l2aW5nIGFjY2VzcyB0byB0aGUgDQpTZWFyY2hDYWNoZS4gVW5sZXNzLCBvZiBj
+b3Vyc2UsIHlvdSB3YW50IHRvIHJlbHkgb24gZ2xvYmFsIHN0YXRlLg0KDQo+IDQpIHNyYy9vcmcv
+b3BlbnNvbGFyaXMvb3Blbmdyb2svY29uZmlndXJhdGlvbi9SdW50aW1lRW52aXJvbm1lbnQuamF2
+YQ0KPiAgIGEpIGxpbmUgNDE6IGltcG9ydCBub3QgbmVlZGVkIC0gbm8gY2hhbmdlcyByZXF1aXJl
+ZA0KDQpBIGxlZnRvdmVyIGZyb20gdGhlIG9yaWdpbmFsIGNoYW5nZS4NCg0KPg0KPiA1KSBzcmMv
+b3JnL29wZW5zb2xhcmlzL29wZW5ncm9rL2NvbmZpZ3VyYXRpb24vQ29uZmlndXJhdGlvbi5qYXZh
+Og0KPiAgIC0gbGluZSAxOTU6IGEgbGl0dGxlIG5pdCAtIG5vdCByZXF1aXJlZCwgc2luY2UgZ2xv
+YmFscyBhcmUgYWx3YXlzDQo+ICAgICBpbml0aWFsaXplZCB0byAwL251bGwNCg0KLi4uDQoNCj4g
+Nikgc3JjL29yZy9vcGVuc29sYXJpcy9vcGVuZ3Jvay93ZWIvU2VhcmNoSGVscGVyLmphdmENCj4g
+ICBDaGFuZ2VzIGxvb2sgSU1ITyBhIGxpdHRsZSBiaXQgY2hhb3RpYzoNCj4gICBhKSAidGhpcy4i
+IHByZWZpeCA9PSBvdmVyaGVhZCAtIHNob3VsZG4ndCBiZSB1c2VkIGlmIG5vdCByZXF1aXJlZA0K
+PiAgICAgIChyZWFkYWJpbGl0eSwgdW53cml0dGVuIHByb2plY3QgY29kZSBjb252ZW50aW9uKQ0K
+DQpJIGFsd2F5cyBwcmVmZXIgdG8gcXVhbGlmeSB3aXRoIHRoaXMgYWNjZXNzIHRvIGZpZWxkcyBi
+ZWNhdXNlIGl0IA0KZGlzdGluZ3Vpc2hlcyBsb2NhbHMgZnJvbSBmaWVsZHMgaW1tZWRpYXRlbHks
+IGJ1dCBJJ2xsIHJlbW92ZSB0aGVtIGlmIA0KaXQncyBhZ2FpbnN0IHRoZSBjb252ZW50aW9uLg0K
+DQo+ICAgYikgTGluZXMgMTAzLTEwODogV2h5IHB1YmxpYz8gSU1ITyB0aGVyZSBpcyBubyBuZWVk
+L2lzIGRhbmdlcm91cyB0bw0KPiAgICAgIGV4cG9zZSB0aGVzZSBpbXBlbWVudGF0aW9uIGRldGFp
+bHMgLi4uDQoNCkFuIG92ZXJzaWdodC4NCg0KPiAgIGMpIExpbmVzIDEwNywxMDg6IFdoeSBpcyB0
+aGlzIG9uZSBuZWVkZWQ/IElmIHByb2dyYW1tZWQgY2xlYW5seSwNCj4gICAgICBkb2Vzbid0IHRo
+aXMgbGlzdCBjb250YWluIG9uZSBlbnRyeSwgb25seT8gdGhlIEluZGV4U2VhcmNoZXIgDQo+IHdo
+aWNoIGlzDQo+ICAgICAgZXF1YWwgdG8gdGhpcy5zZWFyY2hlciAtIGkuZS4gd2UgYWxyZWFkeSBo
+YXZlIGEgcmVmZXJlbmNlIHRvIGl0IA0KPiA/DQoNCk5vdCBpbiB0aGUgY2FzZSBvZiBzZWFyY2hp
+bmcgbXVsdGlwbGUgcHJvamVjdHMuIFRoZSBpbmRleCBzZWFyY2hlcnMgYXJlIA0KY2FjaGVkIG9u
+Y2UgcGVyIGRpcmVjdG9yeS4gU28gb25lIHNlYXJjaGluZyBtdWx0aXBsZSBwcm9qZWN0cywgb25l
+IG5lZWRzIA0KdG8gZ2V0IHRoZSBpbmRleCBzZWFyY2hlcnMgZm9yIGVhY2ggcHJvamVjdC4gQnV0
+IHRoZSBpbmRleCBzZWFyY2hlcnMgDQpjYW5ub3QgYmUgY29tYmluZWQgKE11bHRpU2VhcmNoZXIg
+aXMgZGVwcmVjYXRlZCksIHNvIHRoZSBpbmRleCByZWFkZXJzIA0Kb2YgdGhlIGluZGV4IHNlYXJj
+aGVycyBhcmUgY29tYmluZWQgaW5zdGVhZC4NCg0KSW4gYW55IGNhc2UsIEkgYWdyZWUgdGhpcyBj
+b3VsZCBiZSBjbGVhcmVyIGFuZCBiZXR0ZXIgZW5jYXBzdWxhdGVkLiBUaGUgDQpwcm9ibGVtIGlz
+IHRoZSBMdWNlbmUgQVBJIGlzIG5vdCB2ZXJ5IGNsZWFuLiBJZiBJbmRleFNlYXJjaGVyIHdlcmUg
+YW4gDQppbnRlcmZhY2UsIHdlIGNvdWxkIHJldHVybiBhbiBJbmRleFNlYXJjaGVyIGRlY29yYXRv
+ciBmcm9tIFNlYXJjaGVyQ2FjaGUgDQp0aGF0IHdvdWxkIGhpZGUgYWxsIHRoZXNlIGNsZWFudXAg
+ZGV0YWlscy4NCg0KSSdsbCByZWZhY3RvciB0aGlzIHRvIGhhdmUgdGhlIFNlYXJjaGVyQ2FjaGUg
+cmV0dXJuIGFuIEluZGV4U2VhcmNoZXIgaW4gDQphbGwgY2FzZXMgKGluY2x1ZGluZyBtdWx0aXBs
+ZSBwcm9qZWN0cykgYWxvbmdzaWRlIHdpdGggYW4gb2JqZWN0IGZvciANCnJlbGVhc2luZyB0aGUg
+cmVzb3VyY2VzLg0KDQo+ICAgZCkgTGluZXMgMTAzLi4xMDU6IFdoeSBpcyB0aGlzIG5lZWRlZCBo
+ZXJlPyBTZWFyY2hlck1hbmFnZXJzDQo+ICAgICAgYXJlIGFjcXVpcmVkIGZyb20gdGhlICJTZWFy
+Y2hlckNhY2hlIiBiYXNlZCBvbiB0aGUgaW5kZXggZGlyLg0KPiAgICAgIFdoeSBpcyBpdCBub3Qg
+cG9zc2libGUgdG8gYXF1aXJlIHRoZSBuZWVkZWQgU2VhcmNoZXIgZGlyZWN0bHkgDQo+IGZyb20N
+Cj4gICAgICB0aGUgIlNlYXJjaGVyQ2FjaGUiIGJhc2VkIG9uIHRoZSBpbmRleCBkaXI/DQo+ICAg
+ICAgU28gSU1ITywgaWYgc3VjaCBhIGxpc3QgaXMgbmVlZGVkLCBpdCBzaG91bGQgYmUgcGFydCBv
+ZiB0aGUNCj4gICAgICBTZWFyY2hNYW5hZ2VyLiBJc24ndCBpdCBwcmV0dHkgdW5jbGVhbi9kYW5n
+ZXJvdXMsIHRvIGxldCBhbg0KPiAgICAgICJvdXRzaWRlciIgbWFuYWdlL2NvbnRyb2wgdGhlIGlu
+bmFyZHMgb2YgdGhlIFNlYXJjaGVyQ2FjaGU/DQo+ICAgICAgSU1ITyBiZXR0ZXIgZW5jYXBzdWxh
+dGlvbiBpcyBuZWVkZWQuDQo+ICAgZSkgTGluZXMgMTMzLi4xNDM6IG5vdCBuZWVkZWQgLSBzZWUg
+MSkNCj4gICBmKSBMaW5lcyAxODQuLjIyNzogYXMgc2FpZCBpbiBkKSAtIGFueSByZWZlcmVuY2Uv
+b2NjdXJhbmNlIG9mDQo+ICAgICAgU2VhcmNoZXJNYW5hZ2VyIGxvb2tzIGxpa2UgYSBkZXNpZ24g
+ZmxhdyAtIHNob3VsZCBnbyBpbnRvDQo+ICAgICAgIlNlYXJjaGVyQ2FjaGUiDQoNClNlZSBhYm92
+ZS4NCg0KPiAgIGcpIExpbmVzIDIxMC4uMjIyOiB0cmlidXQgdG8gdW5jbGVhbiBkZXNpZ24/IEFz
+a2luZyB0aGUNCj4gICAgICBTZWFyY2hlckNhY2hlIGZvciBTZWFyY2hlciBmb3IgY2VydGFpbiBk
+aXJzIGp1c3QgdG8gZ2V0IGENCj4gICAgICByZWZlcmVuY2UgdG8gaXRzIGludGVybmFsbHkgdXNl
+ZCBJbmRleFJlYWRlcnMgdG8gYnVpbGQgYSBuZXcNCj4gICAgICBTZWFyY2hlciBmcm9tIGl0IC0g
+ZG9lcyB0aGlzIG1ha2UgYW55IHNlbnNlPyBTb3VuZHMgZm9yIG1lIGZyb20NCj4gICAgICB0aGUg
+YmFjayB0aHJvdWdoIHRoZSBicmVhc3QgYW5kIGFsc28gcmlzZXMgdGhlIHF1ZXN0aW9uOg0KPiAg
+ICAgIERvIHdlIGhhdmUgYSBTZWFyY2hlckNhY2hlIG9yIG5vdD8gV2h5IGRvZXMgb25lIG5lZWQg
+dG8gYnlwYXNzIA0KPiBpdA0KPiAgICAgIGZyb20gdGltZSB0byB0aW1lPw0KDQpXZWxsLCB0aGVy
+ZSdzIG5vIHdheSB0byBjb21iaW5lIHRoZSBJbmRleFNlYXJjaGVycyB3aXRob3V0IHVzaW5nIA0K
+ZGVwcmVjYXRlZCBmdW5jdGlvbmFsaXR5LCBzbyB0byBzZWFyY2ggaW4gbXVsdGlwbGUgcHJvamVj
+dHMgd2UgbmVlZCB0byANCnVzZSB0aGUgSW5kZXhSZWFkZXJzIGRpcmVjdGx5LiBXZSBjYW5ub3Qg
+Y2FjaGUgSW5kZXhTZWFyY2hlcnMgZm9yIA0KbXVsdGlwbGUgcHJvamVjdHMuIElmIHdlIGhhdmUg
+MTAgcHJvamVjdHMsIHdlIHdvdWxkIHBvdGVudGlhbGx5IGhhdmUgdG8gDQpzdG9yZSAxMDEzIHNl
+YXJjaGVycyBmb3IgbXVsdGlwbGUgcHJvamVjdCBzZWFyY2ggLS0gDQpodHRwOi8vd3d3LndvbGZy
+YW1hbHBoYS5jb20vaW5wdXQvP2k9U3VtJTVCQmlub21pYWwlNUIxMCUyQ2klNUQlMkMrJTdCaSUy
+QzIlMkMxMCU3RCU1RCANCi4gVGhlIHBlbmFsdHkgZm9yIGNyZWF0aW5nIGFuIEluZGV4U2VhcmNo
+ZXIgaXMgc21hbGwgY29tcGFyZWQgdG8gdGhhdCANCm9mIGNyZWF0aW5nIGFuIEluZGV4cmVhZGVy
+LCBzbyB0aGlzIGlzIG5vdCBhIGJpZyBpc3N1ZS4NCg0KQW5kIHN1cmUsIHdlICpjb3VsZCogc3Rv
+cmUgdGhlIEluZGV4UmVhZGVycyBpbiBhIHNlcGFyYXRlIHBsYWNlIGFuZCANCmRvbid0IGZldGNo
+IHRoZW0gdmlhIHRoZSBJbmRleFNlYXJjaGVyLiBJdCB3b3VsZCBiZSBwb2ludGxlc3MgSU1PLiBN
+YXliZSANCnlvdSdkIGZlZWwgYSBsaXR0bGUgY2xlYW5lciwgYnV0IGl0IHdvdWxkIGNvbXBsaWNh
+dGUgdGhlIGJvb2sga2VlcGluZyANCnVubmVjZXNzYXJpbHkgOnANCg0KPiAgIGgpIExpbmUgMjI3
+OiBzaW1pbGFyIHRvIGcpIC0gV2h5IGRvZXMgdGhlIFNlYXJjaEhlbHBlciBuZWVkIHRvIGtub3cN
+Cj4gICAgICBhbnl0aGluZyBhYm91dCBhbiBleGVjdXRvciwgd2hlbiBpdCBkb2Vzbid0IG5lZWQg
+aXQgLSB0aGUgDQo+IG9idmlvdXMNCj4gICAgICBvd25lci91c2VyL21hbmFnZXIgc2VlbSB0byBi
+ZSB0aGUgU2VhcmNoZXJDYWNoZT8NCj4gICBpKSBMaW5lcyA0NjAtNDcyOiBhcyBzYWlkLCBzZWVt
+cyB0byBiZSBvZGQgYXMgd2VsbCwgc2luY2UgYQ0KPiAgICAgIFNlYXJjaEhlbHBlciBoYXMgb25l
+IGFrYSB0aGlzLnNlYXJjaGVyLCBvbmx5IC4uLg0KDQpTZWUgYWJvdmUsIEkgcGxhbiB0byBhZGRy
+ZXNzIHRoaXMuDQoNCj4NCj4gNykgc3JjL29yZy9vcGVuc29sYXJpcy9vcGVuZ3Jvay9zZWFyY2gv
+U2VhcmNoZXJDYWNoZS5qYXZhDQo+ICAgYSkgYmlnIGZsYXc6IHRoZXJlIGlzIG5vIHdheSB0byBz
+aHV0ZG93biB0aGlzIENhY2hlLiBTbyBhIHJlc3RhcnQNCj4gICAgICBvZiB0aGUgd2ViIGFwcCBt
+YXkgY2F1c2UgYmlnIGxlYWtzIGFzIHdlbGwgLi4uDQo+ICAgICAgQWxzbyByZXNvdXJjZXMgY2Fu
+J3QgYmUgZnJlZWQsIGV2ZW4gaWYgdGhlcmUgYXJlIG5vIGNvbnN1bWVycw0KPiAgICAgIGZvciBh
+IGxvbmcgdGltZSAuLi4NCg0KVmVyeSBnb29kIHBvaW50LiBQZXJzb25hbGx5LCBJIG5ldmVyIHJl
+c3RhcnQgb3IgaG90IGRlcGxveSANCmFwcGxpY2F0aW9ucywgYnV0IHRoaXMgbXVzdCBkZWZpbml0
+ZWx5IGJlIGZpeGVkLg0KDQo+ICAgYikgTGluZXMgNzAtNzI6IHRoZSBpbnRlcm5hbGx5IHVzZWQg
+dGhyZWFkUG9vbCwgd2hpY2ggaXMgZXNzZW50aWFsDQo+ICAgICAgZm9yIHByb3BlciB3b3JraW5n
+LCBzaG91bGQgbm90IGJlIGV4cG9zZWQgdG8gb3V0c2lkZXJzLg0KDQpPbmNlIEkgZG8gdGhlIHJl
+ZmFjdG9yaW5nIEkgbWVudGlvbmVkIGFib3ZlIHRoaXMgd29uJ3QgYmUgbmVlZGVkLg0KDQo+ICAg
+YykgTGluZXMgNDgtNTQ6IFRoZSBjdXJyZW50IGJlaGF2aW9yIGlzLCB0aGF0IGVhY2ggcmVxdWVz
+dCBnZXRzDQo+ICAgICAgYSBuZXcgVGhyZWFkUG9vbCB3aXRoIG1heCAyKihDUFVzKzEpLCBpZiBy
+ZXF1aXJlZC4gT2J2aW91c2x5DQo+ICAgICAgbm90IHRoYXQgc21hcnQuIEhvd2V2ZXIsIHdpdGgg
+dGhlIHN1Z2dlc3RlZCBjaGFuZ2UgdGhlcmUgYXJlDQo+ICAgICAgbWF4LiBvbmx5IDIqKENQVXMr
+MSkgdGhyZWFkcyBhdmFpbGFibGUgZm9yIGFsbCByZXF1ZXN0cy4gDQo+IERlcGVuZGluZw0KPiAg
+ICAgIG9uIHRoZSBsb2FkIChudW1iZXIgb2YgY29uY3VycmVudCByZXF1ZXN0cyBhbmQgcXVlcmll
+ZCANCj4gcHJvamVjdHMpLA0KPiAgICAgIHRoaXMgbWF5IGFjdHVhbGx5IHJlc3VsdCBpbiBibG9j
+a2luZyByZXF1ZXN0cyAoa2luZCBvZiANCj4gc2VxdWVudGlhbA0KPiAgICAgIGJlaGF2aW9yKSBh
+bmQgbGVhZCB0byB0aW1lb3V0cyB3cnQuIGFuc3dlcnMuIE5vdCBzdXJlLCB3aGF0IHRoZQ0KPiAg
+ICAgIHNlYXJjaCB0aHJlYWRzIGFyZSBhY3R1YWxseSBkb2luZywgYnV0IG1heSBiZSBhIEZpeGVk
+VGhyZWFkUG9vbA0KPiAgICAgIG1heSBjYXVzZSBtb3JlIHByb2JsZW1zLCB0aGFuIGl0IHNvbHZl
+cy4gVW5sZXNzIG5vIGRlZXBlcg0KPiAgICAgIHJlc2VhcmNoL2V4cGVyaWVuY2Ugd2FzIGdhdGhl
+cmVkLCBmb3Igbm93IEkgd291bGQgcHJvYmFibHkgDQo+IHByZWZlciBhDQo+ICAgICAgZHluYW1p
+YyBUaHJlYWQgUG9vbCBFeGVjdXRvciB3aXRoIGEgY29yZSBwb29sIHNpemUgb2YgMiooQ1BVcysx
+KSANCj4gYW5kIGENCj4gICAgICBtYXguIHBvb2wgc2l6ZSBvZiBlLmcuIDEyOCBvciAyNTYgdGhy
+ZWFkcyAoZGVwZW5kaW5nIG9uIHRoZSANCj4gbnVtYmVyIG9mDQo+ICAgICAgcHJvamVjdHMsIG1h
+Y2hpbmUsIC4uLikuIEphdmFDb25zb2xlL0pNWCBtaWdodCBiZSB1c2VkIHRvIGZpbmQNCj4gb3V0
+IG1vcmUgLi4uDQoNCk9idmlvdXNseSwgSSBoYXZlbid0IGRvbmUgYW55IGJlbmNobWFya2luZyBv
+biB0aGUgYXBwcm9wcmlhdGUgc2l6ZSBvZiANCnRoZSB0aHJlYWQgcG9vbC4gSWYgdGhlIHNlYXJj
+aGVzIGFyZSBub3QgQ1BVIGJvdW5kIGl0IG1pZ2h0IChvciBpdCBtaWdodCANCm5vdCkgaGVscCB0
+byBpbmNyZWFzZSB0aGUgcG9vbCBzdWJzdGFudGlhbGx5LiBJIHJlY29nbml6ZWQgdGhlIGNob3Nl
+biANCmRlZmF1bHQgY291bGQgbm90IGJlIGFwcHJvcHJpYXRlLCB3aGljaCBpcyB3aHkgSSBhZGRl
+ZCBhIGNvbmZpZ3VyYXRpb24gDQpvcHRpb24gdG8gaGF2ZSBpdCBzZXQuDQoNCj4gICBkKSBMaW5l
+cyA1OC4uNjM6IHN5bmNocm9uaXppbmcgbmV3VGhyZWFkIGp1c3QgYmVjYXVzZSBvZiBnZXR0aW5n
+IGENCj4gICAgICB1bmlxdWUgaW50IGlzIGEgYmFkIGNob2ljZS4gSXQgc2hvdWxkIGJlIHVuc3lu
+Y2VkIGFuZCB1c2UgYW4NCj4gICAgICBBdG9taWNJbnRlZ2VyIGluc3RlYWQuDQoNClRoaXMgaXMg
+bml0cGlja2luZy4gRXZlbiBpZiBieSBjaGFuY2Ugc29tZSB0aHJlYWQgcG9vbCB3b3JrZXJzIGFy
+ZSANCnN0YXJ0ZWQgYnkgZGlmZmVyZW50IHRocmVhZHMgYXQgdGhlIHNhbWUgdGltZSwgc2VyaWFs
+aXppbmcgdGhlIHRocmVhZCANCmNyZWF0aW9uIHdvdWxkIGJlIGEgb25lIHRpbWUgcGVuYWx0eSBh
+cyB0aGUgdGhyZWFkcyBhcmUgY3JlYXRlZCBvbmNlLg0KDQo+ICAgZSkgTGluZSA2NDogYSB0cmli
+dXRlIHRvIHRoZSBtaXNzaW5nIHNodXRkb3duIG1ldGhvZD8gOy0pDQo+ICAgZikgTGluZSA3Ny4u
+ODQ6DQo+ICAgICAgMSkgV2h5IGlzIGl0IG5lY2Vzc2FyeSB0byBjcmVhdGUgYSBuZXcgU2VhcmNo
+ZXJGYWN0b3J5IGZvciBlYWNoDQo+ICAgICAgICAgaW5kZXggZGlyPyBTaG91bGRuJ3QgZmFjdG9y
+aWVzIGJlIHNpbmdsZXRvbnMgYSBwcmlvcmk/DQoNCk5vdCB0aGUgY3VycmVudCBiZWhhdmlvciBp
+bnRyb2R1Y2VzIGEgYmlnIHBlbmFsdHksIGJ1dCBzdXJlLCB3ZSBjb3VsZCANCnN0b3JlIGFuIGlu
+c3RhbmNlIGluIGEgU2VhcmNoZXJDYWNoZSBmaWVsZCBhbmQgdXNlIGl0IGFsbCB0aGUgdGltZS4N
+Cg0KPiAgICAgIDIpIERvZXMgaXQgbWFrZSBzZW5zZSwgdGhhdCBhIGh0dHAgdGhyZWFkICJmb3Jr
+cyIgYW5vdGhlciB0aHJlYWQNCj4gICAgICAgICBhbmQgYmxvY2tzIHVudGlsIGl0IGhhcyBmaW5p
+c2hlZCBpdHMgd29yaz8gSS5lLiB0aGUgc2VhcmNoDQo+ICAgICAgICAgd2l0aGluIGEgc2luZ2xl
+IGRpciAocHJvamVjdCkgc2hvdWxkIGFsd2F5cyBiZSBkb25lIGJ5IHRoZQ0KPiAgICAgICAgIFto
+dHRwXSB0aHJlYWQgaXRzZWxmLCB3L28gdGhlIHVzZSBvZiBhbm90aGVyIHRocmVhZCAuLi4NCg0K
+WW91IGhhdmUgdG8gc2V2ZXJhbCB0aHJlYWRzIGlmIHlvdSB3YW50IHRvIGJlIGFibGUgdG8gc2Vh
+cmNoIHNldmVyYWwgDQppbmRleCBzZWdtZW50cyBhdCB0aGUgc2FtZSB0aW1lLg0KDQo+ICAgICAg
+MykgU2luY2UgdGhlIHdob2xlIHRoaW5nIGlzIHRvIGF2b2lkIHVubmVjZXNzYXJ5IFNlYXJjaGVy
+L1JlYWRlcg0KPiAgICAgICAgIGNyZWF0aW9uLCBzaG91bGRuJ3QgYmUgYSBtb3JlIGNsZXZlciBh
+bGdvcml0aG0gYmUgdXNlZCB0byANCj4gb2J0YWluDQo+ICAgICAgICAgU2VhcmNoTWFuYWdlcnMv
+bWFpbnRhaW4gdGhlIG1hcD8NCj4gICAgICAgICBJIHRoaW5rIGl0IHdvdWxkIGJlIGJldHRlciB0
+byB1c2UgYSBub3JtYWwgbWFwIGFuZCBhDQo+ICAgICAgICAgUmVlbnRyYW50TG9jayAtPiBsb29r
+dXAgYWdhaW4gLT4gb24gZmFpbCBjcmVhdGUgYW5kIGFkZA0KPiAgICAgICAgIGluc3RlYWQgb2Yg
+YmxpbmRseSBjcmVhdGluZyBhbmQgZXZlbnR1ZWxseSBkaXNjYXJkaW5nIGENCj4gICAgICAgICBT
+TStTZWFyY2hlcitSZWFkZXIgLi4uDQoNCklmIHRoZSBwbGFuZXRzIGFsaWduIGFuZCB0d28gb3Ig
+bW9yZSBwZW9wbGUgc2VhcmNoIG9uIHRoZSBzYW1lIHByb2plY3QsIA0Kd2hpY2ggbXVzdG4ndCBo
+YXZlIGJlZW4gc2VhcmNoZWQgb24gYmVmb3JlLCBhdCB0aGUgc2FtZSB0aW1lLCBpdCB3b3VsZCAN
+CmJlIHBvc3NpYmxlIHRoYXQgeW91IHdvdWxkIGRpc2NhcmQgYW4gSW5kZXhTZWFyY2hlci4gV2hh
+dCB5b3UncmUgc2F5aW5nIA0KaXMgdGhhdCB5b3Ugd2FudCB0byBpbnRyb2R1Y2UgYSBwZW5hbHR5
+ICh1c2luZyBhIGxvY2spIG9uIEVWRVJZIHNlYXJjaCANCmFnYWluc3QgYSB2ZXJ5IHVubGlrZWx5
+IG9uZSB0aW1lIGhpdCAoaXQgaXMgYSBvbmUgdGltZSBoaXQgYmVjYXVzZSBvbmNlIA0KdGhlIElu
+ZGV4U2VhcmNoZXIgaXMgY2FjaGVkLCB0aGUgY29uZGl0aW9uIGNhbm5vdCBoYXBwZW4pLg0KDQo+
+ICAgIGcpIExhc3QgYnV0IG5vdCBsZWFzdCwgd2hhdCBoYXBwZW5zLCBpZiB0aGUgY29uZmlndXJh
+dGlvbiAoZGF0YSANCj4gcm9vdCkNCj4gICAgICAgY2hhbmdlcz8NCg0KTm90aGluZyBjYXRhc3Ry
+b3BoaWMuIFRoZSBjdXJyZW50IHNlYXJjaGVycyBhcmUgbGVha2VkLiBXZSBjb3VsZCANCmRlc3Ry
+b3kgdGhlIFNlYXJjaGVyQ2FjaGUgb24gY29uZmlndXJhdGlvbiByZWxvYWQgdGhvdWdoLiBUaGF0
+IHdvdWxkIA0KYWxzbyBhbGxvdyBlYXNpbHkgY2hhbmdpbmcgdGhlIHRocmVhZCBwb29sIHNpemUg
+b24gcnVudGltZS4NCg0KPiBBIGJldHRlciB3YXkgdG8gaW1wbGVtZW50Pw0KPiAgIGEpIFNlYXJj
+aGVyQ2FjaGU6IGNvdWxkIGJlIGVpdGhlciBhIHNpbmdsZXRvbiAtDQo+ICAgICAgU2VhcmNoZXJD
+YWNoZS5nZXRJbnN0YW5jZSgpIC0gb3IgYSAibm9ybWFsIiBJbnN0YW5jZSBtYW5hZ2VkIGJ5IA0K
+PiB0aGUNCj4gICAgICBSdW50aW1lRW52aXJvbm1lbnQgKFJFKSAtIHRoZSBlYXN5IHdheSB3cnQu
+IG1hbmFnZW1lbnQsIGUuZy46DQoNCldlbGwsIHRoZXJlJ3MgYSByZWFzb24gcGVvcGxlIGRvbid0
+IHVzZSB0aGUgc2luZ2xldG9uIGFudGlwYXR0ZXJuIA0KYW55bW9yZS4gQW1vbmcgb3RoZXIgdGhp
+bmdzLCBpdCdzIGEgdmlvbGF0aW9uIG9mIHRoZSBzZXBhcmF0aW9uIG9mIA0KY29uY2VybnMgLS0g
+YSBjbGFzcyBzaG91bGQgbm90IG1hbmFnZSBpdHMgaW5zdGFuY2VzLiBTaW5jZSB0aGUgbGlmZXRp
+bWUgDQpvZiB0aGUgU2VhcmNoZXJDYWNoZSBpcyBhc3NvY2lhdGVkIHdpdGggdGhhdCBvZiB0aGUg
+YXBwbGljYXRpb24sIHRoZSANCmluc3RhbmNlIGlzIG1hbmFnZWQgdmlhIFdlYmFwcExpc3RlbmVy
+LiBJdCdzIGFsc28gcG9zc2libGUgdG8gaGF2ZSBpdCANCmFzc29jaWF0ZWQgdG8gdGhlIGxpZmV0
+aW1lIG9mIHRoZSBjb25maWd1cmF0aW9uLCBhcyB5b3UgYWR2b2NhdGUuIFRoZSANCnJlYXNvbiBJ
+IGRpZG4ndCBoYXZlIFJ1bnRpbWVFbnZpcm9ubWVudCBtYW5hZ2UgdGhlIGNhY2hlIGlzIGJlY2F1
+c2UgSSANCnRob3VnaCBpdCB3YXMgdG8gYmUgdXNlZCBleGNsdXNpdmVseSBmb3IgZGVhbGluZyB3
+aXRoIHRoZSBjb25maWd1cmF0aW9uIA0KKGJlaW5nIGluIHRoZSBwYWNrYWdlIGl0IGlzIGFuZCBh
+bGwpLg0KDQo+ICAgICAgLSBSRS5nZXRTZWFyY2hlckNhY2hlKCkgY3JlYXRlcyBsYXp5IGEgaW5z
+dGFuY2Ugb2YgdGhlDQo+ICAgICAgICBTZWFyY2hlckNhY2hlIGlmIG5vdCBhbHJlYWR5IGRvbmUs
+IGtlZXBzIGEgcmVmIHRvIGl0IGFuZCANCj4gcmV0dXJucw0KPiAgICAgICAgaXQNCj4gICAgICAt
+IG9uIFJFLnNldENvbmZpZ3VyYXRpb24oKSBbZGF0YSByb290IGNoYW5nZV0gaXQgbWF5IHNodXRk
+b3duIA0KPiB0aGUNCj4gICAgICAgIFNDIGFuZCBzZXQgdGhlIGludGVybmFsIHJlZiB0byBudWxs
+DQo+ICAgICAgLSB0aGVyZSBzaG91bGQgYmUgb25seSBvbmUgaW5zdGFuY2Ugb2YgYSBTZWFyY2hl
+ckZhY3RvcnkgYmUgdXNlZA0KPiAgICAgICAgYnkgdGhlIFNDDQo+ICAgICAgLSB0aGUgU2VhcmNo
+ZXJGYWN0b3J5IHNob3VsZCBjcmVhdGUgbmV3U2VhcmNoZXIgd2l0aCBhIA0KPiB0aHJlYWRwb29s
+DQo+ICAgICAgICBhcmcgb25seSwgaWYgaXQgaGFzIHN1YnJlYWRlcnMNCg0KWW91J3JlIG5vdCBj
+b25zaWRlcmluZyB0aGUgZmFjdCB0aGF0IHVzaW5nIHRocmVhZCBwb29scyBhcmUgDQphZHZhbnRh
+Z2VvdXMgZXZlbiB3aXRoIGEgc2luZ2xlIGluZGV4LCBhcyBzZXZlcmFsIHNlZ21lbnRzIGNhbiBi
+ZSByZWFkIA0Kc2ltdWx0YW5lb3VzbHkgaWYgeW91IHVzZSBhIHRocmVhZCBwb29sLg0KDQo+ICAg
+ICAgLSB0aGUgc20ubWF5YmVSZWZyZXNoKCkgcGFydCBjYW4gYmUgb21taXR0ZWQsIGlmIHRoZSBj
+YWNoZSBnZXRzDQo+ICAgICAgICBzaHV0ZG93bmVkL2EgbmV3IG9uZSBpcyB1c2VkLCB3aGVuIHRo
+ZSBSRS5jb25maWcgZ2V0cyBjaGFuZ2VkDQoNCkknbSBub3Qgc3VyZSBJIGFncmVlIHdpdGggdGhp
+cy4gV2hlbiB5b3UncmUgdXBkYXRpbmcgdGhlIGluZGV4ZXMgZm9yIA0Kc2V2ZXJhbCBwcm9qZWN0
+cyBpdCBjYW4gdGFrZSBzb21lIHRpbWUgZm9yIGl0IHRvIGZpbmlzaCBhbmQgdGhlIA0KY29uZmln
+dXJhdGlvbiB0byBiZSByZWxvYWRlZC4gSSB3b3VsZG4ndCB3YW50IHRvIGJlIHVzaW5nIHRoZSBv
+bGQgDQppbmRleGVzIGFsbCB0aGF0IHRpbWUuDQoNCj4gICAgICAtIGltcGxlbWVudGF0aW9uIGRl
+dGFpbHMgbGlrZSB0aHJlYWRwb29sLCBTTSB1c2FnZSBzaG91bGQgYmUgDQo+IGtlcHQNCj4gICAg
+ICAgIHByaXZhdGUNCj4gICAgICAtIG1pc2MgYmxhIG1lbnRpb25lZCBhYm92ZQ0KPiAgICBiKSAt
+IFNlYXJjaEhlbHBlciBzaG91bGQgZ2V0IGEgcmVmIHRvIHRoZSBTQyBlaXRoZXIgdmlhDQo+ICAg
+ICAgICAgU2VhcmNoZXJDYWNoZS5nZXRJbnN0YW5jZSgpIG9yIFJFLmdldFNlYXJjaGVyQ2FjaGUo
+KQ0KPiAgICAgICAtIHRoZSBvbmx5IHRoaW5nIGl0IGRvZXMsIGlzIHNjLmdldFNlYXJjaGVyKEZp
+bGUgLi4uLikgYW5kDQo+ICAgICAgIC0gb24gZGVzdHJveTogc2MucmVsZWFzZShzZWFyY2hlcikN
+Cg0KVGhpcyBpcyBub3QgcmVhbGx5IHBvc3NpYmxlIGJlY2F1c2UgdGhlIFNlYXJjaGVyQ2FjaGUg
+Y2FuJ3QgZ2V0IHRvIHRoZSANCm1hbmFnZXIganVzdCBieSB1c2luZyB0aGUgSW5kZXhTZWFyY2hl
+ci4gU2VlIGFib3ZlIG9uIGhvdyBJIHBsYW4gdG8gDQphZGRyZXNzIHRoaXMuDQoNCj4gICAgICAg
+Tk9URTogVGhlIGltcGxlbWVudGF0aW9uIGRldGFpbHMsIHdoZXRoZXIgdGhlIFNDIG9ubHkgY2Fj
+aGVzDQo+ICAgICAgIHJlYWRlcnMgYW5kIGNyZWF0ZXMgZWFjaCB0aW1lIGEgbmV3IFNlYXJjaGVy
+IG9uIA0KPiBnZXRTZWFyY2hlciguLi4pDQo+ICAgICAgIG9yIGNhY2hlcyBjcmVhdGVkIHNlYXJj
+aGVycywgaXMgY29tcGxldGVseSBoaWRkZW4gZnJvbSB0aGUNCj4gICAgICAgY29uc3VtZXIgKGUu
+Zy4gU2VhcmNoSGVscGVyKSBhbmQgdGh1cyBjYW4gYmUgY2hhbmdlZC90dW5lZCANCj4gd2l0aG91
+dCBhbnkNCj4gICAgICAgdHJvdWJsZSBpZiBuZWNlc3NhcnkgLi4uDQoNCi0tIA0KR3VzdGF2byBM
+b3Blcw==
+</data>
+
+          </attachment>
+      
+
+    </bug>
+
+</bugzilla>

@@ -1,0 +1,25 @@
+# HG changeset patch
+# User Leo Davis <ldavis@fonix.com>
+# Date 1200372019 25200
+# Node ID 8216eda23e5ea17cf074918aa8a64b251c0cb1ff
+# Parent  8a36368159a0f59ec28b0856b8abd67cfc3b61a5
+Fix for date not being displayed in history.
+
+web/history.jsp -- fixed reversed test and typo in output.
+
+diff -r 8a36368159a0 -r 8216eda23e5e web/history.jsp
+--- a/web/history.jsp	Mon Jan 14 19:20:46 2008 -0700
++++ b/web/history.jsp	Mon Jan 14 21:40:19 2008 -0700
+@@ -89,10 +89,10 @@ while (hr.next()) {
+ }
+ %><td><% 
+         Date date = hr.getDate(); 
+-        if (date == null) {
++        if (date != null) {
+             %><%=df.format(date)%><%
+         } else {
+-            %>&nbsp<%
++            %>&nbsp;<%
+         }
+ %>&nbsp;</td>
+ <td>

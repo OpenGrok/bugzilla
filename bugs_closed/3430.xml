@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>3430</bug_id>
+          
+          <creation_ts>2008-09-14 13:34:00 +0000</creation_ts>
+          <short_desc>indexer stops on some files, but still exits with status &quot;0&quot;</short_desc>
+          <delta_ts>2008-09-16 01:08:43 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>indexer</component>
+          <version>unspecified</version>
+          <rep_platform>Other</rep_platform>
+          <op_sys>Linux</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXED</resolution>
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>major</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Christian Lohmaier">cloph</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          <cc>Lubos.Kosco</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>12469</commentid>
+              <attachid>490</attachid>
+            <who name="Christian Lohmaier">cloph</who>
+            <bug_when>2008-09-14 13:34:16 +0000</bug_when>
+            <thetext>Created attachment 490
+a preudo-ELF binary data file that causes the indexer to &quot;fail with success&quot;
+
+Severity major, because despite the error-case, the command returns with an exit status of zero
+
+The problem is with opengrok-dev/mecurial from today (2008-09-14):
+##########
+$ java  -jar opengrok.jar -v -e -R /home/cloph/opengrokdata/configuration.xml -W configurationwritten.xml -T 3  -S  -O off
+Scanning for repositories...
+14.09.2008 22:01:11 org.opensolaris.opengrok.history.HistoryGuru addRepositories
+INFO: Adding &lt;org.opensolaris.opengrok.history.SubversionRepository&gt; repository: &lt;/home/cloph/svntrunk&gt;
+Done searching for repositories (0s)
+Writing configuration to configurationwritten.xml
+Done...
+14.09.2008 22:01:11 org.opensolaris.opengrok.index.Indexer doIndexerExecution
+INFO: Starting indexExecution
+Adding: /testautomation/writer/optional/input/filter/regcomp/regcompli (ELFAnalyzer)
+$ echo $?
+0
+##########
+
+The execution just stops, and still signals &quot;success&quot; via the exit status.
+It would be great if it wouldn&apos;t have to stop on those junk-files, but simply treat it as some random binary. But if it fails, it should return non-zero.
+
+The files are not valid ELF files, I&apos;ll attach one of three that cause the problem</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>12492</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2008-09-15 00:50:36 +0000</bug_when>
+            <thetext>Hmm
+as a temporary workaround I suggest ignoring the file
+(passing to indexer: -i regcompli -i regcompli2 ... )
+
+It indeed seems as we silently fail here ... wondering if this is the regression of the Indexer executor changes done in past 5 days ...
+
+Christian, when did it last time work for you ?
+
+Thanks
+Lubos</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>12502</commentid>
+            <who name="Christian Lohmaier">cloph</who>
+            <bug_when>2008-09-15 06:57:07 +0000</bug_when>
+            <thetext>Sorry, I&apos;m not a regular trunk/mercurial user - I only switched to mercurial since the svn repository I&apos;m using to test opengrok uses the mergetracking feature and apparently that repository format is not supported anymore by the released 0.6.1 (indexing of course works, but the annotate mode reports that it needs a newer svn client version)
+I did use the workaround (ignore the files) and thankfully it is only three files that affected in the repository 
+#########
+So long story short: opengrok did not stop at those files with the released 0.6.1, but I cannot tell when it broke (since I didn&apos;t try any other version)</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>12551</commentid>
+            <who name="Trond Norbye">trond.norbye</who>
+            <bug_when>2008-09-16 01:08:43 +0000</bug_when>
+            <thetext>Fixed in: 593:b279e0683b7c
+
+addFile did not catch any exceptions, so an Exception thrown by the analyzer from one of the files would cause the indexer to bail out.</thetext>
+          </long_desc>
+      
+          <attachment
+              isobsolete="0"
+              ispatch="0"
+              isprivate="0"
+              isurl="0"
+          >
+            <attachid>490</attachid>
+            <date>2008-09-14 13:34:00 +0000</date>
+            <delta_ts>2008-09-14 13:34:16 +0000</delta_ts>
+            <desc>a preudo-ELF binary data file that causes the indexer to &quot;fail with success&quot;</desc>
+            <filename>regcompli</filename>
+            <type>application/octet-stream</type>
+            <size>1277</size>
+            <attacher>cloph</attacher>
+            
+              <data encoding="base64">f0VMRgEBAeg99///kI10Jujt9f//kI10Juh98///kI10Jugd8v//kI10Jug98f//kI10Ju///4PE
+EOsF6JDv//+LReSDxPRQ6HTw//+DxBCDxPxojNIECOi8KOgd7v//kI10JugN7P//kI10JlCLRQhX
+g8AIUFKLQRT/0ItVCIPEEItCBIPACFCLRfyDwAhQaIDdBAih2AEFCFDo6eL//4PEEOmZUFdSi0EY
+/9CDxBCEwHQpi1UIi0IEg8AIUItF/IPACFBo6P3h//+QjXQm6O3d//+QjXQm6K3c//+QjXQm6O3b
+//+QjXQm2///g8QQ683oYNr//4ld3IXbdA6LA4PE9FOLQAz/0IPEEItV4IXSdA6LAoPE9FKLQBD/
+0IPEEIld4OsJ6OzZ//+NdCbofdP//5CNdCZ1c2luZzogcmVnY29tcCAtcmVnaXN0ZXJ8cmV2b2tl
+IC1yIHJlZ2lzdHJ5ZmlsZSAtYyBsb2NhdGlvblVybCBbLWJyIHJlZ2lzdHJ5ZmlsZV0gWy1sIGNv
+bXBvbmVudExvYWRlclVybF0KCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBJZiB0aGUg
+Ym9vdHN0cmFwIHJlZ2lzdHJ5IGhhdmUgdGhlIHNhbWUgbmFtZSBhcyB0aGUgcmVnaXN0cmF0aW9u
+IHJlZ2lzdHJ5CiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICB0aGUgLXIgb3B0aW9uIGlz
+IG9wdGlvbmFsLgogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgb3IgYSBsaXN0IG9mIHVy
+bHMgc2VwZXJhdGVkIGJ5ICc7JyBvciAnICcuIE5vdGUgaWYgYSBsaXN0IG9mIHVybHMgaXMgc3Bl
+Y2lmaWVkLCB0aGUKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIGNvbXBvbmVudHMgbXVz
+dCBhbGwgbmVlZCB0aGUgc2FtZSBsb2FkZXIgKHF1b3RpbmcgaXMgcG9zc2libGUgd2l0aCBcIG9y
+ICIiKS4KICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHRoZSAnY29tLnN1bi5zdGFyLmxv
+YWRlci5TaGFyZWRMaWJyYXJ5JyBpcyB1c2VkLgogICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgbG9hZGVyczogY29tLnN1bi5zdGFyLmxvYWRlci5TaGFyZWRMaWJyYXJ5IHwgY29tLnN1bi5z
+dGFyLmxvYWRlci5KYXZhMgoKcmVnaXN0ZXIgY29tcG9uZW50ICIlcyIgaW4gcmVnaXN0cnkgIiVz
+IiBzdWNjZXNmdWwhCnJlZ2lzdGVyIGNvbXBvbmVudCAiJXMiIGluIHJlZ2lzdHJ5ICIlcyIgZmFp
+bGVkIQpFUlJPUjogJXMKcmV2b2tlIGNvbXBvbmVudCAiJXMiIGZyb20gcmVnaXN0cnkgIiVzIiBz
+dWNjZXNmdWwhCnJldm9rZSBjb21wb25lbnQgIiVzIiBmcm9tIHJlZ2lzdHJ5ICIlcyIgZmFpbGVk
+IQpDb21wb25lbnQgcmVnaXN0cmF0aW9uIHNlcnZpY2UgY291bGQgbm90IGJlIGxvYWRlZCEKQYYL
+QYMMRy4QAqsuQYYLQYMMay4gZS4Qbi4=
+</data>
+
+          </attachment>
+      
+
+    </bug>
+
+</bugzilla>

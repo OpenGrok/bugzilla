@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>18613</bug_id>
+          
+          <creation_ts>2011-06-24 09:45:00 +0000</creation_ts>
+          <short_desc>JAVA_OPTS should be settable</short_desc>
+          <delta_ts>2012-08-10 15:32:41 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>indexer</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>DUPLICATE</resolution>
+          <dup_id>19177</dup_id>
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>enhancement</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Vladimir Kotal">vladimir.kotal</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>83861</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2011-06-24 09:45:50 +0000</bug_when>
+            <thetext>OpenGrok script contains this:
+
+    # OPTIONAL: JVM Options
+    #JAVA_OPTS=&quot;-server -Xmx2048m&quot;
+
+In order to raise the limit one has to hack the script.
+
+JAVA_OPTS should be settable like other variables used in OpenGrok script.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86574</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2012-08-10 15:32:41 +0000</bug_when>
+            <thetext>
+
+*** This bug has been marked as a duplicate of bug 19177 ***</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

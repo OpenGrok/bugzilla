@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>1450</bug_id>
+          
+          <creation_ts>2008-04-23 04:58:00 +0000</creation_ts>
+          <short_desc>RFE: Make the user aware of project he is, add drop down menu for projects inside xref path(easy change of project)</short_desc>
+          <delta_ts>2010-04-16 08:23:54 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>webapp</component>
+          <version>unspecified</version>
+          <rep_platform>Other</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>NEW</bug_status>
+          
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>enhancement</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Lubos Kosco">Lubos.Kosco</reporter>
+          <assigned_to name="Lubos Kosco">Lubos.Kosco</assigned_to>
+          
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>4924</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2008-04-23 04:58:08 +0000</bug_when>
+            <thetext>If you&apos;re inside a project, let&apos;s say:
+http://src.opensolaris.org/source/xref/opengrok/trunk/run.sh
+
+you see the xref path:
+xref: /opengrok/trunk/run.sh
+
+it should be more obvious that you&apos;re actually in project &quot;opengrok&quot;
+
+A nice idea (thnx Chandan) would be to have for example a drop down menu where you can switch the project without going to home page.
+
+It would be obvious that opengrok is a project and you&apos;re &quot;inside it&quot;
+and it would save you time when switching between projects ;)</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

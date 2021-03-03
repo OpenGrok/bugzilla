@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>16760</bug_id>
+          
+          <creation_ts>2010-08-09 22:20:00 +0000</creation_ts>
+          <short_desc>Generating incorrect links for C/C++ &quot;#include&quot; statements if extension of a header file is not on the lexer&apos;s list</short_desc>
+          <delta_ts>2011-01-05 08:41:56 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>analyzer</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>REOPENED</bug_status>
+          
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>minor</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Yuriy Vasylchenko">yuriy.av</reporter>
+          <assigned_to name="Lubos Kosco">Lubos.Kosco</assigned_to>
+          <cc>knut.hatlen</cc>
+    
+    <cc>Lubos.Kosco</cc>
+    
+    <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>76378</commentid>
+            <who name="Yuriy Vasylchenko">yuriy.av</who>
+            <bug_when>2010-08-09 22:20:46 +0000</bug_when>
+            <thetext>For example I got invalid link to &quot;header.h&quot; + trailing &quot;h&quot; for the statement &quot;#include &lt;header.hh&gt;&quot;
+
+Workaround that helped me to cover the code tree:
+
+
+
+--- src.ori/org/opensolaris/opengrok/analysis/c/CXref.lex       2010-05-11 02:12:43.000000000 -0700
++++ src/org/opensolaris/opengrok/analysis/c/CXref.lex   2010-08-02 13:38:17.643478404 -0700
+@@ -66,7 +66,7 @@
+ 
+ URIChar = [\?\+\%\&amp;\:\/\.\@\_\;\=\$\,\-\!\~\*\\]
+ FNameChar = [a-zA-Z0-9_\-\.]
+-File = [a-zA-Z]{FNameChar}* &quot;.&quot; ([chts]|&quot;conf&quot;|&quot;java&quot;|&quot;cpp&quot;|&quot;hpp&quot;|&quot;CC&quot;|&quot;txt&quot;|&quot;htm&quot;|&quot;html&quot;|&quot;pl&quot;|&quot;xml&quot;)
++File = [a-zA-Z]{FNameChar}* &quot;.&quot; ([chts]|&quot;conf&quot;|&quot;java&quot;|&quot;cpp&quot;|&quot;hpp&quot;|&quot;CC&quot;|&quot;txt&quot;|&quot;htm&quot;|&quot;html&quot;|&quot;pl&quot;|&quot;xml&quot;|&quot;cc&quot;|&quot;cxx&quot;|&quot;c++&quot;|&quot;hh&quot;|&quot;hxx&quot;|&quot;h++&quot;)
+ Path = &quot;/&quot;? [a-zA-Z]{FNameChar}* (&quot;/&quot; [a-zA-Z]{FNameChar}*[a-zA-Z0-9])+
+ 
+ Number = ([0-9][0-9]*|[0-9]+.[0-9]+|&quot;0x&quot; [0-9a-fA-F]+ )([udl]+)?
+
+
+
+--- src.ori/org/opensolaris/opengrok/analysis/c/CxxXref.lex     2010-05-11 02:12:43.000000000 -0700
++++ src/org/opensolaris/opengrok/analysis/c/CxxXref.lex 2010-08-02 13:39:02.935826843 -0700
+@@ -66,7 +66,7 @@
+ 
+ URIChar = [\?\+\%\&amp;\:\/\.\@\_\;\=\$\,\-\!\~\*\\]
+ FNameChar = [a-zA-Z0-9_\-\.]
+-File = [a-zA-Z]{FNameChar}* &quot;.&quot; ([chts]|&quot;conf&quot;|&quot;java&quot;|&quot;cpp&quot;|&quot;hpp&quot;|&quot;CC&quot;|&quot;txt&quot;|&quot;htm&quot;|&quot;html&quot;|&quot;pl&quot;|&quot;xml&quot;)
++File = [a-zA-Z]{FNameChar}* &quot;.&quot; ([chts]|&quot;conf&quot;|&quot;java&quot;|&quot;cpp&quot;|&quot;hpp&quot;|&quot;CC&quot;|&quot;txt&quot;|&quot;htm&quot;|&quot;html&quot;|&quot;pl&quot;|&quot;xml&quot;|&quot;cc&quot;|&quot;cxx&quot;|&quot;c++&quot;|&quot;hh&quot;|&quot;hxx&quot;|&quot;h++&quot;)
+ Path = &quot;/&quot;? [a-zA-Z]{FNameChar}* (&quot;/&quot; [a-zA-Z]{FNameChar}*[a-zA-Z0-9])+
+ 
+ Number = ([0-9][0-9]*|[0-9]+.[0-9]+|&quot;0x&quot; [0-9a-fA-F]+ )([udl]+)?</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>76401</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2010-08-10 06:21:03 +0000</bug_when>
+            <thetext>http://src.opensolaris.org/source/xref/opengrok/trunk/src/org/opensolaris/opengrok/index/CommandLineOptions.java#95
+
+e.g. -A hh:&lt;full dotted path to analyzer class factory&gt;
+
+if hh is some standard header extension, I&apos;ll just add it
+(http://filext.com/file-extension/HH suggests it&apos;s like that ... so I&apos;ll add this)
+
+thnx !
+L
+
+note that for bigger patches of yours we would need SCA if you want your name to be in contrib list (http://hub.opensolaris.org/bin/view/Main/sun_contributor_agreement , one can get the SCA# with mail ...)</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>76423</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2010-08-10 13:55:03 +0000</bug_when>
+            <thetext>changeset:   1070:db0798ab2fac</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>76486</commentid>
+            <who name="Yuriy Vasylchenko">yuriy.av</who>
+            <bug_when>2010-08-11 17:27:37 +0000</bug_when>
+            <thetext>All of &quot;cpp&quot;/&quot;hpp&quot;, &quot;cc&quot;/&quot;hh&quot;, &quot;cxx&quot;/&quot;hxx&quot; and &quot;c++&quot;/&quot;h++&quot; are standard C++
+source files&apos; extensions and they all are widely used, some of them - more for
+Windows development, some - more on *NIX side.
+
+My point was that in the statements:
+
+#include &lt;file1.ext1&gt;
+#include &quot;file2.ext2&quot;
+
+Filenames are &apos;file1.ext1&apos; and &apos;file2.ext2&apos; - analyzer does not need to guess
+what the names are there (based on list of extensions or anything else). The
+exact file name can be extracted directly from the string and analyzer should
+generate link accordingly (In the ideal world)
+
+SCA#OS0465
+
+Thanks.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>76487</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2010-08-11 18:26:41 +0000</bug_when>
+            <thetext>ah, gotcha
+you wanted the lexical analysis to just use anything after include keyword and make it a path ref ...
+
+reopening then
+
+I&apos;ll check the rest of your bugs and push them with respective SCA
+
+thanks for explanation
+Lubos</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>76507</commentid>
+            <who name="Yuriy Vasylchenko">yuriy.av</who>
+            <bug_when>2010-08-12 03:15:25 +0000</bug_when>
+            <thetext>Thanks for rephrasing my mumbling using established project&apos;s terminology</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>76517</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2010-08-12 06:01:31 +0000</bug_when>
+            <thetext>
+:-D
+
+(In reply to comment #5)
+&gt; Thanks for rephrasing my mumbling using established project&apos;s terminology</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>80285</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2011-01-05 08:41:56 +0000</bug_when>
+            <thetext>Resetting target milestone since the full fix for this bug won&apos;t make it into 0.10.</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>988</bug_id>
+          
+          <creation_ts>2008-04-04 03:33:00 +0000</creation_ts>
+          <short_desc>Make it possible to optimize the index without reingexing</short_desc>
+          <delta_ts>2008-04-06 06:55:19 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>indexer</component>
+          <version>unspecified</version>
+          <rep_platform>Other</rep_platform>
+          <op_sys>Linux</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXED</resolution>
+          
+          
+          
+          
+          
+          <priority>P4</priority>
+          <bug_severity>minor</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Lubomir Rintel">lkundrak</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>3223</commentid>
+            <who name="Lubomir Rintel">lkundrak</who>
+            <bug_when>2008-04-04 03:33:00 +0000</bug_when>
+            <thetext>It might make some sense to use existing arguments for opengrok to just optimize the index without adding the files, if -O was explicitly turned on together with -n.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>3261</commentid>
+            <who name="Trond Norbye">trond.norbye</who>
+            <bug_when>2008-04-06 06:55:19 +0000</bug_when>
+            <thetext>Fixed in: 270:a4a2747f0a3b</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

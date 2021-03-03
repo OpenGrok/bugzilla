@@ -1,0 +1,130 @@
+diff --git a/src/org/opensolaris/opengrok/history/MercurialRepository.java b/src/org/opensolaris/opengrok/history/MercurialRepository.java
+--- a/src/org/opensolaris/opengrok/history/MercurialRepository.java
++++ b/src/org/opensolaris/opengrok/history/MercurialRepository.java
+@@ -26,6 +26,7 @@
+ import java.io.ByteArrayInputStream;
+ import java.io.ByteArrayOutputStream;
+ import java.io.File;
++import java.io.FileReader;
+ import java.io.IOException;
+ import java.io.InputStream;
+ import java.io.InputStreamReader;
+@@ -54,9 +55,11 @@
+     /** The command to use to access the repository if none was given explicitly */
+     public static final String CMD_FALLBACK = "hg";
+ 
+-    /** The boolean property and environment variable name to indicate
++    /**
++     * The boolean property and environment variable name to indicate
+      * whether forest-extension in Mercurial adds repositories inside the
+-     * repositories. */
++     * repositories.
++     */
+     public static final String NOFOREST_PROPERTY_KEY =
+         "org.opensolaris.opengrok.history.mercurial.disableForest";
+ 
+@@ -75,6 +78,38 @@
+         datePattern = "yyyy-MM-dd hh:mm ZZZZ";
+     }
+ 
++
++    /**
++     * Determine hg root for a file.
++     *
++     * @param file The file to retrieve hg root for
++     * @return String with absolute .hg directory path
++     */
++    private String getHgRoot(File file) {
++        String hgroot = null;
++	File dir = file;
++
++        if (!dir.isDirectory())
++            dir = file.getParentFile();
++
++        do {
++            File[] listOfFiles = dir.listFiles();
++            for (File f : listOfFiles) {
++                if (f.getName().equals(".hg")) {
++                    hgroot = f.getAbsolutePath();
++                    break;
++                }
++                if (hgroot != null)
++                    break;
++            }
++            dir = dir.getParentFile();
++        } while (dir != null);
++
++        return hgroot;
++    }
++
++    private Boolean isBranch = null;
++    private String branchName = null;
+     /**
+      * Get an executor to be used for retrieving the history log for the
+      * named file.
+@@ -97,7 +132,47 @@
+         ensureCommand(CMD_PROPERTY_KEY, CMD_FALLBACK);
+         cmd.add(this.cmd);
+         cmd.add("log");
+-        if ( !file.isDirectory() ) { cmd.add("-f"); }
++        if (!file.isDirectory()) { cmd.add("-f"); }
++
++        /* We only want changesets for particular branch. */
++        if (isBranch == null) {
++            String hgDir = getHgRoot(file);
++            if (hgDir == null) {
++                OpenGrokLogger.getLogger().log(Level.WARNING,
++                    "Failed to get hg root for: "
++                    + file.getAbsolutePath());
++                /* Rather than returning false data we return nothing. */
++                return null;
++            }
++            File branchFile = new File(hgDir, "branch");
++            if (branchFile.isFile()) {
++                String line;
++		isBranch = Boolean.TRUE;
++                BufferedReader input =
++                    new BufferedReader(new FileReader(branchFile));
++                try {
++                    line = input.readLine();
++                    if (line != null) {
++                        branchName = line;
++                    }
++                }
++                catch (java.io.IOException e) {
++                    OpenGrokLogger.getLogger().log(Level.WARNING,
++                        "Failed to get branch from: " + branchFile);
++                    return null;
++                }
++                finally {
++                    IOUtils.close(input);
++                }
++            } else {
++	        isBranch = Boolean.FALSE;
++	    }
++        }
++        if (isBranch.equals(Boolean.TRUE) && branchName != null
++            && !branchName.isEmpty()) {
++            cmd.add("-b");
++            cmd.add(branchName);
++        }
+ 
+         if (changeset != null) {
+             cmd.add("-r");
+@@ -300,11 +375,11 @@
+ 
+     @Override
+     boolean isRepositoryFor(File file) {
+-      if (file.isDirectory()) {
+-        File f = new File(file, ".hg");
+-        return f.exists() && f.isDirectory();
+-      }
+-      return false;
++        if (file.isDirectory()) {
++            File f = new File(file, ".hg");
++            return f.exists() && f.isDirectory();
++        }
++        return false;
+     }
+ 
+     @Override

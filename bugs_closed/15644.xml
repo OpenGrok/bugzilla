@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>15644</bug_id>
+          
+          <creation_ts>2010-04-15 22:31:00 +0000</creation_ts>
+          <short_desc>Matching lines not shown when using single-character wildcard (?)</short_desc>
+          <delta_ts>2010-05-08 21:53:21 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>webapp</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXED</resolution>
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>minor</bug_severity>
+          <target_milestone>0.9</target_milestone>
+          <dependson>15638</dependson>
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Knut Anders Hatlen">knut.hatlen</reporter>
+          <assigned_to name="Knut Anders Hatlen">knut.hatlen</assigned_to>
+          <cc>Lubos.Kosco</cc>
+    
+    <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>71477</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2010-04-15 22:31:31 +0000</bug_when>
+            <thetext>When using a question mark as wildcard in a search, the webapp shows the files that match, but it fails to display the matching lines within the file. See here for an example: http://src.opensolaris.org/source/search?q=svc%3Frop&amp;project=%2Fopengrok
+
+If a star is used instead of a question mark, the matching lines are displayed as expected. See here: http://src.opensolaris.org/source/search?q=svc*rop&amp;project=%2Fopengrok</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>72702</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2010-05-08 21:53:21 +0000</bug_when>
+            <thetext>changeset:   1002:605d0bb410da</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

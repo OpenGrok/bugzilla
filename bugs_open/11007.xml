@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>11007</bug_id>
+          
+          <creation_ts>2009-08-28 08:59:00 +0000</creation_ts>
+          <short_desc>OpenGrok will NULL def on SRC_ROOT when configure file is put in web.xml</short_desc>
+          <delta_ts>2009-08-28 08:59:21 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>misc</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>NEW</bug_status>
+          
+          
+          
+          
+          
+          
+          <priority>P4</priority>
+          <bug_severity>normal</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Edward OCallaghan">victoredwardocallaghan</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>48082</commentid>
+            <who name="Edward OCallaghan">victoredwardocallaghan</who>
+            <bug_when>2009-08-28 08:59:21 +0000</bug_when>
+            <thetext>Good day,
+
+OpenGrok will NULL def on SRC_ROOT when configure file is put in web.xml
+
+Fortunately I fixed the problem now and I don&apos;t have the trace at hand however I can explain how to recreate it.
+
+If you don&apos;t comment out:
+
+  &lt;!-- context-param&gt;^M
+    &lt;param-name&gt;CONFIGURATION&lt;/param-name&gt;^M
+    &lt;param-value&gt;/etc/opengrok/configuration.xml&lt;/param-value&gt;^M
+    &lt;description&gt;Full path to the configuration file where OpenGrok can read it&apos;s configuration&lt;/description&gt;^M
+  &lt;/context-param --&gt;^M
+
+Then OpenGrok will claim that:
+
+  &lt;context-param&gt;^M
+    &lt;param-name&gt;SRC_ROOT&lt;/param-name&gt;^M
+    &lt;param-value&gt;/sourcegate/aurorauxsource/sourcetree&lt;/param-value&gt;^M
+    &lt;description&gt;REQUIRED: Full path to source tree&lt;/description&gt;^M
+  &lt;/context-param&gt;^M
+
+Is not correct, even though it maybe correct and fine.
+
+What OpenGrok _should_ do, is check that configuration.xml exists before using it.
+
+Hope this is clear on what I mean.
+
+Regards,
+Edward O&apos;Callaghan.</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

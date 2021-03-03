@@ -1,0 +1,2 @@
+#OpenGrok Cron Job
+0 0 * * * /user/opengrok-0.7/run-modified.sh > /tmp/logs/logfile.log 2>&1

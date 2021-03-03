@@ -1,0 +1,120 @@
+# HG changeset patch
+# User jel+opengrok@cs.uni-magdeburg.de
+# Date 1329285924 -3600
+# Node ID b2c98bfe426308a0a2cca1c25afbf0f342d87f97
+# Parent  a8850f7d70172318837616eabd0b34ea379291e8
+make index_body.html an include like {header,footer}_include
+
+diff -r a8850f7d7017 -r b2c98bfe4263 README.txt
+--- a/README.txt	Wed Feb 15 05:44:14 2012 +0100
++++ b/README.txt	Wed Feb 15 07:05:24 2012 +0100
+@@ -275,11 +275,14 @@
+     * DATA_ROOT: absolute path of the directory where OpenGrok data
+     files are stored
+        - Header file 'header_include' can be created under DATA_ROOT.
+-	 The contents of this file file will be appended to the header of each
++	 The contents of this file will be appended to the header of each
+ 	 web page after the OpenGrok logo element.
+        - Footer file 'footer_include' can be created under DATA_ROOT.
+-	 The contents of this file file will be appended to the footer of each
++	 The contents of this file will be appended to the footer of each
+ 	 web page after the information about last index update.
++       - The file 'body_include' can be created under DATA_ROOT.
++     The contents of this file will be inserted above the footer of the web
++     application's "Home" page. 
+ 
+ 4.4.3 - Path Descriptions
+ -------------------------
+diff -r a8850f7d7017 -r b2c98bfe4263 src/org/opensolaris/opengrok/configuration/Configuration.java
+--- a/src/org/opensolaris/opengrok/configuration/Configuration.java	Wed Feb 15 05:44:14 2012 +0100
++++ b/src/org/opensolaris/opengrok/configuration/Configuration.java	Wed Feb 15 07:05:24 2012 +0100
+@@ -595,6 +595,7 @@
+      * Get the contents of the footer include file.
+      * @return an empty string if it could not be read successfully, the 
+      * 	contents of the file otherwise.
++     * @see #FOOTER_INCLUDE_FILE
+      */
+     public String getFooterIncludeFileContent() {
+     	if (footer == null) {
+@@ -614,6 +615,7 @@
+      * Get the contents of the footer include file.
+      * @return an empty string if it could not be read successfully, the 
+      * 	contents of the file otherwise.
++     * @see #HEADER_INCLUDE_FILE
+      */
+     public String getHeaderIncludeFileContent() {
+     	if (header == null) {
+@@ -623,6 +625,26 @@
+     }
+ 
+     /**
++     * The name of the file relative to the <var>DATA_ROOT</var>, which should 
++     * be included into the body of web app's "Home" page.
++     */
++    public static final String BODY_INCLUDE_FILE = "body_include";
++    
++    private transient String body = null;
++    /**
++     * Get the contents of the body include file.
++     * @return an empty string if it could not be read successfully, the 
++     *  contents of the file otherwise.
++     *  @see Configuration#BODY_INCLUDE_FILE
++     */
++    public String getBodyIncludeFileContent() {
++        if (body == null) {
++            body = getFileContent(new File(getDataRoot(), BODY_INCLUDE_FILE));
++        }
++        return body;
++    }
++
++    /**
+      * The name of the eftar file relative to the <var>DATA_ROOT</var>, which 
+      * contains definition tags.
+      */
+diff -r a8850f7d7017 -r b2c98bfe4263 web/index.jsp
+--- a/web/index.jsp	Wed Feb 15 05:44:14 2012 +0100
++++ b/web/index.jsp	Wed Feb 15 07:05:24 2012 +0100
+@@ -55,11 +55,9 @@
+ 
+             %></div>
+         </div>
+-        <div id="results"><%@
+-
+-include file="index_body.html"
+-
+-        %></div>
++        <div id="results">
++<%= cfg.getEnv().getConfiguration().getBodyIncludeFileContent() %>
++        </div>
+ <%
+ }
+ /* ---------------------- index.jsp end --------------------- */
+diff -r a8850f7d7017 -r b2c98bfe4263 web/index_body.html
+--- a/web/index_body.html	Wed Feb 15 05:44:14 2012 +0100
++++ /dev/null	Thu Jan 01 00:00:00 1970 +0000
+@@ -1,24 +0,0 @@
+-<p>
+-<b>OpenGrok - a "wicked fast" source browser!</b></p>
+-
+-<p>
+-This is the front page of your <a 
+-href="xref/">browsable and searchable source tree</a> (<a 
+-href="xref/">xref/</a>).</p>
+-
+-<p>
+-To setup and configure OpenGrok please refer to <a 
+-href="http://www.opensolaris.org/os/project/opengrok/"
+->http://www.opensolaris.org/os/project/opengrok/</a> or README.txt in the 
+-distribution.</p>
+-
+-<p>
+-You can replace this block of text (in index_body.html) with some more useful
+-information about your source tree and its organization, with direct 
+-links to key parts of code base.
+-</p>
+-<br/>
+-<br/>
+-<br/>
+-<br/>
+-<br/>
+\ No newline at end of file

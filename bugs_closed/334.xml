@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>334</bug_id>
+          
+          <creation_ts>2007-12-27 10:09:00 +0000</creation_ts>
+          <short_desc>double-colons in search pattern results in error</short_desc>
+          <delta_ts>2008-01-19 22:51:16 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>webapp</component>
+          <version>unspecified</version>
+          <rep_platform>Other</rep_platform>
+          <op_sys>Windows</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXED</resolution>
+          
+          
+          <bug_file_loc>http://cvs.opensolaris.org/source/search?q=dislay%3A%3Ablock&amp;defs=&amp;refs=&amp;path=&amp;hist=&amp;project=%2Fopengrok</bug_file_loc>
+          
+          
+          <priority>P4</priority>
+          <bug_severity>normal</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Hemang Lavana">HemangLavana</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>925</commentid>
+            <who name="Hemang Lavana">HemangLavana</who>
+            <bug_when>2007-12-27 10:09:14 +0000</bug_when>
+            <thetext>Hi,
+
+When I search for a string containing double-colons such as &quot;display::block&quot;, opengrok displays the following error:
+
+---------
+Error:
+dislay::block (project:(/opengrok))
+Encountered &quot;:&quot; at line 1, column 7.
+Was expecting one of:
+&quot;(&quot; ...
+&lt;QUOTED&gt; ...
+&lt;TERM&gt; ...
+&lt;PREFIXTERM&gt; ...
+&lt;WILDTERM&gt; ...
+&quot;[&quot; ...
+&quot;{&quot; ...
+&lt;NUMBER&gt; ...
+---------
+
+One current workaround is to escape the colons using backslash as in &quot;display\:\:block&quot;. However, it would be great if it allowed double-colons in search pattern since :: is used for namespaces in Tcl code. 
+
+Hemang.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>1097</commentid>
+            <who name="Trond Norbye">trond.norbye</who>
+            <bug_when>2008-01-19 22:51:16 +0000</bug_when>
+            <thetext>Fixed in a0c6d643f032
+
+Please reopen the bug if it still cause problems.</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

@@ -1,0 +1,47 @@
+# HG changeset patch
+# User jel+opengrok@cs.uni-magdeburg.de
+# Date 1328932002 -3600
+# Node ID 82579830a2a26fc3d703b0ab4fa39876a5d90305
+# Parent  329ecaac1832aef22a6696784df4fa4f887ff2da
+satisfy eclipse project requirements (use 'ant eclipse')
+
+diff -r 329ecaac1832 -r 82579830a2a2 .classpath
+--- a/.classpath	Fri Feb 10 17:33:23 2012 +0100
++++ b/.classpath	Sat Feb 11 04:46:42 2012 +0100
+@@ -6,13 +6,13 @@
+ 	<classpathentry kind="src" path="generatedsrc"/>
+ 	<classpathentry kind="src" path="build/src/jsp"/>
+ 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
+-	<classpathentry kind="lib" path="lib/lucene-core-3.0.2.jar"/>
+-	<classpathentry kind="lib" path="lib/lucene-spellchecker-3.0.2.jar"/>
+ 	<classpathentry kind="lib" path="/local/share/ant/lib/ant.jar"/>
+ 	<classpathentry kind="lib" path="lib/bcel-5.2.jar"/>
+ 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/Jasper GF3"/>
+ 	<classpathentry kind="lib" path="build/jrcs"/>
+ 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
+ 	<classpathentry kind="lib" path="build/test/classes"/>
++	<classpathentry kind="lib" path="lib/lucene-core-3.5.0.jar"/>
++	<classpathentry kind="lib" path="lib/lucene-spellchecker-3.5.0.jar"/>
+ 	<classpathentry kind="output" path="build/classes"/>
+ </classpath>
+diff -r 329ecaac1832 -r 82579830a2a2 build.xml
+--- a/build.xml	Fri Feb 10 17:33:23 2012 +0100
++++ b/build.xml	Sat Feb 11 04:46:42 2012 +0100
+@@ -236,6 +236,8 @@
+         
+     <property name="coverage.dir" value="${basedir}/coverage"/>
+     <target name="-pre-compile" depends="jrcs,jflex,download-lucene"/>
++	<target name="eclipse" depends="-pre-compile" 
++		description="satisfy eclipse dependencies"/>
+     <target name="-post-clean">
+         <delete dir="${src.generatedsrc.dir}"/>
+         <delete file="${manifest.file}"/>
+@@ -271,6 +273,8 @@
+             <flattenmapper/>
+             <map from="" to="lib/"/>
+         </pathconvert>
++    	<mkdir dir="${build.test.classes.dir}"/>
++    	<mkdir dir="${build.dir}/src/jsp"/>
+     </target>
+ 
+     <!-- Update the manifest file with a classpath attribute -->

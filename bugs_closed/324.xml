@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>324</bug_id>
+          
+          <creation_ts>2007-12-18 14:26:00 +0000</creation_ts>
+          <short_desc>indexer allows creation of project names with spaces in them, webapp can&apos;t cope</short_desc>
+          <delta_ts>2012-12-06 16:07:37 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>indexer</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>Solaris</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXED</resolution>
+          
+          
+          
+          
+          
+          <priority>P4</priority>
+          <bug_severity>normal</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Dan Price">daniel.price</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>901</commentid>
+            <who name="Dan Price">daniel.price</who>
+            <bug_when>2007-12-18 14:26:19 +0000</bug_when>
+            <thetext>If you have project names with spaces in them (which the indexer will happily create), the webapp won&apos;t be able to cope.  Instead, it takes the project name (for example &quot;Solaris 10&quot;) and breaks it into space-delimited tokens as follows: &quot;Solaris OR 10&quot;.  This is then used as part of the query to the search engine.
+
+So either project names should not be allowed to have spaces (or other weird chars?) in them and the indexer should enforce that, or the webapp should tolerate such project names.
+
+The workaround is to rename your projects to not have spaces.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>1016</commentid>
+            <who name="Trond Norbye">trond.norbye</who>
+            <bug_when>2008-01-15 12:27:11 +0000</bug_when>
+            <thetext>This is no longer a problem since each project have it&apos;s own index database.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86647</commentid>
+              <attachid>4671</attachid>
+            <who name="Daniel Cevaal">dani70ce</who>
+            <bug_when>2012-12-06 16:07:37 +0000</bug_when>
+            <thetext>Created attachment 4671
+1</thetext>
+          </long_desc>
+      
+          <attachment
+              isobsolete="0"
+              ispatch="0"
+              isprivate="0"
+              isurl="0"
+          >
+            <attachid>4671</attachid>
+            <date>2012-12-06 16:07:00 +0000</date>
+            <delta_ts>2012-12-06 16:07:37 +0000</delta_ts>
+            <desc>1</desc>
+            <filename>0.html</filename>
+            <type>text/html</type>
+            <size>177</size>
+            <attacher>dani70ce</attacher>
+            
+              <data encoding="base64">PCFET0NUWVBFIGh0bWwgUFVCTElDICItLy9XM0MvL0RURCBIVE1MIDQuMDEgVHJhbnNpdGlvbmFs
+Ly9FTiI+DQo8aHRtbD4NCjxoZWFkPg0KPHRpdGxlPml0IFdPS1M8L3RpdGxlPg0KPC9oZWFkPg0K
+PGJvZHk+DQoNCg0KPGgxPlVzZSBDaWFsaXMgb3IgVGFkYWxhZmlsIDwvaDE+DQo8L2JvZHk+DQo8
+L2h0bWw+
+</data>
+
+          </attachment>
+      
+
+    </bug>
+
+</bugzilla>

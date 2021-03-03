@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>17554</bug_id>
+          
+          <creation_ts>2010-12-06 15:24:00 +0000</creation_ts>
+          <short_desc>Empty &quot;Navigate&quot; window in Perl code</short_desc>
+          <delta_ts>2011-01-13 08:24:44 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>webapp</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXINSOURCE</resolution>
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>minor</bug_severity>
+          <target_milestone>0.10</target_milestone>
+          
+          <blocked>17719</blocked>
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Miroslav Osladil">mira</reporter>
+          <assigned_to name="Lubos Kosco">Lubos.Kosco</assigned_to>
+          <cc>Lubos.Kosco</cc>
+    
+    <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>79773</commentid>
+              <attachid>4415</attachid>
+            <who name="Miroslav Osladil">mira</who>
+            <bug_when>2010-12-06 15:24:48 +0000</bug_when>
+            <thetext>Created attachment 4415
+Sample Perl code
+
+Steps to reproduce:
+1. Have some Perl code
+2. Display it and open &quot;Navigate&quot;
+
+Expected result:
+A navigate window with variables, functions, ... is displayed, as on, e.g. C++ code.
+
+Actual result:
+Empty navigate window.
+
+Used software:
+OpenGrok 0.10-rc, Apache Tomcat 6.0.29, Sun Java 6 1.6.0_20-b02, Debian GNU/Linux 5.0</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>79855</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2010-12-08 15:59:18 +0000</bug_when>
+            <thetext>in perl there are &quot;Subroutines&quot;
+which we mark .xsr css
+and that is missing in get_sym_list_contents
+
+it should be added
+
+maybe we should add namespaces(.xn) and enumerators (.xer) typedefs (.xts)
+unions (.xu) too ?</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>79856</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2010-12-08 16:01:32 +0000</bug_when>
+            <thetext>also according to exuberant ctags, we can recognize in perl only:
+
+% ctags --list-kinds=perl
+c  constants
+f  formats
+l  labels
+p  packages
+s  subroutines
+d  subroutine declarations [off]
+
+I am not even sure if grok ctag parser can recognize anything else than subroutines and packages from above list</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>79883</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2010-12-09 09:04:41 +0000</bug_when>
+            <thetext>p  packages
+s  subroutines
+
+those two will be added to navigate for perl</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>79886</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2010-12-09 10:38:55 +0000</bug_when>
+            <thetext>changeset:   1135:635720f394f0</thetext>
+          </long_desc>
+      
+          <attachment
+              isobsolete="0"
+              ispatch="0"
+              isprivate="0"
+              isurl="0"
+          >
+            <attachid>4415</attachid>
+            <date>2010-12-06 15:24:00 +0000</date>
+            <delta_ts>2010-12-06 15:24:48 +0000</delta_ts>
+            <desc>Sample Perl code</desc>
+            <filename>sample.pl</filename>
+            <type>text/x-perl-script</type>
+            <size>130</size>
+            <attacher>mira</attacher>
+            
+              <data encoding="base64">IyEvdXNyL2Jpbi9wZXJsCgp1c2Ugc3RyaWN0Owp1c2Ugd2FybmluZ3M7Cgp1c2UgY29uc3RhbnQg
+WTJLID0+IDIwMDA7Cm15ICR2YXJpYWJsZSA9IDE7CgpzdWIgZnVuY3Rpb24KewogICAgcmV0dXJu
+IDE7Cn0KCmV4aXQgMDsKCg==
+</data>
+
+          </attachment>
+      
+
+    </bug>
+
+</bugzilla>

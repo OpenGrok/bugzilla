@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>19156</bug_id>
+          
+          <creation_ts>2012-01-25 13:48:00 +0000</creation_ts>
+          <short_desc>Adding chars other than [a-zA-Z0-9] to identifiers.</short_desc>
+          <delta_ts>2012-01-25 13:52:22 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>analyzer</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>NEW</bug_status>
+          
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>normal</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Creigh">creigh.hobson</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>86132</commentid>
+            <who name="Creigh">creigh.hobson</who>
+            <bug_when>2012-01-25 13:48:52 +0000</bug_when>
+            <thetext>Investigate indexing certain single chars. 
+
+The need arose for me to search our repository for all sql statements that contained a wildcard character, i.e. &quot;select * from&quot;. This did not work as single characters are not indexed. I understand the complexity as java comments contain such characters. 
+
+In addition I found this regarding Lucene:
+https://issues.apache.org/jira/browse/LUCENE-588 
+It relates to certain regex characters not being analyzed. 
+Quote: &quot;...The escape characters are removed in QueryParser&quot;. 
+
+I understand there is a batch attached to that bug, but don&apos;t know if it is in the current release.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86133</commentid>
+              <attachid>4620</attachid>
+            <who name="Creigh">creigh.hobson</who>
+            <bug_when>2012-01-25 13:52:22 +0000</bug_when>
+            <thetext>Created attachment 4620
+email that gave rise to this bug</thetext>
+          </long_desc>
+      
+          <attachment
+              isobsolete="0"
+              ispatch="0"
+              isprivate="0"
+              isurl="0"
+          >
+            <attachid>4620</attachid>
+            <date>2012-01-25 13:52:00 +0000</date>
+            <delta_ts>2012-01-25 13:52:22 +0000</delta_ts>
+            <desc>email that gave rise to this bug</desc>
+            <filename>email.txt</filename>
+            <type>text/plain</type>
+            <size>2320</size>
+            <attacher>creigh.hobson</attacher>
+            
+              <data encoding="base64">SGkKCkkgcmVhbGx5IGFtIG5vdCBhIGJhZCBnb29nbGVyLCBidXQgSSBjb3VsZCBub3QgZmluZCBh
+bnkgdGlwcyBvbiBob3cgdG8Kc2VhcmNoIGZvciBhIHdpbGRjYXJkIGluIGEgc2VudGVuY2UuIFNw
+ZWNpZmljYWxseSwgd2UgaGF2ZSBhIHBvbGljeQpoZXJlIGF0IHdvcmsgaW4gd2hpY2ggdGhleSBk
+byBub3QgYWxsb3cgYW55IHNxbCBzZWxlY3Qgc3RhdGVtZW50cyB3aXRoCmEgd2lsZGNhcmQsIGku
+ZS4gInNlbGVjdCAqIGZyb20gLi4uIi4gSSBoYXZlIHRyaWVkIGVzY2FwaW5nIHRoZQp3aWxkY2Fy
+ZCBidXQgaXQgbWFrZXMgbm8gZGlmZmVyZW5jZSwgZXZlbiBvbiBvcGVuZ3JvaydzIG93biBzZWFy
+Y2gKc2l0ZS4gQ2FuIHNvbWVvbmUgcG9pbnQgbWUgaW4gdGhlIHJpZ2h0IGRpcmVjdGlvbj8KClJl
+Z2FyZHMKCgpMdWJvcyBLb3NjbyBMdWJvcy5Lb3Njb0BvcmFjbGUuY29tCjE6NDMgUE0gKDIgaG91
+cnMgYWdvKQoKdG8gbWUsIG9wZW5ncm9rLWRpc2N1LiAKSXQgY2FuIHZlcnkgd2VsbCBiZSwgd2Ug
+ZG9uJ3QgZXZlbiBpbmRleCBhIHdpbGRjYXJkCml0IGRlcGVuZHMgb24gbGFuZ3VhZ2UgYW5hbHl6
+ZXIKCmUuZy4gc3FsIGFuYWx5emVyIGluaGVyaXRzIHRva2VuaXplciBmcm9tIHBsYWluIGZpbGUg
+YW5hbHl6ZXIKd2hpY2ggc2F5cyhyZWdleHApOgpJZGVudGlmaWVyID0gW2EtekEtWl9dIFthLXpB
+LVowLTlfXSoKCmhlbmNlIEkgZG91YnQgJyonIGlzIGluZGV4ZWQKCm9idmlvdXNseSB0aGVzZSBh
+bmFseXplcnMgY291bGQgYmUgaW1wcm92ZWQsIHNvIGl0J3MganVzdCBhYm91dCBhZGp1c3Rpbmcg
+dGhlIGFwcHJvcHJpYXRlIC5sZXggZmlsZSBhbmQgaW1wcm92ZSB0aGUgbGV4aWNhbCBhbmFseXNp
+cwphbHNvIG5vdGUgdGhhdCAxIGNoYXIgdG9rZW5zIG1vc3QgdXN1YWxseSBkb24ndCBtYWtlIHRo
+YXQgbXVjaCBzZW5zZSBhbmQganVzdCB1bm5lY2Vzc2FyeSBpbmNyZWFzZSBpbmRleCwgc28gd2Ug
+ZG8gdGhlbSBvbmx5IGZvciBmdWxsIHNlYXJjaCwgSSB0aGluayBzeW1ib2xzIGFuZCByZWZzIGp1
+c3QgaWdub3JlIDEgY2hhciBpZGVudGlmaWVycyAuLi4KCmh0aApMCl9fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCm9wZW5ncm9rLWRpc2N1c3MgbWFpbGluZyBs
+aXN0Cm9wZW5ncm9rLWRpc2N1c3NAb3BlbnNvbGFyaXMub3JnCmh0dHA6Ly9tYWlsLm9wZW5zb2xh
+cmlzLm9yZy9tYWlsbWFuL2xpc3RpbmZvL29wZW5ncm9rLWRpc2N1c3MKCkNyZWlnaCBIb2Jzb24K
+MjoxMyBQTSAoMSBob3VyIGFnbykKCnRvIEx1Ym9zIApZZXMsIHRoYXQgbWFrZXMgc2Vuc2UgYXMg
+InNlbGVjdCBcPyIgYWxzbyBkaWQgbm90IHdvcmsuIEkgZm91bmQgYSBwb3N0Cm9uIGEgbHVjZW5l
+IG1haWxpbmcgbGlzdCB0aGF0IHNhaWQgdGhlcmUgd2FzIGEgZmFpbHVyZSBpbiBxdWVyeQpwYXJz
+aW5nIHRvIGRpc2NvdmVyIHJlZ2V4IGV4cHJlc3Npb25zIGFuZCByZWRpcmVjdCB0byB0aGUgcHJv
+cGVyCmFuYWx5emVyLCBzbyB0aGV5IGFyZSBhd2FyZSBvZiBpdCAoSSB0aGluayBhIHBhdGNoIHdh
+cyB3cml0dGVuKS4gQWxzbywKSSByZWFsbHkganVzdCB3YW50IHRvIGJlIGEgdXNlciByaWdodCBu
+b3csIGFuZCBub3QgaGF2ZSB0byB3cml0ZSBteQpvd24gQW5hbHl6ZXIuIFRoYW5rIGZvciB0aGUg
+cmVwbHkuCgpSZWdhcmRzCgoKTHVib3MgS29zY28gTHVib3MuS29zY29Ab3JhY2xlLmNvbQoyOjI4
+IFBNICgxIGhvdXIgYWdvKQoKdG8gbWUgCldlbGwgSSBjYW4gdHJ5IHRvIHJlbGF4IHRoaXMgYW5k
+IGFkZCBtb3JlIGNoYXJzIGJlc2lkZXMgYS16QS1aMC05IHRvIHRoZSBpbmRlbnRpZmllcgphbGJl
+aXQgSSB3aWxsIG5vdCBkbyBpdCBiZWZvcmUgcmVsZWFzZSBvZiAwLjExICh0b28gcmlza3kpCgpJ
+IGhhdmUgYWxyZWFkeSBhbiB1cGdyYWRlIHRvIGx1Y2VuZSAzLjUgcHJlcGFyZWQKc28gSSBjYW4g
+dHJ5IHRvIGNoZWNrIHN1Y2ggcmVsYXhhdGlvbiBhZnRlciBJIHB1c2ggdGhhdCB1cGdyYWRlIChu
+ZXdlciBsdWNlbmUgaGFzIGxlc3MgbWVtb3J5IGNvbnN1bXB0aW9uICsgZmFzdGVyIHNlYXJjaGlu
+ZykuCgpJIGhvcGUgdGhlIGluZGV4IHdpbGwgbm90IGdyb3cgdGhhdCBiaWcgYW5kIHRoZSBzZWFy
+Y2ggd2lsbCBzdGlsbCBiZSBmYXN0IGVub3VnaCAtIGlmIHllcywgSSB3aWxsIGdsYWRseSByZWxh
+eCB0aGUgaW5kZW50aWZpZXIgcmVnZXhwCgpJZiB5b3UgaGF2ZSB0aW1lLCBwbGVhc2UgZmlsZSBp
+dCBhcyBhIGJ1ZyB0byBodHRwOi8vZGVmZWN0Lm9wZW5zb2xhcmlzLm9yZy8KSSdsbCBwaWNrIHVw
+IHNvIEkgZG9uJ3QgZm9yZ2V0IGFib3V0IHRoaXMgYnVnCgp0aG54Cg==
+</data>
+
+          </attachment>
+      
+
+    </bug>
+
+</bugzilla>

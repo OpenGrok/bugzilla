@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>3078</bug_id>
+          
+          <creation_ts>2008-08-26 02:43:00 +0000</creation_ts>
+          <short_desc>Contents of README no longer shown as part of directory listing</short_desc>
+          <delta_ts>2008-08-26 12:57:54 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>webapp</component>
+          <version>unspecified</version>
+          <rep_platform>Other</rep_platform>
+          <op_sys>Solaris</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXED</resolution>
+          
+          
+          
+          
+          
+          <priority>P4</priority>
+          <bug_severity>minor</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Knut Anders Hatlen">knut.hatlen</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>11100</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2008-08-26 02:43:16 +0000</bug_when>
+            <thetext>The contents of README or README.txt used to be shown in the directory listing. This isn&apos;t the case anymore. See for instance http://src.opensolaris.org/source/xref/opengrok/trunk/.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>11139</commentid>
+            <who name="Trond Norbye">trond.norbye</who>
+            <bug_when>2008-08-26 12:57:54 +0000</bug_when>
+            <thetext>This bug was caused by the compressed xref-files introduced in changeset 335:7babd68db59d
+
+Fixed in changeset 477:d37058a51fa1</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>16986</bug_id>
+          
+          <creation_ts>2010-09-06 16:08:00 +0000</creation_ts>
+          <short_desc>Relative path for data root and source root has stopped working</short_desc>
+          <delta_ts>2010-09-24 11:07:18 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>indexer</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXED</resolution>
+          
+          
+          
+          
+          
+          <priority>P2</priority>
+          <bug_severity>normal</bug_severity>
+          <target_milestone>0.10</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Knut Anders Hatlen">knut.hatlen</reporter>
+          <assigned_to name="Knut Anders Hatlen">knut.hatlen</assigned_to>
+          <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>77341</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2010-09-06 16:08:44 +0000</bug_when>
+            <thetext>When running the indexer with relative paths for source and data root (ex. java -jar opengrok.jar -s src -d data -W conf.xml) I see these problems (not seen with 0.9):
+
+1) The generated configuration file will contain relative paths to source root and data root. Expected result: absolute path should be stored in the config file.
+
+2) If the data root doesn&apos;t exist, the indexer fails (ERROR: data root must be a directory: data) instead of creating the directory.
+
+This is probably a fallout from bug #16913, which made the indexer work on the Configuration object directly instead of going through RuntimeEnvironment. RuntimeEnvironment has some extra code in its setDataRoot() and setSourceRoot() methods to convert relative paths to absolute paths and to create the data root if it doesn&apos;t already exist.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>77871</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2010-09-24 11:07:18 +0000</bug_when>
+            <thetext>Fixed in changeset:   1106:aa6f8f87e5f3</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>6229</bug_id>
+          
+          <creation_ts>2009-01-26 08:23:00 +0000</creation_ts>
+          <short_desc>IndexOutOfBoundsException in ElfAnalyser</short_desc>
+          <delta_ts>2010-04-18 12:35:25 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>indexer</component>
+          <version>unspecified</version>
+          <rep_platform>Other</rep_platform>
+          <op_sys>Windows</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>DUPLICATE</resolution>
+          <dup_id>10440</dup_id>
+          
+          
+          
+          
+          <priority>P4</priority>
+          <bug_severity>normal</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Vasanth Manickam">vasanth.manickam</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          <cc>knut.hatlen</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>25774</commentid>
+            <who name="Vasanth Manickam">vasanth.manickam</who>
+            <bug_when>2009-01-26 08:23:24 +0000</bug_when>
+            <thetext>In file ELFAnalyzer.java in the method &apos;getName&apos;
+the following line
+
+&apos;while((c = fmap.get(start++)) != 0x00) {&apos;
+
+causes an IndexOutOfBoundsException on some elf files which causes the indexer to respawn a new thread which keeps failing at the same place.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>71609</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2010-04-18 12:35:25 +0000</bug_when>
+            <thetext>
+
+*** This bug has been marked as a duplicate of bug 10440 ***</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

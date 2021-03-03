@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>1007</bug_id>
+          
+          <creation_ts>2008-04-07 04:54:00 +0000</creation_ts>
+          <short_desc>Add URL friendly project handling</short_desc>
+          <delta_ts>2008-04-07 05:07:40 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>webapp</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXED</resolution>
+          
+          
+          
+          
+          
+          <priority>P2</priority>
+          <bug_severity>minor</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Lubos Kosco">Lubos.Kosco</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>3289</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2008-04-07 04:54:58 +0000</bug_when>
+            <thetext>Sending and sharing links to code between developers is important.
+At the moment (0.6 version) the search will be broken and asking for project or searching in totally different project when sharing link e.g.
+http://src.opensolaris.org/source/xref/opengrok/trunk/src/org/opensolaris/opengrok/index/Indexer.java
+and then doing a search from the form.
+(either cookies must point to other project, or it must be a new browser session to see the error / odd behavior).
+
+Thanks for fixing this.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>3290</commentid>
+            <who name="Trond Norbye">trond.norbye</who>
+            <bug_when>2008-04-07 05:03:14 +0000</bug_when>
+            <thetext>The project cookie was added as a part of the project prototype, and to avoid modifying all of the different xref generators we just used a cookie. We should update the xref generation to add the project id to the link, and just remove the project cookie.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>3291</commentid>
+            <who name="Trond Norbye">trond.norbye</who>
+            <bug_when>2008-04-07 05:07:40 +0000</bug_when>
+            <thetext>Fixed in 271:fd2ea8c62397. Please report back if you still have problems.</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

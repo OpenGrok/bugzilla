@@ -1,0 +1,6 @@
+598,599c603,604
+<                          "(ses_id, mer_id, pass_id, " + refCol +" , mer_ref, amnt, cur, ps_id, ret_url, d_req_time, d_req_mil, h_resp_time, h_resp_mil) " +
+<                          "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", values);
+---
+>                          "(ses_id, mer_id, pass_id, " + refCol +" , mer_ref, amnt, cur, ps_id, ret_url, exp_url, d_req_time, d_req_mil, h_resp_time, h_resp_mil) " +
+>                          "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", values);

@@ -1,0 +1,72 @@
+D:\grok\opengrok>java -Xms1024m -Xmx1024m -jar "D:\grok\opengrok\opengrok.jar" -T 20 -H -m 150000 -v -c "D:\grok\ctags57\ctags.exe" -P -p /2.0.01 -Q off -S -w search  -i .cvsignore -i CVSROOT -i .svn -i jars -i package -i classes -i TeamNews4Setup -i Codecs -i *.0 -i *.000 -i *.001 -i *.002 -i *.003 -i *.004 -i *.1 -i *.3 -i *.a -i *.a1 -i *.a2 -i *.abc -i *.ac -i *.aco -i *.alias -i *.am -i *.aps -i *.asa -i *.asc -i *.asx -i *.avi -i *.ax -i *.bas -i *.bin -i *.bmp -i *.bmp_ -i *.bpi -i *.bpl -i *.cab -i *.cd -i *.cdx -i *.cer -i *.cfg -i *.cgt -i *.charset -i *.chm -i *.class -i *.classpath -i *.cls -i *.clw -i *.clx -i *.cmap -i *.cnt -i *.conf -i *.config -i *.configure -i *.cset -i *.csproj -i *.cth -i *.cup -i *.cur -i *.cw9prj -i *.cwl -i *.darwin -i *.dat -i *.datasource -i *.db -i *.dbf -i *.dcp -i *.dcr -i *.dcu -i *.def -i *.dep -i *.dev -i *.dfm -i *.dic -i *.dict -i *.dir -i *.diz -i *.djgpp -i *.dll -i *.doc -i *.docs -i *.dof -i *.doxygen -i *.dpk -i *.dpl -i *.dpr -i *.ds -i *.ds_store -i *.dsk -i *.dsm -i *.dsp_ -i *.dsw -i *.dtd -i *.dti -i *.dv -i *.emf -i *.erd -i *.exe -i *.fcs -i *.fil -i *.files -i *.fla -i *.form -i *.fpt -i *.frm -i *.frx -i *.gid -i *.gif -i *.global -i *.grf -i *.guess -i *.gxf -i *.hfd -i *.hlp -i *.hm -i *.howto -i *.hta -i *.ico -i *.idb -i *.ids -i *.idx -i *.imf -i *.iml -i *.inc -i *.inf -i *.inl -i *.inst -i *.ipr -i *.irl -i *.isr -i *.isu -i *.isv -i *.iws -i *.iwz -i *.jar -i *.jnlp -i *.jpeg -i *.jpg -i *.jplugin -i *.jws -i *.kbd -i *.lai -i *.lex -i *.li_ -i *.lib -i *.lic -i *.linux -i *.lnk -i *.lst -i *.m -i *.m0 -i *.m2v -i *.m4 -i *.m_index -i *.manifest -i *.map -i *.mat -i *.mc -i *.mcp -i *.mdl -i *.me -i *.men -i *.mf -i *.mft -i *.mingw32 -i *.mk -i *.mlet -i *.mo -i *.mod -i *.mp2 -i *.mp3 -i *.mpg -i *.msvc -i *.multi -i *.nas -i *.ncb -i *.noi -i *.nsi -i *.obj -i *.oca -i *.ocx -i *.odl -i *.odt -i *.old -i *.opt -i *.original -i *.os2 -i *.output -i *.pat -i *.pbxproj -i *.pch -i *.pch++ -i *.pcx -i *.pdf -i *.pfx -i *.pgr -i *.plc -i *.plg -i *.plist -i *.png -i *.policy -i *.positions -i *.ppt -i *.properties -i *.prx -i *.ps -i *.psd -i *.pwli -i *.pws -i *.py -i *.r -i *.ra -i *.ram -i *.ras -i *.rds -i *.rec -i *.renamed -i *.rep -i *.res -i *.resorg -i *.resx -i *.rgs -i *.rpt -i *.rsu -i *.rtf -i *.rws -i *.sample -i *.scc -i *.scm -i *.settings -i *.sin -i *.skl -i *.sln -i *.sm -i *.snd -i *.spec -i *.static -i *.sts -i *.sub -i *.suo -i *.swf -i *.sys -i *.t3 -i *.tcd -i *.tcs -i *.template -i *.tga -i *.tif -i *.tlb -i *.tlx -i *.tmpl -i *.tmstmp -i *.tpl -i *.tre -i *.trg -i *.ttf -i *.tth -i *.ttk -i *.unix -i *.vbg -i *.vbp -i *.vbw -i *.vcproj -i *.ver -i *.vsd -i *.vspscc -i *.vssscc -i *.vup -i *.vws -i *.wav -i *.wbmp -i *.wingtk -i *.wma -i *.wmf -i *.wml -i *.wmlt -i *.wmv -i *.woe32 -i *.wri -i *.wsm -i *.wsp -i *.xls -i *.xsd -i *.xtc -i *.y -i *.zip -i *.~df -i *.~dp -i *.~h -i *.~pa -i *.0 -i *.000 -i *.001 -i *.002 -i *.003 -i *.004 -i *.1 -i *.3 -i *.A -i *.A1 -i *.A2 -i *.ABC -i *.AC -i *.ACO -i *.ALIAS -i *.AM -i *.APS -i *.ASA -i *.ASC -i *.ASX -i *.AVI -i *.AX -i *.BAS -i *.BIN -i *.BMP -i *.BMP_ -i *.BPI -i *.BPL -i *.CAB -i *.CD -i *.CDX -i *.CER -i *.CFG -i *.CGT -i *.CHARset -i *.CHM -i *.CLASS -i *.CLASSPATH -i *.CLS -i *.CLW -i *.CLX -i *.CMAP -i *.CNT -i *.CONF -i *.CONFIG -i *.CONFIGURE -i *.Cset -i *.CSPROJ -i *.CTH -i *.CUP -i *.CUR -i *.CW9PRJ -i *.CWL -i *.DARWIN -i *.DAT -i *.DATASOURCE -i *.DB -i *.DBF -i *.DCP -i *.DCR -i *.DCU -i *.DEF -i *.DEP -i *.DEV -i *.DFM -i *.DIC -i *.DICT -i *.DIR -i *.DIZ -i *.DJGPP -i *.DLL -i *.DOC -i *.DOCS -i *.DOF -i *.DOXYGEN -i *.DPK -i *.DPL -i *.DPR -i *.DS -i *.DS_STORE -i *.DSK -i *.DSM -i *.DSP_ -i *.DSW -i *.DTD -i *.DTI -i *.DV -i *.EMF -i *.ERD -i *.EXE -i *.FCS -i *.FIL -i *.FILES -i *.FLA -i *.FORM -i *.FPT -i *.FRM -i *.FRX -i *.GID -i *.GIF -i *.GLOBAL -i *.GRF -i *.GUESS -i *.GXF -i *.HFD -i *.HLP -i *.HM -i *.HOWTO -i *.HTA -i *.ICO -i *.IDB -i *.IDS -i *.IDX -i *.IMF -i *.IML -i *.INC -i *.INF -i *.INL -i *.INST -i *.IPR -i *.IRL -i *.ISR -i *.ISU -i *.ISV -i *.IWS -i *.IWZ -i *.JAR -i *.JNLP -i *.JPEG -i *.JPG -i *.JPLUGIN -i *.JWS -i *.KBD -i *.LAI -i *.LEX -i *.LI_ -i *.LIB -i *.LIC -i *.LINUX -i *.LNK -i *.LST -i *.M -i *.M0 -i *.M2V -i *.M4 -i *.M_INDEX -i *.MANIFEST -i *.MAP -i *.MAT -i *.MC -i *.MCP -i *.MDL -i *.ME -i *.MEN -i *.MF -i *.MFT -i *.MINGW32 -i *.MK -i *.MLET -i *.MO -i *.MOD -i *.MP2 -i *.MP3 -i *.MPG -i *.MSVC -i *.MULTI -i *.NAS -i *.NCB -i *.NOI -i *.NSI -i *.OBJ -i *.OCA -i *.OCX -i *.ODL -i *.ODT -i *.OLD -i *.OPT -i *.ORIGINAL -i *.OS2 -i *.OUTPUT -i *.PAT -i *.PBXPROJ -i *.PCH -i *.PCH++ -i *.PCX -i *.PDF -i *.PFX -i *.PGR -i *.PLC -i *.PLG -i *.PLIST -i *.PNG -i *.POLICY -i *.POSITIONS -i *.PPT -i *.PROPERTIES -i *.PRX -i *.PS -i *.PSD -i *.PWLI -i *.PWS -i *.PY -i *.R -i *.RA -i *.RAM -i *.RAS -i *.RDS -i *.REC -i *.RENAMED -i *.REP -i *.RES -i *.RESORG -i *.RESX -i *.RGS -i *.RPT -i *.RSU -i *.RTF -i *.RWS -i *.SAMPLE -i *.SCC -i *.SCM -i *.SETTINGS -i *.SIN -i *.SKL -i *.SLN -i *.SM -i *.SND -i *.SPEC -i *.STATIC -i *.STS -i *.SUB -i *.SUO -i *.SWF -i *.SYS -i *.T3 -i *.TCD -i *.TCS -i *.TEMPLATE -i *.TGA -i *.TIF -i *.TLB -i *.TLX -i *.TMPL -i *.TMSTMP -i *.TPL -i *.TRE -i *.TRG -i *.TTF -i *.TTH -i *.TTK -i *.UNIX -i *.VBG -i *.VBP -i *.VBW -i *.VCPROJ -i *.VER -i *.VSD -i *.VSPSCC -i *.VSSSCC -i *.VUP -i *.VWS -i *.WAV -i *.WBMP -i *.WINGTK -i *.WMA -i *.WMF -i *.WML -i *.WMLT -i *.WMV -i *.WOE32 -i *.WRI -i *.WSM -i *.WSP -i *.XLS -i *.XSD -i *.XTC -i *.Y -i *.ZIP -i *.~DF -i *.~DP -i *.~H -i *.~PA -a on -s "D:\grok\working-copies" -d "D:\grok\index" 
+Scanning for repositories...
+Oct 22, 2008 5:04:33 PM org.opensolaris.opengrok.history.HistoryGuru addRepositories
+INFO: Adding <org.opensolaris.opengrok.history.SubversionRepository> repository: <D:\grok\working-copies\1.4.28>
+Oct 22, 2008 5:04:34 PM org.opensolaris.opengrok.history.HistoryGuru addRepositories
+INFO: Adding <org.opensolaris.opengrok.history.SubversionRepository> repository: <D:\grok\working-copies\1.4.31>
+Oct 22, 2008 5:04:34 PM org.opensolaris.opengrok.history.HistoryGuru addRepositories
+INFO: Adding <org.opensolaris.opengrok.history.SubversionRepository> repository: <D:\grok\working-copies\1.4.32>
+Oct 22, 2008 5:04:34 PM org.opensolaris.opengrok.history.HistoryGuru addRepositories
+INFO: Adding <org.opensolaris.opengrok.history.SubversionRepository> repository: <D:\grok\working-copies\1.4.33>
+Oct 22, 2008 5:04:35 PM org.opensolaris.opengrok.history.HistoryGuru addRepositories
+INFO: Adding <org.opensolaris.opengrok.history.SubversionRepository> repository: <D:\grok\working-copies\1.4.34>
+Oct 22, 2008 5:04:35 PM org.opensolaris.opengrok.history.HistoryGuru addRepositories
+INFO: Adding <org.opensolaris.opengrok.history.SubversionRepository> repository: <D:\grok\working-copies\1.5.07>
+Oct 22, 2008 5:04:35 PM org.opensolaris.opengrok.history.HistoryGuru addRepositories
+INFO: Adding <org.opensolaris.opengrok.history.SubversionRepository> repository: <D:\grok\working-copies\1.5.08>
+Oct 22, 2008 5:04:35 PM org.opensolaris.opengrok.history.HistoryGuru addRepositories
+INFO: Adding <org.opensolaris.opengrok.history.SubversionRepository> repository: <D:\grok\working-copies\2.0.01>
+Oct 22, 2008 5:04:36 PM org.opensolaris.opengrok.history.HistoryGuru addRepositories
+INFO: Adding <org.opensolaris.opengrok.history.SubversionRepository> repository: <D:\grok\working-copies\3.0.01>
+Oct 22, 2008 5:04:36 PM org.opensolaris.opengrok.history.HistoryGuru addRepositories
+INFO: Adding <org.opensolaris.opengrok.history.SubversionRepository> repository: <D:\grok\working-copies\Dalet5>
+Oct 22, 2008 5:04:36 PM org.opensolaris.opengrok.history.HistoryGuru addRepositories
+INFO: Adding <org.opensolaris.opengrok.history.SubversionRepository> repository: <D:\grok\working-copies\trunk>
+Done searching for repositories (5s)
+Oct 22, 2008 5:04:36 PM org.opensolaris.opengrok.history.HistoryGuru createCache
+INFO: Create historycache for D:\grok\working-copies\2.0.01 (SubversionRepository)
+Oct 22, 2008 5:32:11 PM org.opensolaris.opengrok.history.HistoryGuru createCache
+INFO: Creating historycache for D:\grok\working-copies\2.0.01 took (1655255ms)
+Oct 22, 2008 5:32:11 PM org.opensolaris.opengrok.history.HistoryGuru createCache
+INFO: Create historycache for D:\grok\working-copies\1.4.31 (SubversionRepository)
+Oct 22, 2008 5:37:20 PM org.opensolaris.opengrok.history.HistoryGuru createCache
+INFO: Creating historycache for D:\grok\working-copies\1.4.31 took (308118ms)
+Oct 22, 2008 5:37:20 PM org.opensolaris.opengrok.history.HistoryGuru createCache
+INFO: Create historycache for D:\grok\working-copies\1.4.32 (SubversionRepository)
+Oct 22, 2008 5:43:23 PM org.opensolaris.opengrok.history.HistoryGuru createCache
+INFO: Creating historycache for D:\grok\working-copies\1.4.32 took (363865ms)
+Oct 22, 2008 5:43:23 PM org.opensolaris.opengrok.history.HistoryGuru createCache
+INFO: Create historycache for D:\grok\working-copies\1.4.28 (SubversionRepository)
+Oct 22, 2008 5:45:50 PM org.opensolaris.opengrok.history.HistoryGuru createCache
+INFO: Creating historycache for D:\grok\working-copies\1.4.28 took (146528ms)
+Oct 22, 2008 5:45:50 PM org.opensolaris.opengrok.history.HistoryGuru createCache
+INFO: Create historycache for D:\grok\working-copies\1.4.33 (SubversionRepository)
+Oct 22, 2008 5:46:27 PM org.opensolaris.opengrok.history.HistoryGuru createCache
+INFO: Creating historycache for D:\grok\working-copies\1.4.33 took (37077ms)
+Oct 22, 2008 5:46:27 PM org.opensolaris.opengrok.history.HistoryGuru createCache
+INFO: Create historycache for D:\grok\working-copies\1.4.34 (SubversionRepository)
+Oct 22, 2008 6:13:45 PM org.opensolaris.opengrok.history.HistoryGuru createCache
+INFO: Creating historycache for D:\grok\working-copies\1.4.34 took (1637911ms)
+Oct 22, 2008 6:13:45 PM org.opensolaris.opengrok.history.HistoryGuru createCache
+INFO: Create historycache for D:\grok\working-copies\3.0.01 (SubversionRepository)
+Oct 22, 2008 6:42:04 PM org.opensolaris.opengrok.history.HistoryGuru createCache
+INFO: Creating historycache for D:\grok\working-copies\3.0.01 took (1699332ms)
+Oct 22, 2008 6:42:04 PM org.opensolaris.opengrok.history.HistoryGuru createCache
+INFO: Create historycache for D:\grok\working-copies\1.5.07 (SubversionRepository)
+Oct 22, 2008 6:50:05 PM org.opensolaris.opengrok.history.HistoryGuru createCache
+INFO: Creating historycache for D:\grok\working-copies\1.5.07 took (480800ms)
+Oct 22, 2008 6:50:05 PM org.opensolaris.opengrok.history.HistoryGuru createCache
+INFO: Create historycache for D:\grok\working-copies\1.5.08 (SubversionRepository)
+Oct 22, 2008 7:03:31 PM org.opensolaris.opengrok.history.HistoryGuru createCache
+INFO: Creating historycache for D:\grok\working-copies\1.5.08 took (805510ms)
+Oct 22, 2008 7:03:31 PM org.opensolaris.opengrok.history.HistoryGuru createCache
+INFO: Create historycache for D:\grok\working-copies\trunk (SubversionRepository)
+Oct 22, 2008 7:47:47 PM org.opensolaris.opengrok.history.HistoryGuru createCache
+INFO: Creating historycache for D:\grok\working-copies\trunk took (2656682ms)
+Oct 22, 2008 7:47:47 PM org.opensolaris.opengrok.history.HistoryGuru createCache
+INFO: Create historycache for D:\grok\working-copies\Dalet5 (SubversionRepository)
+Oct 22, 2008 7:47:56 PM org.opensolaris.opengrok.history.HistoryGuru createCache
+INFO: Creating historycache for D:\grok\working-copies\Dalet5 took (8406ms)
+Oct 22, 2008 7:47:56 PM org.opensolaris.opengrok.index.Indexer doIndexerExecution
+INFO: Starting indexExecution
+Adding: /trunk/Ver 1.4/ActiveLog/ActiveLogSetup/REFRESH.BAT (PlainAnalyzer)

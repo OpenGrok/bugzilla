@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>6163</bug_id>
+          
+          <creation_ts>2009-01-20 06:15:00 +0000</creation_ts>
+          <short_desc>ShAnalyzer magic strings should be more strict to match only valid shell scripts</short_desc>
+          <delta_ts>2012-07-04 15:26:28 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>analyzer</component>
+          <version>unspecified</version>
+          <rep_platform>Other</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXINSOURCE</resolution>
+          
+          
+          
+          
+          
+          <priority>P4</priority>
+          <bug_severity>enhancement</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Vladimir Kotal">vladimir.kotal</reporter>
+          <assigned_to name="Vladimir Kotal">vladimir.kotal</assigned_to>
+          <cc>knut.hatlen</cc>
+    
+    <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>25383</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2009-01-20 06:15:55 +0000</bug_when>
+            <thetext>In ON repository README files are detected as shell files (OpenGrok 0.7).
+
+For example:
+  http://src.opensolaris.org/source/xref/onnv/onnv-gate/usr/src/common/openssl/README.SUNW
+
+This file contains the CDDL licence as a &quot;comment&quot; and then continues with normal text:
+
+      1 #
+      2 # Copyright 2009 Sun Microsystems, Inc.  All rights reserved.
+      3 # Use is subject to license terms.
+      4 #
+      5 
+      6 The version of OpenSSL found in this directory was created by taking the
+      7 stock version of OpenSSL 0.9.8a from www.openssl.org and modifying some of
+      8 the files to conform to Sun standards.  
+
+However, it is highlighted because it was detected as shell script. This is because src/org/opensolaris/opengrok/analysis/sh/ShAnalyzerFactory.java contains the following magic strings:
+
+     61     private static final String[] MAGICS = {
+     62         &quot;#!&quot;,
+     63         &quot;##&quot;,
+     64         &quot;#\n#&quot;,
+     65     };
+
+The last magic string matches.
+
+Instead, README files should be treated as plain files (means no highlighting except HTTP links and such).</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>25384</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2009-01-20 06:17:37 +0000</bug_when>
+            <thetext>Conclusion: either make the magic strings more strict or special case &apos;README*&apos; files to make them automatically treated as plain files.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>79054</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2010-11-09 09:50:10 +0000</bug_when>
+            <thetext>*** Bug 16004 has been marked as a duplicate of this bug. ***</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>79055</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2010-11-09 10:06:10 +0000</bug_when>
+            <thetext>When we make this change, we also need to ensure that README.html is still recognized as an HTML file and not as a plain text file.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86511</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2012-07-04 09:39:33 +0000</bug_when>
+            <thetext>I just happened to hit this bug again with p5m files (Image Packaging System definitions) being recognized as shell files. Will do the fix.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86512</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2012-07-04 11:12:14 +0000</bug_when>
+            <thetext>I just checked what file(1) command does in Solaris and it it pretty strict about checking whether a file is a shell script.
+
+Basically it does the following check:
+
+if (filebuf[0] == &apos;#&apos; &amp;&amp; filebuf[1] == &apos;!&apos; &amp;&amp;
+    (from filebuf[2] check spaces and non-spaces are ASCII until first newline) &amp;&amp;
+     make sure there were non-space characters except # and ! until the first newline)
+        return (TRUE);</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86516</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2012-07-04 15:26:28 +0000</bug_when>
+            <thetext>Fixed with:
+
+changeset:   1401:4bad063b48d3
+tag:         tip
+user:        Vladimir Kotal &lt;Vladimir.Kotal@oracle.com&gt;
+date:        Wed Jul 04 17:17:14 2012 +0200
+
+description:
+	Bug 6163 - ShAnalyzer magic strings should be more strict to match only valid shell scripts
+	Bug 19221 - diff does not work for plaintext files with colon in their filename
+
+modified:
+   src/org/opensolaris/opengrok/analysis/AnalyzerGuru.java
+   src/org/opensolaris/opengrok/analysis/sh/ShAnalyzerFactory.java
+   src/org/opensolaris/opengrok/web/PageConfig.java</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

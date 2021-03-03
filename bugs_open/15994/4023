@@ -1,0 +1,18 @@
+package de.jamba.foundation.soa.hessianutils.serializable;
+
+/**
+ * Similar to {@link FileFilter} but for classes.
+ *
+ * @author  sthomschke
+ */
+public interface ClassFilter {
+
+    /**
+     * Tests whether or not the specified class should be handled.
+     *
+     * @param   theClass  The class to be tested
+     *
+     * @return  <code>true</code> if and only if <code>theClass</code> should be included
+     */
+    boolean accept(Class theClass);
+}

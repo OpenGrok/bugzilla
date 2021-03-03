@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>19244</bug_id>
+          
+          <creation_ts>2012-10-11 21:54:00 +0000</creation_ts>
+          <short_desc>Comments in git directory history are centered</short_desc>
+          <delta_ts>2012-10-12 06:16:34 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>webapp</component>
+          <version>unspecified</version>
+          <rep_platform>i86pc/amd64</rep_platform>
+          <op_sys>Linux</op_sys>
+          <bug_status>NEW</bug_status>
+          
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>minor</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Brian Johnson">bjohnson</reporter>
+          <assigned_to name="Lubos Kosco">Lubos.Kosco</assigned_to>
+          <cc>jel+osbugs</cc>
+    
+    <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>86630</commentid>
+            <who name="Brian Johnson">bjohnson</who>
+            <bug_when>2012-10-11 21:54:49 +0000</bug_when>
+            <thetext>I&apos;m running opengrok 0.11.1 on SLES10 x64, indexing a git tree.
+
+Using the default skin, the text in the &quot;Comments&quot; column of directory
+history pages is centered, making it hard to read.  However, in file
+history displays it is left justified, as expected.
+
+It appears that the &quot;#revisions tbody&quot; elements in the default
+style.css don&apos;t take into account that directory history has 4
+columns, but file history has five.  Therefore the Comments column
+in a directory history (the fourth column) ends up centered.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86631</commentid>
+            <who name="Jens Elkner">jel+osbugs</who>
+            <bug_when>2012-10-12 06:16:34 +0000</bug_when>
+            <thetext>http://defect.opensolaris.org/bz/show_bug.cgi?id=19199 changeset 1423 (see e.g. 
+http://src.iws.cs.ovgu.de/source/diff/opengrok-jel/web/static/polished/style.css?r1=/opengrok-jel/web/static/polished/style.css@1390:04e4831c7e72&amp;r2=/opengrok-jel/web/static/polished/style.css@1423:488ba30c8520&amp;format=w&amp;full=0
+ ) may help to fix it.</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

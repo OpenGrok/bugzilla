@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>13364</bug_id>
+          
+          <creation_ts>2009-12-15 10:28:00 +0000</creation_ts>
+          <short_desc>regression : Jar analyzer doesn&apos;t analyze the jars it used to for 0.7</short_desc>
+          <delta_ts>2010-01-14 12:55:10 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>analyzer</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXED</resolution>
+          
+          
+          
+          
+          
+          <priority>P2</priority>
+          <bug_severity>normal</bug_severity>
+          <target_milestone>0.9</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Lubos Kosco">Lubos.Kosco</reporter>
+          <assigned_to name="Lubos Kosco">Lubos.Kosco</assigned_to>
+          <cc>knut.hatlen</cc>
+    
+    <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>59745</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2009-12-15 10:28:43 +0000</bug_when>
+            <thetext>Happens with 0.8.1
+
+Dec 14, 2009 8:06:22 AM org.opensolaris.opengrok.index.IndexDatabase addFile
+INFO: Skipped file &apos;/blahblah/server/lib/catalina-storeconfig.jar&apos; because the analyzer didn&apos;t understand it.
+Dec 14, 2009 8:06:22 AM org.opensolaris.opengrok.index.IndexDatabase addFile
+FINE: Exception from analyzer:
+org.apache.bcel.classfile.ClassFormatException: Invalid signature: `java/lang/Object;Lorg/apache/catalina/storeconfig/StoreDescription;)V&apos;
+        at org.apache.bcel.classfile.Utility.signatureToString(Utility.java:878)
+        at org.apache.bcel.classfile.Utility.methodSignatureArgumentTypes(Utility.java:593)
+        at org.opensolaris.opengrok.analysis.executables.JavaClassAnalyzer.getContent(JavaClassAnalyzer.java:242)
+        at org.opensolaris.opengrok.analysis.executables.JavaClassAnalyzer.analyze(JavaClassAnalyzer.java:100)
+        at org.opensolaris.opengrok.analysis.executables.JarAnalyzer.analyze(JarAnalyzer.java:98)
+        at org.opensolaris.opengrok.analysis.AnalyzerGuru.getDocument(AnalyzerGuru.java:250)
+        at org.opensolaris.opengrok.index.IndexDatabase.addFile(IndexDatabase.java:560)
+        at org.opensolaris.opengrok.index.IndexDatabase.indexDown(IndexDatabase.java:690)
+        at org.opensolaris.opengrok.index.IndexDatabase.indexDown(IndexDatabase.java:673)
+        at org.opensolaris.opengrok.index.IndexDatabase.indexDown(IndexDatabase.java:673)
+        at org.opensolaris.opengrok.index.IndexDatabase.indexDown(IndexDatabase.java:673)
+        at org.opensolaris.opengrok.index.IndexDatabase.indexDown(IndexDatabase.java:673)
+        at org.opensolaris.opengrok.index.IndexDatabase.update(IndexDatabase.java:327)
+        at org.opensolaris.opengrok.index.IndexDatabase$1.run(IndexDatabase.java:142)
+        at java.util.concurrent.Executors$RunnableAdapter.call(Unknown Source)
+        at java.util.concurrent.FutureTask$Sync.innerRun(Unknown Source)
+        at java.util.concurrent.FutureTask.run(Unknown Source)
+        at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(Unknown Source)
+        at java.util.concurrent.ThreadPoolExecutor$Worker.run(Unknown Source)
+        at java.lang.Thread.run(Unknown Source)
+
+the same file is correctly analyzed with 0.7
+I think this might be a problem because of bcel jars with 1.6 ...</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>59746</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2009-12-15 10:33:42 +0000</bug_when>
+            <thetext>bcel not thread safe: 
+http://www.mail-archive.com/bcel-dev@jakarta.apache.org/msg01235.html
+
+oh well, so jar analyzer has to be improved</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>61768</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2010-01-10 22:02:30 +0000</bug_when>
+            <thetext>another thing I noticed is, that I often got the error:
+&quot; Cannot get tokens from an empty list! &quot;
+
+so my changes regarding 2.4.1 lucene might have caused this too, 
+we need tests for this and improve
+http://src.opensolaris.org/source/search?q=List2TokenStream&amp;project=%2Fopengrok</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>61769</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2010-01-10 22:08:09 +0000</bug_when>
+            <thetext>I will update bcel as well as fix the analyzer</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>62276</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2010-01-13 21:49:57 +0000</bug_when>
+            <thetext>I seriously think this is a regression of 
+Bug #67: Duplicate magics in the analyzers
+
+bcel is not thread safe and we were supposed to have an analyzer per thread, which in this case is not done, because of fixes in #67 ...
+DEFAULT_INSTANCE seems to be the evil ... 
+and as I can see we use DEFAULT_INSTANCE for zip, jar and plain analyzer
+all of them need to be thread safe because of that
+the confusion might be cause by confusing threadlocal cache when using zipanalyzer, which can return defaultinstance of jar analyzer, hence the proper factory model is broken
+
+kah, can you help ?</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>62348</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2010-01-14 09:36:01 +0000</bug_when>
+            <thetext>Bug #67 has been fixed since 0.6.1, so I don&apos;t see how it could have caused a regression from 0.7 to 0.8. Also note that we only had one instance of JarAnalyzerFactory before that fix too. The fix just added a field to make it easier to get hold of the instance, as far as I can see.
+
+The cached analyzers (the actual analyzers, not the analyzer factories) are not supposed to be shared between threads, by the way. They are stored in a ThreadLocal in the factory. See FileAnalyzerFactory.getAnalyzer().</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>62351</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2010-01-14 09:43:29 +0000</bug_when>
+            <thetext>(In reply to comment #5)
+&gt; Bug #67 has been fixed since 0.6.1, so I don&apos;t see how it could have caused a
+&gt; regression from 0.7 to 0.8. Also note that we only had one instance of
+&gt; JarAnalyzerFactory before that fix too. The fix just added a field to make it
+&gt; easier to get hold of the instance, as far as I can see.
+&gt; 
+&gt; The cached analyzers (the actual analyzers, not the analyzer factories) are not
+&gt; supposed to be shared between threads, by the way. They are stored in a
+&gt; ThreadLocal in the factory. See FileAnalyzerFactory.getAnalyzer().
+
+I understand all above, I am just questioning it
+because I cannot explain how is that we get this errors and we get &quot; Cannot get tokens from an empty list! &quot;
+coming from jar analyzer ... (if we got 6 threads we only get this error message from one, but not from the rest of threads, which fail and leave dirty files behind ... )
+
+it doesn&apos;t happen for any other analyzer it seems (so ThreadLocal kicks in there properly), so only this analyzer is hit and we didn&apos;t see this as a problem until we recently increased default number of threads ...</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>62352</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2010-01-14 09:44:30 +0000</bug_when>
+            <thetext>(In reply to comment #6)
+&gt; (In reply to comment #5)
+&gt; &gt; Bug #67 has been fixed since 0.6.1, so I don&apos;t see how it could have caused a
+&gt; &gt; regression from 0.7 to 0.8. Also note that we only had one instance of
+&gt; &gt; JarAnalyzerFactory before that fix too. The fix just added a field to make it
+&gt; &gt; easier to get hold of the instance, as far as I can see.
+&gt; &gt; 
+&gt; &gt; The cached analyzers (the actual analyzers, not the analyzer factories) are not
+&gt; &gt; supposed to be shared between threads, by the way. They are stored in a
+&gt; &gt; ThreadLocal in the factory. See FileAnalyzerFactory.getAnalyzer().
+&gt; 
+&gt; I understand all above, I am just questioning it
+&gt; because I cannot explain how is that we get this errors and we get &quot; Cannot get
+&gt; tokens from an empty list! &quot;
+&gt; coming from jar analyzer ... (if we got 6 threads we only get this error
+&gt; message from one, but not from the rest of threads, which fail and leave dirty
+&gt; files behind ... )
+
+sorry I mean we get the error from 5 analyzers which crash and only one goes through ...
+
+&gt; 
+&gt; it doesn&apos;t happen for any other analyzer it seems (so ThreadLocal kicks in
+&gt; there properly), so only this analyzer is hit and we didn&apos;t see this as a
+&gt; problem until we recently increased default number of threads ...</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>62372</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2010-01-14 11:25:51 +0000</bug_when>
+            <thetext>Lubos, I filed a new bug for the List2TokenStream problem in case it&apos;s unrelated. See bug #13884.
+
+The first revision that fails with a ClassFormatException, is:
+
+changeset:   508:7f3cfee18fc0
+user:        Trond Norbye &lt;trond.norbye@sun.com&gt;
+date:        Sun Aug 31 21:29:03 2008 +0200
+summary:     Added logging of exceptions instead of silently ignoring them
+
+The problem was probably there before too, but we just ignored the exception.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>62378</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2010-01-14 12:05:55 +0000</bug_when>
+            <thetext>Multi-threaded indexing was not possible at the time bug #67 was fixed, so the thread-safety problem could not be seen at that time. I updated my source tree to the revision where multi-threaded indexing was implemented (261:fd6b4fa4f533) and added print statements to show if ClassFormatExceptions were thrown. I did see the problem there as well (only that the indexer ignored the exceptions).
+
+Then I backed out changeset 257:6fe5bd23fcb9 (fix for bug #67), and I still saw the exceptions. So I&apos;d conclude that these two bugs are not related.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>62381</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2010-01-14 12:55:10 +0000</bug_when>
+            <thetext>fixed by just updating the bcel to 5.2
+
+fixed in changeset:   929:576073c1ca02
+OSR number for bcel is : 13368</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

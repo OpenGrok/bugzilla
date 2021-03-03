@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>16422</bug_id>
+          
+          <creation_ts>2010-06-30 11:10:00 +0000</creation_ts>
+          <short_desc>NullPointerException on definition search</short_desc>
+          <delta_ts>2010-08-20 11:51:24 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>webapp</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXED</resolution>
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>minor</bug_severity>
+          <target_milestone>0.10</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Knut Anders Hatlen">knut.hatlen</reporter>
+          <assigned_to name="Lubos Kosco">Lubos.Kosco</assigned_to>
+          <cc>Lubos.Kosco</cc>
+    
+    <cc>opengrok-dev</cc>
+    
+    <cc>vladimir.kotal</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>74932</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2010-06-30 11:10:30 +0000</bug_when>
+            <thetext>I performed a definitions search for JMXMPConnectorServer in the OpenGrok codebase, using OpenGrok 0.9, and got this NullPointerException:
+
+java.lang.NullPointerException
+	at org.apache.jsp.search_jsp._jspService(search_jsp.java from :349)
+	at org.apache.jasper.runtime.HttpJspBase.service(HttpJspBase.java:109)
+	at javax.servlet.http.HttpServlet.service(HttpServlet.java:847)
+	at org.apache.jasper.servlet.JspServletWrapper.service(JspServletWrapper.java:389)
+	at org.apache.jasper.servlet.JspServlet.serviceJspFile(JspServlet.java:486)
+	at org.apache.jasper.servlet.JspServlet.service(JspServlet.java:380)
+	at javax.servlet.http.HttpServlet.service(HttpServlet.java:847)
+.
+.
+.
+
+These links to two different internal servers show the bug:
+
+http://khepri25.norway/source/s?defs=JMXMPConnectorServer&amp;project=opengrok
+http://grok.czech:8080/source/s?defs=JMXMPConnectorServer&amp;project=opengrok-trunk</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>74938</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2010-06-30 12:13:07 +0000</bug_when>
+            <thetext>All references to JMXMPConnectorServer has been removed from head of trunk in OpenGrok, so the links to the pages that demonstrated the bug won&apos;t fail anymore. So in order to reproduce the NPE now, you&apos;ll have to check out revision 1034:2a6748329481 (or earlier) of OpenGrok and try to index that codebase.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>74939</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2010-06-30 12:31:53 +0000</bug_when>
+            <thetext>fixed in as part of lucene upgrade ;)
+changeset 1029:68cf84c46421</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>74940</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2010-06-30 12:37:56 +0000</bug_when>
+            <thetext>Verified that it works on trunk. Thanks!</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

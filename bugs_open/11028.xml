@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>11028</bug_id>
+          
+          <creation_ts>2009-08-29 08:50:00 +0000</creation_ts>
+          <short_desc>OpenGrok can&apos;t deal with the Ada language syntax.</short_desc>
+          <delta_ts>2010-11-16 08:55:06 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>analyzer</component>
+          <version>unspecified</version>
+          <rep_platform>i86pc/i386</rep_platform>
+          <op_sys>Linux</op_sys>
+          <bug_status>NEW</bug_status>
+          
+          
+          
+          
+          
+          
+          <priority>P4</priority>
+          <bug_severity>enhancement</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Edward OCallaghan">victoredwardocallaghan</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          <cc>jkimball4</cc>
+    
+    <cc>jleyh</cc>
+    
+    <cc>knut.hatlen</cc>
+    
+    <cc>opengrok-dev</cc>
+    
+    <cc>vincent.crispo</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>48210</commentid>
+            <who name="Edward OCallaghan">victoredwardocallaghan</who>
+            <bug_when>2009-08-29 08:50:55 +0000</bug_when>
+            <thetext>Good day,
+
+OpenGrok can&apos;t deal with the Ada language syntax.
+
+For example:
+http://src.auroraux.org:8080/xref/org.auroraux.nebula.primary/source/usr/lib/sunrise/source/sunrise-drawing.adb
+
+Leads to no proper syntax highlighting.
+
+For a quick guide on Ada syntax see:
+* http://www.csci.csusb.edu/dick/samples/ada.syntax.html
+
+And for a more extensive documentation of the whole lang should you need it:
+* The Ada 2005 RM is available at: http://www.adaic.com/standards/05rm/RM-Final.pdf  or http://adaic.org/standards/05rm/html/RM-TTL.html
+
+This RFE is *very* much needed for the AuroraUX project ^[1] and I can only hope this RFE can get implemented, I know I am maybe asking a lot?
+
+Thanks for your time,
+Edward O&apos;Callaghan. 
+
+[1] - http://www.auroraux.org/</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>48211</commentid>
+            <who name="Julian Leyh">jleyh</who>
+            <bug_when>2009-08-29 09:12:47 +0000</bug_when>
+            <thetext>Would like to see Ada support, too!</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>48245</commentid>
+            <who name="example@mailinator.com">jkimball4</who>
+            <bug_when>2009-08-29 22:26:42 +0000</bug_when>
+            <thetext>+1</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>79192</commentid>
+            <who name="Vin">vincent.crispo</who>
+            <bug_when>2010-11-15 18:43:11 +0000</bug_when>
+            <thetext>Hi - I was wondering if any work has been done on the Ada analyzer? Or, is there any roadmap planned?
+
+Thanks,
+Vin</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>79213</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2010-11-16 08:55:06 +0000</bug_when>
+            <thetext>Nothing work has been put into implementing Ada support so far. Mostly because those who contribute to OpenGrok aren&apos;t familiar with the Ada language, I suppose.
+
+Adding a new language isn&apos;t very hard, though. It&apos;s usually just a copy/paste job, starting with an existing analyzer and adjusting it for the new language. If someone wants to have a try, they could for example start with the Java analyzer (http://src.opensolaris.org/source/xref/opengrok/trunk/src/org/opensolaris/opengrok/analysis/java/), clone it, and make the necessary adjustments.
+
+The contributor would also need to have signed the Oracle Contributor Agreement (or the old Sun Contributor Agreement) before the code can be incorporated.
+http://hub.opensolaris.org/bin/view/Main/oracle_contributor_agreement
+
+Ada isn&apos;t mentioned in the list of languages supported by Exuberant Ctags (http://ctags.sourceforge.net/), which OpenGrok uses for extracting definitions from the source files, so there may be some extra work needed in order to get full support for the language. But just for getting basic syntax highlighting, I don&apos;t think this would be a stopper.</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

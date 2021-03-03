@@ -1,0 +1,10 @@
+#define xyz abc
+
+void xyz(void)
+{
+}
+
+void f(void)
+{
+  xyz();
+}

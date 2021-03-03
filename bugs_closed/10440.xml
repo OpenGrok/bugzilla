@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>10440</bug_id>
+          
+          <creation_ts>2009-08-04 05:08:00 +0000</creation_ts>
+          <short_desc>elf analyzer fails on .so objects in getName</short_desc>
+          <delta_ts>2010-05-26 11:07:52 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>analyzer</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXED</resolution>
+          
+          
+          
+          
+          
+          <priority>P4</priority>
+          <bug_severity>minor</bug_severity>
+          <target_milestone>0.8</target_milestone>
+          
+          <blocked>16076</blocked>
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Lubos Kosco">Lubos.Kosco</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          <cc>vasanth.manickam</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>45742</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2009-08-04 05:08:40 +0000</bug_when>
+            <thetext>Aug 3, 2009 6:55:31 AM org.opensolaris.opengrok.index.IndexDatabase indexDown
+WARNING: Failed to add file /tank/opengrok-sources/n1aa-HEAD/tools/jdk142_04_i386/usr/j2se/jre/lib/i386/libjmutil.so
+java.lang.IndexOutOfBoundsException
+        at java.nio.Buffer.checkIndex(Buffer.java:438)
+        at java.nio.DirectByteBuffer.get(DirectByteBuffer.java:209)
+        at org.opensolaris.opengrok.analysis.executables.ELFAnalyzer.getName(ELFAnalyzer.java:166)
+        at org.opensolaris.opengrok.analysis.executables.ELFAnalyzer.parseELF(ELFAnalyzer.java:111)
+        at org.opensolaris.opengrok.analysis.executables.ELFAnalyzer.analyze(ELFAnalyzer.java:79)
+        at org.opensolaris.opengrok.analysis.AnalyzerGuru.getDocument(AnalyzerGuru.java:246)
+        at org.opensolaris.opengrok.index.IndexDatabase.addFile(IndexDatabase.java:458)
+        at org.opensolaris.opengrok.index.IndexDatabase.indexDown(IndexDatabase.java:578)
+        at org.opensolaris.opengrok.index.IndexDatabase.indexDown(IndexDatabase.java:561)
+        at org.opensolaris.opengrok.index.IndexDatabase.indexDown(IndexDatabase.java:561)
+        at org.opensolaris.opengrok.index.IndexDatabase.indexDown(IndexDatabase.java:561)
+        at org.opensolaris.opengrok.index.IndexDatabase.indexDown(IndexDatabase.java:561)
+        at org.opensolaris.opengrok.index.IndexDatabase.indexDown(IndexDatabase.java:561)
+        at org.opensolaris.opengrok.index.IndexDatabase.indexDown(IndexDatabase.java:561)
+        at org.opensolaris.opengrok.index.IndexDatabase.indexDown(IndexDatabase.java:561)
+        at org.opensolaris.opengrok.index.IndexDatabase.update(IndexDatabase.java:251)
+        at org.opensolaris.opengrok.index.IndexDatabase$1.run(IndexDatabase.java:139)
+        at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:417)
+        at java.util.concurrent.FutureTask$Sync.innerRun(FutureTask.java:269)
+        at java.util.concurrent.FutureTask.run(FutureTask.java:123)
+        at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:650)
+        at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:675)
+        at java.lang.Thread.run(Thread.java:595)</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>45850</commentid>
+            <who name="Trond Norbye">trond.norbye</who>
+            <bug_when>2009-08-05 06:04:57 +0000</bug_when>
+            <thetext>The specified file doesn&apos;t contain a string section in the ELF file. I fixed the bug by skipping ELF files without sections or empty string section :-)
+
+Fixed in:
+changeset:   804:d9a0f44786b4</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>71610</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2010-04-18 12:35:25 +0000</bug_when>
+            <thetext>*** Bug 6229 has been marked as a duplicate of this bug. ***</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

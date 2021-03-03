@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>7215</bug_id>
+          
+          <creation_ts>2009-03-09 07:39:00 +0000</creation_ts>
+          <short_desc>fails on directory names that contain a plus (+) character</short_desc>
+          <delta_ts>2009-10-02 00:13:28 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>webapp</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>WORKSFORME</resolution>
+          
+          
+          
+          
+          
+          <priority>P4</priority>
+          <bug_severity>minor</bug_severity>
+          <target_milestone>---</target_milestone>
+          <dependson>966</dependson>
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter>carlomagnoa</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          <cc>john.levon</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>30007</commentid>
+            <who name="">carlomagnoa</who>
+            <bug_when>2009-03-09 07:39:41 +0000</bug_when>
+            <thetext>+++ This bug was initially created as a clone of Bug #966 +++
+
+The web interface can&apos;t show results in directories with names that contain a plus (+) character.
+
+
+!!! Error when trying to get to an xvm repository that includes a +  in its name
+!!! &quot;Error 404: File not found!&quot;. e.g.
+
+http://src.opensolaris.org/source/xref/xen-gate/xvm-3.3%2Bsunos.hg/
+or
+http://src.opensolaris.org/source/xref/xen-gate/xvm-3.3+sunos.hg/
+
+Error 404: File not found!
+The requested resource is not available.
+
+Workaround:
+
+Escaping the % character with %25 will do the trick, because the last parse step
+will get an %2B escape sequence as opossed to a + character (space). e.g.
+
+http://src.opensolaris.org/source/xref/xen-gate/xvm-3.3%252Bsunos.hg/</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>51360</commentid>
+            <who name="John Levon">john.levon</who>
+            <bug_when>2009-10-02 00:13:28 +0000</bug_when>
+            <thetext>Seems fixed to me.</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>17978</bug_id>
+          
+          <creation_ts>2011-03-07 16:58:00 +0000</creation_ts>
+          <short_desc>Compiler errors For ContextXml.java</short_desc>
+          <delta_ts>2011-03-08 03:15:15 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>build</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>INVALID</resolution>
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>critical</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Dana">ultimav</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          <cc>knut.hatlen</cc>
+    
+    <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>81606</commentid>
+            <who name="Dana">ultimav</who>
+            <bug_when>2011-03-07 16:58:30 +0000</bug_when>
+            <thetext>My IDE has a major compliant with the following:
+
+&gt;&gt; line 54 - 70 in ContextXml.java
+
+    private static Set&lt;String&gt; tokenFields = new HashSet&lt;String&gt;(3);
+
+    static {
+        tokenFields.add(&quot;full&quot;);
+        tokenFields.add(&quot;refs&quot;);
+        tokenFields.add(&quot;defs&quot;);
+    }
+
+    /**
+     * Constructs a context generator
+     * @param query the query to generate the result for
+     * @param queryStrings map from field names to queries against the fields
+     */
+    public ContextXml(Query query, Map&lt;String, String&gt; queryStrings) {
+        QueryMatchers qm = new QueryMatchers();
+---&gt;    m = qm.getMatchers(query, tokenFields);
+
+
+&lt;&lt; 
+
+At the &quot;---&gt;&quot;, i get a compile error
+&quot;The method getMatchers(Query, Map&lt;String,Boolean&gt;) in the type QueryMatchers is not applicable for the arguments 
+ (Query, Set&lt;String&gt;)&quot;
+
+In QueryMatchers class, it definately is expecting a Map object with the String for the field name, and a flag/boolean for the sensitivity. Though in ContextXml it is just passing the set of &quot;full/refs/defs&quot; strings. 
+
+I&apos;m going try to correct it to keep my development going, but I wanted to document it.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>81622</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2011-03-07 22:04:37 +0000</bug_when>
+            <thetext>There is no source file called ContextXml.java in OpenGrok, as far as I can see.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>81629</commentid>
+            <who name="Dana">ultimav</who>
+            <bug_when>2011-03-08 03:15:15 +0000</bug_when>
+            <thetext>I apologize.. 
+
+I just realized this was a customization I added. I have been experimenting with being able to return search results as xml, so that another thin client can interface with it..
+
+It was actually a copy of org.opensolaris.opengrok.search.context.Context.java</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

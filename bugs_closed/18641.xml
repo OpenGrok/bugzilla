@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>18641</bug_id>
+          
+          <creation_ts>2011-07-01 11:32:00 +0000</creation_ts>
+          <short_desc>Cannot access history for directories</short_desc>
+          <delta_ts>2011-08-16 14:45:59 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>webapp</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXED</resolution>
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>minor</bug_severity>
+          <target_milestone>0.11</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Knut Anders Hatlen">knut.hatlen</reporter>
+          <assigned_to name="Knut Anders Hatlen">knut.hatlen</assigned_to>
+          <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>84004</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2011-07-01 11:32:14 +0000</bug_when>
+            <thetext>I have a server running OpenGrok from trunk (0.11-dev (5b933ad97e9b)) and when I click on the &quot;History&quot; link in a directory listing, I just get the directory listing again. The link seems to be correct (.../source/history/...), but the request gets redirected from history to xref for some reason.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>84800</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2011-08-16 14:45:59 +0000</bug_when>
+            <thetext>PageConfig.getDirectoryRedirect() checked the servlet path against Prefix.HIST_P, which is reserved for future use according to the comments in Prefix.java. It should use HIST_L instead.
+
+Checked in a fix and a regression test case.
+
+changeset:   1270:d49f8e8ec30f</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

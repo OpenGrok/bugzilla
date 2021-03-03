@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>19103</bug_id>
+          
+          <creation_ts>2011-12-12 15:30:00 +0000</creation_ts>
+          <short_desc>History view in top level directory of Mercurial repo with long history takes too long</short_desc>
+          <delta_ts>2011-12-12 15:30:47 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>webapp</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>NEW</bug_status>
+          
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>major</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Vladimir Kotal">vladimir.kotal</reporter>
+          <assigned_to name="Lubos Kosco">Lubos.Kosco</assigned_to>
+          <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>85895</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2011-12-12 15:30:47 +0000</bug_when>
+            <thetext>For Mercurial (and other) projects displaying history for the whole project takes too long.
+
+For example try this:
+  http://src.opensolaris.org/source/history/onnv/onnv-gate
+
+Firstly, it takes long time to display (could be minutes on slower HW). Secondly, the page is way too long (ONNV repo has 13k changesets).</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

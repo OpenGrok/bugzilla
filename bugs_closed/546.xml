@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>546</bug_id>
+          
+          <creation_ts>2008-02-17 11:29:00 +0000</creation_ts>
+          <short_desc>IOException when viewing history for xref root in multi-project installation</short_desc>
+          <delta_ts>2008-03-18 06:52:40 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>webapp</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXED</resolution>
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>minor</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Knut Anders Hatlen">knut.hatlen</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>1694</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2008-02-17 11:29:09 +0000</bug_when>
+            <thetext>When I click on the History link on http://src.opensolaris.org/source/xref/ I get this exception:
+
+java.io.IOException: Could not locate index database
+	at org.opensolaris.opengrok.history.DirectoryHistoryReader.(DirectoryHistoryReader.java:75)
+	at org.opensolaris.opengrok.history.DirectoryHistoryParser.parse(DirectoryHistoryParser.java:44)
+	at org.opensolaris.opengrok.history.HistoryCache.get(HistoryCache.java:82)
+	at org.opensolaris.opengrok.history.HistoryGuru.getDirectoryHistoryReader(HistoryGuru.java:247)
+	at org.opensolaris.opengrok.history.HistoryGuru.getHistoryReader(HistoryGuru.java:207)
+	at org.apache.jsp.history_jsp._jspService(history_jsp.java:430)
+	at org.apache.jasper.runtime.HttpJspBase.service(HttpJspBase.java:97)
+	at javax.servlet.http.HttpServlet.service(HttpServlet.java:802)
+	at org.apache.jasper.servlet.JspServletWrapper.service(JspServletWrapper.java:334)
+	at org.apache.jasper.servlet.JspServlet.serviceJspFile(JspServlet.java:314)
+	at org.apache.jasper.servlet.JspServlet.service(JspServlet.java:264)
+	at javax.servlet.http.HttpServlet.service(HttpServlet.java:802)
+	at sun.reflect.GeneratedMethodAccessor48.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:589)
+	at org.apache.catalina.security.SecurityUtil$1.run(SecurityUtil.java:243)
+	at java.security.AccessController.doPrivileged(Native Method)
+	at javax.security.auth.Subject.doAsPrivileged(Subject.java:517)
+	at org.apache.catalina.security.SecurityUtil.execute(SecurityUtil.java:275)
+	at org.apache.catalina.security.SecurityUtil.doAsPrivilege(SecurityUtil.java:161)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:245)
+	at org.apache.catalina.core.ApplicationFilterChain.access$000(ApplicationFilterChain.java:50)
+	at org.apache.catalina.core.ApplicationFilterChain$1.run(ApplicationFilterChain.java:156)
+	at java.security.AccessController.doPrivileged(Native Method)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:152)
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:213)
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:178)
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:126)
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:105)
+	at org.apache.catalina.valves.AccessLogValve.invoke(AccessLogValve.java:541)
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:107)
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:148)
+	at org.apache.coyote.http11.Http11Processor.process(Http11Processor.java:869)
+	at org.apache.coyote.http11.Http11BaseProtocol$Http11ConnectionHandler.processConnection(Http11BaseProtocol.java:664)
+	at org.apache.tomcat.util.net.PoolTcpEndpoint.processSocket(PoolTcpEndpoint.java:527)
+	at org.apache.tomcat.util.net.LeaderFollowerWorkerThread.runIt(LeaderFollowerWorkerThread.java:80)
+	at org.apache.tomcat.util.threads.ThreadPool$ControlRunnable.run(ThreadPool.java:684)
+	at java.lang.Thread.run(Thread.java:619)</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>2634</commentid>
+            <who name="Trond Norbye">trond.norbye</who>
+            <bug_when>2008-03-18 06:52:40 +0000</bug_when>
+            <thetext>Don&apos;t display the history link unless history information is available for the directory / file.
+
+Fixed in changeset: 256:c86a10624b8b</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>2636</commentid>
+            <who name="Trond Norbye">trond.norbye</who>
+            <bug_when>2008-03-18 06:55:15 +0000</bug_when>
+            <thetext>*** Bug 547 has been marked as a duplicate of this bug. ***</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

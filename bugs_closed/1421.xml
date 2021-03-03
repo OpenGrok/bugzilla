@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>1421</bug_id>
+          
+          <creation_ts>2008-04-22 07:35:00 +0000</creation_ts>
+          <short_desc>Error 404 issues when trying to access GTK+ patches</short_desc>
+          <delta_ts>2008-05-30 05:03:04 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>webapp</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>OpenSolaris</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>DUPLICATE</resolution>
+          <dup_id>1135</dup_id>
+          
+          
+          
+          <keywords>in-preview2</keywords>
+          <priority>P4</priority>
+          <bug_severity>major</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Ken Mays">maybird1776</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          <cc>sylvain.pasche</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>4715</commentid>
+            <who name="Ken Mays">maybird1776</who>
+            <bug_when>2008-04-22 07:35:47 +0000</bug_when>
+            <thetext>JDS Patches - file access issues (&apos;file not found&apos; error) when you try to display GTK+ patches through the Source Code Browser (i.e. OpenGrok) of the openSolaris.org web portal:
+
+Example: http://src.opensolaris.org/source/xref/jds/spec-files/trunk/patches/gtk%2B-01-window-icons-for-message-dialog.diff</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>5476</commentid>
+            <who name="Sylvain Pasche">sylvain.pasche</who>
+            <bug_when>2008-04-25 15:56:46 +0000</bug_when>
+            <thetext>I see something similar. I configured an OpenGrok instance to index the gtk+ sources, and I&apos;m getting a 404 error if I try to access any source file in that directory. The gtk+ source directory contains a &quot;+&quot; which seems to be the issue, because other directories are working fine (this is OpenGrok 0.6).</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>5481</commentid>
+            <who name="Sylvain Pasche">sylvain.pasche</who>
+            <bug_when>2008-04-25 16:03:45 +0000</bug_when>
+            <thetext>It is interpreting the &quot;+&quot; character as a space when translating the URL to a path.
+I could create a symbolic link named &quot;gtk &quot; pointing to &quot;gtk+&quot; as a workaround.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>7522</commentid>
+            <who name="Trond Norbye">trond.norbye</who>
+            <bug_when>2008-05-30 05:03:04 +0000</bug_when>
+            <thetext>
+
+*** This bug has been marked as a duplicate of bug 1135 ***</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

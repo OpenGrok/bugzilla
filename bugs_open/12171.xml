@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>12171</bug_id>
+          
+          <creation_ts>2009-10-22 09:36:00 +0000</creation_ts>
+          <short_desc>we fork hg(other scms?) for every file in a nested repository</short_desc>
+          <delta_ts>2010-04-30 13:40:18 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>scm</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>NEW</bug_status>
+          
+          
+          
+          
+          
+          
+          <priority>P2</priority>
+          <bug_severity>minor</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Lubos Kosco">Lubos.Kosco</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          <cc>garen</cc>
+    
+    <cc>knut.hatlen</cc>
+    
+    <cc>vitezslav.batrla</cc>
+    
+    <cc>vladimir.kotal</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>53775</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2009-10-22 09:36:48 +0000</bug_when>
+            <thetext>steps to reproduce:
+
+1) create a clone of onnv with closed source (which is a nested repo):
+http://onnv.sfbay.sun.com/README.html
+look for Bringing over section which explains how to create such repo
+
+2) index it with mercurial history support enabled
+
+observe forking of hg for closed part of the gate ...</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>55821</commentid>
+            <who name="Garen">garen</who>
+            <bug_when>2009-11-10 12:08:19 +0000</bug_when>
+            <thetext>Yes,
+
+It does happens with ClearCase (cleartool command line program) too.  Never could get it to completely get all the history, even after 48-hours, so have been disabling it for now.  
+
+In general, the CC support needs to be improved to get more data on each request. I have some patches for it, but they need to be cleaned up.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>72323</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2010-04-30 13:39:42 +0000</bug_when>
+            <thetext>ok, got some hypothesis here - it seems it happens because we don&apos;t properly detect to which repository the file belongs if there is a nested repo
+
+so I guess if this check is fixed this bug could be closed
+
+Garen ... send the patches, we will clear them ;)</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>72324</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2010-04-30 13:40:18 +0000</bug_when>
+            <thetext>*clear - 
+I mean we will clean them up ;)</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

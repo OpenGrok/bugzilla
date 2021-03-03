@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>3226</bug_id>
+          
+          <creation_ts>2008-09-04 02:32:00 +0000</creation_ts>
+          <short_desc>ParseException for RCS files</short_desc>
+          <delta_ts>2008-09-05 12:57:28 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>scm</component>
+          <version>unspecified</version>
+          <rep_platform>Other</rep_platform>
+          <op_sys>Solaris</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXED</resolution>
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>minor</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Trond Norbye">trond.norbye</reporter>
+          <assigned_to name="Knut Anders Hatlen">knut.hatlen</assigned_to>
+          <cc>knut.hatlen</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>11701</commentid>
+            <who name="Trond Norbye">trond.norbye</who>
+            <bug_when>2008-09-04 02:32:42 +0000</bug_when>
+            <thetext>The getRevision test in HistoryGuruTest fails with the following stack-trace for RCS:
+
+org.opensolaris.opengrok.history.RCSRepository getHistoryGet
+SEVERE: Failed to retrieve revision 1.1 of header.h
+java.io.IOException: Parse error: Parse error at line 1, column 0.  Encountered: #include
+	at org.opensolaris.opengrok.history.RCSRepository.wrapInIOException(RCSRepository.java:115)
+	at org.opensolaris.opengrok.history.RCSget.&lt;init&gt;(RCSget.java:64)
+	at org.opensolaris.opengrok.history.RCSRepository.getHistoryGet(RCSRepository.java:62)
+	at org.opensolaris.opengrok.history.HistoryGuru.getRevision(HistoryGuru.java:165)
+	at org.opensolaris.opengrok.history.HistoryGuruTest.getRevision(HistoryGuruTest.java:120)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at org.junit.internal.runners.TestMethodRunner.executeMethodBody(TestMethodRunner.java:99)
+	at org.junit.internal.runners.TestMethodRunner.runUnprotected(TestMethodRunner.java:81)
+	at org.junit.internal.runners.BeforeAndAfterRunner.runProtected(BeforeAndAfterRunner.java:34)
+	at org.junit.internal.runners.TestMethodRunner.runMethod(TestMethodRunner.java:75)
+	at org.junit.internal.runners.TestMethodRunner.run(TestMethodRunner.java:45)
+	at org.junit.internal.runners.TestClassMethodsRunner.invokeTestMethod(TestClassMethodsRunner.java:71)
+	at org.junit.internal.runners.TestClassMethodsRunner.run(TestClassMethodsRunner.java:35)
+	at org.junit.internal.runners.TestClassRunner$1.runUnprotected(TestClassRunner.java:42)
+	at org.junit.internal.runners.BeforeAndAfterRunner.runProtected(BeforeAndAfterRunner.java:34)
+	at org.junit.internal.runners.TestClassRunner.run(TestClassRunner.java:52)
+	at junit.framework.JUnit4TestAdapter.run(JUnit4TestAdapter.java:32)
+	at org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner.run(JUnitTestRunner.java:516)
+	at org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner.launch(JUnitTestRunner.java:1032)
+	at org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner.main(JUnitTestRunner.java:886)
+Caused by: org.apache.commons.jrcs.rcs.ParseException: Parse error at line 1, column 0.  Encountered: #include
+	at org.apache.commons.jrcs.rcs.ArchiveParser.generateParseException(ArchiveParser.java:497)
+	at org.apache.commons.jrcs.rcs.ArchiveParser.jj_consume_token(ArchiveParser.java:475)
+	at org.apache.commons.jrcs.rcs.ArchiveParser.admin(ArchiveParser.java:116)
+	at org.apache.commons.jrcs.rcs.ArchiveParser.archive(ArchiveParser.java:84)
+	at org.apache.commons.jrcs.rcs.ArchiveParser.load(ArchiveParser.java:59)
+	at org.apache.commons.jrcs.rcs.ArchiveParser.load(ArchiveParser.java:64)
+	at org.apache.commons.jrcs.rcs.Archive.&lt;init&gt;(Archive.java:241)
+	at org.opensolaris.opengrok.history.RCSget.&lt;init&gt;(RCSget.java:48)
+	... 21 more</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>11862</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2008-09-05 12:57:28 +0000</bug_when>
+            <thetext>Fixed in changeset 557:d950f5889576.</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

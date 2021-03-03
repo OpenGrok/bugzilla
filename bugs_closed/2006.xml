@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>2006</bug_id>
+          
+          <creation_ts>2008-05-21 05:07:00 +0000</creation_ts>
+          <short_desc>sccs command is not taken from configuration.xml</short_desc>
+          <delta_ts>2008-05-22 07:55:29 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>scm</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>Solaris</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXED</resolution>
+          
+          
+          
+          
+          
+          <priority>P4</priority>
+          <bug_severity>minor</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Lubos Kosco">Lubos.Kosco</reporter>
+          <assigned_to name="Lubos Kosco">Lubos.Kosco</assigned_to>
+          
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>7137</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2008-05-21 05:07:33 +0000</bug_when>
+            <thetext> </thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>7138</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2008-05-21 05:14:25 +0000</bug_when>
+            <thetext>SCCSGet only takes sccs command from the property  e.g. &quot; -Dorg.opensolaris.opengrok.history.Teamware=/usr/ccs/bin/sccs &quot;
+
+in comparison to hg , which persists this to configuration.xml and takes it from there, sccs ignores this configuration entry ...
+
+hence webapp history is broken, if web container doesn&apos;t contain path to sccs in its path ...</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>7230</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2008-05-22 07:29:01 +0000</bug_when>
+            <thetext>SCCSGet will still take the system property as default, HOWEVER if there is a configuration for TeamwareRepository it will use the one from config</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>7231</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2008-05-22 07:55:29 +0000</bug_when>
+            <thetext>A workaround for older Opengrok releases ( 0.6.1 and older)
+is to always have a path containing sccs for your web container</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

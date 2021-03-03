@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>19227</bug_id>
+          
+          <creation_ts>2012-07-10 12:46:00 +0000</creation_ts>
+          <short_desc>Selecting all projects creates a long GET query</short_desc>
+          <delta_ts>2012-07-19 22:31:17 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>webapp</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>NEW</bug_status>
+          
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>enhancement</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Deniz Türkoglu">deniz</reporter>
+          <assigned_to name="Lubos Kosco">Lubos.Kosco</assigned_to>
+          <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>86532</commentid>
+              <attachid>4666</attachid>
+            <who name="Deniz Türkoglu">deniz</who>
+            <bug_when>2012-07-10 12:46:59 +0000</bug_when>
+            <thetext>Created attachment 4666
+Patch for adding &apos;allProjects&apos; parameter
+
+Currently OpenGrok sends all projects one by one in the GET request. This makes the request quite big when you have a lot repositories, leading to problems, such as 400 - Bad request.
+
+Attached is a patch that adds a new parameter &apos;allProjects&apos; so we can create reasonably sized GET requests. Tested on Opera, Safari, Chrome and Firefox.</thetext>
+          </long_desc>
+      
+          <attachment
+              isobsolete="0"
+              ispatch="1"
+              isprivate="0"
+              isurl="0"
+          >
+            <attachid>4666</attachid>
+            <date>2012-07-10 12:46:00 +0000</date>
+            <delta_ts>2012-07-19 22:31:17 +0000</delta_ts>
+            <desc>Patch for adding &apos;allProjects&apos; parameter</desc>
+            <filename>allprojects.diff</filename>
+            <type>text/plain</type>
+            <size>6917</size>
+            <attacher>deniz</attacher>
+            
+              <data encoding="base64">Y29tbWl0IGE5NWExYTQ4MGIyMzY4ZGQ2NTJkNDIxZTQyMDZhOTBhNTMxYzNhYzAKQXV0aG9yOiBE
+ZW5peiBUdcyIcmtvZ2x1IDxkZW5pekBzcG90aWZ5LmNvbT4KRGF0ZTogICBXZWQgSnVsIDQgMTI6
+MzI6NTIgMjAxMiArMDIwMAoKICAgIE1ha2UgYWxsUHJvamVjdHMgYSBzaW5nbGUgR0VUIHBhcmFt
+ZXRlcgogICAgCiAgICBDdXJyZW50bHkgT3Blbkdyb2sgc2VuZHMgYWxsIHByb2plY3RzIG9uZSBi
+eSBvbmUKICAgIGluIHRoZSBHRVQgcmVxdWVzdC4gVGhpcyBtYWtlcyB0aGUgcmVxdWVzdCBodWdl
+CiAgICBjb25zaWRlcmluZyB3ZSBoYXZlIGxvdHMgb2YgcmVwb3NpdG9yaWVzLgogICAgCiAgICBB
+ZGRlZCBhIG5ldyBwYXJhbWV0ZXIgJ2FsbFByb2plY3RzJyBzbyB3ZSBjYW4gY3JlYXRlCiAgICBy
+ZWFzb25hYmx5IHNpemVkIEdFVCByZXF1ZXN0cy4KICAgIAogICAgVGVzdGVkIG9uIE9wZXJhLCBT
+YWZhcmksIENocm9tZSBhbmQgRmlyZWZveC4KICAgIAogICAgQ2hhbmdlLUlkOiBJZjZlMjI3Mjhj
+ODU0ZGVjNDcwYmNlOGY2N2NjZmEwMWUyNWMyYzk0NQoKZGlmZiAtLWdpdCBhL3NyYy9vcmcvb3Bl
+bnNvbGFyaXMvb3Blbmdyb2svd2ViL1BhZ2VDb25maWcuamF2YSBiL3NyYy9vcmcvb3BlbnNvbGFy
+aXMvb3Blbmdyb2svd2ViL1BhZ2VDb25maWcuamF2YQppbmRleCBjYWRhZDQxLi5jOTI3YTU5IDEw
+MDY0NAotLS0gYS9zcmMvb3JnL29wZW5zb2xhcmlzL29wZW5ncm9rL3dlYi9QYWdlQ29uZmlnLmph
+dmEKKysrIGIvc3JjL29yZy9vcGVuc29sYXJpcy9vcGVuZ3Jvay93ZWIvUGFnZUNvbmZpZy5qYXZh
+CkBAIC0yNjksNiArMjY5LDE2IEBAIHB1YmxpYyBmaW5hbCBjbGFzcyBQYWdlQ29uZmlnIHsKICAg
+ICB9CiAKICAgICAvKioKKyAgICAgKiBDaGVjaywgd2hldGhlciBhbGwgcHJvamVjdHMgYXJlIHRv
+IGJlIGluY2x1ZGVkIGluIHRoZSBzZWFyY2gKKyAgICAgKiBAcmV0dXJuIHtAY29kZSB0cnVlfSBp
+ZiBhIHJlcXVlc3QgcGFyYW1ldGVyIHtAY29kZSBhbGxwcm9qZWN0c30gd2l0aCB0aGUKKyAgICAg
+KiAgbGl0ZXJhbCB2YWx1ZSB7QGNvZGUgMX0gd2FzIGZvdW5kLgorICAgICAqLworICAgIHB1Ymxp
+YyBib29sZWFuIGlzQWxsUHJvamVjdHMoKSB7CisgICAgICAgIFN0cmluZyB2YWwgPSByZXEuZ2V0
+UGFyYW1ldGVyKCJhbGxwcm9qZWN0cyIpOworICAgICAgICByZXR1cm4gdmFsICE9IG51bGwgJiYg
+dmFsLmVxdWFscygiMSIpOworICAgIH0KKworICAgIC8qKgogICAgICAqIENoZWNrLCB3aGV0aGVy
+IHRoZSByZXF1ZXN0IGNvbnRhaW5zIG1pbmltYWwgaW5mb3JtYXRpb24gcmVxdWlyZWQgdG8KICAg
+ICAgKiBwcm9kdWNlIGEgdmFsaWQgcGFnZS4gSWYgdGhpcyBtZXRob2QgcmV0dXJucyBhbiBlbXB0
+eSBzdHJpbmcsIHRoZQogICAgICAqIHJlZmVycmVkIGZpbGUgb3IgZGlyZWN0b3J5IGFjdHVhbGx5
+IGV4aXN0cyBiZWxvdyB0aGUgc291cmNlIHJvb3QKQEAgLTY3Niw2ICs2ODYsMTUgQEAgcHVibGlj
+IGZpbmFsIGNsYXNzIFBhZ2VDb25maWcgewogICAgICAqIDwvb2w+CiAgICAgICovCiAgICAgcHVi
+bGljIFNvcnRlZFNldDxTdHJpbmc+IGdldFJlcXVlc3RlZFByb2plY3RzKCkgeworICAgICAgICBp
+Zihpc0FsbFByb2plY3RzKCkpIHsKKyAgICAgICAgICAgIExpc3Q8UHJvamVjdD4gYWxsUHJvamVj
+dHMgPSBnZXRFbnYoKS5nZXRQcm9qZWN0cygpOworICAgICAgICAgICAgaWYoYWxsUHJvamVjdHMg
+IT0gbnVsbCkgeworICAgICAgICAgICAgICAgIHJlcXVlc3RlZFByb2plY3RzID0gbmV3IFRyZWVT
+ZXQ8U3RyaW5nPigpOworICAgICAgICAgICAgICAgIGZvciAoUHJvamVjdCBwIDogYWxsUHJvamVj
+dHMpIHsKKyAgICAgICAgICAgICAgICAgICAgcmVxdWVzdGVkUHJvamVjdHMuYWRkKHAuZ2V0RGVz
+Y3JpcHRpb24oKSk7CisgICAgICAgICAgICAgICAgfQorICAgICAgICAgICAgfQorICAgICAgICB9
+CiAgICAgICAgIGlmIChyZXF1ZXN0ZWRQcm9qZWN0cyA9PSBudWxsKSB7CiAgICAgICAgICAgICBy
+ZXF1ZXN0ZWRQcm9qZWN0cyA9CiAgICAgICAgICAgICAgICAgICAgIGdldFJlcXVlc3RlZFByb2pl
+Y3RzKCJwcm9qZWN0IiwgIk9wZW5Hcm9rUHJvamVjdCIpOwpkaWZmIC0tZ2l0IGEvd2ViL2RlZmF1
+bHQvc3R5bGUuY3NzIGIvd2ViL2RlZmF1bHQvc3R5bGUuY3NzCmluZGV4IDFiMzFlMTguLmU1Y2Uz
+ZjEgMTAwNjQ0Ci0tLSBhL3dlYi9kZWZhdWx0L3N0eWxlLmNzcworKysgYi93ZWIvZGVmYXVsdC9z
+dHlsZS5jc3MKQEAgLTUxLDYgKzUxLDE0IEBAIGlucHV0LCBidXR0b24gewogCWJhY2tncm91bmQt
+Y29sb3I6ICNhM2I4Y2I7CiB9CiAKKy5qcy1saW5rIHsKKyAgICBjb2xvcjogIzFGNEY4MjsKK30K
+KworLmpzLWxpbms6aG92ZXIgeworICAgIHRleHQtZGVjb3JhdGlvbjogdW5kZXJsaW5lOworfQor
+CiAvKiBiZWxvdyBzZWVtcyB0byBiZSBhIHByb2JsZW0gZm9yIGlucHV0IGJveGVzLCB3aGVyZSB0
+aGUgY29sb3Igd2lsbCBvdmVyd3JpdGUgdGhlIHRleHQgaW5zaWRlLCBsZXQncyBsZWF2ZSBpdCBm
+b3IgYnV0dG9ucyB0aG91Z2gKIGZvciBzZWFyY2ggYW5kIGNsZWFyIGJ1dHRvbnMgd2lsbCBtYWtl
+IGl0IHBhcnQgb2Ygc3VibWl0IGNsYXNzIE9OTFkgKi8KIGlucHV0LnN1Ym1pdDpob3ZlciwgaW5w
+dXQuc3VibWl0OmFjdGl2ZSwKZGlmZiAtLWdpdCBhL3dlYi9tZW51LmpzcGYgYi93ZWIvbWVudS5q
+c3BmCmluZGV4IDk2ZjkzM2IuLjYzZWJkN2YgMTAwNjQ0Ci0tLSBhL3dlYi9tZW51LmpzcGYKKysr
+IGIvd2ViL21lbnUuanNwZgpAQCAtMTQwLDExICsxNDAsMjEgQEAgb3JnLm9wZW5zb2xhcmlzLm9w
+ZW5ncm9rLndlYi5VdGlsIgogICAgIGlmIChwcm9qZWN0cy5zaXplKCkgIT0gMCkgewogJT4KIDxk
+aXYgaWQ9InB0YmwiPgotICAgIDxwPjxsYWJlbCBmb3I9InByb2plY3QiPkluIFByb2plY3Qocyk8
+L2xhYmVsPiA8YnV0dG9uIHRhYmluZGV4PSI2IiB0eXBlPSJidXR0b24iCi0gICAgICAgIG9uY2xp
+Y2s9ImphdmFzY3JpcHQ6IHNlbGVjdEFsbFByb2plY3RzKCk7IHJldHVybiBmYWxzZTsiCi0gICAg
+ICAgID5zZWxlY3QgYWxsPC9idXR0b24+Jm5ic3A7PGJ1dHRvbiB0YWJpbmRleD0iNyIgdHlwZT0i
+YnV0dG9uIgotICAgICAgICBvbmNsaWNrPSJqYXZhc2NyaXB0OiBpbnZlcnRBbGxQcm9qZWN0cygp
+OyByZXR1cm4gZmFsc2U7IgotICAgICAgICA+aW52ZXJ0IHNlbGVjdGlvbjwvYnV0dG9uPiA8L3A+
+CisgICAgPHA+PGxhYmVsIGZvcj0icHJvamVjdCI+SW4gUHJvamVjdChzKTwvbGFiZWw+CisgICAg
+IDxpbnB1dCB0eXBlPSJjaGVja2JveCIgaWQ9ImFsbHByb2plY3RzIiBuYW1lPSJhbGxwcm9qZWN0
+cyIgdmFsdWU9IjEiCisgICAgIG9uY2xpY2s9ImphdmFzY3JpcHQ6IHNlbGVjdEFsbFByb2plY3Rz
+KCk7IHJldHVybiB0cnVlOyIKKyAgICAgPCUKKyAgICAgICAgU3RyaW5nIGFsbFByb2plY3RzUGFy
+YW0gPSByZXF1ZXN0LmdldFBhcmFtZXRlcigiYWxscHJvamVjdHMiKTsKKyAgICAgICAgIGlmIChh
+bGxQcm9qZWN0c1BhcmFtICE9IG51bGwgJiYgYWxsUHJvamVjdHNQYXJhbS5lcXVhbHMoIjEiKSkg
+eworICAgICU+Y2hlY2tlZD0iY2hlY2tlZCI8JQorICAgICAgICAgfQorICAgICAlPgorICAgICA+
+PC9pbnB1dD4KKyAgICAgPGxhYmVsIGNsYXNzPSJqcy1saW5rIiBpZD0iYWxscHJvamVjdHMtbGFi
+ZWwiIGZvcj0iYWxscHJvamVjdHMiIHRhYmluZGV4PSI2Ij4KKyAgICAgICAgIHNlbGVjdCBhbGw8
+L2xhYmVsPgorICAgICZuYnNwO3wmbmJzcDs8bGFiZWwKKyAgICAgICAgY2xhc3M9ImpzLWxpbmsi
+IG9uY2xpY2s9ImphdmFzY3JpcHQ6IGludmVydEFsbFByb2plY3RzKCk7IHJldHVybiBmYWxzZTsi
+CisgICAgICAgID5pbnZlcnQgc2VsZWN0aW9uPC9sYWJlbD4gPC9wPgogICAgIDxzZWxlY3QgdGFi
+aW5kZXg9IjgiIG9uZGJsY2xpY2s9ImphdmFzY3JpcHQ6IGdvRmlyc3RQcm9qZWN0KCk7IgogICAg
+ICAgICBvbmtleXVwPSJqYXZhc2NyaXB0OiBjaGVja0VudGVyKGV2ZW50KTsiIGNsYXNzPSJxIiBp
+ZD0icHJvamVjdCIKICAgICAgICAgbmFtZT0icHJvamVjdCIgbXVsdGlwbGU9Im11bHRpcGxlIiBz
+aXplPSI8JT0KZGlmZiAtLWdpdCBhL3dlYi9wcm9qZWN0cy5qc3BmIGIvd2ViL3Byb2plY3RzLmpz
+cGYKaW5kZXggMzMwZjkxNi4uZjNmNTEzMiAxMDA2NDQKLS0tIGEvd2ViL3Byb2plY3RzLmpzcGYK
+KysrIGIvd2ViL3Byb2plY3RzLmpzcGYKQEAgLTM5LDcgKzM5LDcgQEAgb3JnLm9wZW5zb2xhcmlz
+Lm9wZW5ncm9rLmNvbmZpZ3VyYXRpb24uUHJvamVjdAogICAgIGNmZy5nZXRFbnYoKS5zZXRVcmxQ
+cmVmaXgocmVxdWVzdC5nZXRDb250ZXh0UGF0aCgpICsgUHJlZml4LlNFQVJDSF9SICsgIj8iKTsK
+IAogICAgIFN0cmluZyBwcm9qZWN0cyA9IGNmZy5nZXRSZXF1ZXN0ZWRQcm9qZWN0c0FzU3RyaW5n
+KCk7Ci0gICAgaWYgKHByb2plY3RzLmxlbmd0aCgpICE9IDApIHsKKyAgICBpZiAocHJvamVjdHMu
+bGVuZ3RoKCkgIT0gMCAmJiAhY2ZnLmlzQWxsUHJvamVjdHMoKSkgewogICAgICAgICBDb29raWUg
+Y29va2llID0gbmV3IENvb2tpZSgiT3Blbkdyb2tQcm9qZWN0IiwgcHJvamVjdHMpOwogICAgICAg
+ICByZXNwb25zZS5hZGRDb29raWUoY29va2llKTsKICAgICB9CmRpZmYgLS1naXQgYS93ZWIvc2Vh
+cmNoLmpzcCBiL3dlYi9zZWFyY2guanNwCmluZGV4IDA5NTgxMTUuLjJiN2RmODUgMTAwNjQ0Ci0t
+LSBhL3dlYi9zZWFyY2guanNwCisrKyBiL3dlYi9zZWFyY2guanNwCkBAIC00Niw3ICs0NiwxMCBA
+QCBpbmNsdWRlIGZpbGU9InByb2plY3RzLmpzcGYiCiAgICAgICAgICAgICBVdGlsLmFwcGVuZFF1
+ZXJ5KHVybCwgInBhdGgiLCBxYi5nZXRQYXRoKCkpOwogICAgICAgICAgICAgVXRpbC5hcHBlbmRR
+dWVyeSh1cmwsICJoaXN0IiwgcWIuZ2V0SGlzdCgpKTsKICAgICAgICAgfQotICAgICAgICBpZiAo
+c2gucHJvamVjdHMgIT0gbnVsbCAmJiBzaC5wcm9qZWN0cy5zaXplKCkgIT0gMCkgeworICAgICAg
+ICBpZihjZmcuaXNBbGxQcm9qZWN0cygpKSB7CisgICAgICAgICAgICBVdGlsLmFwcGVuZFF1ZXJ5
+KHVybCwgImFsbHByb2plY3RzIiwgIjEiKTsKKyAgICAgICAgfQorICAgICAgICBlbHNlIGlmIChz
+aC5wcm9qZWN0cyAhPSBudWxsICYmIHNoLnByb2plY3RzLnNpemUoKSAhPSAwKSB7CiAgICAgICAg
+ICAgICBVdGlsLmFwcGVuZFF1ZXJ5KHVybCwgInByb2plY3QiLCBjZmcuZ2V0UmVxdWVzdGVkUHJv
+amVjdHNBc1N0cmluZygpKTsKICAgICAgICAgfQogICAgICAgICByZXR1cm4gdXJsOwpkaWZmIC0t
+Z2l0IGEvd2ViL3V0aWxzLmpzIGIvd2ViL3V0aWxzLmpzCmluZGV4IGY2ZTVkNzMuLjViZTkzYmUg
+MTAwNjQ0Ci0tLSBhL3dlYi91dGlscy5qcworKysgYi93ZWIvdXRpbHMuanMKQEAgLTI5LDEwICsy
+OSwxOCBAQCB3aW5kb3cub25sb2FkID0gZnVuY3Rpb24oKSB7CiAgICAgfQogfQogCiskLnVybFBh
+cmFtID0gZnVuY3Rpb24obmFtZSl7CisgICAgdmFyIHJlc3VsdHMgPSBuZXcgUmVnRXhwKCdbXFw/
+Jl0nICsgbmFtZSArICc9KFteJiNdKiknKS5leGVjKHdpbmRvdy5sb2NhdGlvbi5ocmVmKTsKKyAg
+ICByZXR1cm4gcmVzdWx0c1sxXSB8fCAwOworfQorCiAkKGRvY3VtZW50KS5yZWFkeShmdW5jdGlv
+bigpIHsKICAgICBmb3IodmFyIGkgaW4gdGhpcy5kb21SZWFkeSkgewogICAgICAgICBkb2N1bWVu
+dC5kb21SZWFkeVtpXSgpOwogICAgIH0KKyAgICBpZigkLnVybFBhcmFtKCdhbGxwcm9qZWN0cycp
+KSB7CisgICAgICAgIHNlbGVjdEFsbFByb2plY3RzKCk7CisgICAgfQogfSk7CiAKIC8qKgpAQCAt
+MzY1LDE5ICszNzMsMjkgQEAgZnVuY3Rpb24gdG9nZ2xlZGlmZnMoKSB7CiB9CiAKIGZ1bmN0aW9u
+IHNlbGVjdEFsbFByb2plY3RzKCkgewotICAgICQoIiNwcm9qZWN0ICoiKS5hdHRyKCJzZWxlY3Rl
+ZCIsICJzZWxlY3RlZCIpOworICAgIGlmKCQoJyNhbGxwcm9qZWN0cycpLmlzKCc6Y2hlY2tlZCcp
+KSB7CisgICAgICAgICQoIiNwcm9qZWN0ICoiKS5hdHRyKCJzZWxlY3RlZCIsICJzZWxlY3RlZCIp
+OworICAgICAgICAkKCIjcHJvamVjdCIpLmF0dHIoJ2Rpc2FibGVkJywnZGlzYWJsZWQnKTsKKyAg
+ICAgICAgJCgiI2FsbHByb2plY3RzLWxhYmVsIikudGV4dCgnc2VsZWN0IG5vbmUnKTsKKyAgICB9
+IGVsc2UgeworICAgICAgICAkKCIjcHJvamVjdCAqIikucmVtb3ZlQXR0cigic2VsZWN0ZWQiLCAi
+c2VsZWN0ZWQiKTsKKyAgICAgICAgJCgiI3Byb2plY3QiKS5yZW1vdmVBdHRyKCdkaXNhYmxlZCcp
+OworICAgICAgICAkKCIjYWxscHJvamVjdHMtbGFiZWwiKS50ZXh0KCdzZWxlY3QgYWxsJyk7Cisg
+ICAgfQogfQogCiBmdW5jdGlvbiBpbnZlcnRBbGxQcm9qZWN0cygpIHsKLSAgICAkKCIjcHJvamVj
+dCAqIikuZWFjaCgKLSAgICAgICAgZnVuY3Rpb24oKSB7Ci0gICAgICAgICAgICBpZiAoJCh0aGlz
+KS5hdHRyKCJzZWxlY3RlZCIpKSB7Ci0gICAgICAgICAgICAgICAgJCh0aGlzKS5yZW1vdmVBdHRy
+KCJzZWxlY3RlZCIpCi0gICAgICAgICAgICB9IGVsc2UgewotICAgICAgICAgICAgICAgICQodGhp
+cykuYXR0cigic2VsZWN0ZWQiLCAidHJ1ZSIpOworICAgIGlmKCEkKCcjYWxscHJvamVjdHMnKS5p
+cygnOmNoZWNrZWQnKSkgeworICAgICAgICAkKCIjcHJvamVjdCAqIikuZWFjaCgKKyAgICAgICAg
+ICAgIGZ1bmN0aW9uKCkgeworICAgICAgICAgICAgICAgIGlmICgkKHRoaXMpLmF0dHIoInNlbGVj
+dGVkIikpIHsKKyAgICAgICAgICAgICAgICAgICAgJCh0aGlzKS5yZW1vdmVBdHRyKCJzZWxlY3Rl
+ZCIpCisgICAgICAgICAgICAgICAgfSBlbHNlIHsKKyAgICAgICAgICAgICAgICAgICAgJCh0aGlz
+KS5hdHRyKCJzZWxlY3RlZCIsICJ0cnVlIik7CisgICAgICAgICAgICAgICAgfQogICAgICAgICAg
+ICAgfQotICAgICAgICB9Ci0gICAgKTsKKyAgICAgICAgKTsKKyAgICB9CiB9CiAKIGZ1bmN0aW9u
+IGdvRmlyc3RQcm9qZWN0KCkgewo=
+</data>
+
+          </attachment>
+      
+
+    </bug>
+
+</bugzilla>

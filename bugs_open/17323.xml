@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>17323</bug_id>
+          
+          <creation_ts>2010-11-02 05:59:00 +0000</creation_ts>
+          <short_desc>OpenGrok History showing a commit which is not part of git log on a certain branch</short_desc>
+          <delta_ts>2011-01-12 08:38:01 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>scm</component>
+          <version>unspecified</version>
+          <rep_platform>i86pc/amd64</rep_platform>
+          <op_sys>Linux</op_sys>
+          <bug_status>ACCEPTED</bug_status>
+          
+          
+          
+          
+          
+          
+          <priority>P2</priority>
+          <bug_severity>minor</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Ragesh Nair">Ragesh.X.Nair</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>78871</commentid>
+            <who name="Ragesh Nair">Ragesh.X.Nair</who>
+            <bug_when>2010-11-02 05:59:36 +0000</bug_when>
+            <thetext>I am facing a problem with OpenGrok (version 0.9) that when I index my project (GIT SCM), its showing a SHA1 as latest which is not available if I do a git log in the project. My steps are as below.
+
+cd SRC
+repo init -u git://mygitserver/mymanifest.git -b mybranch
+repo sync
+
+I now do indexing and when I go to history of a particular file, say A (through browser), it has SHA1 X as latest. I go to SRC/project.git and do &quot;git log A&quot;, the SHA1 X is not present. But the SHA1 is available in that project and I can see the details by &quot;git show X&quot; however its not present in the branch mybranch (now?). 
+
+I am not sure how I can give more useful information to narrate my situation. I am not sure if the SHA1 X was there in my branch earlier and now its removed causing issue. I have deleted the historycache/for/file/A and reindexed to see if I get new history, but still its having SHA1 X.
+
+Since its a production server I dont want to delete entire data folder and reindex. Also I am not sure if I have some other files having similar issues.
+
+Please let me know how I can fix this. If need any more information, please let me know. I am happy to provide.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>80328</commentid>
+            <who name="Trond Norbye">trond.norbye</who>
+            <bug_when>2011-01-06 11:16:55 +0000</bug_when>
+            <thetext>OpenGrok will create the log by running:
+
+git log --name-only --pretty=fuller
+
+and try to parse the output. It could be that we&apos;ve got a bug in our parser causing it to extract filenames / sha1&apos;s from the comment section... Could you look at the output from the above command and see if it could be the case? If so, could you post the output so that we can fix the parser?</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>80435</commentid>
+            <who name="Ragesh Nair">Ragesh.X.Nair</who>
+            <bug_when>2011-01-12 06:41:35 +0000</bug_when>
+            <thetext>I had a look again in my issue. I have below findings.
+
+Inside my git if I give git log --name-only --pretty=fuller ; I am getting the SHA1 which is having issue. That means the commit is part of that branch and git. However when I give &quot;git log --name-only --pretty=fuller filename&quot; ; the SHA1 is not shown. This is but incorrect in this case it seems as I can see the &quot;filename&quot; part of that SHA1 by looking at &quot;git show SHA1&quot;. So I believe what OpenGrok is doing is correct (?). 
+
+Its showing a SHA1 X in the history of a file Y whereas &quot;git log Y&quot; is not showing that SHA1, eventhough &quot;git show X&quot; has file Y changes part of commit X. 
+
+Now I dont know if its a git issue. However the user is confused since he cant see the SHA1 X when he do &quot;git log Y&quot; but OpenGrok is  showing it.
+
+Please let me know how I can be more helpful in closing the issue.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>80436</commentid>
+            <who name="Trond Norbye">trond.norbye</who>
+            <bug_when>2011-01-12 06:47:54 +0000</bug_when>
+            <thetext>Could it be that a file with that name has been deleted and recreated at a later time?
+
+We don&apos;t want to revert back to getting the log per file, because that would make the indexing phase really slow on large repositories..</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>80437</commentid>
+            <who name="Ragesh Nair">Ragesh.X.Nair</who>
+            <bug_when>2011-01-12 08:38:01 +0000</bug_when>
+            <thetext>
+(In reply to comment #3)
+&gt; Could it be that a file with that name has been deleted and recreated at a
+&gt; later time?
+&gt; We don&apos;t want to revert back to getting the log per file, because that would
+&gt; make the indexing phase really slow on large repositories..
+
+Yes the file was deleted in one commit.
+
+&quot;git log --diff-filter=D -- Y&quot; gave me one SHA1 which is present in the git log of that particular Git + branch. I can see the file Y being deleted in that commit by git show SHA1.
+
+So whats the conclusion?
+
+I also dont want any performance degradation in indexing. 
+
+I still wonder why the SHA1 showing in OpenGok is not shown in &quot;git log fileY&quot;.</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

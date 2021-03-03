@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>19235</bug_id>
+          
+          <creation_ts>2012-08-24 13:47:00 +0000</creation_ts>
+          <short_desc>wildcardEquals leads to infinite loop</short_desc>
+          <delta_ts>2012-08-24 15:02:32 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>webapp</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>ACCEPTED</bug_status>
+          
+          
+          
+          
+          
+          
+          <priority>P1</priority>
+          <bug_severity>blocker</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Vladimir Kotal">vladimir.kotal</reporter>
+          <assigned_to name="Lubos Kosco">Lubos.Kosco</assigned_to>
+          <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>86588</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2012-08-24 13:47:04 +0000</bug_when>
+            <thetext>Recently I discovered the OpenGrok process eating more than usual amounts of CPU:
+
+  2945 webservd 3240M 2592M cpu19    0    0 170:39:40  17% java/52
+
+This is on very powerful machine where it usually eats below 1% CPU.
+
+Most of the threads of the process are sleeping on a condvar but there are 2 interesting threads in pstack(1M) output:
+
+-----------------  lwp# 1159 / thread# 1159  --------------------
+ fffffd7ff5e622ba * *org/apache/lucene/search/WildcardTermEnum.wildcardEquals(Ljava/lang/String;ILjava/lang/String;I)Z [compiled] 
+-----------------  lwp# 1158 / thread# 1158  --------------------
+ fffffd7ff5e620d9 * *org/apache/lucene/search/WildcardTermEnum.wildcardEquals(Ljava/lang/String;ILjava/lang/String;I)Z [compiled] 
+
+
+Note: the stacks are not trimmed.
+
+I tried to use jstack and found this stack in catalina.out:
+
+&quot;http-8888-10&quot; daemon prio=3 tid=0x00000000022b5800 nid=0x487 runnable [0xfffffd7ffa69a000]
+   java.lang.Thread.State: RUNNABLE
+        at org.apache.lucene.search.WildcardTermEnum.wildcardEquals(WildcardTermEnum.java:145)
+        at org.apache.lucene.search.WildcardTermEnum.wildcardEquals(WildcardTermEnum.java:176)
+        at org.apache.lucene.search.WildcardTermEnum.wildcardEquals(WildcardTermEnum.java:176)
+        at org.apache.lucene.search.WildcardTermEnum.wildcardEquals(WildcardTermEnum.java:176)
+        at org.apache.lucene.search.WildcardTermEnum.wildcardEquals(WildcardTermEnum.java:176)
+        at org.apache.lucene.search.WildcardTermEnum.wildcardEquals(WildcardTermEnum.java:176)
+        at org.apache.lucene.search.WildcardTermEnum.wildcardEquals(WildcardTermEnum.java:176)
+        at org.apache.lucene.search.WildcardTermEnum.wildcardEquals(WildcardTermEnum.java:176)
+        at org.apache.lucene.search.WildcardTermEnum.wildcardEquals(WildcardTermEnum.java:176)
+        at org.apache.lucene.search.WildcardTermEnum.wildcardEquals(WildcardTermEnum.java:176)
+        at org.apache.lucene.search.WildcardTermEnum.wildcardEquals(WildcardTermEnum.java:176)
+        at org.apache.lucene.search.WildcardTermEnum.wildcardEquals(WildcardTermEnum.java:176)
+        at org.apache.lucene.search.WildcardTermEnum.wildcardEquals(WildcardTermEnum.java:176)
+        at org.apache.lucene.search.WildcardTermEnum.wildcardEquals(WildcardTermEnum.java:176)
+        at org.apache.lucene.search.WildcardTermEnum.wildcardEquals(WildcardTermEnum.java:176)
+        at org.apache.lucene.search.WildcardTermEnum.wildcardEquals(WildcardTermEnum.java:176)
+        at org.apache.lucene.search.WildcardTermEnum.termCompare(WildcardTermEnum.java:73)
+        at org.apache.lucene.search.FilteredTermEnum.next(FilteredTermEnum.java:79)
+        at org.apache.lucene.search.FilteredTermEnum.setEnum(FilteredTermEnum.java:56)
+        at org.apache.lucene.search.WildcardTermEnum.&lt;init&gt;(WildcardTermEnum.java:65)
+        at org.apache.lucene.search.WildcardQuery.getEnum(WildcardQuery.java:56)
+        at org.apache.lucene.search.MultiTermQuery$ConstantScoreAutoRewrite.rewrite(MultiTermQuery.java:230)
+        at org.apache.lucene.search.MultiTermQuery.rewrite(MultiTermQuery.java:371)
+        at org.apache.lucene.search.WildcardQuery.rewrite(WildcardQuery.java:77)
+        at org.apache.lucene.search.BooleanQuery.rewrite(BooleanQuery.java:386)
+        at org.apache.lucene.search.IndexSearcher.rewrite(IndexSearcher.java:272)
+        at org.apache.lucene.search.Query.weight(Query.java:100)
+        at org.apache.lucene.search.Searcher.createWeight(Searcher.java:147)
+        at org.apache.lucene.search.Searcher.search(Searcher.java:49)
+        at org.opensolaris.opengrok.web.SearchHelper.executeQuery(SearchHelper.java:248)
+        at org.apache.jsp.search_jsp._jspService(search_jsp.java:153)
+        at org.apache.jasper.runtime.HttpJspBase.service(HttpJspBase.java:70)
+        at javax.servlet.http.HttpServlet.service(HttpServlet.java:717)
+        at org.apache.jasper.servlet.JspServletWrapper.service(JspServletWrapper.java:388)
+        at org.apache.jasper.servlet.JspServlet.serviceJspFile(JspServlet.java:313)
+        at org.apache.jasper.servlet.JspServlet.service(JspServlet.java:260)
+        at javax.servlet.http.HttpServlet.service(HttpServlet.java:717)
+        at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:290)
+        at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:206)
+        at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:233)
+        at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:191)
+        at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:127)
+        at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:102)
+        at org.apache.catalina.valves.AccessLogValve.invoke(AccessLogValve.java:615)
+        at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:109)
+        at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:293)
+        at org.apache.coyote.http11.Http11Processor.process(Http11Processor.java:859)
+        at org.apache.coyote.http11.Http11Protocol$Http11ConnectionHandler.process(Http11Protocol.java:602)
+        at org.apache.tomcat.util.net.JIoEndpoint$Worker.run(JIoEndpoint.java:489)
+        at java.lang.Thread.run(Thread.java:662)
+
+
+Note: 0t1159 = 0x498 so this is one of threads as reported by pstack.
+
+It looks like some &quot;wild&quot; wildcard search triggered the infinite loop.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86589</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2012-08-24 14:16:09 +0000</bug_when>
+            <thetext>This is a denial of service problem.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86590</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2012-08-24 14:30:22 +0000</bug_when>
+            <thetext>The lwp listing displays starting times and running times of the lwps (I truncated the CMD for clarity):
+
+# ps -L -f -p 2945 | sed &apos;s/\/.*//&apos;
+     UID   PID  PPID   LWP  NLWP   C    STIME TTY        LTIME CMD
+webservd  2945     1     1    52   0   Aug 21 ?           0:00 
+webservd  2945     1     2    52   0   Aug 21 ?           0:08 
+webservd  2945     1     3    52   0   Aug 21 ?           0:12 
+webservd  2945     1     4    52   0   Aug 21 ?           0:12 
+webservd  2945     1     5    52   0   Aug 21 ?           0:12 
+webservd  2945     1     6    52   0   Aug 21 ?           0:12 
+webservd  2945     1     7    52   0   Aug 21 ?           0:12 
+webservd  2945     1     8    52   0   Aug 21 ?           0:12 
+webservd  2945     1     9    52   0   Aug 21 ?           0:12 
+webservd  2945     1    10    52   0   Aug 21 ?           0:11 
+webservd  2945     1    11    52   0   Aug 21 ?           0:12 
+webservd  2945     1    12    52   0   Aug 21 ?           0:12 
+webservd  2945     1    13    52   0   Aug 21 ?           0:12 
+webservd  2945     1    14    52   0   Aug 21 ?           0:12 
+webservd  2945     1    15    52   0   Aug 21 ?           0:12 
+webservd  2945     1    16    52   0   Aug 21 ?           0:12 
+webservd  2945     1    17    52   0   Aug 21 ?           0:12 
+webservd  2945     1    18    52   0   Aug 21 ?           0:12 
+webservd  2945     1    19    52   0   Aug 21 ?           0:12 
+webservd  2945     1    20    52   0   Aug 21 ?           0:12 
+webservd  2945     1    21    52   0   Aug 21 ?           0:26 
+webservd  2945     1    22    52   0   Aug 21 ?           0:01 
+webservd  2945     1    23    52   0   Aug 21 ?           0:01 
+webservd  2945     1    24    52   0   Aug 21 ?           0:00 
+webservd  2945     1    25    52   0   Aug 21 ?           0:15 
+webservd  2945     1    26    52   0   Aug 21 ?           0:13 
+webservd  2945     1    27    52   0   Aug 21 ?           0:00 
+webservd  2945     1    28    52   0   Aug 21 ?           0:52 
+webservd  2945     1   846    52   0   Aug 21 ?           0:17 
+webservd  2945     1   845    52   0   Aug 21 ?           1:55 
+webservd  2945     1   847    52   0   Aug 21 ?           0:02 
+webservd  2945     1   848    52   0   Aug 21 ?           0:00 
+webservd  2945     1   849    52   0   Aug 21 ?           0:00 
+webservd  2945     1   850    52   0   Aug 21 ?           0:00 
+webservd  2945     1   851    52   0   Aug 21 ?           0:00 
+webservd  2945     1   852    52   0   Aug 21 ?           0:01 
+webservd  2945     1   853    52   0   Aug 21 ?           0:34 
+webservd  2945     1   854    52   0   Aug 21 ?           0:44 
+webservd  2945     1   895    52   0   Aug 21 ?           0:47 
+webservd  2945     1   896    52   0   Aug 21 ?           0:37 
+webservd  2945     1   897    52   4   Aug 21 ?        2597:19 
+webservd  2945     1   898    52   0   Aug 21 ?           0:36 
+webservd  2945     1   899    52   4   Aug 21 ?        2596:20 
+webservd  2945     1   900    52   0   Aug 21 ?           0:22 
+webservd  2945     1  5028    52   0   Aug 22 ?           0:25 
+webservd  2945     1  1160    52   0   Aug 21 ?           0:32 
+webservd  2945     1  1158    52   4   Aug 21 ?        2604:24 
+webservd  2945     1  3366    52   0   Aug 22 ?           0:28 
+webservd  2945     1  1637    52   0   Aug 21 ?           0:32 
+webservd  2945     1  1159    52   4   Aug 21 ?        2609:12 
+webservd  2945     1  3365    52   0   Aug 22 ?           0:20 
+webservd  2945     1  5027    52   0   Aug 22 ?           0:34 
+
+
+We can see lwps 1158/1159 having high times, there are also another 2 such lwps.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86591</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2012-08-24 14:39:49 +0000</bug_when>
+            <thetext>I got a core file from the process 2945 and grepped it for query strings, correlated this with access logs (using the info from &apos;ps -L&apos;), reconfirmed with the core data and found a very likely candidate query which is likely causing this problem. This is because number of elements in the query seems to match the number of stack frames of function dealing with wildcards in the stack of lwp causing the high CPU utilization.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86592</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2012-08-24 14:49:09 +0000</bug_when>
+            <thetext>According to the latest findings this does not seem to be a problem in OpenGrok per se but rather in Apache Lucene.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86593</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2012-08-24 14:59:34 +0000</bug_when>
+            <thetext>The search query which most likely triggered this problem ended with HTTP error code 502 (Bad gateway means Tomcat returned invalid data to the Apache proxy server - we are sort of lucky to have this setup because these attempts were not recorded in Tomcat logs) which confirms it is indeed the case.
+
+Also, there were exactly 4 attempts with the same query which led to the 4 spinning lwps as seen in the &apos;ps -L&apos; output.
+
+I am now 100% positive the query was the culprit.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86594</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2012-08-24 15:02:32 +0000</bug_when>
+            <thetext>problematic query was something like
+
+q=+****************group+asset
+
+so we need to sanitize when more than 1 * is used in row and use just 1 *
+- lucene 4.0 also doesn&apos;t use this method anymore, so this sanitization needs a test so we can do upgrade</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

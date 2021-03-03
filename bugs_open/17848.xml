@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>17848</bug_id>
+          
+          <creation_ts>2011-02-08 13:00:00 +0000</creation_ts>
+          <short_desc>broken links in history files, when file was removed in the changeset</short_desc>
+          <delta_ts>2011-02-08 13:00:25 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>scm</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>NEW</bug_status>
+          
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>minor</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Lubos Kosco">Lubos.Kosco</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          <cc>milan.jurik</cc>
+    
+    <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>80988</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2011-02-08 13:00:25 +0000</bug_when>
+            <thetext>show a history of a directory (in mercurial)
+we use hg cat -r &lt;rev&gt; filename
+
+BUT if the file was removed in rev, above command will fail with e.g. :
+usr/src/cmd/rpcsvc/nis/rpc.nisd/resolv_server/main.c: No such file in rev b7ebfbf2359e
+
+if you decrease rev by one, you get the desired file
+
+testing link:
+http://grok.czech.sun.com:8080/source/history/onnv-clone/usr/src/lib/nsswitch/
+enable files listing 
+search for 11262:b7ebfbf2359e 
+
+and click on e.g. usr/src/cmd/rpcsvc/nis/rpc.nisd/resolv_server/main.c
+(which was removed)</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

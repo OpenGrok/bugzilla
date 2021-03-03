@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>67</bug_id>
+          
+          <creation_ts>2007-11-01 03:22:00 +0000</creation_ts>
+          <short_desc>Duplicate magics in the analyzers</short_desc>
+          <delta_ts>2008-03-20 02:09:28 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>analyzer</component>
+          <version>unspecified</version>
+          <rep_platform>Other</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXED</resolution>
+          
+          
+          
+          
+          
+          <priority>P4</priority>
+          <bug_severity>minor</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Knut Anders Hatlen">knut.hatlen</reporter>
+          <assigned_to name="Knut Anders Hatlen">knut.hatlen</assigned_to>
+          <cc>knut.hatlen</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>153</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2007-11-01 03:22:37 +0000</bug_when>
+            <thetext>Some magic sequences (stored in the static &apos;magics&apos; field in the analyzer classes) are present in more than one analyzer. For instance, &quot;PK\003\004&quot; is a magic sequence in JarAnalyzer and in ZipAnalyzer. The magic sequences are stored in a HashMap with the sequence as key, so only one of the analyzers will be associated with that sequence (ZipAnalyzer in this case). Same goes for &quot;/*&quot;, which is used both in CAnalyzer and in JavaAnalyzer). We should try to keep the magic sequences unique for each analyzer.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>2727</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2008-03-20 02:09:28 +0000</bug_when>
+            <thetext>Fixed in changeset 6fe5bd23fcb9b2ef5e9c0281e3d22e2e0b73aaa6.</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>19217</bug_id>
+          
+          <creation_ts>2012-06-19 13:05:00 +0000</creation_ts>
+          <short_desc>Substantially improve PHP scanners</short_desc>
+          <delta_ts>2012-06-26 20:03:13 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>analyzer</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>RESOLVED</bug_status>
+          <resolution>FIXINSOURCE</resolution>
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>enhancement</bug_severity>
+          <target_milestone>next</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Gustavo Lopes">glopes</reporter>
+          <assigned_to name="Lubos Kosco">Lubos.Kosco</assigned_to>
+          <cc>knut.hatlen</cc>
+    
+    <cc>Lubos.Kosco</cc>
+    
+    <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>86470</commentid>
+            <who name="Gustavo Lopes">glopes</who>
+            <bug_when>2012-06-19 13:05:45 +0000</bug_when>
+            <thetext>The PHP scanners seem to have been copied from the Perl scanners with a few modifications. There are several problems:
+
+* They look for features that exist only in Perl (like extra variable prefixes, PODs).
+* They assume the whole file is PHP code, while PHP MUST be introduced with &lt;?php or some other opening variant
+* They don&apos;t support string interpolation.
+* They don&apos;t support HEREDOC/NOWDOC and backquote strings.
+* Multi-line strings are not supported
+* They don&apos;t support phpDoc comments.
+* The instanceof keyword is not recognized, nor any constant introduced in PHP 5.4
+* Casts are not recognized.
+* The definition of labels for symbols is wrong.
+
+I fixed these problems in my fork:
+
+https://bitbucket.org/cataphract/opengrok/compare/php-scanners..7fc6a548dcc7</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86471</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2012-06-19 13:52:11 +0000</bug_when>
+            <thetext>thank you
+
+I had a quick look and it looked ok, I am going to accept it
+with one condition though
+
+- you made a lot of customizations and improvements (either for token parser or for xref parser) and I am wondering if some of them couldn&apos;t be generalized for all languages - naturally I&apos;d be happy if you could generalize them and get them up to all *.lex files if appropriate</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86472</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2012-06-19 14:08:32 +0000</bug_when>
+            <thetext>changeset:   1382:7ee9c107d5b6
+- 
+changeset:   1398:5a257c9d4c34
+
+are pushed
+
+I used OCA OS0489</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86473</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2012-06-19 14:53:38 +0000</bug_when>
+            <thetext>(In reply to comment #2)
+&gt; changeset:   1382:7ee9c107d5b6
+&gt; - 
+&gt; changeset:   1398:5a257c9d4c34
+&gt; 
+&gt; are pushed
+&gt; 
+&gt; I used OCA OS0489
+
+I had to fix junit tests (using ant) a bit
+see
+changeset:   1399:e91232706b4d
+
+I will test maven later in the evening, but I don&apos;t expect I broke maven
+
+--
+L</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86474</commentid>
+            <who name="Gustavo Lopes">glopes</who>
+            <bug_when>2012-06-19 16:41:05 +0000</bug_when>
+            <thetext>&gt; - you made a lot of customizations and improvements (either for token parser or
+&gt; for xref parser) and I am wondering if some of them couldn&apos;t be generalized for
+&gt; all languages - naturally I&apos;d be happy if you could generalize them and get
+&gt; them up to all *.lex files if appropriate
+
+The part that I though that it could be generalized -- the state stack, yypush() and yypop() -- was indeed generalized.
+
+I don&apos;t know which other languages have some sort of nested structure (in this context where we basically need mainly to distinguish only comments, strings and the rest) that could benefit from this. PHP benefits from this because of string interpolation and script/non-script blocks.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86477</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2012-06-20 11:39:55 +0000</bug_when>
+            <thetext>I haven&apos;t checked if code could be shared/reused, but ShXref also implements a state stack.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86481</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2012-06-20 16:23:23 +0000</bug_when>
+            <thetext>(In reply to comment #4)
+&gt; &gt; - you made a lot of customizations and improvements (either for token parser or
+&gt; &gt; for xref parser) and I am wondering if some of them couldn&apos;t be generalized for
+&gt; &gt; all languages - naturally I&apos;d be happy if you could generalize them and get
+&gt; &gt; them up to all *.lex files if appropriate
+&gt; 
+&gt; The part that I though that it could be generalized -- the state stack,
+&gt; yypush() and yypop() -- was indeed generalized.
+
+yes, I noticed those, thank you
+as Knut pointed out he is using something similar in ShAnalyzer, might be worthwhile checking and comparing which version needs improvement (or make a hybrid of best of both)
+
+&gt; 
+&gt; I don&apos;t know which other languages have some sort of nested structure (in this
+&gt; context where we basically need mainly to distinguish only comments, strings
+&gt; and the rest) that could benefit from this. PHP benefits from this because of
+
+I think some of other analyzers - perl/python or java do the distinguish of comments,strings,etc. in an easy way using jflex (so you might compare them also to see which way is better and which one can be improved ... )
+
+&gt; string interpolation and script/non-script blocks.
+
+thanks for looking into this (feel free to put it into new bug, after all we will be eventually improving ALL analyzers to be better/faster)
+
+btw. feel free to look at how to run junit (ant is preferred, maven testing doesn&apos;t work 100% for me :( )for whole project in README, ev. there are findbugs/checkstyle targets
+
+L</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86499</commentid>
+            <who name="Gustavo Lopes">glopes</who>
+            <bug_when>2012-06-26 20:03:13 +0000</bug_when>
+            <thetext>A minimal change to ShXref to use the stacks introduced here is:
+
+https://bitbucket.org/cataphract/opengrok/changeset/4d056e1ac0f7
+
+though the interface in ShXref is probably cleaner, even if a bit more limited.</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

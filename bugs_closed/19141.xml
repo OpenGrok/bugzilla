@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>19141</bug_id>
+          
+          <creation_ts>2012-01-17 15:41:00 +0000</creation_ts>
+          <short_desc>opensearch based searches are broken in mod_proxy environment</short_desc>
+          <delta_ts>2012-01-27 13:02:18 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>webapp</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXINSOURCE</resolution>
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>major</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Vladimir Kotal">vladimir.kotal</reporter>
+          <assigned_to name="Lubos Kosco">Lubos.Kosco</assigned_to>
+          <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>86073</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2012-01-17 15:41:41 +0000</bug_when>
+            <thetext>When searching via opensearch in an environment where OpenGrok/Tomcat is behing Apache&apos;s mod_proxy the searches go to the URL specified in the proxy configuration (yes the URL no one is supposed to see).
+
+Also, with some opensearch engines stored before converting the instance to mod_proxy I am seeing some weird encodings of strings, e.g. from &apos;:path&apos; it produces &apos;path%3AMakefile&apos;, effectively breaking such search as well.
+
+It looks like opensearch code should be more proxy friendly.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86147</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2012-01-27 09:34:30 +0000</bug_when>
+            <thetext>The problem is in web/opensearch.jsp which produces the OpenSearch description:
+
+     43     StringBuilder url = new StringBuilder(128);
+     44         String scheme=request.getScheme();
+     45         url.append(scheme).append(&quot;://&quot;).append(request.getServerName());
+     46     int port = request.getServerPort();
+     47     if ((port != 80 &amp;&amp; scheme.equals(&quot;http&quot;)) ||
+     48                (port != 443 &amp;&amp; scheme.equals(&quot;https&quot;))) {
+     49         url.append(&apos;:&apos;).append(port);
+     50     }
+
+...
+
+     73     &lt;Url template=&quot;&lt;%= url.toString() %&gt;&amp;amp;q={searchTerms}&quot; type=&quot;text/html&quot;/&gt;
+
+
+mod_proxy rewrites the URL to internal one and the jsp hands it over.
+
+Not sure yet who does the URL encoding.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86148</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2012-01-27 09:35:35 +0000</bug_when>
+            <thetext>This is how the contents of /source/opensearch look like for mod_proxy configuration which proxies to localhost:8888:
+
+&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;OpenSearchDescription xmlns=&quot;http://a9.com/-/spec/opensearch/1.1/&quot;&gt;
+&lt;ShortName&gt;OpenGrok on11sru-clone&lt;/ShortName&gt;
+&lt;Description&gt;Search in OpenGrok on11sru-clone&lt;/Description&gt;
+&lt;InputEncoding&gt;UTF-8&lt;/InputEncoding&gt;
+&lt;Image height=&quot;16&quot; width=&quot;16&quot; type=&quot;image/png&quot;&gt;http://localhost:8888/source/default/img/icon.png&lt;/Image&gt;&lt;Url template=&quot;http://localhost:8888/source/search?project=on11sru-clone&amp;amp;q={searchTerms}&quot; type=&quot;text/html&quot;/&gt;
+&lt;/OpenSearchDescription&gt;</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86149</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2012-01-27 09:42:32 +0000</bug_when>
+            <thetext>We could use the X-Forwarded-Host HTTP header which contains the original host and is passed to the proxied server.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86150</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2012-01-27 12:37:48 +0000</bug_when>
+            <thetext>(In reply to comment #0)
+
+&lt;snip&gt;
+
+&gt; Also, with some opensearch engines stored before converting the instance to
+&gt; mod_proxy I am seeing some weird encodings of strings, e.g. from &apos;:path&apos; it
+&gt; produces &apos;path%3AMakefile&apos;, effectively breaking such search as well.
+
+The encoding is caused by &apos;escaping for redirect&apos; rewrite rule in Apache configuration and is not related to this bug at all.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86151</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2012-01-27 12:49:24 +0000</bug_when>
+            <thetext>(In reply to comment #3)
+&gt; We could use the X-Forwarded-Host HTTP header which contains the original host
+&gt; and is passed to the proxied server.
+
+Unfortunately, the X-Forwarded-Host header contains just the original hostname, not scheme (http/https) or original port number so the fix is limited in what it can do.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86152</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2012-01-27 13:02:18 +0000</bug_when>
+            <thetext>Fixed by this changeset:
+
+changeset:   1302:b46a528ed9af
+user:        Vladimir Kotal &lt;Vladimir.Kotal@oracle.com&gt;
+date:        Fri Jan 27 13:49:13 2012 +0100
+
+description:
+	Bug 19141 - opensearch based searches are broken in mod_proxy environment
+
+modified:
+   web/default/print.css
+   web/opensearch.jsp</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

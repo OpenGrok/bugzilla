@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>16135</bug_id>
+          
+          <creation_ts>2010-06-02 09:43:00 +0000</creation_ts>
+          <short_desc>SubversionHistory parser ignore Ignore</short_desc>
+          <delta_ts>2010-06-02 09:43:24 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>indexer</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>NEW</bug_status>
+          
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>minor</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter>tom</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>73805</commentid>
+            <who name="">tom</who>
+            <bug_when>2010-06-02 09:43:24 +0000</bug_when>
+            <thetext>as the ignore option at the configuration is available,
+it should also be used in history parsing.
+
+
+I changed and tested following patch, which is an addon patch to https://defect.opensolaris.org/bz/show_bug.cgi?id=15956
+
+
+diff -r opengrok-0.9-src/src/org/opensolaris/opengrok/history/SubversionHistoryParser.java src1/opengrok-0.9-src/src/org/opensolaris/opengrok/history/SubversionHistoryParser.java
+44d43
+&lt; import org.opensolaris.opengrok.util.Interner;
+68d66
+&lt;         private final Interner&lt;String&gt; stringInterner = new Interner&lt;String&gt;();
+100,103c98
+&lt;                 if (RuntimeEnvironment.getInstance().getIgnoredNames().ignore(s)) {
+&lt;                 	OpenGrokLogger.getLogger().log(Level.FINE, &quot;Skipping file ignored: &quot; + s);
+&lt;                 } else {
+&lt;                 	if (s.startsWith(prefix)) {
+---
+&gt;                 if (s.startsWith(prefix)) {
+106,115c101,103
+&lt;                     // The same file names may be repeated in many commits,
+&lt;                     // so intern them to reduce the memory footprint.
+&lt;                     // Bug #15956: Don&apos;t use String.intern(), since that may
+&lt;                     // exhaust the permgen space. Instead, use our own
+&lt;                     // interner that allocates space on the heap.
+&lt;                     path = stringInterner.intern(path);
+&lt;                     entry.addFile(path);
+&lt;                 	} else {
+&lt;                   	  OpenGrokLogger.getLogger().log(Level.FINE, &quot;Skipping file outside repository: &quot; + s);
+&lt;                 	}
+---
+&gt;                     entry.addFile(path.intern());
+&gt;                 } else {
+&gt;                     OpenGrokLogger.getLogger().log(Level.FINE, &quot;Skipping file outside repository: &quot; + s);
+
+
+
+
+
+this patch works in may use case and reduces the indexing time from ~20000000ms to 856208ms</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

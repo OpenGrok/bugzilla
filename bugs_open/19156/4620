@@ -1,0 +1,65 @@
+Hi
+
+I really am not a bad googler, but I could not find any tips on how to
+search for a wildcard in a sentence. Specifically, we have a policy
+here at work in which they do not allow any sql select statements with
+a wildcard, i.e. "select * from ...". I have tried escaping the
+wildcard but it makes no difference, even on opengrok's own search
+site. Can someone point me in the right direction?
+
+Regards
+
+
+Lubos Kosco Lubos.Kosco@oracle.com
+1:43 PM (2 hours ago)
+
+to me, opengrok-discu. 
+It can very well be, we don't even index a wildcard
+it depends on language analyzer
+
+e.g. sql analyzer inherits tokenizer from plain file analyzer
+which says(regexp):
+Identifier = [a-zA-Z_] [a-zA-Z0-9_]*
+
+hence I doubt '*' is indexed
+
+obviously these analyzers could be improved, so it's just about adjusting the appropriate .lex file and improve the lexical analysis
+also note that 1 char tokens most usually don't make that much sense and just unnecessary increase index, so we do them only for full search, I think symbols and refs just ignore 1 char identifiers ...
+
+hth
+L
+_______________________________________________
+opengrok-discuss mailing list
+opengrok-discuss@opensolaris.org
+http://mail.opensolaris.org/mailman/listinfo/opengrok-discuss
+
+Creigh Hobson
+2:13 PM (1 hour ago)
+
+to Lubos 
+Yes, that makes sense as "select \?" also did not work. I found a post
+on a lucene mailing list that said there was a failure in query
+parsing to discover regex expressions and redirect to the proper
+analyzer, so they are aware of it (I think a patch was written). Also,
+I really just want to be a user right now, and not have to write my
+own Analyzer. Thank for the reply.
+
+Regards
+
+
+Lubos Kosco Lubos.Kosco@oracle.com
+2:28 PM (1 hour ago)
+
+to me 
+Well I can try to relax this and add more chars besides a-zA-Z0-9 to the indentifier
+albeit I will not do it before release of 0.11 (too risky)
+
+I have already an upgrade to lucene 3.5 prepared
+so I can try to check such relaxation after I push that upgrade (newer lucene has less memory consumption + faster searching).
+
+I hope the index will not grow that big and the search will still be fast enough - if yes, I will gladly relax the indentifier regexp
+
+If you have time, please file it as a bug to http://defect.opensolaris.org/
+I'll pick up so I don't forget about this bug
+
+thnx

@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>16481</bug_id>
+          
+          <creation_ts>2010-07-07 21:02:00 +0000</creation_ts>
+          <short_desc>NumberFormatException when opening Connection Settings the second time</short_desc>
+          <delta_ts>2010-07-07 21:22:58 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>trayapp</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXED</resolution>
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>minor</bug_severity>
+          <target_milestone>0.10</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Knut Anders Hatlen">knut.hatlen</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>75178</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2010-07-07 21:02:52 +0000</bug_when>
+            <thetext>In the trayapp, open Connection Settings, close it, and reopen it. The window will not be display. Instead, this exception is printed:
+
+Exception in thread &quot;AWT-EventQueue-0&quot; java.lang.NumberFormatException: For input string: &quot;jmx&quot;
+	at java.lang.NumberFormatException.forInputString(NumberFormatException.java:48)
+	at java.lang.Integer.parseInt(Integer.java:449)
+	at java.lang.Integer.valueOf(Integer.java:554)
+	at org.opensolaris.opengrok.management.client.SettingsPersistence.getAgentUrl(SettingsPersistence.java:108)
+	at org.opensolaris.opengrok.management.client.SettingsFrame.loadSettings(SettingsFrame.java:59)
+	at org.opensolaris.opengrok.management.client.SettingsFrame.&lt;init&gt;(SettingsFrame.java:53)
+	at org.opensolaris.opengrok.management.client.OpenGrokTrayApp$6.actionPerformed(OpenGrokTrayApp.java:226)
+	at java.awt.MenuItem.processActionEvent(MenuItem.java:627)
+.
+.
+.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>75179</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2010-07-07 21:04:31 +0000</bug_when>
+            <thetext>May have been triggered by the recent change from JMXMP protocol to RMI, which changed the format of the default URL.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>75181</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2010-07-07 21:22:58 +0000</bug_when>
+            <thetext>changeset:   1046:0129627086f0</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

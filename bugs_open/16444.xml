@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>16444</bug_id>
+          
+          <creation_ts>2010-07-02 11:38:00 +0000</creation_ts>
+          <short_desc>Full search is case insensitive and cannot be changed</short_desc>
+          <delta_ts>2010-07-15 14:24:03 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>webapp</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>NEW</bug_status>
+          
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>enhancement</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          <blocked>15970</blocked>
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Lubos Kosco">Lubos.Kosco</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          <cc>opengrok-dev</cc>
+    
+    <cc>zdenek.kotala</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>75032</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2010-07-02 11:38:45 +0000</bug_when>
+            <thetext>Full search is case insensitive by default, but sometime is useful to search for case sensitive text - for example &quot;Password:&quot;. It would be nice to have some switch which change behavior.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>75491</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2010-07-15 14:24:03 +0000</bug_when>
+            <thetext>ok, I did some investigation
+and it seems we would need to change full index to index case sensitive
+- adding a field to index called full_cs , adjusting analyzers to produce index both versions
+
+then by clicking the combo box one would be using the proper index field (either sensitive or insensitive) in the query
+
+also to satisfy 15970 we would need to have defs and refs in lowercase version too
+
+hence a fix for this bug will increase the index size 2x !!!
+so we should probably add an option for indexer so the users can decide whether they are OK with old behaviour or need to switch between case sensitive / insensitive searches
+
+for special type of queries we need to bear in mind:
+http://wiki.apache.org/lucene-java/LuceneFAQ#Are_Wildcard.2C_Prefix.2C_and_Fuzzy_queries_case_sensitive.3F</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

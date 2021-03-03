@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>19179</bug_id>
+          
+          <creation_ts>2012-02-20 11:52:00 +0000</creation_ts>
+          <short_desc>OpenGrok v0.11 does not find Java enum definions</short_desc>
+          <delta_ts>2012-06-20 21:35:32 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>analyzer</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXED</resolution>
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>major</bug_severity>
+          <target_milestone>0.11</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Robert Morschel">robert.morschel</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          <cc>Lubos.Kosco</cc>
+    
+    <cc>opengrok-dev</cc>
+    
+    <cc>zxiao</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>86221</commentid>
+            <who name="Robert Morschel">robert.morschel</who>
+            <bug_when>2012-02-20 11:52:35 +0000</bug_when>
+            <thetext>OpenGrok v0.11 does not appear to find Java enum definions.  
+
+For example:
+http://vrtstgeo001:8080/source/s?defs=TemplateLevel&amp;project=Commissions
+
+whereas it does find the enum as a symbol:
+
+http://vrtstgeo001:8080/source/xref/Commissions/intf/src/main/java/com/iggroup/wt/commissions/dto/templates/TemplateLevel.java</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86222</commentid>
+            <who name="Robert Morschel">robert.morschel</who>
+            <bug_when>2012-02-20 11:55:03 +0000</bug_when>
+            <thetext>The links below are not accessible as they are internal to IG, but are listed for reference.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86223</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2012-02-20 12:19:33 +0000</bug_when>
+            <thetext>Hello
+this is weird
+I just tried with our local 0.11 and I am able to find enums without any probs in defs index
+
+If this was working before (in 0.10) then something went wrong with new reindex, or you guys didn&apos;t create a new index upon update to 0.11
+Alt. this can be a exctags bug, so you should also check if you run exuberant ctags 5.8
+
+hmm?
+L</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86225</commentid>
+            <who name="Robert Morschel">robert.morschel</who>
+            <bug_when>2012-02-20 14:53:06 +0000</bug_when>
+            <thetext>Resolved this issue by updating my version of ctags to the latest and rebuilding the index.
+
+Thanks for your help.  I&apos;ll close this issue.
+
+Robert</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86486</commentid>
+            <who name="Ze Lin Xiao">zxiao</who>
+            <bug_when>2012-06-20 20:27:18 +0000</bug_when>
+            <thetext>Running into similar issues--
+After upgrading my ctags from 5.6 to 5.8, I rebuilt my indexes by running &quot;OpenGrok index&quot; but OpenGrok find certain function definitions.  Do I have to remove the indexes from the &quot;index&quot; folder before index again?  I&apos;ve also double checked that the OpenGrok script points to the correct path for the new ctags. 
+
+Thanks,
+
+Ze
+
+(In reply to comment #3)
+&gt; Resolved this issue by updating my version of ctags to the latest and
+&gt; rebuilding the index.
+&gt; 
+&gt; Thanks for your help.  I&apos;ll close this issue.
+&gt; 
+&gt; Robert</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86487</commentid>
+            <who name="Ze Lin Xiao">zxiao</who>
+            <bug_when>2012-06-20 21:35:32 +0000</bug_when>
+            <thetext>Ah, I answered my own question--looks like I had to rebuild the indexes from scratch and my functions are now showing up, which makes sense. 
+
+Ze
+(In reply to comment #4)
+&gt; Running into similar issues--
+&gt; After upgrading my ctags from 5.6 to 5.8, I rebuilt my indexes by running
+&gt; &quot;OpenGrok index&quot; but OpenGrok find certain function definitions.  Do I have to
+&gt; remove the indexes from the &quot;index&quot; folder before index again?  I&apos;ve also
+&gt; double checked that the OpenGrok script points to the correct path for the new
+&gt; ctags. 
+&gt; 
+&gt; Thanks,
+&gt; 
+&gt; Ze
+&gt; 
+&gt; (In reply to comment #3)
+&gt; &gt; Resolved this issue by updating my version of ctags to the latest and
+&gt; &gt; rebuilding the index.
+&gt; &gt; 
+&gt; &gt; Thanks for your help.  I&apos;ll close this issue.
+&gt; &gt; 
+&gt; &gt; Robert</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

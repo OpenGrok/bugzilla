@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>19145</bug_id>
+          
+          <creation_ts>2012-01-20 13:58:00 +0000</creation_ts>
+          <short_desc>annotate view for Mercurial displays only first name of the author in some cases</short_desc>
+          <delta_ts>2012-01-24 15:28:29 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>webapp</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>RESOLVED</bug_status>
+          <resolution>FIXINSOURCE</resolution>
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>minor</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Vladimir Kotal">vladimir.kotal</reporter>
+          <assigned_to name="Vladimir Kotal">vladimir.kotal</assigned_to>
+          <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>86094</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2012-01-20 13:58:53 +0000</bug_when>
+            <thetext>This is caused by the absence of -v in the &apos;hg annotate&apos; command run from src/org/opensolaris/opengrok/history/MercurialRepository.java:annotate()
+
+In order to make this work nicer with &apos;userPage&apos; configuration option (which provides prefix for the user search link) it would be nice to have email address there. If no email address can be found in the user identifier the whole field can be taken.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86095</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2012-01-20 14:02:54 +0000</bug_when>
+            <thetext>Usually, the user identifier is in the form of:
+
+First Last &lt;first.last@email.some&gt;
+
+but sometimes we can see things like:
+
+userfoo
+foo@bar.bah &lt;foo bar&gt;
+First Middle Last &lt;foo@bar.bah&gt;
+foo@bar.my
+First Last - Organization - Country &lt;first.last@some.org&gt;
+
+the regular expression needs to be accommodated accordingly.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86096</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2012-01-20 14:05:56 +0000</bug_when>
+            <thetext>To fix this in robust way the ANNOTATION_PATTERN regexp needs to be extended so it stops at the colon which divides the filename and the commit comment, otherwise a number from the comment could be picked up (greedy matching).</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86116</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2012-01-24 10:51:26 +0000</bug_when>
+            <thetext>This would be much easier to implement if hg annotate produced parseable output (I filed feature request for this: http://mercurial.selenic.com/bts/issue3216). Until then we will have to live with imperfect regular expression.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86117</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2012-01-24 15:19:59 +0000</bug_when>
+            <thetext>(In reply to comment #3)
+&gt; This would be much easier to implement if hg annotate produced parseable output
+&gt; (I filed feature request for this: http://mercurial.selenic.com/bts/issue3216).
+&gt; Until then we will have to live with imperfect regular expression.
+
+The solution could be made robust even without proper parseable output as suggested by Knut: make hg annotate print just the revision number (which is separated by colon) and use history index to lookup the author for particular revision (using HashMap).</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86118</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2012-01-24 15:28:29 +0000</bug_when>
+            <thetext>Pushed (reviewed by Knut):
+
+changeset:   1297:9605270be351
+tag:         tip
+user:        Vladimir Kotal &lt;Vladimir.Kotal@oracle.com&gt;
+date:        Tue Jan 24 16:24:01 2012 +0100
+description:
+	Bug 19145 - annotate view for Mercurial displays only first name of the author in some cases</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>153</bug_id>
+          
+          <creation_ts>2007-11-05 04:42:00 +0000</creation_ts>
+          <short_desc>Files without an extention potentially incorrectly identified</short_desc>
+          <delta_ts>2007-11-07 08:48:44 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>analyzer</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXED</resolution>
+          
+          
+          
+          
+          
+          <priority>P4</priority>
+          <bug_severity>normal</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Jason Leonard">jason</reporter>
+          <assigned_to name="Knut Anders Hatlen">knut.hatlen</assigned_to>
+          <cc>knut.hatlen</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>342</commentid>
+            <who name="Jason Leonard">jason</who>
+            <bug_when>2007-11-05 04:42:43 +0000</bug_when>
+            <thetext>I have come across an problem were a file wasn&apos;t being identified properly and causing a fault in the xref index.
+
+I have a file called &apos;zip&apos;, which happens to be an executable for a unix platform.
+OpenGrok seems to be identifying and analysing it with ZipAnalyser.
+
+Looking at the code, the problem seems to be during the call to find() in AnalyserGuru.java.
+The filename gets trimmed up, put into uppercase, and the extension is looked for. Since we have no extension we skip that part, but the whole filename is still being treated as though it were the extension. Therefore the ZipAnalyser is being picked and subsequently fails to index the file properly.
+
+My fix for this was to change the return line in this function from...
+return(ext.get(path));
+to...
+return null;
+
+I understand that this fix may affect analysing of other files, but I can&apos;t think of an example where you would want files identified in this way.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>371</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2007-11-05 14:12:10 +0000</bug_when>
+            <thetext>I checked in a fix and a regression test in changeset 150:2d285eebf5db. Please verify and reopen the bug if this didn&apos;t fix the problem.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>441</commentid>
+            <who name="Jason Leonard">jason</who>
+            <bug_when>2007-11-07 08:48:44 +0000</bug_when>
+            <thetext>Verified fixed.</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

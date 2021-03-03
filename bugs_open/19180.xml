@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>19180</bug_id>
+          
+          <creation_ts>2012-02-20 13:11:00 +0000</creation_ts>
+          <short_desc>default list in IgnoredNames needs to be more strict</short_desc>
+          <delta_ts>2012-02-21 21:31:40 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>indexer</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>ACCEPTED</bug_status>
+          
+          
+          <see_also>http://defect.opensolaris.org/bz/show_bug.cgi?id=18601</see_also>
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>critical</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Vladimir Kotal">vladimir.kotal</reporter>
+          <assigned_to name="Vladimir Kotal">vladimir.kotal</assigned_to>
+          <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>86224</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2012-02-20 13:11:53 +0000</bug_when>
+            <thetext>After 1275:affabbacf51c (Bug 18655) we found that in OpenGrok 0.11 legitimate directories are being ignored, namely &apos;bin&apos; and &apos;usr.lib&apos;. The problem is that defaultPatterns in src/org/opensolaris/opengrok/index/IgnoredNames.java does not distinguish between files and directories (separate bug). Secondly, the strings are treated as regular expressions by the Filter class but the regular expressions are not fully specified.
+
+This is the reason why &apos;.lib&apos; in defaultPatterns matches &apos;usr.lib&apos; path component.
+
+The regular expressions should be really fully specified, i.e. &apos;^.hg$&apos;.</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

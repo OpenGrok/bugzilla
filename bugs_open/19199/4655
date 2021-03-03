@@ -1,0 +1,85 @@
+# HG changeset patch
+# User jel+opengrok@cs.uni-magdeburg.de
+# Date 1334534374 -7200
+# Node ID 500c50a51dca748b9a301c266adab4b2ad9d2a7f
+# Parent  2c9931a8cd154bc7b488ac738ced965297f0b98c
+fix css related test failures
+
+diff -r 2c9931a8cd15 -r 500c50a51dca test/org/opensolaris/opengrok/search/context/ContextTest.java
+--- a/test/org/opensolaris/opengrok/search/context/ContextTest.java	Mon Apr 16 01:12:26 2012 +0200
++++ b/test/org/opensolaris/opengrok/search/context/ContextTest.java	Mon Apr 16 01:59:34 2012 +0200
+@@ -141,7 +141,7 @@
+ 
+         String expectedOutput = hitList ?
+             "abc <b>def</b> ghi" :
+-            "<a class=\"s\" href=\"#1\"><span class=\"l\">1</span> " +
++            "<a class=\"rsh\" href=\"#1\"><span class=\"l\">1</span> " +
+                      "abc <b>def</b> ghi</a><br/>";
+ 
+         String actualOutput = hitList ? hits.get(0).getLine() : out.toString();
+@@ -165,8 +165,8 @@
+ 
+         expectedOutput = hitList ?
+             "abc <b>def</b> ghi" :
+-            "<a class=\"s\" href=\"#1\"><span class=\"l\">1</span> " +
+-                     "abc <b>def</b> ghi</a> <i> type</i> <br/>";
++            "<a class=\"rsh\" href=\"#1\"><span class=\"l\">1</span> " +
++                     "abc <b>def</b> ghi</a> <span class=\"rshd\"> type</span> <br/>";
+         actualOutput = hitList ? hits.get(0).getLine() : out.toString();
+         assertEquals(expectedOutput, actualOutput);
+ 
+@@ -185,8 +185,8 @@
+ 
+         expectedOutput = hitList ?
+             "text" :
+-            "<a class=\"s\" href=\"#1\"><span class=\"l\">1</span> " +
+-                     "text</a> <i>type</i><br/>";
++            "<a class=\"rsh\" href=\"#1\"><span class=\"l\">1</span> " +
++                     "text</a> <span class=\"rshd\">type</span><br/>";
+         actualOutput = hitList ? hits.get(0).getLine() : out.toString();
+         assertEquals(expectedOutput, actualOutput);
+ 
+@@ -355,7 +355,7 @@
+         QueryBuilder qb = new QueryBuilder().setFreetext("mixed");
+         Context c = new Context(qb.build(), qb.getQueries());
+         assertTrue(c.getContext(in, out, "", "", "", null, false, null));
+-        assertEquals("<a class=\"s\" href=\"#0\"><span class=\"l\">0</span> " +
++        assertEquals("<a class=\"rsh\" href=\"#0\"><span class=\"l\">0</span> " +
+                         "<b>Mixed</b> case: abc AbC dEf</a><br/>",
+                      out.toString());
+     }
+diff -r 2c9931a8cd15 -r 500c50a51dca test/org/opensolaris/opengrok/web/UtilTest.java
+--- a/test/org/opensolaris/opengrok/web/UtilTest.java	Mon Apr 16 01:12:26 2012 +0200
++++ b/test/org/opensolaris/opengrok/web/UtilTest.java	Mon Apr 16 01:59:34 2012 +0200
+@@ -183,7 +183,7 @@
+                 + "h_resp_time, h_resp_mil) \"",
+ 
+                 "\"(ses_id, mer_id, pass_id, \" + refCol +\" , mer_ref, amnt, "
+-                + "cur, ps_id, ret_url, <span class=\"a\">exp_url, "
++                + "cur, ps_id, ret_url, <span class=\"p\">exp_url, "
+                 + "</span>d_req_time, d_req_mil, h_resp_time, h_resp_mil) \""
+             },
+             {   
+@@ -191,19 +191,19 @@
+                 "\"VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)\", values);",
+                 
+                 "\"VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?<span "
+-                + "class=\"a\">, ?</span>)\", values);"
++                + "class=\"p\">, ?</span>)\", values);"
+             },
+             {
+                 "char    *config_list = NULL;",
+                 "char    **config_list = NULL;",
+                 
+-                "char    *<span class=\"a\">*</span>config_list = NULL;"
++                "char    *<span class=\"p\">*</span>config_list = NULL;"
+             },
+             {
+                 "* An error occured or there is non-numeric stuff at the end",
+                 "* An error occurred or there is non-numeric stuff at the end",
+                 
+-                "* An error occur<span class=\"a\">r</span>ed or there is "
++                "* An error occur<span class=\"p\">r</span>ed or there is "
+                 + "non-numeric stuff at the end"
+             }
+         };

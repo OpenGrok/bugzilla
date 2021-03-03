@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>12834</bug_id>
+          
+          <creation_ts>2009-11-23 14:04:00 +0000</creation_ts>
+          <short_desc>source.war missing from package</short_desc>
+          <delta_ts>2009-11-23 14:13:16 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>misc</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>Solaris</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXED</resolution>
+          
+          
+          
+          
+          
+          <priority>P4</priority>
+          <bug_severity>normal</bug_severity>
+          <target_milestone>0.8.1</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Trond Norbye">trond.norbye</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>57186</commentid>
+            <who name="Trond Norbye">trond.norbye</who>
+            <bug_when>2009-11-23 14:04:36 +0000</bug_when>
+            <thetext>OSOLopengrok.pkg does not contain source.war</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>57187</commentid>
+            <who name="Trond Norbye">trond.norbye</who>
+            <bug_when>2009-11-23 14:05:36 +0000</bug_when>
+            <thetext>source.war should be installed into /usr/opengrok/webapp/source.war</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>57188</commentid>
+            <who name="Trond Norbye">trond.norbye</who>
+            <bug_when>2009-11-23 14:08:56 +0000</bug_when>
+            <thetext>changeset:   909:738565a07ee9</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

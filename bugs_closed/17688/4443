@@ -1,0 +1,132 @@
+diff -r e8d7dc250c14 -r 65611056eee5 web/diff.jsp
+--- a/web/diff.jsp	Wed Jan 05 15:22:16 2011 +0100
++++ b/web/diff.jsp	Wed Jan 05 12:06:46 2011 -0500
+@@ -433,11 +433,18 @@
+                 }
+             } catch (FileNotFoundException e) {
+ 		 %><div class="src"><h3 class="error">Error Opening files! <%=Util.htmlize(e.getMessage())%></h3></div><%
++            } finally {
++                if(in1 != null)
++                    try {
++                        in1.close();
++                    } catch (IOException ignore) {
++                    }
++                if(in2 != null)
++                    try {
++                        in2.close();
++                    } catch (IOException ignore) {
++                }
+             }
+-            if(in1 != null)
+-                in1.close();
+-            if(in2 != null)
+-                in2.close();
+         } else if (g == Genre.IMAGE) {
+ 				%> <div class="src">
+ 				<table rules="cols" cellpadding="5"><tr><th><%=basename%> (revision <%=r1%>)</th><th><%=basename%> (revision <%=r2%>)</th></tr>
+diff -r e8d7dc250c14 -r 65611056eee5 web/list.jsp
+--- a/web/list.jsp	Wed Jan 05 15:22:16 2011 +0100
++++ b/web/list.jsp	Wed Jan 05 12:06:46 2011 -0500
+@@ -375,9 +375,11 @@
+                         }
+                     } catch (IOException e) {
+                         %> <h3 class="error">IO Error</h3> <p> <%=e.getMessage() %> </p> <%
++                    } finally {
++                    	in.close();
+                     }
+                     %></pre></div><%
+-                    in.close();
++                    
+                 } else {
+     	            %> <h3 class="error">Error reading file</h3> <%
+                 }
+@@ -416,32 +418,36 @@
+             br.close();
+         } else {
+             BufferedInputStream bin = new BufferedInputStream(new FileInputStream(resourceFile));
+-            FileAnalyzerFactory a = AnalyzerGuru.find(basename);
+-            Genre g = AnalyzerGuru.getGenre(a);
+-            if(g == null) {
+-                a = AnalyzerGuru.find(bin);
+-                g = AnalyzerGuru.getGenre(a);
+-            }
+-            if (g == Genre.IMAGE) {
++            try {
++	            FileAnalyzerFactory a = AnalyzerGuru.find(basename);
++	            Genre g = AnalyzerGuru.getGenre(a);
++	            if(g == null) {
++	                a = AnalyzerGuru.find(bin);
++	                g = AnalyzerGuru.getGenre(a);
++	            }
++	            if (g == Genre.IMAGE) {
+         	%><div id="src"><img src="<%=context+Constants.rawP+path%>"/></div><%
+-            } else if( g == Genre.HTML) {
+-                char[] buf = new char[8192];
+-                Reader br = new InputStreamReader(bin);
+-                int len = 0;
+-                while((len = br.read(buf)) > 0) {
+-                    out.write(buf, 0, len);
+-                }
+-            } else if(g == Genre.PLAIN) {
+-                %><div id="src"><pre><%
++	            } else if( g == Genre.HTML) {
++	                char[] buf = new char[8192];
++	                Reader br = new InputStreamReader(bin);
++	                int len = 0;
++	                while((len = br.read(buf)) > 0) {
++	                    out.write(buf, 0, len);
++	                }
++	            } else if(g == Genre.PLAIN) {
++	                %><div id="src"><pre><%
+                 // We're generating xref for the latest revision, so we can
+                 // find the definitions in the index.
+                 Definitions defs = IndexDatabase.getDefinitions(resourceFile);
+                 Annotation annotation = annotate ? HistoryGuru.getInstance().annotate(resourceFile, rev) : null;                
+                 Reader r = new InputStreamReader(bin);
+                 AnalyzerGuru.writeXref(a, r, out, defs, annotation, Project.getProject(resourceFile));
+-                %></pre></div><%
+-            } else {
++	                %></pre></div><%
++	            } else {
+ 	        %> Click <a href="<%=context+Constants.rawP+path%>">download <%=basename%></a><%
++	            }
++            } finally {
++            	bin.close();
+             }
+         }
+     }
+diff -r e8d7dc250c14 -r 65611056eee5 web/raw.jsp
+--- a/web/raw.jsp	Wed Jan 05 15:22:16 2011 +0100
++++ b/web/raw.jsp	Wed Jan 05 12:06:46 2011 -0500
+@@ -64,18 +64,22 @@
+     return ;
+   }
+ } else {
+-  in = new FileInputStream(file);
+   response.setContentLength((int)file.length());
+   response.setDateHeader("Last-Modified", file.lastModified());
++  in = new FileInputStream(file);
+ }
+-response.setHeader("content-disposition", "attachment; filename=" + file.getName());
+ 
+-OutputStream o = response.getOutputStream();
+-byte[] buffer = new byte[8192];
+-int nr;
+-while ((nr = in.read(buffer)) > 0) {
+-  o.write(buffer, 0, nr);
++try {
++  response.setHeader("content-disposition", "attachment; filename=" + file.getName());
++
++  OutputStream o = response.getOutputStream();
++  byte[] buffer = new byte[8192];
++  int nr;
++  while ((nr = in.read(buffer)) > 0) {
++    o.write(buffer, 0, nr);
++  }
++  o.close();
++} finally {
++  in.close();
+ }
+-o.flush();
+-o.close();
+ %>

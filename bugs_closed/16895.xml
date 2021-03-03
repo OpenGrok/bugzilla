@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>16895</bug_id>
+          
+          <creation_ts>2010-08-22 19:35:00 +0000</creation_ts>
+          <short_desc>Maven build doesn&apos;t update manifest</short_desc>
+          <delta_ts>2011-05-09 19:40:22 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>build</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXED</resolution>
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>minor</bug_severity>
+          <target_milestone>0.11</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Knut Anders Hatlen">knut.hatlen</reporter>
+          <assigned_to name="Knut Anders Hatlen">knut.hatlen</assigned_to>
+          <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>76846</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2010-08-22 19:35:24 +0000</bug_when>
+            <thetext>The jar file produced by Maven doesn&apos;t have a Main-Class or a Class-Path attribute. Here are the attributes in a jar file built with Ant:
+
+Main-Class: org.opensolaris.opengrok.index.Indexer
+Class-Path: lib/ant.jar lib/bcel-5.2.jar lib/jakarta-oro-2.0.8.jar lib
+ /org.apache.commons.jrcs.diff.jar lib/org.apache.commons.jrcs.rcs.jar
+  lib/servlet-api.jar lib/swing-layout-0.9.jar lib/lucene-core-3.0.2.j
+ ar lib/lucene-spellchecker-3.0.2.jar lib/derbyclient.jar lib/derby.ja
+ r</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>82779</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2011-05-09 19:40:22 +0000</bug_when>
+            <thetext>changeset:   1179:d26d0b26707a</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

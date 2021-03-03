@@ -1,0 +1,2935 @@
+diff -r bfe828cbcc84 src/org/opensolaris/opengrok/analysis/Ctags.java
+--- a/src/org/opensolaris/opengrok/analysis/Ctags.java	Sat Feb 26 19:16:58 2011 +0100
++++ b/src/org/opensolaris/opengrok/analysis/Ctags.java	Thu Mar 31 06:59:17 2011 +0200
+@@ -229,7 +230,7 @@
+                             for (String name : names) {
+                              if (name.length()>0) {
+                               //log.fine("Param Def = "+ string);
+-                              defs.addTag(Integer.valueOf(lnum), name.trim(),
++                              defs.addTag(Integer.parseInt(lnum), name.trim(),
+                                     "argument", def.trim() + signature.trim());
+                               break;
+                              }
+diff -r bfe828cbcc84 src/org/opensolaris/opengrok/analysis/archive/BZip2Analyzer.java
+--- a/src/org/opensolaris/opengrok/analysis/archive/BZip2Analyzer.java	Sat Feb 26 19:16:58 2011 +0100
++++ b/src/org/opensolaris/opengrok/analysis/archive/BZip2Analyzer.java	Thu Mar 31 06:59:17 2011 +0200
+@@ -34,7 +34,6 @@
+ import org.apache.tools.bzip2.CBZip2InputStream;
+ import org.opensolaris.opengrok.analysis.AnalyzerGuru;
+ import org.opensolaris.opengrok.analysis.FileAnalyzer;
+-import org.opensolaris.opengrok.analysis.FileAnalyzer.Genre;
+ import org.opensolaris.opengrok.analysis.FileAnalyzerFactory;
+ 
+ /**
+diff -r bfe828cbcc84 src/org/opensolaris/opengrok/configuration/Configuration.java
+--- a/src/org/opensolaris/opengrok/configuration/Configuration.java	Sat Feb 26 19:16:58 2011 +0100
++++ b/src/org/opensolaris/opengrok/configuration/Configuration.java	Thu Mar 31 06:59:17 2011 +0200
+@@ -35,9 +35,12 @@
+ import java.io.InputStream;
+ import java.io.OutputStream;
+ import java.util.ArrayList;
++import java.util.Collections;
+ import java.util.Date;
++import java.util.HashMap;
+ import java.util.HashSet;
+ import java.util.List;
++import java.util.Map;
+ import java.util.Set;
+ import org.opensolaris.opengrok.history.RepositoryInfo;
+ import org.opensolaris.opengrok.index.Filter;
+@@ -94,16 +97,17 @@
+     private int cachePages;
+     private String databaseDriver;
+     private String databaseUrl;
+-    private Integer scanningDepth;
++    private int scanningDepth;
+     private Set<String> allowedSymlinks;
+     private boolean obfuscatingEMailAddresses;
+     private boolean chattyStatusPage;
++    private Map<String,String> cmds;
+ 
+-    public Integer getScanningDepth() {
++    public int getScanningDepth() {
+         return scanningDepth;
+     }
+ 
+-    public void setScanningDepth(Integer scanningDepth) {
++    public void setScanningDepth(int scanningDepth) {
+         this.scanningDepth = scanningDepth;
+     }
+ 
+@@ -141,8 +145,31 @@
+         setCachePages(5);
+         setScanningDepth(3); // default depth of scanning for repositories
+         setAllowedSymlinks(new HashSet<String>());
++        cmds = new HashMap<String, String>();
+     }
+ 
++    public String getRepoCmd(String clazzName) {
++    	return cmds.get(clazzName);
++    }
++    public String setRepoCmd(String clazzName, String cmd) {
++    	if (clazzName == null) {
++    		return null;
++    	}
++    	if (cmd == null || cmd.length() == 0) {
++    		return cmds.remove(clazzName);
++    	}
++    	return cmds.put(clazzName, cmd);
++    }
++
++    // just to satisfy bean/de|encoder stuff
++    public Map<String, String> getCmds() {
++    	return Collections.unmodifiableMap(cmds);
++    }
++    public void setCmds(Map<String, String> cmds) {
++    	this.cmds.clear();
++    	this.cmds.putAll(cmds);
++    }
++    
+     public String getCtags() {
+         return ctags;
+     }
+diff -r bfe828cbcc84 src/org/opensolaris/opengrok/configuration/RuntimeEnvironment.java
+--- a/src/org/opensolaris/opengrok/configuration/RuntimeEnvironment.java	Sat Feb 26 19:16:58 2011 +0100
++++ b/src/org/opensolaris/opengrok/configuration/RuntimeEnvironment.java	Thu Mar 31 06:59:17 2011 +0200
+@@ -25,6 +25,8 @@
+ import java.beans.XMLDecoder;
+ import java.beans.XMLEncoder;
+ import java.io.BufferedInputStream;
++import java.io.ByteArrayInputStream;
++import java.io.ByteArrayOutputStream;
+ import java.io.File;
+ import java.io.FileNotFoundException;
+ import java.io.IOException;
+@@ -38,6 +40,8 @@
+ import java.util.Set;
+ import java.util.logging.Level;
+ import java.util.logging.Logger;
++
++import org.apache.bcel.generic.FDIV;
+ import org.opensolaris.opengrok.OpenGrokLogger;
+ import org.opensolaris.opengrok.history.HistoryGuru;
+ import org.opensolaris.opengrok.history.RepositoryInfo;
+@@ -91,11 +95,11 @@
+         }
+     }
+ 
+-    public Integer getScanningDepth() {
++    public int getScanningDepth() {
+         return threadConfig.get().getScanningDepth();
+     }
+ 
+-    public void setScanningDepth(Integer scanningDepth) {
++    public void setScanningDepth(int scanningDepth) {
+         threadConfig.get().setScanningDepth(scanningDepth);
+     }
+ 
+@@ -510,6 +514,29 @@
+     }
+ 
+     /**
++     * Get the client command to use to access the repository for the given
++     * fully quallified classname.
++     * @param clazzName	name of the targeting class
++     * @return {@code null} if not yet set, the client command otherwise.
++     */
++    public String getRepoCmd(String clazzName) {
++    	return threadConfig.get().getRepoCmd(clazzName);
++    }
++    
++    /**
++     * Set the client command to use to access the repository for the given
++     * fully quallified classname.
++     * @param clazzName	name of the targeting class. If {@code null} this method
++     * 	does nothing.
++     * @param cmd the client command to use. If {@code null} the corresponding 
++     * 	entry for the given clazzName get removed.
++     * @return the client command previously set, which might be {@code null}.
++     */
++    public String setRepoCmd(String clazzName, String cmd) {
++    	return threadConfig.get().setRepoCmd(clazzName, cmd);
++    }
++    
++    /**
+      * Sets the user page for the history listing
+      * @param userPage the URL fragment preceeding the username from history
+      */
+@@ -779,14 +806,26 @@
+             Thread t = new Thread(new Runnable() {
+                 @Override
+                 public void run() {
++                    ByteArrayOutputStream bos = new ByteArrayOutputStream(1<<13);
+                     while (!sock.isClosed()) {
+                         Socket s = null;
++                        BufferedInputStream in = null;
+                         try {
+                             s = sock.accept();
+-                            log.log(Level.FINE, " OpenGrok: Got request from {0}", s.getInetAddress().getHostAddress());
+-                            BufferedInputStream in = new BufferedInputStream(s.getInputStream());
+-                            
+-                            XMLDecoder d = new XMLDecoder(new BufferedInputStream(in));
++                            bos.reset();
++                            log.log(Level.FINE, "OpenGrok: Got request from {0}",
++                            	s.getInetAddress().getHostAddress());
++                            in = new BufferedInputStream(s.getInputStream());
++                            byte[] buf = new byte[1024];
++                            int len;
++                            while ((len = in.read(buf)) != -1) {
++                            	bos.write(buf, 0, len);
++                            }
++                            buf = bos.toByteArray();
++                            if (log.isLoggable(Level.FINE)) {
++                                log.log(Level.FINE, "new config:" + new String(buf));
++                            }
++                            XMLDecoder d = new XMLDecoder(new ByteArrayInputStream(buf));
+                             Object obj = d.readObject();
+                             d.close();
+                             
+@@ -800,12 +839,11 @@
+                             log.log(Level.SEVERE, "Error parsing config file: ", e);
+                         } finally {
+                             if (s != null) {
+-                                try {
+-                                    s.close();
+-                                } catch (IOException ex) {
+-                                    log.log(Level.WARNING, "Interrupt closing config listener reader socket: ", ex);
+-                                }
++                                try { s.close(); } catch (Exception ex) { /* ignore */ }
+                             }
++                            if (in != null) {
++                           		try { in.close(); } catch (Exception x) { /* ignore */ }
++							}
+                         }
+                     }
+                 }
+diff -r bfe828cbcc84 src/org/opensolaris/opengrok/history/BazaarRepository.java
+--- a/src/org/opensolaris/opengrok/history/BazaarRepository.java	Sat Feb 26 19:16:58 2011 +0100
++++ b/src/org/opensolaris/opengrok/history/BazaarRepository.java	Thu Mar 31 06:59:17 2011 +0200
+@@ -44,9 +44,11 @@
+  */
+ public class BazaarRepository extends Repository {
+     private static final long serialVersionUID = 1L;
+-    private static ScmChecker bzrBinary = new ScmChecker(new String[] {
+-        System.getProperty("org.opensolaris.opengrok.history.Bazaar", "bzr"),
+-        "--help" });
++    /** The property name used to obtain the client command for thisrepository. */
++    public static final String CMD_PROPERTY_KEY = 
++    	"org.opensolaris.opengrok.history.Bazaar";
++    /** The command to use to access the repository if none was given explicitly */
++    public static final String CMD_FALLBACK = "bzr";
+ 
+     public BazaarRepository() {
+         type = "Bazaar";
+@@ -54,22 +56,15 @@
+     }
+ 
+    /**
+-     * Get the name of the Bazaar command that should be used.
+-     * 
+-     * @return the name of the bzr command in use
+-     */
+-    private String getCommand() {
+-        return System.getProperty("org.opensolaris.opengrok.history.Bazaar", "bzr");
+-    }
+-    
+-   /**
+      * Get an executor to be used for retrieving the history log for the
+      * named file.
+      * 
+      * @param file The file to retrieve history for
+      * @return An Executor ready to be started
+      */
+-    Executor getHistoryLogExecutor(final File file, final String sinceRevision) throws IOException {
++    Executor getHistoryLogExecutor(final File file, final String sinceRevision) 
++    	throws IOException 
++    {
+         String abs = file.getCanonicalPath();
+         String filename = "";
+         if (abs.length() > directoryName.length()) {
+@@ -77,7 +72,8 @@
+         }
+         
+         List<String> cmd = new ArrayList<String>();
+-        cmd.add(getCommand());
++		ensureCommand(CMD_PROPERTY_KEY, CMD_FALLBACK);
++        cmd.add(this.cmd);
+         cmd.add("log");
+ 
+         if (file.isDirectory()) {
+@@ -94,15 +90,18 @@
+     }    
+     
+     @Override
+-    public InputStream getHistoryGet(String parent, String basename, String rev) {
++    public InputStream getHistoryGet(String parent, String basename, String rev) 
++    {
+         InputStream ret = null;
+ 
+         File directory = new File(directoryName);
+ 
+         Process process = null;
+         try {
+-            String filename =  (new File(parent, basename)).getCanonicalPath().substring(directoryName.length() + 1);
+-            String argv[] = {getCommand(), "cat", "-r", rev, filename};
++            String filename =  (new File(parent, basename)).getCanonicalPath()
++            	.substring(directoryName.length() + 1);
++    		ensureCommand(CMD_PROPERTY_KEY, CMD_FALLBACK);
++            String argv[] = {cmd, "cat", "-r", rev, filename};
+             process = Runtime.getRuntime().exec(argv, null, directory);
+ 
+             ByteArrayOutputStream out = new ByteArrayOutputStream();
+@@ -118,7 +117,8 @@
+             
+             ret = new BufferedInputStream(new ByteArrayInputStream(out.toByteArray()));
+         } catch (Exception exp) {
+-            OpenGrokLogger.getLogger().log(Level.SEVERE, "Failed to get history: " + exp.getClass().toString(), exp);
++            OpenGrokLogger.getLogger().log(Level.SEVERE, 
++            	"Failed to get history: " + exp.getClass().toString(), exp);
+         } finally {
+             // Clean up zombie-processes...
+             if (process != null) {
+@@ -148,7 +148,8 @@
+     @Override
+     public Annotation annotate(File file, String revision) throws IOException {
+         List<String> cmd = new ArrayList<String>();
+-        cmd.add(getCommand());
++		ensureCommand(CMD_PROPERTY_KEY, CMD_FALLBACK);
++        cmd.add(this.cmd);
+         cmd.add("blame");
+         cmd.add("--all");
+         cmd.add("--long");
+@@ -162,13 +163,17 @@
+         int status = exec.exec();
+         
+         if (status != 0) {
+-            OpenGrokLogger.getLogger().log(Level.WARNING, "Failed to get annotations for: \"{0}\" Exit code: {1}", new Object[]{file.getAbsolutePath(), String.valueOf(status)});
++            OpenGrokLogger.getLogger().log(Level.WARNING, 
++            	"Failed to get annotations for: \"{0}\" Exit code: {1}", 
++            	new Object[]{file.getAbsolutePath(), String.valueOf(status)});
+         }
+ 
+         return parseAnnotation(exec.getOutputReader(), file.getName());
+     }
+ 
+-    protected Annotation parseAnnotation(Reader input, String fileName) throws IOException {
++    protected Annotation parseAnnotation(Reader input, String fileName) 
++    	throws IOException 
++    {
+         BufferedReader in = new BufferedReader(input);
+         Annotation ret = new Annotation(fileName);
+         String line = "";
+@@ -182,7 +187,9 @@
+                 String author = matcher.group(2).trim();
+                 ret.addLine(rev, author, true);
+             } else {
+-                OpenGrokLogger.getLogger().log(Level.SEVERE, "Error: did not find annotation in line {0}: [{1}]", new Object[]{String.valueOf(lineno), line});
++                OpenGrokLogger.getLogger().log(Level.SEVERE, 
++                	"Error: did not find annotation in line {0}: [{1}]", 
++                	new Object[]{String.valueOf(lineno), line});
+             }
+         }
+         return ret;
+@@ -198,7 +205,8 @@
+         File directory = new File(getDirectoryName());
+ 
+         List<String> cmd = new ArrayList<String>();
+-        cmd.add(getCommand());
++		ensureCommand(CMD_PROPERTY_KEY, CMD_FALLBACK);
++        cmd.add(this.cmd);
+         cmd.add("info");
+         Executor executor = new Executor(cmd, directory);
+         if (executor.exec() != 0) {
+@@ -207,7 +215,7 @@
+ 
+         if (executor.getOutputString().indexOf("parent branch:") != -1) {
+             cmd.clear();
+-            cmd.add(getCommand());
++            cmd.add(this.cmd);
+             cmd.add("up");
+             executor = new Executor(cmd, directory);
+             if (executor.exec() != 0) {
+@@ -230,13 +238,17 @@
+        if (file.isDirectory()) {
+         File f = new File(file, ".bzr");
+         return f.exists() && f.isDirectory();
+-       } else {
+-        return false; }
++       }
++       return false;
+     }
+     
+     @Override
+     public boolean isWorking() {
+-        return bzrBinary.available;
++    	if (working == null) {
++    		ensureCommand(CMD_PROPERTY_KEY, CMD_FALLBACK);
++        	working = checkCmd(new String[]{ cmd, "--help" });
++    	}
++        return working.booleanValue();
+     }
+ 
+     @Override
+diff -r bfe828cbcc84 src/org/opensolaris/opengrok/history/CVSRepository.java
+--- a/src/org/opensolaris/opengrok/history/CVSRepository.java	Sat Feb 26 19:16:58 2011 +0100
++++ b/src/org/opensolaris/opengrok/history/CVSRepository.java	Thu Mar 31 06:59:17 2011 +0200
+@@ -45,28 +45,24 @@
+  */
+ public class CVSRepository extends RCSRepository {
+     private static final long serialVersionUID = 1L;
+-
+-    private static ScmChecker cvsBinary = new ScmChecker(new String[]{
+-                getCommand(), "--version"
+-            });
++    /** The property name used to obtain the client command for repository. */
++    public static final String CMD_PROPERTY_KEY = 
++    	"org.opensolaris.opengrok.history.cvs";
++    /** The command to use to access the repository if none was given explicitly */
++    public static final String CMD_FALLBACK = "cvs";
+ 
+     public CVSRepository() {
+         type = "CVS";
+         datePattern = "yyyy-MM-dd hh:mm:ss";
+     }
+     
+-   /**
+-     * Get the name of the Cvs command that should be used
+-     * 
+-     * @return the name of the cvs command in use
+-     */
+-    private static String getCommand() {
+-        return System.getProperty("org.opensolaris.opengrok.history.cvs", "cvs");
+-    }
+-
+     @Override
+     public boolean isWorking() {
+-        return cvsBinary.available;
++    	if (working == null) {
++    		ensureCommand(CMD_PROPERTY_KEY, CMD_FALLBACK);
++        	working = checkCmd(new String[]{ cmd , "--version" });
++    	}
++        return working.booleanValue();
+     }
+ 
+     @Override
+@@ -75,9 +71,8 @@
+                 RCSHistoryParser.getCVSFile(file.getParent(), file.getName());
+         if (cvsFile != null && cvsFile.exists()) {
+             return cvsFile;
+-        } else {
+-            return null;
+         }
++        return null;
+     }
+ 
+     @Override
+@@ -85,8 +80,8 @@
+        if (file.isDirectory()) {
+         File cvsDir = new File(file, "CVS");
+         return cvsDir.isDirectory();
+-       } else {
+-        return false; }
++       }
++       return false;
+     }
+     
+     @Override
+@@ -94,7 +89,8 @@
+         File directory = new File(getDirectoryName());
+ 
+         List<String> cmd = new ArrayList<String>();
+-        cmd.add(getCommand());
++		ensureCommand(CMD_PROPERTY_KEY, CMD_FALLBACK);
++        cmd.add(this.cmd);
+         cmd.add("update");
+         Executor executor = new Executor(cmd, directory);
+         if (executor.exec() != 0) {
+@@ -119,7 +115,8 @@
+         }
+ 
+         List<String> cmd = new ArrayList<String>();
+-        cmd.add(getCommand());
++		ensureCommand(CMD_PROPERTY_KEY, CMD_FALLBACK);
++        cmd.add(this.cmd);
+         cmd.add("log");
+         cmd.add("-N"); //don't display tags
+ 
+@@ -134,20 +131,27 @@
+                   if (line!=null) {
+                          branch=line.substring(1); }
+                  } catch (Exception exp) {
+-                    OpenGrokLogger.getLogger().log(Level.WARNING, "Failed to get revision tag of {0}", getDirectoryName() + ": "+exp.getClass().toString() );
++                    OpenGrokLogger.getLogger().log(Level.WARNING, 
++                    	"Failed to get revision tag of {0}", 
++                    	getDirectoryName() + ": "+exp.getClass().toString() );
+                  } finally {
+                     br.close();
+                    }
+                 } catch (IOException ex){
+-                 OpenGrokLogger.getLogger().log(Level.WARNING, "Failed to work with CVS/Tag file of {0}", getDirectoryName() + ": "+ex.getClass().toString() );
++                 OpenGrokLogger.getLogger().log(Level.WARNING, 
++                	 "Failed to work with CVS/Tag file of {0}", 
++                	 getDirectoryName() + ": "+ex.getClass().toString() );
+                 }
+ 
+ 
+             }
+             else { isBranch=Boolean.FALSE; }
+         }
+-        if (isBranch.equals(Boolean.TRUE) && branch!=null && !branch.isEmpty()) {
+-             cmd.add("-r"+branch); //just generate THIS branch history, we don't care about the other branches which are not checked out            
++        if (isBranch.equals(Boolean.TRUE) && branch!=null && !branch.isEmpty()) 
++        {
++        	//just generate THIS branch history, we don't care about the other 
++        	// branches which are not checked out
++            cmd.add("-r"+branch);
+         }
+         
+         if (filename.length() > 0) {
+@@ -157,7 +161,8 @@
+     }
+ 
+     @Override
+-    public InputStream getHistoryGet(String parent, String basename, String rev) {
++    public InputStream getHistoryGet(String parent, String basename, String rev)
++    {
+         InputStream ret = null;
+ 
+         Process process = null;
+@@ -168,7 +173,8 @@
+             revision = rev.substring(0, rev.indexOf(':'));
+         }
+         try {
+-            String argv[] = {getCommand(), "up", "-p", "-r", revision, basename};
++    		ensureCommand(CMD_PROPERTY_KEY, CMD_FALLBACK);
++            String argv[] = {cmd, "up", "-p", "-r", revision, basename};
+             process = Runtime.getRuntime().exec(argv, null, new File(parent));
+ 
+             ByteArrayOutputStream out = new ByteArrayOutputStream();
+@@ -184,13 +190,15 @@
+ 
+             ret = new BufferedInputStream(new ByteArrayInputStream(out.toByteArray()));
+         } catch (Exception exp) {
+-            OpenGrokLogger.getLogger().log(Level.SEVERE, "Failed to get history: {0}", exp.getClass().toString());
++            OpenGrokLogger.getLogger().log(Level.SEVERE, 
++            	"Failed to get history: {0}", exp.getClass().toString());
+         } finally {
+             if (in != null) {
+                 try {
+                     in.close();
+                 } catch (IOException e) {
+-                    OpenGrokLogger.getLogger().log(Level.WARNING, "An error occured while closing stream", e);
++                    OpenGrokLogger.getLogger().log(Level.WARNING, 
++                    	"An error occured while closing stream", e);
+                 }
+             }
+             // Clean up zombie-processes...
+@@ -228,7 +236,8 @@
+     @Override
+     Annotation annotate(File file, String revision) throws IOException {
+         ArrayList<String> cmd = new ArrayList<String>();
+-        cmd.add(getCommand());
++		ensureCommand(CMD_PROPERTY_KEY, CMD_FALLBACK);
++        cmd.add(this.cmd);
+         cmd.add("annotate");
+         if (revision != null) {
+             cmd.add("-r");
+@@ -240,7 +249,9 @@
+         int status = exec.exec();
+ 
+         if (status != 0) {
+-            OpenGrokLogger.getLogger().log(Level.WARNING, "Failed to get annotations for: \"{0}\" Exit code: {1}", new Object[]{file.getAbsolutePath(), String.valueOf(status)});
++            OpenGrokLogger.getLogger().log(Level.WARNING, 
++            	"Failed to get annotations for: \"{0}\" Exit code: {1}",
++            	new Object[]{file.getAbsolutePath(), String.valueOf(status)});
+         }
+ 
+         return parseAnnotation(exec.getOutputReader(), file.getName());
+@@ -250,31 +261,37 @@
+     private final static Pattern ANNOTATE_PATTERN =
+         Pattern.compile("([\\.\\d]+)\\W+\\((\\w+)");
+ 
+-    protected Annotation parseAnnotation(Reader input, String fileName) throws IOException {
+-        BufferedReader in = new BufferedReader(input);
+-        Annotation ret = new Annotation(fileName);
+-        String line = "";
+-        int lineno = 0;
+-        boolean hasStarted = false;
+-        Matcher matcher = ANNOTATE_PATTERN.matcher(line);
+-        while ((line = in.readLine()) != null) {
+-            // Skip header
+-            if (!hasStarted && (line.length() == 0 || !Character.isDigit(line.charAt(0)))) {
+-                continue;
+-            }
+-            hasStarted = true;
+-
+-            // Start parsing
+-            ++lineno;
+-            matcher.reset(line);
+-            if (matcher.find()) {
+-                String rev = matcher.group(1);
+-                String author = matcher.group(2).trim();
+-                ret.addLine(rev, author, true);
+-            } else {
+-                OpenGrokLogger.getLogger().log(Level.SEVERE, "Error: did not find annotation in line {0}: [{1}]", new Object[]{String.valueOf(lineno), line});
+-            }
+-        }
+-        return ret;
+-    }
++    protected Annotation parseAnnotation(Reader input, String fileName) 
++		throws IOException 
++	{
++	    BufferedReader in = new BufferedReader(input);
++	    Annotation ret = new Annotation(fileName);
++	    String line = "";
++	    int lineno = 0;
++	    boolean hasStarted = false;
++	    Matcher matcher = ANNOTATE_PATTERN.matcher(line);
++	    while ((line = in.readLine()) != null) {
++	        // Skip header
++	        if (!hasStarted && (line.length() == 0 
++	        	|| !Character.isDigit(line.charAt(0)))) 
++	        {
++	            continue;
++	        }
++	        hasStarted = true;
++	
++	        // Start parsing
++	        ++lineno;
++	        matcher.reset(line);
++	        if (matcher.find()) {
++	            String rev = matcher.group(1);
++	            String author = matcher.group(2).trim();
++	            ret.addLine(rev, author, true);
++	        } else {
++	            OpenGrokLogger.getLogger().log(Level.SEVERE, 
++	            	"Error: did not find annotation in line {0}: [{1}]", 
++	            	new Object[]{String.valueOf(lineno), line});
++	        }
++	    }
++	    return ret;
++	}
+ }
+diff -r bfe828cbcc84 src/org/opensolaris/opengrok/history/ClearCaseRepository.java
+--- a/src/org/opensolaris/opengrok/history/ClearCaseRepository.java	Sat Feb 26 19:16:58 2011 +0100
++++ b/src/org/opensolaris/opengrok/history/ClearCaseRepository.java	Thu Mar 31 06:59:17 2011 +0200
+@@ -40,28 +40,22 @@
+  */
+ public class ClearCaseRepository extends Repository {
+     private static final long serialVersionUID = 1L;
+-
+-    private static ScmChecker cleartoolBinary = new ScmChecker(new String[]{
+-                getCommand(), "-version"
+-            });
++    /** The property name used to obtain the client 
++     * command for this repository.
++     */
++    public static final String CMD_PROPERTY_KEY = 
++    	"org.opensolaris.opengrok.history.ClearCase";
++    /** The command to use to access the repository if none was given explicitly */
++    public static final String CMD_FALLBACK = "cleartool";
+ 
+     private boolean verbose;
+ 
+     public ClearCaseRepository() {
+         type = "ClearCase";
+-        working = true;
+         datePattern = "yyyyMMdd.HHmmss";
+     }
+ 
+     /**
+-     * Get the name of the ClearCase command that should be used
+-     * @return the name of the cleartool command in use
+-     */
+-    private static String getCommand() {
+-        return System.getProperty("org.opensolaris.opengrok.history.ClearCase", "cleartool");
+-    }
+-
+-    /**
+      * Use verbose log messages, or just the summary
+      * @return true if verbose log messages are used for this repository
+      */
+@@ -92,7 +86,8 @@
+         }
+         
+         List<String> cmd = new ArrayList<String>();
+-        cmd.add(getCommand());
++		ensureCommand(CMD_PROPERTY_KEY, CMD_FALLBACK);
++        cmd.add(this.cmd);
+         cmd.add("lshistory");
+         if (file.isDirectory()) {
+             cmd.add("-dir");
+@@ -105,24 +100,28 @@
+     }    
+ 
+     @Override
+-    public InputStream getHistoryGet(String parent, String basename, String rev) {
++    public InputStream getHistoryGet(String parent, String basename, String rev)
++    {
+         InputStream ret = null;
+ 
+         File directory = new File(directoryName);
+ 
+         Process process = null;
+         try {
+-            String filename = (new File(parent, basename)).getCanonicalPath().substring(directoryName.length() + 1);
++            String filename = (new File(parent, basename)).getCanonicalPath()
++            	.substring(directoryName.length() + 1);
+             final File tmp = File.createTempFile("opengrok", "tmp");
+             String tmpName = tmp.getCanonicalPath();
+ 
+             // cleartool can't get to a previously existing file
+             if (tmp.exists() && !tmp.delete()) {
+-                OpenGrokLogger.getLogger().log(Level.WARNING, "Failed to remove temporary file used by history cache");
++                OpenGrokLogger.getLogger().log(Level.WARNING, 
++                	"Failed to remove temporary file used by history cache");
+             }
+ 
+             String decorated = filename + "@@" + rev;
+-            String argv[] = {getCommand(), "get", "-to", tmpName, decorated};
++    		ensureCommand(CMD_PROPERTY_KEY, CMD_FALLBACK);
++            String argv[] = {cmd, "get", "-to", tmpName, decorated};
+             process = Runtime.getRuntime().exec(argv, null, directory);
+ 
+             drainStream(process.getInputStream());
+@@ -145,7 +144,8 @@
+                 }
+             };
+         } catch (Exception exp) {
+-            OpenGrokLogger.getLogger().log(Level.SEVERE, "Failed to get history: " + exp.getClass().toString(), exp);
++            OpenGrokLogger.getLogger().log(Level.SEVERE, 
++            	"Failed to get history: " + exp.getClass().toString(), exp);
+         } finally {
+             // Clean up zombie-processes...
+             if (process != null) {
+@@ -172,8 +172,10 @@
+             try  {
+                 skipped = in.skip(32768L);
+             } catch (IOException ioe) {
+-                // ignored - stream isn't seekable, but skipped variable still has correct value.
+-                OpenGrokLogger.getLogger().log(Level.FINEST, "Stream not seekable", ioe);
++                // ignored - stream isn't seekable, but skipped variable still 
++            	// has correct value.
++                OpenGrokLogger.getLogger().log(Level.FINEST, 
++                	"Stream not seekable", ioe);
+             }
+             if (skipped == 0 && in.read() == -1) {
+                 // No bytes skipped, checked that we've reached EOF with read()
+@@ -194,7 +196,8 @@
+ public Annotation annotate(File file, String revision) throws IOException {
+         ArrayList<String> argv = new ArrayList<String>();
+ 
+-        argv.add(getCommand());
++		ensureCommand(CMD_PROPERTY_KEY, CMD_FALLBACK);
++        argv.add(cmd);
+         argv.add("annotate");
+         argv.add("-nheader");
+         argv.add("-out");
+@@ -232,7 +235,8 @@
+                 try {
+                     in.close();
+                 } catch (IOException exp) {
+-                    OpenGrokLogger.getLogger().log(Level.WARNING, "An error occured while closing stream.", exp);
++                    OpenGrokLogger.getLogger().log(Level.WARNING, 
++                    	"An error occured while closing stream.", exp);
+                 }
+             }
+ 
+@@ -270,7 +274,8 @@
+             File directory = new File(getDirectoryName());
+ 
+             // Check if this is a snapshot view
+-            String[] argv = {getCommand(), "catcs"};
++    		ensureCommand(CMD_PROPERTY_KEY, CMD_FALLBACK);
++            String[] argv = {cmd, "catcs"};
+             process = Runtime.getRuntime().exec(argv, null, directory);
+             in = new BufferedReader(new InputStreamReader(process.getInputStream()));
+             boolean snapshot = false;
+@@ -285,7 +290,8 @@
+             in = null; // To avoid double close in finally clause
+             if (snapshot) {
+                 // It is a snapshot view, we need to update it manually
+-                argv = new String[]{getCommand(), "update", "-overwrite", "-f"};
++        		ensureCommand(CMD_PROPERTY_KEY, CMD_FALLBACK);
++                argv = new String[]{cmd, "update", "-overwrite", "-f"};
+                 process = Runtime.getRuntime().exec(argv, null, directory);
+                 in = new BufferedReader(new InputStreamReader(process.getInputStream()));
+                 // consume output
+@@ -302,7 +308,8 @@
+                 try {
+                     in.close();
+                 } catch (IOException e) {
+-                    OpenGrokLogger.getLogger().log(Level.WARNING, "An error occured while closing stream.", e);
++                    OpenGrokLogger.getLogger().log(Level.WARNING, 
++                    	"An error occured while closing stream.", e);
+                 }
+             }
+             if (process != null) {
+@@ -326,7 +333,11 @@
+ 
+     @Override
+     public boolean isWorking() {
+-        return cleartoolBinary.available;
++    	if (working == null) {
++    		ensureCommand(CMD_PROPERTY_KEY, CMD_FALLBACK);
++        	working = checkCmd(new String[]{ cmd, "–version" });
++    	}
++        return working.booleanValue();
+     }
+ 
+     @Override
+@@ -348,7 +359,8 @@
+                     }
+                 }
+             } catch (IOException e) {
+-                OpenGrokLogger.getLogger().log(Level.WARNING, "Could not get canonical path for \""+file+"\"", e);
++                OpenGrokLogger.getLogger().log(Level.WARNING, 
++                	"Could not get canonical path for \""+file+"\"", e);
+             }
+         }
+         return false;
+@@ -362,25 +374,33 @@
+         return VobsHolder.vobs;
+     }
+ 
++    private static ClearCaseRepository testRepo;
++
+     private static String[] runLsvob() {
+-        Executor exec = new Executor(new String[] {getCommand(), "lsvob", "-s"});
+-        int rc;
+-        if ((rc = exec.exec(true)) == 0) {
+-            String output = exec.getOutputString();
+-
+-            if (output == null) {
+-                OpenGrokLogger.getLogger().log(Level.SEVERE, "\"cleartool lsvob -s\" output was null");
+-                return new String[0];
+-            } else {
+-                String sep = System.getProperty("line.separator");
+-                String[] vobs = output.split(Pattern.quote(sep));
+-                OpenGrokLogger.getLogger().log(Level.CONFIG, "Found VOBs: {0}", Arrays.asList(vobs));
+-                return vobs;
+-            }
+-        } else {
+-            OpenGrokLogger.getLogger().log(Level.SEVERE, "\"cleartool lsvob -s\" returned non-zero status: {0}", rc);
+-            return new String[0];
+-        }
++    	if (testRepo == null) {
++    		testRepo = new ClearCaseRepository();
++    	}
++		if (testRepo.isWorking()) {
++	        Executor exec = new Executor(new String[] {testRepo.cmd, "lsvob", "-s"});
++	        int rc;
++	        if ((rc = exec.exec(true)) == 0) {
++	            String output = exec.getOutputString();
++	
++	            if (output == null) {
++	                OpenGrokLogger.getLogger().log(Level.SEVERE, 
++	                	"\"cleartool lsvob -s\" output was null");
++	                return new String[0];
++	            }
++	            String sep = System.getProperty("line.separator");
++	            String[] vobs = output.split(Pattern.quote(sep));
++	            OpenGrokLogger.getLogger().log(Level.CONFIG, "Found VOBs: {0}",
++	            	Arrays.asList(vobs));
++	            return vobs;
++	        }
++	        OpenGrokLogger.getLogger().log(Level.SEVERE, 
++	        	"\"cleartool lsvob -s\" returned non-zero status: " + rc);
++		}
++        return new String[0];
+     }
+ 
+     @Override
+diff -r bfe828cbcc84 src/org/opensolaris/opengrok/history/GitRepository.java
+--- a/src/org/opensolaris/opengrok/history/GitRepository.java	Sat Feb 26 19:16:58 2011 +0100
++++ b/src/org/opensolaris/opengrok/history/GitRepository.java	Thu Mar 31 06:59:17 2011 +0200
+@@ -46,8 +46,13 @@
+ public class GitRepository extends Repository {
+ 
+     private static final long serialVersionUID = 1L;
+-    private static ScmChecker gitBinary = new ScmChecker(new String[]{
+-                getCommand(), "--help"});
++    /** The property name used to obtain the client 
++     * command for this repository.
++     */
++    public static final String CMD_PROPERTY_KEY = 
++    	"org.opensolaris.opengrok.history.git";
++    /** The command to use to access the repository if none was given explicitly */
++    public static final String CMD_FALLBACK = "git";
+ 
+     public GitRepository() {
+         type = "git";
+@@ -61,7 +66,9 @@
+      * @param file The file to retrieve history for
+      * @return An Executor ready to be started
+      */
+-    Executor getHistoryLogExecutor(final File file, String sinceRevision) throws IOException {
++    Executor getHistoryLogExecutor(final File file, String sinceRevision) 
++    	throws IOException 
++    {
+         String abs = file.getCanonicalPath();
+         String filename = "";
+         if (abs.length() > directoryName.length()) {
+@@ -69,7 +76,8 @@
+         }
+ 
+         List<String> cmd = new ArrayList<String>();
+-        cmd.add(getCommand());
++		ensureCommand(CMD_PROPERTY_KEY, CMD_FALLBACK);
++        cmd.add(this.cmd);
+         cmd.add("log");
+         cmd.add("--name-only");
+         cmd.add("--pretty=fuller");
+@@ -100,16 +108,9 @@
+         return new InputStreamReader(input, "UTF-8");
+     }
+ 
+-    /**
+-     * Get the name of the Git command that should be used
+-     * @return the name of the hg command in use
+-     */
+-    private static String getCommand() {
+-        return System.getProperty("org.opensolaris.opengrok.history.git", "git");
+-    }
+-
+     @Override
+-    public InputStream getHistoryGet(String parent, String basename, String rev) {
++    public InputStream getHistoryGet(String parent, String basename, String rev)
++    {
+         InputStream ret = null;
+ 
+         File directory = new File(directoryName);
+@@ -119,8 +120,10 @@
+ 
+         Process process = null;
+         try {
+-            String filename = (new File(parent, basename)).getCanonicalPath().substring(directoryName.length() + 1);
+-            String argv[] = {getCommand(), "show", rev + ":" + filename};
++            String filename = (new File(parent, basename)).getCanonicalPath()
++            	.substring(directoryName.length() + 1);
++    		ensureCommand(CMD_PROPERTY_KEY, CMD_FALLBACK);
++            String argv[] = {cmd, "show", rev + ":" + filename};
+             process = Runtime.getRuntime().exec(argv, null, directory);
+ 
+             InputStream in = process.getInputStream();
+@@ -134,7 +137,8 @@
+ 
+             ret = new BufferedInputStream(new ByteArrayInputStream(output.toByteArray()));
+         } catch (Exception exp) {
+-            OpenGrokLogger.getLogger().log(Level.SEVERE, "Failed to get history: " + exp.getClass().toString(), exp);
++            OpenGrokLogger.getLogger().log(Level.SEVERE, 
++            	"Failed to get history: " + exp.getClass().toString(), exp);
+         } finally {
+             // Clean up zombie-processes...
+             if (process != null) {
+@@ -163,7 +167,8 @@
+     @Override
+     public Annotation annotate(File file, String revision) throws IOException {
+         List<String> cmd = new ArrayList<String>();
+-        cmd.add(getCommand());
++		ensureCommand(CMD_PROPERTY_KEY, CMD_FALLBACK);
++        cmd.add(this.cmd);
+         cmd.add("blame");
+         cmd.add("-l");
+         if (revision != null) {
+@@ -175,14 +180,18 @@
+         int status = exec.exec();
+ 
+         if (status != 0) {
+-            OpenGrokLogger.getLogger().log(Level.WARNING, "Failed to get annotations for: \"{0}\" Exit code: {1}", new Object[]{file.getAbsolutePath(), String.valueOf(status)});
++            OpenGrokLogger.getLogger().log(Level.WARNING, 
++            	"Failed to get annotations for: \"{0}\" Exit code: {1}", 
++            	new Object[]{file.getAbsolutePath(), String.valueOf(status)});
+         }
+ 
+         return parseAnnotation(
+                 newLogReader(exec.getOutputStream()), file.getName());
+     }
+ 
+-    protected Annotation parseAnnotation(Reader input, String fileName) throws IOException {
++    protected Annotation parseAnnotation(Reader input, String fileName) 
++    	throws IOException 
++    {
+         BufferedReader in = new BufferedReader(input);
+         Annotation ret = new Annotation(fileName);
+         String line = "";
+@@ -196,7 +205,9 @@
+                 String author = matcher.group(2).trim();
+                 ret.addLine(rev, author, true);
+             } else {
+-                OpenGrokLogger.getLogger().log(Level.SEVERE, "Error: did not find annotation in line {0}: [{1}] of {2}", new Object[]{String.valueOf(lineno), line, fileName});
++                OpenGrokLogger.getLogger().log(Level.SEVERE, 
++                	"Error: did not find annotation in line {0}: [{1}] of {2}",
++                	new Object[]{String.valueOf(lineno), line, fileName});
+             }
+         }
+         return ret;
+@@ -211,7 +222,8 @@
+     public void update() throws IOException {
+         File directory = new File(getDirectoryName());
+         List<String> cmd = new ArrayList<String>();
+-        cmd.add(getCommand());
++		ensureCommand(CMD_PROPERTY_KEY, CMD_FALLBACK);
++        cmd.add(this.cmd);
+         cmd.add("config");
+         cmd.add("--list");
+ 
+@@ -222,7 +234,7 @@
+ 
+         if (executor.getOutputString().indexOf("remote.origin.url=") != -1) {
+             cmd.clear();
+-            cmd.add(getCommand());
++            cmd.add(this.cmd);
+             cmd.add("pull");
+             cmd.add("-n");
+             cmd.add("-q");
+@@ -246,14 +258,17 @@
+         if (file.isDirectory()) {
+             File f = new File(file, ".git");
+             return f.exists() && f.isDirectory();
+-        } else {
+-            return false;
+         }
++        return false;
+     }
+ 
+     @Override
+     public boolean isWorking() {
+-        return gitBinary.available;
++    	if (working == null) {
++    		ensureCommand(CMD_PROPERTY_KEY, CMD_FALLBACK);
++        	working = checkCmd(new String[]{ cmd, "--help" });
++    	}
++        return working.booleanValue();
+     }
+ 
+     @Override
+diff -r bfe828cbcc84 src/org/opensolaris/opengrok/history/HistoryGuru.java
+--- a/src/org/opensolaris/opengrok/history/HistoryGuru.java	Sat Feb 26 19:16:58 2011 +0100
++++ b/src/org/opensolaris/opengrok/history/HistoryGuru.java	Thu Mar 31 06:59:17 2011 +0200
+@@ -29,7 +29,6 @@
+ import java.util.ArrayList;
+ import java.util.Collection;
+ import java.util.HashMap;
+-import java.util.Iterator;
+ import java.util.List;
+ import java.util.Map;
+ import java.util.Set;
+@@ -57,8 +56,9 @@
+     /** The history cache to use */
+     private final HistoryCache historyCache;
+     
+-    private Map<String, Repository> repositories = new HashMap<String, Repository>();
+-    private final Integer scanningDepth;
++    private Map<String, Repository> repositories = 
++    	new HashMap<String, Repository>();
++    private final int scanningDepth;
+ 
+     /**
+      * Creates a new instance of HistoryGuru, and try to set the default
+@@ -120,6 +120,7 @@
+      * @param rev the revision to annotate (<code>null</code> means BASE)
+      * @return file annotation, or <code>null</code> if the
+      * <code>HistoryParser</code> does not support annotation
++     * @throws IOException 
+      */
+     public Annotation annotate(File file, String rev) throws IOException {
+         Annotation ret = null;
+@@ -128,26 +129,30 @@
+         if (repos != null) {
+             ret = repos.annotate(file, rev);
+             History hist = null;
+-            boolean h=true;
+             try {
+                 hist = repos.getHistory(file);
+             } catch (HistoryException ex) {
+-                Logger.getLogger(HistoryGuru.class.getName()).log(Level.FINEST, "Cannot get messages for tooltip: ", ex);
+-                h=false;
++                Logger.getLogger(HistoryGuru.class.getName()).log(Level.FINEST, 
++                	"Cannot get messages for tooltip: ", ex);
+             }
+-            if (h) {
++            if (hist != null) {
+              Set<String> revs=ret.getRevisions();
+-             List<HistoryEntry> hent = hist.getHistoryEntries();
++             //	!!! cannot do this because of not matching rev ids (keys)
++             // first is the most recent one, so we need the position of "rev" 
++             // until the end of the list
+              //if (hent.indexOf(rev)>0) {
+-             // hent = hent.subList(hent.indexOf(rev), hent.size()); // !!! cannot do this because of not matching rev ids (keys)
+-              //first is the most recent one, so we need the position of "rev" until the end of the list
++             //		hent = hent.subList(hent.indexOf(rev), hent.size());
+              //}
+-             for (Iterator it = hent.iterator(); it.hasNext();) {
+-                HistoryEntry he = (HistoryEntry) it.next();
++             for (HistoryEntry he : hist.getHistoryEntries()) {
+                 String cmr=he.getRevision();
+-                String[] brev=cmr.split(":"); //TODO this is only for mercurial, for other SCMs it might also be a problem, we need to revise how we shorten the rev # for annotate
++                //TODO this is only for mercurial, for other SCMs it might also 
++                // be a problem, we need to revise how we shorten the rev # for 
++                // annotate
++                String[] brev=cmr.split(":"); 
+                 if (revs.contains(brev[0])) {
+-                    ret.addDesc(brev[0], "changeset: "+he.getRevision()+"\nsummary: "+he.getMessage()+"\nuser: "+he.getAuthor()+"\ndate: "+he.getDate());
++                    ret.addDesc(brev[0], "changeset: "+he.getRevision()
++                    	+"\nsummary: "+he.getMessage()+"\nuser: "
++                    	+he.getAuthor()+"\ndate: "+he.getDate());
+                 }
+              }
+             }
+@@ -157,11 +162,13 @@
+     }
+ 
+     /**
+-     * Get the appropriate history reader for the file specified by parent and basename.
++     * Get the appropriate history reader for the file specified by parent and 
++     * basename.
+      *
+      * @param file The file to get the history reader for
+      * @throws HistoryException If an error occurs while getting the history
+-     * @return A HistorReader that may be used to read out history data for a named file
++     * @return A HistorReader that may be used to read out history data for a
++     *  named file
+      */
+     public HistoryReader getHistoryReader(File file) throws HistoryException {
+         History history = getHistory(file, false);
+@@ -196,9 +203,10 @@
+ 
+         History history = null;
+ 
+-        if (repos != null && repos.isWorking() && repos.fileHasHistory(file) &&
+-                (!repos.isRemote() ||
+-                RuntimeEnvironment.getInstance().isRemoteScmSupported())) {
++        if (repos != null && repos.isWorking() && repos.fileHasHistory(file)
++        	&& (!repos.isRemote() || RuntimeEnvironment.getInstance()
++        		.isRemoteScmSupported())) 
++        {
+             if (useCache() && historyCache.supportsRepository(repos)) {
+                 history = historyCache.get(file, repos, withFiles);
+             } else {
+@@ -214,10 +222,10 @@
+      * @param parent The directory containing the file
+      * @param basename The name of the file
+      * @param rev The revision to get
+-     * @throws java.io.IOException If an error occurs while reading out the version
+      * @return An InputStream containing the named revision of the file.
+      */
+-    public InputStream getRevision(String parent, String basename, String rev) throws IOException {
++    public InputStream getRevision(String parent, String basename, String rev) 
++    {
+         InputStream ret = null;
+ 
+         Repository rep = getRepository(new File(parent));
+@@ -230,20 +238,17 @@
+     /**
+      * Does this directory contain files with source control information?
+      * @param file The name of the directory
+-     * @return true if the files in this directory have associated revision history
++     * @return true if the files in this directory have associated revision 
++     * history
+      */
+     public boolean hasHistory(File file) {
+         Repository repos = getRepository(file);
+ 
+-        boolean ret = false;
+-
+-        if (repos != null) {
+-            ret = repos.isWorking() && repos.fileHasHistory(file);
+-            if (!RuntimeEnvironment.getInstance().isRemoteScmSupported() && repos.isRemote()) {
+-                ret = false;
+-            }
+-        }
+-        return ret;
++        return repos == null
++        	? false
++        	: repos.isWorking() && repos.fileHasHistory(file)
++        		&& (RuntimeEnvironment.getInstance().isRemoteScmSupported() 
++        			|| !repos.isRemote());
+     }
+ 
+     /**
+@@ -264,8 +269,9 @@
+         return false;
+     }
+ 
+-    private void addRepositories(File[] files, List<RepositoryInfo> repos,
+-            IgnoredNames ignoredNames, Integer depth) {
++    private void addRepositories(File[] files, Collection<RepositoryInfo> repos,
++            IgnoredNames ignoredNames, int depth) 
++    {
+         addRepositories(files, repos, ignoredNames, true, depth);
+     }
+ 
+@@ -275,26 +281,30 @@
+      * @param repos list of found repos
+      * @param ignoredNames what files to ignore
+      * @param recursiveSearch whether to use recursive search
+-     * @param depth current depth - using global scanningDepth - one can limit this to improve scanning performance
++     * @param depth current depth - using global scanningDepth - one can limit 
++     * 	this to improve scanning performance
+      */
+     @SuppressWarnings("PMD.ConfusingTernary")
+-    private void addRepositories(File[] files, List<RepositoryInfo> repos,
+-            IgnoredNames ignoredNames, boolean recursiveSearch, Integer depth) {
++    private void addRepositories(File[] files, Collection<RepositoryInfo> repos,
++            IgnoredNames ignoredNames, boolean recursiveSearch, int depth) {
+         for (File file : files) {
+             Repository repository = null;
+             try {
+                 repository = RepositoryFactory.getRepository(file);
+             } catch (InstantiationException ie) {
+-                log.log(Level.WARNING, "Could not create repoitory for '" + file + "', could not instantiate the repository.", ie);
++                log.log(Level.WARNING, "Could not create repoitory for '" 
++                	+ file + "', could not instantiate the repository.", ie);
+             } catch (IllegalAccessException iae) {
+-                log.log(Level.WARNING, "Could not create repoitory for '" + file + "', missing access rights.", iae);
++                log.log(Level.WARNING, "Could not create repoitory for '" 
++                	+ file + "', missing access rights.", iae);
+             }
+             if (repository != null) {
+                 try {
+                     String path = file.getCanonicalPath();
+                     repository.setDirectoryName(path);
+                     if (RuntimeEnvironment.getInstance().isVerbose()) {
+-                        log.log(Level.CONFIG, "Adding <{0}> repository: <{1}>", new Object[]{repository.getClass().getName(), path});
++                        log.log(Level.CONFIG, "Adding <{0}> repository: <{1}>",
++                        	new Object[]{repository.getClass().getName(), path});
+                     }
+                     
+                     repos.add(new RepositoryInfo(repository));
+@@ -303,17 +313,21 @@
+                     if (recursiveSearch && repository.supportsSubRepositories()) {
+                         File subFiles[] = file.listFiles();
+                         if (subFiles == null) {
+-                            log.log(Level.WARNING, "Failed to get sub directories for ''{0}'', check access permissions.", file.getAbsolutePath());
+-                        } else {
+-                            // Search only one level down - if not: too much stat'ing for huge Mercurial repositories
+-                            if (depth<=scanningDepth) {                            
+-                            addRepositories(subFiles, repos, ignoredNames, false, depth+1);
+-                            }
++                            log.log(Level.WARNING, 
++                            	"Failed to get sub directories for '" 
++                            	+ file.getAbsolutePath() 
++                            	+ "', check access permissions.");
++                        } else if (depth<=scanningDepth) {
++                            // Search only one level down - if not: too much 
++                        	// stat'ing for huge Mercurial repositories
++                        	addRepositories(subFiles, repos, ignoredNames, 
++                        		false, depth+1);
+                         }
+                     }
+                     
+                 } catch (IOException exp) {
+-                    log.log(Level.WARNING, "Failed to get canonical path for {0}: {1}", new Object[]{file.getAbsolutePath(), exp.getMessage()});
++                    log.log(Level.WARNING, "Failed to get canonical path for "
++                    	+ file.getAbsolutePath() + ": " + exp.getMessage());
+                     log.log(Level.WARNING, "Repository will be ignored...", exp);
+                 }
+             } else {
+@@ -321,11 +335,12 @@
+                 if (file.isDirectory() && !ignoredNames.ignore(file)) {
+                     File subFiles[] = file.listFiles();
+                     if (subFiles == null) {
+-                        log.log(Level.WARNING, "Failed to get sub directories for ''{0}'', check access permissions.", file.getAbsolutePath());
+-                    } else {
+-                        if (depth<=scanningDepth) {
+-                           addRepositories(subFiles, repos, ignoredNames, depth+1);
+-                        }
++                        log.log(Level.WARNING, 
++                        	"Failed to get sub directories for '" 
++                        	+ file.getAbsolutePath()
++                        	+ "', check access permissions.");
++                    } else if (depth<=scanningDepth) {
++                    	addRepositories(subFiles, repos, ignoredNames, depth+1);
+                     }
+                 }
+             }
+@@ -360,18 +375,22 @@
+ 
+             if (repository.isWorking()) {
+                 if (verbose) {
+-                    log.info(String.format("Update %s repository in %s", type, path));
++                    log.info(String.format("Update %s repository in %s", 
++                    	type, path));
+                 }
+ 
+                 try {
+                     repository.update();
+                 } catch (UnsupportedOperationException e) {
+-                    log.warning(String.format("Skipping update of %s repository in %s: Not implemented", type, path));
++                    log.warning(String.format("Skipping update of %s repository"
++                    	+ " in %s: Not implemented", type, path));
+                 } catch (Exception e) {
+-                    log.log(Level.WARNING, "An error occured while updating " + path + " (" + type + ")", e);
++                    log.log(Level.WARNING, "An error occured while updating " 
++                    	+ path + " (" + type + ")", e);
+                 }
+             } else {
+-                log.warning(String.format("Skipping update of %s repository in %s: Missing SCM dependencies?", type, path));
++                log.warning(String.format("Skipping update of %s repository in "
++                	+ "%s: Missing SCM dependencies?", type, path));
+             }
+         }
+     }
+@@ -380,36 +399,34 @@
+      * Update the source the contents in the source repositories.
+      * @param paths A list of files/directories to update
+      */
+-    public void updateRepositories(List<String> paths) {
++    public void updateRepositories(Collection<String> paths) {
+         boolean verbose = RuntimeEnvironment.getInstance().isVerbose();
+ 
+-        ArrayList<Repository> repos = new ArrayList<Repository>();
+-        File root = RuntimeEnvironment.getInstance().getSourceRootFile();
+-        for (String path : paths) {
+-            File f = new File(root, path);
+-            Repository r = getRepository(f);
+-            if (!repos.contains(r)) {
+-                repos.add(r);
+-            }
+-        }
++        List<Repository> repos = getReposFromString(paths);
+ 
+         for (Repository repository : repos) {
+             String type = repository.getClass().getSimpleName();
+ 
+             if (repository.isWorking()) {
+                 if (verbose) {
+-                    log.info(String.format("Update %s repository in %s", type, repository.getDirectoryName()));
++                    log.info(String.format("Update %s repository in %s", type, 
++                    	repository.getDirectoryName()));
+                 }
+ 
+                 try {
+                     repository.update();
+                 } catch (UnsupportedOperationException e) {
+-                    log.warning(String.format("Skipping update of %s repository in %s: Not implemented", type, repository.getDirectoryName()));
++                    log.warning(String.format("Skipping update of %s repository"
++                    	+ " in %s: Not implemented", type, 
++                    	repository.getDirectoryName()));
+                 } catch (Exception e) {
+-                    log.log(Level.WARNING, "An error occured while updating " + repository.getDirectoryName() + " (" + type + ")", e);
++                    log.log(Level.WARNING, "An error occured while updating " 
++                    	+ repository.getDirectoryName() + " (" + type + ")", e);
+                 }
+             } else {
+-                log.warning(String.format("Skipping update of %s repository in %s: Missing SCM dependencies?", type, repository.getDirectoryName()));
++                log.warning(String.format("Skipping update of %s repository in"
++                	+ " %s: Missing SCM dependencies?", type, 
++                	repository.getDirectoryName()));
+             }
+         }
+     }
+@@ -427,26 +444,32 @@
+             long start = System.currentTimeMillis();
+ 
+             if (verbose) {
+-                log.log(Level.INFO, "Create historycache for {0} ({1})", new Object[]{path, type});
++                log.log(Level.INFO, "Create historycache for {0} ({1})", 
++                	new Object[]{path, type});
+             }
+ 
+             try {
+                 repository.createCache(historyCache, sinceRevision);
+             } catch (Exception e) {
+-                log.log(Level.WARNING, "An error occured while creating cache for " + path + " (" + type + ")", e);
++                log.log(Level.WARNING, 
++                	"An error occured while creating cache for " + path + " (" 
++                	+ type + ")", e);
+             }
+ 
+             if (verbose) {
+                 long stop = System.currentTimeMillis();
+-                log.log(Level.INFO, "Creating historycache for {0} took ({1}ms)", new Object[]{path, String.valueOf(stop - start)});
++                log.log(Level.INFO, "Creating historycache for {0} took ({1}ms)",
++                	new Object[]{path, String.valueOf(stop - start)});
+             }
+         } else {
+-            log.log(Level.WARNING,"Skipping creation of historycache of {0} repository in {1}: Missing SCM dependencies?", new Object[]{type, path});
++            log.log(Level.WARNING, "Skipping creation of historycache of " 
++            	+ type + " repository in " + path + ": Missing SCM dependencies?");
+         }
+     }
+ 
+     private void createCacheReal(Collection<Repository> repositories) {
+-        ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() * 2);
++        ExecutorService executor = Executors
++        	.newFixedThreadPool(Runtime.getRuntime().availableProcessors() * 2);
+ 
+         for (final Repository repos : repositories) {
+             final String latestRev;
+@@ -472,7 +495,8 @@
+                 // Wait forever                
+                 executor.awaitTermination(999,TimeUnit.DAYS);
+             } catch (InterruptedException exp) {
+-                OpenGrokLogger.getLogger().log(Level.WARNING, "Received interrupt while waiting for executor to finish", exp);
++                OpenGrokLogger.getLogger().log(Level.WARNING, 
++                	"Received interrupt while waiting for executor to finish", exp);
+             }
+         }
+ 
+@@ -486,6 +510,36 @@
+         }
+     }
+ 
++    public void createCache(Collection<String> repositories) {
++        if (!useCache()) {
++            return;
++        }
++        createCacheReal(getReposFromString(repositories));
++    }
++
++    public void removeCache(Collection<String> repositories) throws HistoryException {
++    	List<Repository> repos = getReposFromString(repositories);
++    	HistoryCache cache = historyCache;
++    	if (cache == null) {
++	        if (RuntimeEnvironment.getInstance().storeHistoryCacheInDB()) {
++	            cache = new JDBCHistoryCache();
++	            cache.initialize();
++	        } else {
++	            cache = new FileHistoryCache();
++	        }
++    	}
++    	for (Repository r : repos) {
++    		try {
++				cache.clear(r);
++				log.info("History cache for " + r.getDirectoryName() + " cleared.");
++			} catch (HistoryException e) {
++				log.warning("Clearing history cache for repository " +
++					r.getDirectoryName() + " failed: " + e.getLocalizedMessage());
++			}
++    	}
++    	invalidateRepositories(repos);
++    }
++
+     /**
+      * Create the history cache for all of the repositories
+      */
+@@ -497,25 +551,22 @@
+         createCacheReal(repositories.values());
+     }
+ 
+-    public void createCache(List<String> repositories) {
+-        if (!useCache()) {
+-            return;
+-        }
+-
++    private List<Repository> getReposFromString(Collection<String> repositories) {
+         ArrayList<Repository> repos = new ArrayList<Repository>();
+         File root = RuntimeEnvironment.getInstance().getSourceRootFile();
+         for (String file : repositories) {
+             File f = new File(root, file);
+             Repository r = getRepository(f);
+             if (r == null) {
+-                log.log(Level.WARNING, "Could not locate a repository for {0}", f.getAbsolutePath());
+-            } else {
++                log.log(Level.WARNING, "Could not locate a repository for {0}",
++                	f.getAbsolutePath());
++            } else if (!repos.contains(r)){
+                 repos.add(r);
+             }
+         }
+-        createCacheReal(repos);
++        return repos;
+     }
+-
++    
+     /**
+      * Ensure that we have a directory in the cache. If it's not there, fetch
+      * its history and populate the cache. If it's already there, and the
+@@ -580,24 +631,31 @@
+      * 
+      * @param repos The new repositories
+      */
+-    public void invalidateRepositories(List<RepositoryInfo> repos) {
++    public void invalidateRepositories(Collection<? extends RepositoryInfo> repos) 
++    {
+         if (repos == null || repos.isEmpty()) {
+             repositories.clear();
+         } else {
+-            Map<String, Repository> nrep = new HashMap<String, Repository>(repos.size());
+-
++            Map<String, Repository> nrep = 
++            	new HashMap<String, Repository>(repos.size());
+             for (RepositoryInfo i : repos) {
+                 try {
+                     Repository r = RepositoryFactory.getRepository(i);
+                     if (r == null) {
+-                        log.log(Level.WARNING, "Failed to instanciate internal repository data for {0} in {1}", new Object[]{i.getType(), i.getDirectoryName()});
++                        log.log(Level.WARNING, 
++                        	"Failed to instanciate internal repository data for "
++                        	+ i.getType() + " in " + i.getDirectoryName());
+                     } else {
+                         nrep.put(r.getDirectoryName(), r);
+                     }
+                 } catch (InstantiationException ex) {
+-                    log.log(Level.WARNING, "Could not create " + i.getType() + " for '" + i.getDirectoryName() + "', could not instantiate the repository.", ex);
++                    log.log(Level.WARNING, "Could not create " + i.getType() 
++                    	+ " for '" + i.getDirectoryName() 
++                    	+ "', could not instantiate the repository.", ex);
+                 } catch (IllegalAccessException iae) {
+-                    log.log(Level.WARNING, "Could not create " + i.getType() + " for '" + i.getDirectoryName() + "', missing access rights.", iae);
++                    log.log(Level.WARNING, "Could not create " + i.getType() 
++                    	+ " for '" + i.getDirectoryName() 
++                    	+ "', missing access rights.", iae);
+                 }
+             }
+             repositories = nrep;
+diff -r bfe828cbcc84 src/org/opensolaris/opengrok/history/JDBCHistoryCache.java
+--- a/src/org/opensolaris/opengrok/history/JDBCHistoryCache.java	Sat Feb 26 19:16:58 2011 +0100
++++ b/src/org/opensolaris/opengrok/history/JDBCHistoryCache.java	Thu Mar 31 06:59:17 2011 +0200
+@@ -1075,11 +1090,7 @@
+     private Integer getGeneratedIntKey(Statement stmt) throws SQLException {
+         ResultSet keys = stmt.getGeneratedKeys();
+         try {
+-            if (keys.next()) {
+-                return keys.getInt(1);
+-            } else {
+-                return null;
+-            }
++            return keys.next() ? keys.getInt(1) : null;
+         } finally {
+             keys.close();
+         }
+diff -r bfe828cbcc84 src/org/opensolaris/opengrok/history/MercurialRepository.java
+--- a/src/org/opensolaris/opengrok/history/MercurialRepository.java	Sat Feb 26 19:16:58 2011 +0100
++++ b/src/org/opensolaris/opengrok/history/MercurialRepository.java	Thu Mar 31 06:59:17 2011 +0200
+@@ -46,23 +46,27 @@
+ public class MercurialRepository extends Repository {
+     private static final long serialVersionUID = 1L;
+ 
++    /** The property name used to obtain the client command for thisrepository. */
++    public static final String CMD_PROPERTY_KEY = 
++    	"org.opensolaris.opengrok.history.Mercurial";
++    /** The command to use to access the repository if none was given explicitly */
++    public static final String CMD_FALLBACK = "hg";
++
++    /** The boolean property and environment variable name to indicate
++     * whether forest-extension in Mercurial adds repositories inside the
++     * repositories. */
++    public static final String NOFOREST_PROPERTY_KEY =
++    	"org.opensolaris.opengrok.history.mercurial.disableForest";
++
+     /** Template for formatting hg log output for files. */
+-    private static final String TEMPLATE = "changeset: {rev}:{node|short}\\n{branches}{tags}{parents}\\nuser: {author}\\ndate: {date|isodate}\\ndescription: {desc|strip|obfuscate}\\n";
++    private static final String TEMPLATE = "changeset: {rev}:{node|short}\\n"
++    	+ "{branches}{tags}{parents}\\n"
++    	+ "user: {author}\\ndate: {date|isodate}\\n"
++    	+ "description: {desc|strip|obfuscate}\\n";
+ 
+     /** Template for formatting hg log output for directories. */
+-    private static final String DIR_TEMPLATE = TEMPLATE + "files: {files}{file_copies}\\n";
+-
+-    private static ScmChecker hgBinary = new ScmChecker(new String[] {
+-        System.getProperty("org.opensolaris.opengrok.history.Mercurial", "hg"),
+-        "--help" });
+-    
+-    /**
+-     * Get the name of the Mercurial command that should be used
+-     * @return the name of the hg command in use
+-     */
+-    static String getCommand() {
+-        return System.getProperty("org.opensolaris.opengrok.history.Mercurial", "hg");
+-    }
++    private static final String DIR_TEMPLATE = TEMPLATE 
++    	+ "files: {files}{file_copies}\\n";
+ 
+     public MercurialRepository() {
+         type = "Mercurial";
+@@ -88,7 +92,8 @@
+         }
+         
+         List<String> cmd = new ArrayList<String>();
+-        cmd.add(getCommand());
++		ensureCommand(CMD_PROPERTY_KEY, CMD_FALLBACK);
++        cmd.add(this.cmd);
+         cmd.add("log");
+         if ( !file.isDirectory() ) { cmd.add("-f"); }
+ 
+@@ -112,7 +117,8 @@
+     }    
+     
+     @Override
+-    public InputStream getHistoryGet(String parent, String basename, String rev) {
++    public InputStream getHistoryGet(String parent, String basename, String rev)
++    {
+         InputStream ret = null;
+ 
+         File directory = new File(directoryName);
+@@ -125,8 +131,10 @@
+             revision = rev.substring(0, rev.indexOf(':'));
+         }
+         try {
+-            String filename =  (new File(parent, basename)).getCanonicalPath().substring(directoryName.length() + 1);
+-            String argv[] = {getCommand(), "cat", "-r", revision, filename};
++            String filename =  (new File(parent, basename)).getCanonicalPath()
++            	.substring(directoryName.length() + 1);
++    		ensureCommand(CMD_PROPERTY_KEY, CMD_FALLBACK);
++            String argv[] = {cmd, "cat", "-r", revision, filename};
+             process = Runtime.getRuntime().exec(argv, null, directory);
+             
+             ByteArrayOutputStream out = new ByteArrayOutputStream();
+@@ -142,13 +150,15 @@
+             
+             ret = new BufferedInputStream(new ByteArrayInputStream(out.toByteArray()));
+         } catch (Exception exp) {
+-            OpenGrokLogger.getLogger().log(Level.SEVERE, "Failed to get history: " + exp.getClass().toString());
++            OpenGrokLogger.getLogger().log(Level.SEVERE, 
++            	"Failed to get history: " + exp.getClass().toString());
+         } finally {
+             if (in != null) {
+                 try {
+                     in.close();
+                 } catch (IOException e) {
+-                    OpenGrokLogger.getLogger().log(Level.WARNING, "An error occured while closing stream", e);
++                    OpenGrokLogger.getLogger().log(Level.WARNING, 
++                    	"An error occured while closing stream", e);
+                 }
+             }
+             // Clean up zombie-processes...
+@@ -179,7 +189,8 @@
+     @Override
+     public Annotation annotate(File file, String revision) throws IOException {
+         ArrayList<String> argv = new ArrayList<String>();
+-        argv.add(getCommand());
++		ensureCommand(CMD_PROPERTY_KEY, CMD_FALLBACK);
++        argv.add(cmd);
+         argv.add("annotate");
+         argv.add("-u");
+         argv.add("-n");
+@@ -212,8 +223,9 @@
+                     String rev = matcher.group(2);                    
+                     ret.addLine(rev, author, true);                    
+                 } else {
+-                    OpenGrokLogger.getLogger().log(Level.SEVERE, "Error: did not find annotation in line " + 
+-                            lineno + ": [" + line + "]");
++                    OpenGrokLogger.getLogger().log(Level.SEVERE, 
++                    	"Error: did not find annotation in line " 
++                    	+ lineno + ": [" + line + "]");
+                 }
+             }                    
+         } finally {
+@@ -221,7 +233,8 @@
+                 try {
+                     in.close();
+                 } catch (IOException e) {
+-                    OpenGrokLogger.getLogger().log(Level.WARNING, "An error occured while closing stream", e);
++                    OpenGrokLogger.getLogger().log(Level.WARNING, 
++                    	"An error occured while closing stream", e);
+                 }
+             }
+             if (process != null) {
+@@ -246,7 +259,8 @@
+         File directory = new File(directoryName);
+ 
+         List<String> cmd = new ArrayList<String>();
+-        cmd.add(getCommand());
++		ensureCommand(CMD_PROPERTY_KEY, CMD_FALLBACK);
++        cmd.add(this.cmd);
+         cmd.add("showconfig");
+         Executor executor = new Executor(cmd, directory);
+         if (executor.exec() != 0) {
+@@ -255,7 +269,7 @@
+ 
+         if (executor.getOutputString().indexOf("paths.default=") != -1) {
+             cmd.clear();
+-            cmd.add(getCommand());
++            cmd.add(this.cmd);
+             cmd.add("pull");
+             cmd.add("-u");
+             executor = new Executor(cmd, directory);
+@@ -279,20 +293,25 @@
+       if (file.isDirectory()) {
+         File f = new File(file, ".hg");
+         return f.exists() && f.isDirectory();
+-      } else {
+-        return false; }
++      }
++      return false;
+     }
+ 
+     @Override
+     boolean supportsSubRepositories() {
+-        // The forest-extension in Mercurial adds repositories inside the
+-        // repositories.
+-        return !Boolean.getBoolean("org.opensolaris.opengrok.history.mercurial.disableForest");
++    	String val = System.getenv(NOFOREST_PROPERTY_KEY);
++        return ! (val == null
++        	? Boolean.getBoolean(NOFOREST_PROPERTY_KEY)
++        	: Boolean.parseBoolean(val));
+     }
+ 
+     @Override
+     public boolean isWorking() {
+-        return hgBinary.available;
++    	if (working == null) {
++    		ensureCommand(CMD_PROPERTY_KEY, CMD_FALLBACK);
++        	working = checkCmd(new String[]{ cmd });
++    	}
++        return working.booleanValue();
+     }
+ 
+     @Override
+diff -r bfe828cbcc84 src/org/opensolaris/opengrok/history/MonotoneRepository.java
+--- a/src/org/opensolaris/opengrok/history/MonotoneRepository.java	Sat Feb 26 19:16:58 2011 +0100
++++ b/src/org/opensolaris/opengrok/history/MonotoneRepository.java	Thu Mar 31 06:59:17 2011 +0200
+@@ -46,17 +46,11 @@
+ public class MonotoneRepository extends Repository {
+ 
+     private static final long serialVersionUID = 1L;
+-    private static ScmChecker binary = new ScmChecker(new String[]{
+-                System.getProperty("org.opensolaris.opengrok.history.Monotone", "mtn"),
+-                "--help"});
+-
+-    /**
+-     * Get the name of the Mercurial command that should be used
+-     * @return the name of the hg command in use
+-     */
+-    static String getCommand() {
+-        return System.getProperty("org.opensolaris.opengrok.history.Monotone", "mtn");
+-    }
++    /** The property name used to obtain the client command for this repository. */
++    public static final String CMD_PROPERTY_KEY = 
++    	"org.opensolaris.opengrok.history.Monotone";
++    /** The command to use to access the repository if none was given explicitly */
++    public static final String CMD_FALLBACK = "mnt";
+ 
+     public MonotoneRepository() {
+         type = "Monotone";
+@@ -64,7 +58,8 @@
+     }
+ 
+     @Override
+-    public InputStream getHistoryGet(String parent, String basename, String rev) {
++    public InputStream getHistoryGet(String parent, String basename, String rev) 
++    {
+         InputStream ret = null;
+ 
+         File directory = new File(directoryName);
+@@ -74,8 +69,10 @@
+         String revision = rev;
+ 
+         try {
+-            String filename = (new File(parent, basename)).getCanonicalPath().substring(directoryName.length() + 1);
+-            String argv[] = {getCommand(), "cat", "-r", revision, filename};
++            String filename = (new File(parent, basename)).getCanonicalPath()
++            	.substring(directoryName.length() + 1);
++    		ensureCommand(CMD_PROPERTY_KEY, CMD_FALLBACK);
++            String argv[] = { cmd, "cat", "-r", revision, filename};
+             process = Runtime.getRuntime().exec(argv, null, directory);
+ 
+             ByteArrayOutputStream out = new ByteArrayOutputStream();
+@@ -91,13 +88,15 @@
+ 
+             ret = new BufferedInputStream(new ByteArrayInputStream(out.toByteArray()));
+         } catch (Exception exp) {
+-            OpenGrokLogger.getLogger().log(Level.SEVERE, "Failed to get history: " + exp.getClass().toString());
++            OpenGrokLogger.getLogger().log(Level.SEVERE, 
++            	"Failed to get history: " + exp.getClass().toString());
+         } finally {
+             if (in != null) {
+                 try {
+                     in.close();
+                 } catch (IOException e) {
+-                    OpenGrokLogger.getLogger().log(Level.WARNING, "An error occured while closing stream", e);
++                    OpenGrokLogger.getLogger().log(Level.WARNING, 
++                    	"An error occured while closing stream", e);
+                 }
+             }
+             // Clean up zombie-processes...
+@@ -115,7 +114,7 @@
+     }
+ 
+     Executor getHistoryLogExecutor(File file, String changeset)
+-        throws HistoryException, IOException {
++        throws IOException {
+         String abs = file.getCanonicalPath();
+         String filename = "";
+         if (abs.length() > directoryName.length()) {
+@@ -123,7 +122,8 @@
+         }
+ 
+         List<String> cmd = new ArrayList<String>();
+-        cmd.add(getCommand());
++		ensureCommand(CMD_PROPERTY_KEY, CMD_FALLBACK);
++        cmd.add(this.cmd);
+         cmd.add("log");
+ 
+         if (changeset != null) {
+@@ -151,7 +151,8 @@
+     @Override
+     public Annotation annotate(File file, String revision) throws IOException {
+         ArrayList<String> cmd = new ArrayList<String>();
+-        cmd.add(getCommand());
++		ensureCommand(CMD_PROPERTY_KEY, CMD_FALLBACK);
++        cmd.add(this.cmd);
+         cmd.add("annotate");
+         cmd.add("--reallyquiet");
+         if (revision != null) {
+@@ -191,7 +192,8 @@
+                 try {
+                     in.close();
+                 } catch (IOException e) {
+-                    OpenGrokLogger.getLogger().log(Level.WARNING, "An error occured while closing stream", e);
++                    OpenGrokLogger.getLogger().log(Level.WARNING, 
++                    	"An error occured while closing stream", e);
+                 }
+             }
+         }
+@@ -206,9 +208,10 @@
+     @Override
+     public void update() throws IOException {
+         File directory = new File(directoryName);
++		ensureCommand(CMD_PROPERTY_KEY, CMD_FALLBACK);
+ 
+         List<String> cmd = new ArrayList<String>();
+-        cmd.add(getCommand());
++        cmd.add(this.cmd);
+         cmd.add("pull");
+         cmd.add("--reallyquiet");
+         Executor executor = new Executor(cmd, directory);
+@@ -217,7 +220,7 @@
+         }
+ 
+         cmd.clear();
+-        cmd.add(getCommand());
++        cmd.add(this.cmd);
+         cmd.add("update");
+         cmd.add("--reallyquiet");
+         executor = new Executor(cmd, directory);
+@@ -239,7 +242,11 @@
+ 
+     @Override
+     public boolean isWorking() {
+-        return binary.available;
++    	if (working == null) {
++    		ensureCommand(CMD_PROPERTY_KEY, CMD_FALLBACK);
++        	working = checkCmd(new String[]{ cmd, "--help"});
++    	}
++        return working.booleanValue();
+     }
+ 
+     @Override
+diff -r bfe828cbcc84 src/org/opensolaris/opengrok/history/PerforceRepository.java
+--- a/src/org/opensolaris/opengrok/history/PerforceRepository.java	Sat Feb 26 19:16:58 2011 +0100
++++ b/src/org/opensolaris/opengrok/history/PerforceRepository.java	Thu Mar 31 06:59:17 2011 +0200
+@@ -42,27 +42,25 @@
+ public class PerforceRepository extends Repository {
+ 
+     private static final long serialVersionUID = 1L;
+-    private static ScmChecker p4Binary = new ScmChecker(new String[]{getCommand(), "help"});
+-    private final static Pattern annotation_pattern = Pattern.compile("^(\\d+): .*");
++    /** The property name used to obtain the client command for this repository. */
++    public static final String CMD_PROPERTY_KEY = 
++    	"org.opensolaris.opengrok.history.Perforce";
++    /** The command to use to access the repository if none was given explicitly */
++    public static final String CMD_FALLBACK = "p4";
++
++    private final static Pattern annotation_pattern = 
++    	Pattern.compile("^(\\d+): .*");
+ 
+     public PerforceRepository() {
+         type = "Perforce";
+     }
+ 
+-    /**
+-     * Get the name of the Perforce command that should be used
+-     * 
+-     * @return the name of the p4 command in use
+-     */
+-    private static String getCommand() {
+-        return System.getProperty("org.opensolaris.opengrok.history.Perforce", "p4");
+-    }
+-
+     @Override
+     public Annotation annotate(File file, String rev) throws IOException {
+         Annotation a = new Annotation(file.getName());
+ 
+-        List<HistoryEntry> revisions = PerforceHistoryParser.getRevisions(file, rev).getHistoryEntries();
++        List<HistoryEntry> revisions = 
++        	PerforceHistoryParser.getRevisions(file, rev).getHistoryEntries();
+         HashMap<String, String> revAuthor = new HashMap<String, String>();
+         for (HistoryEntry entry : revisions) {
+             // a.addDesc(entry.getRevision(), entry.getMessage());
+@@ -70,7 +68,8 @@
+         }
+ 
+         ArrayList<String> cmd = new ArrayList<String>();
+-        cmd.add(getCommand());
++		ensureCommand(CMD_PROPERTY_KEY, CMD_FALLBACK);
++        cmd.add(this.cmd);
+         cmd.add("annotate");
+         cmd.add("-q");
+         cmd.add(file.getPath() + ((rev == null) ? "" : "#" + rev));
+@@ -90,8 +89,9 @@
+                     String author = revAuthor.get(revision);
+                     a.addLine(revision, author, true);
+                 } else {
+-                    OpenGrokLogger.getLogger().log(Level.SEVERE,
+-                            "Error: did not find annotation in line " + lineno + ": [" + line + "]");
++                    OpenGrokLogger.getLogger().log(Level.SEVERE, 
++                    	"Error: did not find annotation in line " 
++                    	+ lineno + ": [" + line + "]");
+                 }
+             }
+         } catch (IOException e) {
+@@ -105,7 +105,8 @@
+     @Override
+     InputStream getHistoryGet(String parent, String basename, String rev) {
+         ArrayList<String> cmd = new ArrayList<String>();
+-        cmd.add(getCommand());
++		ensureCommand(CMD_PROPERTY_KEY, CMD_FALLBACK);
++        cmd.add(this.cmd);
+         cmd.add("print");
+         cmd.add("-q");
+         cmd.add(basename + ((rev == null) ? "" : "#" + rev));
+@@ -119,7 +120,8 @@
+         File directory = new File(getDirectoryName());
+ 
+         List<String> cmd = new ArrayList<String>();
+-        cmd.add(getCommand());
++		ensureCommand(CMD_PROPERTY_KEY, CMD_FALLBACK);
++        cmd.add(this.cmd);
+         cmd.add("sync");
+         Executor executor = new Executor(cmd, directory);
+         if (executor.exec() != 0) {
+@@ -137,6 +139,8 @@
+         return true;
+     }
+ 
++    private static PerforceRepository testRepo;
++
+     /**
+      * Check if a given file is in the depot
+      * 
+@@ -145,14 +149,17 @@
+      */
+     public static boolean isInP4Depot(File file) {
+         boolean status = false;
+-        if (p4Binary.available) {
++        if (testRepo == null) {
++        	testRepo = new PerforceRepository();
++        }
++        if (testRepo.isWorking()) {
+             ArrayList<String> cmd = new ArrayList<String>();
+             String name = file.getName();
+             File   dir  = file.getParentFile();
+             if (file.isDirectory()) {
+                 dir = file;
+                 name = "*";
+-                cmd.add(getCommand());
++                cmd.add(testRepo.cmd);
+                 cmd.add("dirs");
+                 cmd.add(name);
+                 Executor executor = new Executor(cmd, dir);
+@@ -165,7 +172,7 @@
+             }
+             if (!status) {
+                 cmd.clear();
+-                cmd.add(getCommand());
++                cmd.add(testRepo.cmd);
+                 cmd.add("files");
+                 cmd.add(name);
+                 Executor executor = new Executor(cmd, dir);
+@@ -187,7 +194,11 @@
+ 
+     @Override
+     public boolean isWorking() {
+-        return p4Binary.available;
++    	if (working == null) {
++    		ensureCommand(CMD_PROPERTY_KEY, CMD_FALLBACK);
++        	working = checkCmd(new String[]{ cmd, "help" });
++    	}
++        return working.booleanValue();
+     }
+ 
+     @Override
+diff -r bfe828cbcc84 src/org/opensolaris/opengrok/history/RazorRepository.java
+--- a/src/org/opensolaris/opengrok/history/RazorRepository.java	Sat Feb 26 19:16:58 2011 +0100
++++ b/src/org/opensolaris/opengrok/history/RazorRepository.java	Thu Mar 31 06:59:17 2011 +0200
+@@ -142,7 +142,7 @@
+ 
+     public RazorRepository() {
+         type = "Razor";
+-        working = true;
++        working = Boolean.TRUE;
+         datePattern = "yyyy/MM/dd,hh:mm:ss";
+     }
+ 
+@@ -150,8 +150,10 @@
+     public void setDirectoryName(String directoryName) {
+         super.setDirectoryName(directoryName);
+         File opengrokBaseDirectory = new File(directoryName);
+-        opengrokSourceRootDirectoryPath = opengrokBaseDirectory.getParentFile().getAbsolutePath();
+-        razorGroupBaseDirectoryPath = new File(directoryName, ".razor").getAbsolutePath();
++        opengrokSourceRootDirectoryPath = 
++        	opengrokBaseDirectory.getParentFile().getAbsolutePath();
++        razorGroupBaseDirectoryPath = 
++        	new File(directoryName, ".razor").getAbsolutePath();
+     }
+ 
+     public String getOpengrokSourceRootDirectoryPath() {
+@@ -171,7 +173,8 @@
+     }
+ 
+     String getOpenGrokFileNameFor(File file) {
+-        return file.getAbsolutePath().substring(opengrokSourceRootDirectoryPath.length());
++        return file.getAbsolutePath()
++        	.substring(opengrokSourceRootDirectoryPath.length());
+     }
+ 
+     File getSourceNameForOpenGrokName(String path) {
+@@ -211,7 +214,8 @@
+     InputStream getHistoryGet( String parent, String basename, String rev) {
+         // @TODO : Rename & Delete Support
+         try {
+-            File binaryFile = getRazorArchiveBinaryFileFor(new File(parent, basename), rev);
++            File binaryFile = 
++            	getRazorArchiveBinaryFileFor(new File(parent, basename), rev);
+             if (binaryFile != null && binaryFile.exists()) {
+                 // @TODO : Implement a UNIX Compress decompression input stream
+                 // The standard Razor implementation uses UNIX Compress, so we
+@@ -230,11 +234,13 @@
+ 
+             File sccsFile = getRazorArchiveSCCSFileFor(new File(parent, basename));
+             if (sccsFile != null && sccsFile.exists()) {
+-                String SCCS_COMMAND = System.getProperty("org.opensolaris.opengrok.history.SCCS", "sccs");
+-                return SCCSget.getRevision(SCCS_COMMAND, sccsFile, rev);
++            	ensureCommand(SCCSRepository.CMD_PROPERTY_KEY, 
++            		SCCSRepository.CMD_FALLBACK);
++                return SCCSget.getRevision(cmd, sccsFile, rev);
+             }
+         } catch (Exception e) {
+-            OpenGrokLogger.getLogger().log(Level.SEVERE, "getHistoryGet( " + parent + ", " + basename + ", " + rev + ")", e);
++            OpenGrokLogger.getLogger().log(Level.SEVERE, "getHistoryGet( " 
++            	+ parent + ", " + basename + ", " + rev + ")", e);
+         }
+         return null;
+     }
+@@ -284,12 +290,16 @@
+         throw new UnsupportedOperationException("Not supported yet.");
+     }
+ 
+-    private File pathTranslation(File file, String intermediateElements, String filePrefix, String fileSuffix) throws IOException {
++    private File pathTranslation(File file, String intermediateElements, 
++    	String filePrefix, String fileSuffix) throws IOException 
++    {
+         
+         File f = file;
+ 
+         if (!f.getAbsolutePath().startsWith(opengrokSourceRootDirectoryPath)) {
+-            throw new IOException("Invalid Path for Translation '" + f.getPath() + "', '" + intermediateElements + "', '" + filePrefix + "', '" + fileSuffix + "'");
++            throw new IOException("Invalid Path for Translation '" + f.getPath()
++            	+ "', '" + intermediateElements + "', '" + filePrefix + "', '" 
++            	+ fileSuffix + "'");
+         }
+ 
+         if (filePrefix.length() != 0) {
+@@ -300,7 +310,8 @@
+         path.append(intermediateElements);
+ 
+         if (f.getAbsolutePath().length() > opengrokSourceRootDirectoryPath.length()) {
+-            path.append(f.getAbsolutePath().substring(opengrokSourceRootDirectoryPath.length() + 1));
++            path.append(f.getAbsolutePath()
++            	.substring(opengrokSourceRootDirectoryPath.length() + 1));
+         }
+ 
+         if (fileSuffix.length() != 0) {
+diff -r bfe828cbcc84 src/org/opensolaris/opengrok/history/RepoRepository.java
+--- a/src/org/opensolaris/opengrok/history/RepoRepository.java	Sat Feb 26 19:16:58 2011 +0100
++++ b/src/org/opensolaris/opengrok/history/RepoRepository.java	Thu Mar 31 06:59:17 2011 +0200
+@@ -38,11 +38,15 @@
+ public class RepoRepository extends Repository {
+ 
+     private static final long serialVersionUID = 1L;
+-//    private static ScmChecker repoBinary = new ScmChecker(new String[]{
+-//                getCommand(), "-h"});
++    /** The property name used to obtain the client command for this repository.*/
++    public static final String CMD_PROPERTY_KEY = 
++    	"org.opensolaris.opengrok.history.repo";
++    /** The command to use to access the repository if none was given explicitly */
++    public static final String CMD_FALLBACK = "repo";
+ 
+     public RepoRepository() {
+         type = "repo";
++        setWorking(Boolean.TRUE);
+     }
+ 
+     @Override
+@@ -50,13 +54,9 @@
+         super.setDirectoryName(directoryName);
+     }
+ 
+-    private static String getCommand() {
+-        return System.getProperty("org.opensolaris.opengrok.history.repo", "repo");
+-    }
+-
+     @Override
+     public boolean isWorking() {
+-//        return repoBinary.available;
++    	ensureCommand(CMD_PROPERTY_KEY, CMD_FALLBACK);
+         return true;
+     }
+ 
+@@ -64,7 +64,8 @@
+     public void update() throws IOException {
+         File directory = new File(getDirectoryName());
+         List<String> cmd = new ArrayList<String>();
+-        cmd.add(getCommand());
++    	ensureCommand(CMD_PROPERTY_KEY, CMD_FALLBACK);
++        cmd.add(this.cmd);
+         cmd.add("sync");
+ 
+         Executor executor = new Executor(cmd, directory);
+@@ -78,9 +79,8 @@
+         if (file.isDirectory()) {
+             File f = new File(file, ".repo");
+             return f.exists() && f.isDirectory();
+-        } else {
+-            return false;
+         }
++        return false;
+     }
+ 
+     @Override
+@@ -99,7 +99,7 @@
+     }
+ 
+     @Override
+-    History getHistory(File file) throws HistoryException {
++    History getHistory(File file) {
+         throw new UnsupportedOperationException("Should never be called!");
+     }
+ 
+@@ -114,7 +114,7 @@
+     }
+ 
+     @Override
+-    Annotation annotate(File file, String revision) throws IOException {
++    Annotation annotate(File file, String revision) {
+         throw new UnsupportedOperationException("Should never be called!");
+     }
+ 
+diff -r bfe828cbcc84 src/org/opensolaris/opengrok/history/Repository.java
+--- a/src/org/opensolaris/opengrok/history/Repository.java	Sat Feb 26 19:16:58 2011 +0100
++++ b/src/org/opensolaris/opengrok/history/Repository.java	Thu Mar 31 06:59:17 2011 +0200
+@@ -33,6 +33,7 @@
+ import java.util.logging.Level;
+ import java.util.logging.Logger;
+ import org.opensolaris.opengrok.OpenGrokLogger;
++import org.opensolaris.opengrok.util.Executor;
+ 
+ /**
+  * An interface for an external repository. 
+@@ -200,16 +201,15 @@
+             if (sinceRevision == null) {
+                 // Failed to get full history, so fail.
+                 throw he;
+-            } else {
+-                // Failed to get partial history. This may have been caused
+-                // by changes in the revision numbers since the last update
+-                // (bug #14724) so we'll try to regenerate the cache from
+-                // scratch instead.
+-                OpenGrokLogger.getLogger().log(Level.INFO,
+-                        "Failed to get partial history. Attempting to " +
+-                        "recreate the history cache from scratch.", he);
+-                history = null;
+             }
++            // Failed to get partial history. This may have been caused
++            // by changes in the revision numbers since the last update
++            // (bug #14724) so we'll try to regenerate the cache from
++            // scratch instead.
++            OpenGrokLogger.getLogger().log(Level.INFO,
++                    "Failed to get partial history. Attempting to " +
++                    "recreate the history cache from scratch.", he);
++            history = null;
+         }
+ 
+         if (sinceRevision != null && history == null) {
+@@ -253,4 +253,9 @@
+     public DateFormat getDateFormat() {
+         return new SimpleDateFormat(datePattern, Locale.getDefault());
+     }
++    
++    static Boolean checkCmd(final String[] args) {
++    	Executor exec = new Executor(args);
++    	return Boolean.valueOf(exec.exec(false) == 0);
++    }
+ }
+diff -r bfe828cbcc84 src/org/opensolaris/opengrok/history/RepositoryFactory.java
+--- a/src/org/opensolaris/opengrok/history/RepositoryFactory.java	Sat Feb 26 19:16:58 2011 +0100
++++ b/src/org/opensolaris/opengrok/history/RepositoryFactory.java	Thu Mar 31 06:59:17 2011 +0200
+@@ -25,7 +25,10 @@
+ 
+ import java.io.File;
+ import java.io.IOException;
++import java.util.ArrayList;
++import java.util.List;
+ import java.util.logging.Level;
++
+ import org.opensolaris.opengrok.OpenGrokLogger;
+ 
+ /**
+@@ -55,6 +58,19 @@
+     }
+ 
+     /**
++     * Get a list of all available repository handlers.
++     * @return a list which contains none-{@code null} values, only.
++     */
++    public static List<Class<? extends Repository>> getRepositoryClasses() {
++    	ArrayList<Class<? extends Repository>> list = 
++    		new ArrayList<Class<? extends Repository>>(repositories.length);
++    	for (int i=repositories.length-1; i >= 0; i--) {
++    		list.add(repositories[i].getClass());
++    	}
++    	return list;
++    }
++    
++    /**
+      * Returns a repository for the given file, or null if no repository was found.
+      * 
+      * @param file File that might contain a repository
+diff -r bfe828cbcc84 src/org/opensolaris/opengrok/history/RepositoryInfo.java
+--- a/src/org/opensolaris/opengrok/history/RepositoryInfo.java	Sat Feb 26 19:16:58 2011 +0100
++++ b/src/org/opensolaris/opengrok/history/RepositoryInfo.java	Thu Mar 31 06:59:17 2011 +0200
+@@ -25,6 +25,8 @@
+ 
+ import java.io.Serializable;
+ 
++import org.opensolaris.opengrok.configuration.RuntimeEnvironment;
++
+ /**
+  * Class to contain the common info for a repository. This object
+  * will live on the server and the client side, so don't add logic
+@@ -36,10 +38,11 @@
+     private static final long serialVersionUID = 1L;
+     
+     protected String directoryName;
+-    protected boolean working;
++    protected Boolean working;
+     protected String type;
+     protected boolean remote;
+     protected String datePattern;
++    protected String cmd;
+ 
+     /**
+      * Empty constructor to support serialization.
+@@ -51,9 +54,10 @@
+     public RepositoryInfo(RepositoryInfo orig) {
+         this.directoryName = orig.directoryName;
+         this.type = orig.type;
+-        this.working = orig.isWorking();
++        this.working = Boolean.valueOf(orig.isWorking());
+         this.remote = orig.isRemote();
+         this.datePattern = orig.datePattern;
++        this.cmd = orig.cmd;
+     }
+ 
+     /**
+@@ -79,7 +83,7 @@
+      * @return true if the HistoryGuru may use the repository
+      */
+     public boolean isWorking() {
+-        return working;
++        return working != null && working.booleanValue();
+     }
+ 
+     /**
+@@ -87,7 +91,7 @@
+      *
+      * @param working
+      */
+-    public void setWorking(boolean working) {
++    public void setWorking(Boolean working) {
+         this.working = working;
+     }
+ 
+@@ -132,5 +136,30 @@
+     public String getDatePattern() {
+         return datePattern;
+     }
++    
++    /**
++     * Set the name of the external client command that should be used to 
++     * access the repository wrt. the given parameters. Does nothing, if this
++     * repository's <var>cmd</var> has been already set (i.e. has a 
++     * none-{@code null} value).
++     * 
++     * @param propertyKey property key to lookup the corresponding system property.
++     * @param fallbackCommand the command to use, if lookup fails.
++     * @return the command to use.
++     * @see #cmd
++     */
++    protected String ensureCommand(String propertyKey, String fallbackCommand) {
++    	if (cmd != null) {
++    		return cmd;
++    	}
++    	cmd = RuntimeEnvironment.getInstance()
++    		.getRepoCmd(this.getClass().getCanonicalName());
++    	if (cmd == null) {
++    		cmd = System.getProperty(propertyKey, fallbackCommand);
++    		RuntimeEnvironment.getInstance()
++    			.setRepoCmd(this.getClass().getCanonicalName(), cmd);
++    	}
++    	return cmd;
++    }
+ }
+ 
+diff -r bfe828cbcc84 src/org/opensolaris/opengrok/history/SCCSRepository.java
+--- a/src/org/opensolaris/opengrok/history/SCCSRepository.java	Sat Feb 26 19:16:58 2011 +0100
++++ b/src/org/opensolaris/opengrok/history/SCCSRepository.java	Thu Mar 31 06:59:17 2011 +0200
+@@ -43,12 +43,11 @@
+  */
+ public class SCCSRepository extends Repository {
+     private static final long serialVersionUID = 1L;
+-    private static ScmChecker sccsBinary = new ScmChecker(new String[] {
+-        System.getProperty("org.opensolaris.opengrok.history.SCCS", "sccs"),
+-        "help", "help" });
+-    private static ScmChecker csscBinary = new ScmChecker(new String[] {
+-        System.getProperty("org.opensolaris.opengrok.history.SCCS", "sccs"),
+-        "--version" });
++    /** The property name used to obtain the client command for this repository. */
++    public static final String CMD_PROPERTY_KEY = 
++    	"org.opensolaris.opengrok.history.SCCS";
++    /** The command to use to access the repository if none was given explicitly */
++    public static final String CMD_FALLBACK = "sccs";
+ 
+     private Map<String, String> authors_cache;
+ 
+@@ -57,19 +56,17 @@
+         datePattern = "yy/MM/dd";
+     }
+ 
+-    private String getCommand() {
+-       return System.getProperty("org.opensolaris.opengrok.history.SCCS", "sccs");
+-    }
+-    
+     @Override
+     public InputStream getHistoryGet(String parent, String basename, String rev) {
+         try {
+             File history = SCCSHistoryParser.getSCCSFile(parent, basename);
+-            return SCCSget.getRevision(getCommand(),history, rev);
++    		ensureCommand(CMD_PROPERTY_KEY, CMD_FALLBACK);
++            return SCCSget.getRevision(cmd, history, rev);
+         } catch (FileNotFoundException ex) {
+             return null;
+         } catch (IOException ex) {
+-            OpenGrokLogger.getLogger().log(Level.WARNING, "An error occured while getting revision", ex);
++            OpenGrokLogger.getLogger().log(Level.WARNING, 
++            	"An error occured while getting revision", ex);
+             return null;
+         }
+     }
+@@ -83,7 +80,8 @@
+         authors_cache = new HashMap<String, String>();
+ 
+         ArrayList<String> argv = new ArrayList<String>();
+-        argv.add(getCommand());
++		ensureCommand(CMD_PROPERTY_KEY, CMD_FALLBACK);
++        argv.add(cmd);
+         argv.add("prs");
+         argv.add("-e");
+         argv.add("-d");
+@@ -107,7 +105,9 @@
+                     String auth = matcher.group(2);
+                     authors_cache.put(rev, auth);
+                 } else {
+-                    OpenGrokLogger.getLogger().log(Level.SEVERE, "Error: did not find authors in line {0}: [{1}]", new Object[]{lineno, line});
++                    OpenGrokLogger.getLogger().log(Level.SEVERE, 
++                    	"Error: did not find authors in line {0}: [{1}]", 
++                    	new Object[]{lineno, line});
+                 }
+             }
+         } finally {
+@@ -148,7 +148,8 @@
+         getAuthors(file);
+         
+         ArrayList<String> argv = new ArrayList<String>();
+-        argv.add(getCommand());
++		ensureCommand(CMD_PROPERTY_KEY, CMD_FALLBACK);
++        argv.add(cmd);
+         argv.add("get");
+         argv.add("-m");
+         argv.add("-p");
+@@ -178,7 +179,9 @@
+                     
+                     a.addLine(rev, author, true);
+                 } else {
+-                    OpenGrokLogger.getLogger().log(Level.SEVERE, "Error: did not find annotations in line {0}: [{1}]", new Object[]{lineno, line});
++                    OpenGrokLogger.getLogger().log(Level.SEVERE, 
++                    	"Error: did not find annotations in line {0}: [{1}]", 
++                    	new Object[]{lineno, line});
+                 }
+             }
+             return a;
+@@ -187,7 +190,8 @@
+                 try {
+                     in.close();
+                 } catch (IOException e) {
+-                    OpenGrokLogger.getLogger().log(Level.WARNING, "An error occured while closing stream", e);
++                    OpenGrokLogger.getLogger().log(Level.WARNING, 
++                    	"An error occured while closing stream", e);
+                 }
+             }
+             if (process != null) {
+@@ -233,13 +237,20 @@
+              return true;
+          }
+          return new File(file, "SCCS").isDirectory();
+-       } else {
+-        return false; }
++       }
++       return false;
+     }
+ 
+     @Override
+     public boolean isWorking() {
+-        return sccsBinary.available || csscBinary.available;
++    	if (working == null) {
++    		ensureCommand(CMD_PROPERTY_KEY, CMD_FALLBACK);
++        	working = checkCmd(new String[]{ cmd, "help", "help" });
++        	if (!working.booleanValue()) {
++            	working = checkCmd(new String[]{ cmd, "--version" });
++        	}
++    	}
++        return working.booleanValue();
+     }
+ 
+     @Override
+diff -r bfe828cbcc84 src/org/opensolaris/opengrok/history/SubversionHistoryParser.java
+--- a/src/org/opensolaris/opengrok/history/SubversionHistoryParser.java	Sat Feb 26 19:16:58 2011 +0100
++++ b/src/org/opensolaris/opengrok/history/SubversionHistoryParser.java	Thu Mar 31 06:59:17 2011 +0200
+@@ -106,7 +106,7 @@
+                     path = stringInterner.intern(path);
+                     entry.addFile(path);
+                 } else {
+-                    OpenGrokLogger.getLogger().log(Level.FINE, "Skipping file outside repository: " + s);
++                    OpenGrokLogger.getLogger().log(Level.INFO, "Skipping file outside repository: " + s);
+                 }
+             } else if ("msg".equals(qname)) {
+                 entry.setMessage(s);
+diff -r bfe828cbcc84 src/org/opensolaris/opengrok/history/SubversionRepository.java
+--- a/src/org/opensolaris/opengrok/history/SubversionRepository.java	Sat Feb 26 19:16:58 2011 +0100
++++ b/src/org/opensolaris/opengrok/history/SubversionRepository.java	Thu Mar 31 06:59:17 2011 +0200
+@@ -30,6 +30,7 @@
+ import java.util.ArrayList;
+ import java.util.List;
+ import java.util.logging.Level;
++
+ import javax.xml.parsers.DocumentBuilder;
+ import javax.xml.parsers.DocumentBuilderFactory;
+ import javax.xml.parsers.ParserConfigurationException;
+@@ -53,15 +54,15 @@
+  */
+ public class SubversionRepository extends Repository {
+     private static final long serialVersionUID = 1L;
+-    
++    /** The property name used to obtain the client 
++     * command for this repository.
++     */
++    public static final String CMD_PROPERTY_KEY = 
++    	"org.opensolaris.opengrok.history.Subversion";
++    /** The command to use to access the repository if none was given explicitly */
++    public static final String CMD_FALLBACK = "svn";
++
+     protected String reposPath;
+-    private static ScmChecker svnBinary = new ScmChecker(new String[]{
+-                getCommand(), "--help"
+-            });
+-
+-    private static final String getCommand() {
+-        return System.getProperty("org.opensolaris.opengrok.history.Subversion", "svn");
+-    }
+ 
+     public SubversionRepository() {
+         type = "Subversion";
+@@ -75,7 +76,7 @@
+         StringBuffer sb = new StringBuffer();
+         Node n = node.getFirstChild();
+         while (n != null) {
+-            if (n.getNodeType() == n.TEXT_NODE) {
++            if (n.getNodeType() == Node.TEXT_NODE) {
+                 sb.append(n.getNodeValue());
+             }
+ 
+@@ -88,12 +89,12 @@
+     public void setDirectoryName(String directoryName) {
+         super.setDirectoryName(directoryName);
+ 
+-        if (svnBinary.available) {
+-            boolean rootFound = false; // set to true if we manage to find the
+-                                     // root directory
++        if (isWorking()) {
++        	// set to true if we manage to find the root directory
++            Boolean rootFound = Boolean.FALSE;
+ 
+             List<String> cmd = new ArrayList<String>();
+-            cmd.add(getCommand());
++            cmd.add(this.cmd);
+             cmd.add("info");
+             cmd.add("--xml");
+             File directory = new File(getDirectoryName());
+@@ -105,29 +106,39 @@
+                     DocumentBuilder builder = factory.newDocumentBuilder();
+                     Document document = builder.parse(executor.getOutputStream());
+ 
+-                    String url = getValue(document.getElementsByTagName("url").item(0));
++                    String url = 
++                    	getValue(document.getElementsByTagName("url").item(0));
+                     if (url == null) {
+-                        OpenGrokLogger.getLogger().warning("svn info did not contain an URL for ["+ directoryName + "]. Assuming remote repository.");
++                        OpenGrokLogger.getLogger()
++                        	.warning("svn info did not contain an URL for ["
++                        		+ directoryName 
++                        		+ "]. Assuming remote repository.");
+                         setRemote(true);
+                     } else {
+                         if (!url.startsWith("file")) {
+                             setRemote(true);
+                         }
+                     }
+-                    String root = getValue(document.getElementsByTagName("root").item(0));
++                    String root = 
++                    	getValue(document.getElementsByTagName("root").item(0));
+                     if (url != null && root != null) {
+                         reposPath = url.substring(root.length());
+-                        rootFound = true;
++                        rootFound = Boolean.TRUE;
+                     } 
+                 } catch (SAXException saxe) {
+-                    OpenGrokLogger.getLogger().log(Level.WARNING, "Parser error parsing svn output", saxe);
++                    OpenGrokLogger.getLogger().log(Level.WARNING, 
++                    	"Parser error parsing svn output", saxe);
+                 } catch (ParserConfigurationException pce) {
+-                    OpenGrokLogger.getLogger().log(Level.WARNING, "Parser configuration error parsing svn output", pce);
++                    OpenGrokLogger.getLogger().log(Level.WARNING, 
++                    	"Parser configuration error parsing svn output", pce);
+                 } catch (IOException ioe) {
+-                    OpenGrokLogger.getLogger().log(Level.WARNING, "IOException reading from svn process", ioe);
++                    OpenGrokLogger.getLogger().log(Level.WARNING, 
++                    	"IOException reading from svn process", ioe);
+                 }
+             } else {
+-                OpenGrokLogger.getLogger().warning("Failed to execute svn info for ["+ directoryName + "]. Repository disabled.");
++                OpenGrokLogger.getLogger()
++                		.warning("Failed to execute svn info for ["
++                			+ directoryName + "]. Repository disabled.");
+             }
+ 
+             setWorking(rootFound);
+@@ -151,7 +162,8 @@
+         }
+ 
+         List<String> cmd = new ArrayList<String>();
+-        cmd.add(getCommand());
++		ensureCommand(CMD_PROPERTY_KEY, CMD_FALLBACK);
++        cmd.add(this.cmd);
+         cmd.add("log");
+         cmd.add("--trust-server-cert");
+         cmd.add("--non-interactive");
+@@ -171,15 +183,18 @@
+     }
+ 
+     @Override
+-    public InputStream getHistoryGet(String parent, String basename, String rev) {
++    public InputStream getHistoryGet(String parent, String basename, String rev)
++    {
+         InputStream ret = null;
+ 
+         File directory = new File(directoryName);
+ 
+-        String filename = (new File(parent, basename)).getAbsolutePath().substring(directoryName.length() + 1);
++        String filename = (new File(parent, basename)).getAbsolutePath()
++        	.substring(directoryName.length() + 1);
+ 
+         List<String> cmd = new ArrayList<String>();
+-        cmd.add(getCommand());
++		ensureCommand(CMD_PROPERTY_KEY, CMD_FALLBACK);
++        cmd.add(this.cmd);
+         cmd.add("cat");
+         cmd.add("-r");
+         cmd.add(rev);
+@@ -229,7 +244,9 @@
+         }
+ 
+         @Override
+-        public void startElement(String uri, String localName, String qname, Attributes attr) throws SAXException {
++        public void startElement(String uri, String localName, String qname, 
++        	Attributes attr)
++        {
+             sb.setLength(0);
+             if ("entry".equals(qname)) {
+                 rev = null;
+@@ -240,7 +257,7 @@
+         }
+ 
+         @Override
+-        public void endElement(String uri, String localName, String qname) throws SAXException {
++        public void endElement(String uri, String localName, String qname) {
+             if ("author".equals(qname)) {
+                 author = sb.toString();
+             } else if ("entry".equals(qname)) {
+@@ -249,7 +266,7 @@
+         }
+ 
+         @Override
+-        public void characters(char[] arg0, int arg1, int arg2) throws SAXException {
++        public void characters(char[] arg0, int arg1, int arg2) {
+             sb.append(arg0, arg1, arg2);
+         }
+     }
+@@ -266,7 +283,8 @@
+         }
+ 
+         ArrayList<String> argv = new ArrayList<String>();
+-        argv.add(getCommand());
++		ensureCommand(CMD_PROPERTY_KEY, CMD_FALLBACK);
++        argv.add(cmd);
+         argv.add("annotate");
+         argv.add("--trust-server-cert");
+         argv.add("--non-interactive");
+@@ -290,14 +308,16 @@
+                 saxParser.parse(in, handler);
+                 ret = handler.annotation;
+             } catch (Exception e) {
+-                OpenGrokLogger.getLogger().log(Level.SEVERE, "An error occurred while parsing the xml output", e);
++                OpenGrokLogger.getLogger().log(Level.SEVERE, 
++                	"An error occurred while parsing the xml output", e);
+             }
+         } finally {
+             if (in != null) {
+                 try {
+                     in.close();
+                 } catch (IOException e) {
+-                    OpenGrokLogger.getLogger().log(Level.WARNING, "An error occured while closing stream", e);
++                    OpenGrokLogger.getLogger().log(Level.WARNING, 
++                    	"An error occured while closing stream", e);
+                 }
+             }
+             if (process != null) {
+@@ -330,7 +350,8 @@
+         File directory = new File(getDirectoryName());
+ 
+         List<String> cmd = new ArrayList<String>();
+-        cmd.add(getCommand());
++		ensureCommand(CMD_PROPERTY_KEY, CMD_FALLBACK);
++        cmd.add(this.cmd);
+         cmd.add("update");
+         cmd.add("--trust-server-cert");
+         cmd.add("--non-interactive");
+@@ -345,12 +366,16 @@
+        if (file.isDirectory()) {
+         File f = new File(file, ".svn");
+         return f.exists() && f.isDirectory();
+-       } else {
+-        return false; }
++       }
++       return false;
+     }
+ 
+     @Override
+     public boolean isWorking() {
+-        return super.isWorking() && svnBinary.available;
++    	if (working == null) {
++    		ensureCommand(CMD_PROPERTY_KEY, CMD_FALLBACK);
++        	working = checkCmd(new String[]{ cmd, "--help" });
++    	}
++        return working.booleanValue();
+     }
+ }
+diff -r bfe828cbcc84 src/org/opensolaris/opengrok/index/CommandLineOptions.java
+--- a/src/org/opensolaris/opengrok/index/CommandLineOptions.java	Sat Feb 26 19:16:58 2011 +0100
++++ b/src/org/opensolaris/opengrok/index/CommandLineOptions.java	Thu Mar 31 06:59:17 2011 +0200
+@@ -67,43 +67,45 @@
+ 
+     public CommandLineOptions() {
+         options = new ArrayList<Option>();
+-        options.add(new Option('q', null, "Run as quietly as possible"));
+-        options.add(new Option('v', null, "Print progress information as we go along"));
++        options.add(new Option('?', null, "Help"));
++        options.add(new Option('A', "ext:analyzer", "Files with the named extension should be analyzed with the specified class"));
++        options.add(new Option('a', ON_OFF, "Allow or disallow leading wildcards in a search"));
++        options.add(new Option('B', "url", "Base URL of the user Information provider. Default: \"http://www.opensolaris.org/viewProfile.jspa?username=\""));
+         options.add(new Option('C', null, "Print per project percentage progress information(I/O extensive, since one read through dir structure is made before indexing, needs -v, otherwise it just goes to the log)"));
++        options.add(new Option('c', "/path/to/ctags", "Path to Exuberant Ctags from http://ctags.sf.net by default takes the Exuberant Ctags in PATH."));
++        options.add(new Option('D', null, "Store history cache in a database (needs the JDBC driver in the classpath, typically derbyclient.jar or derby.jar)"));
++        options.add(new Option('d', "/path/to/data/root", "The directory where OpenGrok stores the generated data"));
+         options.add(new Option('e', null, "Economical - consumes less disk space. It does not generate hyper text cross reference files offline, but will do so on demand - which could be sightly slow."));
+-        options.add(new Option('c', "/path/to/ctags", "Path to Exuberant Ctags from http://ctags.sf.net by default takes the Exuberant Ctags in PATH."));
+-        options.add(new Option('R', "/path/to/configuration", "Read configuration from the specified file"));
+-        options.add(new Option('W', "/path/to/configuration", "Write the current configuration to the specified file (so that the web application can use the same configuration"));
+-        options.add(new Option('U', "host:port", "Send the current configuration to the specified address (This is most likely the web-app configured with ConfigAddress)"));
++        options.add(new Option('H', null, "Generate history cache for all repositories"));
++        options.add(new Option('h', "/path/to/repository", "just generate history cache for the specified repos (absolute path from source root)"));
++        options.add(new Option('I', "pattern", "Only files matching this pattern will be examined (supports wildcards, example: -I *.java -I *.c)"));
++        options.add(new Option('i', "pattern", "Ignore the named files or directories (supports wildcards, example: -i *.so -i *.dll)"));
++        options.add(new Option('j', "class", "Name of the JDBC driver class used by the history cache. Can use one of the shorthands \"client\" (org.apache.derby.jdbc.ClientDriver) or \"embedded\" (org.apache.derby.jdbc.EmbeddedDriver). Default: \"client\""));
++        options.add(new Option('k', "/path/to/repository", "Kill the history cache for the given repository and exit. Use '*' to delete the cache for all repositories."));
++        options.add(new Option('K', null, "List all repository pathes and exit."));
++        options.add(new Option('L', "path", "Path to the subdirectory in the web-application containing the requested stylesheet. The following factory-defaults exist: \"default\", \"offwhite\" and \"polished\""));
++        options.add(new Option('l', ON_OFF, "Turn on/off locking of the Lucene database during index generation"));
++        options.add(new Option('m', "number", "The maximum words to index in a file"));
++        options.add(new Option('N', "/path/to/symlink", "Allow this symlink to be followed. Option may be repeated."));
++        options.add(new Option('n', null, "Do not generate indexes, but process all other command line options"));
++        options.add(new Option('O', ON_OFF, "Turn on/off the optimization of the index database as part of the indexing step"));
+         options.add(new Option('P', null, "Generate a project for each of the top-level directories in source root"));
+         options.add(new Option('p', "/path/to/default/project", "This is the path to the project that should be selected by default in the web application(when no other project set either in cookie or in parameter). You should strip off the source root."));
+         options.add(new Option('Q', ON_OFF, "Turn on/off quick context scan. By default only the first 32k of a file is scanned, and a '[..all..]' link is inserted if the file is bigger. Activating this may slow the server down (Note: this is setting only affects the web application)"));
+-        options.add(new Option('N', "/path/to/symlink", "Allow this symlink to be followed. Option may be repeated."));
+-        options.add(new Option('n', null, "Do not generate indexes, but process all other command line options"));
+-        options.add(new Option('H', null, "Generate history cache for all repositories"));
+-        options.add(new Option('h', "/path/to/repository", "just generate history cache for the specified repos (absolute path from source root)"));
+-        options.add(new Option('D', null, "Store history cache in a database (needs the JDBC driver in the classpath, typically derbyclient.jar or derby.jar)"));
+-        options.add(new Option('j', "class", "Name of the JDBC driver class used by the history cache. Can use one of the shorthands \"client\" (org.apache.derby.jdbc.ClientDriver) or \"embedded\" (org.apache.derby.jdbc.EmbeddedDriver). Default: \"client\""));
++        options.add(new Option('q', null, "Run as quietly as possible"));
++        options.add(new Option('R', "/path/to/configuration", "Read configuration from the specified file"));
++        options.add(new Option('r', ON_OFF, "Turn on/off support for remote SCM systems"));
++        options.add(new Option('S', null, "Search for \"external\" source repositories and add them"));
++        options.add(new Option('s', "/path/to/source/root", "The root directory of the source tree"));
++        options.add(new Option('T', "number", "The number of threads to use for index generation. By default the number of threads will be set to the number of available CPUs"));        
++        options.add(new Option('U', "host:port", "Send the current configuration to the specified address (This is most likely the web-app configured with ConfigAddress)"));
+         options.add(new Option('u', "url", "URL to the database that contains the history cache. Default: If -j specifies \"embedded\", \"jdbc:derby:$DATA_ROOT/cachedb;create=true\"; otherwise, \"jdbc:derby://localhost/cachedb;create=true\""));
+-        options.add(new Option('r', ON_OFF, "Turn on/off support for remote SCM systems"));
+-        options.add(new Option('L', "path", "Path to the subdirectory in the web-application containing the requested stylesheet. The following factory-defaults exist: \"default\", \"offwhite\" and \"polished\""));
+-        options.add(new Option('l', ON_OFF, "Turn on/off locking of the Lucene database during index generation"));
+-        options.add(new Option('O', ON_OFF, "Turn on/off the optimization of the index database as part of the indexing step"));
+-        options.add(new Option('a', ON_OFF, "Allow or disallow leading wildcards in a search"));
++        options.add(new Option('V', null, "Print version and quit"));
++        options.add(new Option('v', null, "Print progress information as we go along"));
++        options.add(new Option('W', "/path/to/configuration", "Write the current configuration to the specified file (so that the web application can use the same configuration"));
+         options.add(new Option('w', "webapp-context", "Context of webapp. Default is /source. If you specify a different name, make sure to rename source.war to that name."));
+-        options.add(new Option('i', "pattern", "Ignore the named files or directories (supports wildcards, example: -i *.so -i *.dll)"));
+-        options.add(new Option('I', "pattern", "Only files matching this pattern will be examined (supports wildcards, example: -I *.java -I *.c)"));
+-        options.add(new Option('A', "ext:analyzer", "Files with the named extension should be analyzed with the specified class"));
+-        options.add(new Option('m', "number", "The maximum words to index in a file"));
+-        options.add(new Option('S', null, "Search for \"external\" source repositories and add them"));
++        options.add(new Option('X', "url:suffix", "URL Suffix for the user Information provider. Default: \"\""));
+         options.add(new Option('z', "number", "depth of scanning for repositories in directory structure relative to source root"));
+-        options.add(new Option('s', "/path/to/source/root", "The root directory of the source tree"));
+-        options.add(new Option('d', "/path/to/data/root", "The directory where OpenGrok stores the generated data"));
+-        options.add(new Option('T', "number", "The number of threads to use for index generation. By default the number of threads will be set to the number of available CPUs"));        
+-        options.add(new Option('B', "url", "Base URL of the user Information provider. Default: \"http://www.opensolaris.org/viewProfile.jspa?username=\""));
+-        options.add(new Option('X', "url:suffix", "URL Suffix for the user Information provider. Default: \"\""));
+-        options.add(new Option('?', null, "Help"));
+-        options.add(new Option('V', null, "Print version and quit"));
+     }
+ 
+     public String getCommandString() {
+diff -r bfe828cbcc84 src/org/opensolaris/opengrok/index/Indexer.java
+--- a/src/org/opensolaris/opengrok/index/Indexer.java	Sat Feb 26 19:16:58 2011 +0100
++++ b/src/org/opensolaris/opengrok/index/Indexer.java	Thu Mar 31 06:59:17 2011 +0200
+@@ -24,6 +24,7 @@
+ 
+ import java.io.File;
+ import java.io.IOException;
++import java.lang.reflect.Field;
+ import java.net.InetAddress;
+ import java.text.ParseException;
+ import java.util.ArrayList;
+@@ -45,7 +46,11 @@
+ import org.opensolaris.opengrok.configuration.Configuration;
+ import org.opensolaris.opengrok.configuration.Project;
+ import org.opensolaris.opengrok.configuration.RuntimeEnvironment;
++import org.opensolaris.opengrok.history.HistoryException;
+ import org.opensolaris.opengrok.history.HistoryGuru;
++import org.opensolaris.opengrok.history.Repository;
++import org.opensolaris.opengrok.history.RepositoryFactory;
++import org.opensolaris.opengrok.history.RepositoryInfo;
+ import org.opensolaris.opengrok.util.Getopt;
+ 
+ /**
+@@ -80,6 +85,7 @@
+         boolean runIndex = true;
+         boolean update = true;
+         boolean optimizedChanged = false;
++        ArrayList<String> zapCache = new ArrayList<String>();
+         CommandLineOptions cmdOptions = new CommandLineOptions();
+ 
+         if (argv.length == 0) {
+@@ -96,6 +102,7 @@
+             boolean refreshHistory = false;
+             String defaultProject = null;
+             boolean listFiles = false;
++            boolean listRepos = false;
+             boolean createDict = false;
+             int noThreads = 2 + (2 * Runtime.getRuntime().availableProcessors());
+             
+@@ -381,7 +388,12 @@
+                             System.out.println(Info.getFullVersion());
+                             System.exit(0);
+                             break;
+-
++                        case 'k':
++                        	zapCache.add(getopt.getOptarg());
++                        	break;
++                        case 'K':
++                        	listRepos = true;
++                        	break;
+                         case '?':
+                             System.err.println(cmdOptions.getUsage());
+                             System.exit(0);
+@@ -393,6 +405,20 @@
+                     }
+                 }
+ 
++                List<Class<? extends Repository>> repositoryClasses = 
++                	RepositoryFactory.getRepositoryClasses();
++                for (Class<? extends Repository> clazz : repositoryClasses) {
++                	try {
++						Field f = clazz.getDeclaredField("CMD_PROPERTY_KEY");
++						Object key = f.get(null);
++						if (key != null) {
++							cfg.setRepoCmd(clazz.getCanonicalName(), 
++								System.getProperty(key.toString()));
++						}
++					} catch (Exception e) {
++						// don't care
++					}
++                }
+                 int optind = getopt.getOptind();
+                 if (optind != -1) {
+                     while (optind < argv.length) {
+@@ -454,7 +480,11 @@
+ 
+                 getInstance().prepareIndexer(env, searchRepositories, addProjects,
+                         defaultProject, configFilename, refreshHistory,
+-                        listFiles, createDict, subFiles, repositories);
++                        listFiles, createDict, subFiles, repositories,
++                        zapCache, listRepos);
++                if (listRepos || !zapCache.isEmpty()) {
++                	return;
++                }
+                 if (runIndex || (optimizedChanged && env.isOptimizeDatabase())) {
+                     IndexChangedListener progress = new DefaultIndexChangedListener();
+                     getInstance().doIndexerExecution(update, noThreads, subFiles,
+@@ -486,7 +516,9 @@
+             boolean listFiles,
+             boolean createDict,
+             List<String> subFiles,
+-            List<String> repositories) throws IndexerException, IOException {
++            List<String> repositories,
++            List<String> zapCache,
++            boolean listRepoPathes) throws IndexerException, IOException {
+ 
+         if (env.getDataRootPath() == null) {
+             throw new IndexerException("ERROR: Please specify a DATA ROOT path");
+@@ -500,15 +532,58 @@
+             throw new IndexerException("Didn't find Exuberant Ctags");
+         }
+ 
+-        if (searchRepositories) {            
++        if (searchRepositories || listRepoPathes || !zapCache.isEmpty()) {            
+             log.log(Level.INFO,"Scanning for repositories...");
+             long start = System.currentTimeMillis();
+             HistoryGuru.getInstance().addRepositories(env.getSourceRootPath());
+             long time = (System.currentTimeMillis() - start) / 1000;            
+             log.log(Level.INFO, "Done scanning for repositories ({0}s)", time);
++            if (listRepoPathes || !zapCache.isEmpty()) {
++            	List<RepositoryInfo> repos = env.getRepositories();
++        		String prefix =  env.getSourceRootPath();
++            	if (listRepoPathes) {
++            		if (repos.isEmpty()) {
++            			System.out.println("No repositories found.");
++            			return;
++            		}
++            		System.out.println("Repositories in " + prefix + ":");
++	            	for (RepositoryInfo info : env.getRepositories()) {
++	            		String dir = info.getDirectoryName();
++	            		System.out.println(dir.substring(prefix.length()));
++	            	}
++            	}
++            	if (!zapCache.isEmpty()) {
++            		HashSet<String> toZap = new HashSet<String>(zapCache.size() << 1);
++            		boolean all = false;
++            		for (String repo : zapCache) {
++            			if (repo.equals("*")) {
++            				all = true;
++            				break;
++            			}
++            			if (repo.startsWith(prefix)) {
++            				repo = repo.substring(prefix.length());
++            			}
++            		}
++            		if (all) {
++            			toZap.clear();
++    	            	for (RepositoryInfo info : env.getRepositories()) {
++    	            		toZap.add(info.getDirectoryName()
++    	            			.substring(prefix.length()));    	            		
++    	            	}            			
++            		}
++            		try {
++						HistoryGuru.getInstance().removeCache(toZap);
++					} catch (HistoryException e) {
++						log.warning("Clearing history cache faild: "
++							+ e.getLocalizedMessage());
++					}
++            	}
++            	return;
++            }
+         }
+ 
+         if (addProjects) {
++        	System.err.println("addProjects");
+             File files[] = env.getSourceRootFile().listFiles();
+             List<Project> projects = env.getProjects();
+ 
+diff -r bfe828cbcc84 src/org/opensolaris/opengrok/web/Util.java
+--- a/src/org/opensolaris/opengrok/web/Util.java	Sat Feb 26 19:16:58 2011 +0100
++++ b/src/org/opensolaris/opengrok/web/Util.java	Thu Mar 31 06:59:17 2011 +0200
+@@ -134,7 +134,9 @@
+ 
+     private static String versionP=htmlize(org.opensolaris.opengrok.Info.getRevision());
+     /**
+-     * used by BUI - CSS needs this parameter for proper cache refresh (per changeset) in client browser
++     * used by BUI - CSS needs this parameter for proper cache refresh 
++     * (per changeset) in client browser
++     * jel: but useless, since the page cached anyway.
+      * @return html escaped version (hg changeset)
+      */
+     public static String versionParameter() {
+@@ -276,7 +278,7 @@
+     private static String escapeForRegex(char c) {
+         StringBuilder sb = new StringBuilder(6);
+         sb.append("\\u");
+-        String hex = Integer.toHexString((int) c);
++        String hex = Integer.toHexString(c);
+         for (int i = 0; i < 4 - hex.length(); i++) {
+             sb.append('0');
+         }
+@@ -284,9 +286,11 @@
+         return sb.toString();
+     }
+ 
++    static NumberFormat FORMATTER = new DecimalFormat("#,###,###,###.#");
++    
+     public static String redableSize(long num) {
+-        float l = (float) num;
+-        NumberFormat formatter = new DecimalFormat("#,###,###,###.#");
++        float l = num;
++        NumberFormat formatter = (NumberFormat) FORMATTER.clone();
+         if (l < 1024) {
+             return formatter.format(l);
+         } else if (l < 1048576) {
+diff -r bfe828cbcc84 web/httpheader.jspf
+--- a/web/httpheader.jspf	Sat Feb 26 19:16:58 2011 +0100
++++ b/web/httpheader.jspf	Thu Mar 31 06:59:17 2011 +0200
+@@ -36,12 +36,12 @@
+     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+     <meta name="generator" content="<%=org.opensolaris.opengrok.Info.getVersion()%> (<%=org.opensolaris.opengrok.Info.getRevision()%>)"/>
+     <link rel="icon" href="<%=httpHeaderContext%>/<%=laf%>/img/icon.png" type="image/png"/>    
+-    <link rel="stylesheet" type="text/css" href="<%=httpHeaderContext%>/<%=laf%>/style.css?v=<%=Util.versionParameter()%>"/>
+-    <link rel="stylesheet" type="text/css" href="<%=httpHeaderContext%>/<%=laf%>/print.css?v=<%=Util.versionParameter()%>" media="print" />
+-    <%-- TODO  Bug 11749 <link rel="stylesheet" type="text/css" href="<%=httpHeaderContext%>/<%=laf%>/jquery.autocomplete.css?v=<%=Util.versionParameter()%>" /> --%>
+-    <link rel="stylesheet" type="text/css" href="<%=httpHeaderContext%>/<%=laf%>/jquery.tooltip.css?v=<%=Util.versionParameter()%>" />
+-    <%-- TODO  Bug 11749 <link rel="stylesheet" type="text/css" href="<%=httpHeaderContext%>/<%=laf%>/jquery.combo.css?v=<%=Util.versionParameter()%>" />--%>
+-    <link rel="alternate stylesheet" type="text/css" media="all" title="Paper White" href="<%=httpHeaderContext%>/<%=laf%>/print.css?v=<%=Util.versionParameter()%>"/>
++    <link rel="stylesheet" type="text/css" href="<%=httpHeaderContext%>/<%=laf%>/style.css"/>
++    <link rel="stylesheet" type="text/css" href="<%=httpHeaderContext%>/<%=laf%>/print.css" media="print" />
++    <%-- TODO  Bug 11749 <link rel="stylesheet" type="text/css" href="<%=httpHeaderContext%>/<%=laf%>/jquery.autocomplete.css" /> --%>
++    <link rel="stylesheet" type="text/css" href="<%=httpHeaderContext%>/<%=laf%>/jquery.tooltip.css" />
++    <%-- TODO  Bug 11749 <link rel="stylesheet" type="text/css" href="<%=httpHeaderContext%>/<%=laf%>/jquery.combo.css%>" />--%>
++    <link rel="alternate stylesheet" type="text/css" media="all" title="Paper White" href="<%=httpHeaderContext%>/<%=laf%>/print.css"/>
+     <link rel="search" href="<%=httpHeaderContext%>/opensearch" type="application/opensearchdescription+xml" title="OpenGrok Search for current project(s)" />
+     <title><%=pageTitle%></title>
+ </head>

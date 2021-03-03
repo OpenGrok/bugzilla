@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>1009</bug_id>
+          
+          <creation_ts>2008-04-07 05:12:00 +0000</creation_ts>
+          <short_desc>Economical mode generates suggestion database</short_desc>
+          <delta_ts>2008-04-07 05:55:43 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>doc</component>
+          <version>unspecified</version>
+          <rep_platform>Other</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXED</resolution>
+          
+          
+          
+          
+          
+          <priority>P4</priority>
+          <bug_severity>minor</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Trond Norbye">trond.norbye</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>3293</commentid>
+            <who name="Trond Norbye">trond.norbye</who>
+            <bug_when>2008-04-07 05:12:13 +0000</bug_when>
+            <thetext>Mail from bfurber@comcast.net on the mailing list:
+
+&quot;Running with the -e Economical option Opengrok 6 built a spelling correction database. 
+This is not a bad thing because it is usefull and does not consume nearly as much space as the hyper text cross reference files. The documentation is now wrong.&quot;</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>3296</commentid>
+            <who name="Trond Norbye">trond.norbye</who>
+            <bug_when>2008-04-07 05:55:43 +0000</bug_when>
+            <thetext>Updated the documentation for the -e option</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

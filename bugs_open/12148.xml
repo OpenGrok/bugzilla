@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>12148</bug_id>
+          
+          <creation_ts>2009-10-21 13:20:00 +0000</creation_ts>
+          <short_desc>Configurable link from each source  page</short_desc>
+          <delta_ts>2009-10-21 13:20:04 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>webapp</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>NEW</bug_status>
+          
+          
+          
+          
+          
+          
+          <priority>P4</priority>
+          <bug_severity>enhancement</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Vasanth Manickam">vasanth.manickam</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>53601</commentid>
+            <who name="Vasanth Manickam">vasanth.manickam</who>
+            <bug_when>2009-10-21 13:20:04 +0000</bug_when>
+            <thetext>It would be useful if we could have a configurable link from the source pages. We currently have modified opengrok to have a link on each source page which links back to the view cvs or other such page as most of the developers require the additional info that is displayed on those pages...
+
+would be good if this is configurable through the xml file on a per project basis on where to link</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>10331</bug_id>
+          
+          <creation_ts>2009-07-28 03:14:00 +0000</creation_ts>
+          <short_desc>Indexer is unable to index all the projects</short_desc>
+          <delta_ts>2010-02-17 12:56:10 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>indexer</component>
+          <version>unspecified</version>
+          <rep_platform>i86pc/i386</rep_platform>
+          <op_sys>Solaris</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>INVALID</resolution>
+          
+          
+          
+          
+          
+          <priority>P1</priority>
+          <bug_severity>major</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Harshit">guntasg</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          <cc>knut.hatlen</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>45195</commentid>
+            <who name="Harshit">guntasg</who>
+            <bug_when>2009-07-28 03:14:07 +0000</bug_when>
+            <thetext>Hi,
+
+In my &quot;source_root&quot; folder there are some 30 checked out CVS modules. When I try to run the indexer to populate the &quot;data_root&quot; folder i see that that the xref (inside ${data_root}/xref) got generated only for few of the projects (and not all projects in source_root). While the indexer was running I got the following WARNINGs in the log:
+
+===========ERROR============
+Jul 28, 2009 5:54:35 AM org.opensolaris.opengrok.index.IndexDatabase indexDown
+WARNING: Failed to add file path/to/file
+ java.lang.IndexOutOfBoundsException
+    at java.nio.Buffer.checkIndex(Buffer.java:514)
+    at java.nio.DirectByteBuffer.get(DirectByteBuffer.java:209)
+    at org.opensolaris.opengrok.analysis.executables.ELFAnalyzer.getName(ELFAnalyzer.java:166)
+    at org.opensolaris.opengrok.analysis.executables.ELFAnalyzer.parseELF(ELFAnalyzer.java:111)
+    at org.opensolaris.opengrok.analysis.executables.ELFAnalyzer.analyze(ELFAnalyzer.java:79)
+    at org.opensolaris.opengrok.analysis.AnalyzerGuru.getDocument(AnalyzerGuru.java:246)
+    at org.opensolaris.opengrok.index.IndexDatabase.addFile(IndexDatabase.java:458)
+    at org.opensolaris.opengrok.index.IndexDatabase.indexDown(IndexDatabase.java:578)
+    at org.opensolaris.opengrok.index.IndexDatabase.indexDown(IndexDatabase.java:561)
+    at org.opensolaris.opengrok.index.IndexDatabase.indexDown(IndexDatabase.java:561)
+    at org.opensolaris.opengrok.index.IndexDatabase.indexDown(IndexDatabase.java:561)
+    at org.opensolaris.opengrok.index.IndexDatabase.indexDown(IndexDatabase.java:561)
+    at org.opensolaris.opengrok.index.IndexDatabase.update(IndexDatabase.java:251)
+    at org.opensolaris.opengrok.index.IndexDatabase$1.run(IndexDatabase.java:139)
+    at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:441)
+    at java.util.concurrent.FutureTask$Sync.innerRun(FutureTask.java:303)
+    at java.util.concurrent.FutureTask.run(FutureTask.java:138)
+    at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
+    at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
+    at java.lang.Thread.run(Thread.java:619)
+==========================
+
+Any idea why not all the projects are getting indexed? How does the indexer get to know that what all projects need to be indexed or does it assume that everything inside the ${source_root} needs to be indexed?
+
+Thanks,
+Guntas.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>45197</commentid>
+            <who name="Harshit">guntasg</who>
+            <bug_when>2009-07-28 03:26:58 +0000</bug_when>
+            <thetext>I want the indexer to continue indexing the files even after encountering the above exception.
+
+Is there any switch by which i can convey to the indexer that continue indexing and just ignore these exceptions (and the files which could not be added) ?
+
+Please help me know this. FYI, I am using latest 0.7 version.
+
+Thanks,
+Guntas.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>45203</commentid>
+            <who name="Harshit">guntasg</who>
+            <bug_when>2009-07-28 04:18:02 +0000</bug_when>
+            <thetext>(In reply to comment #1)
+&gt; I want the indexer to continue indexing the files even after encountering the
+&gt; above exception.
+&gt; 
+&gt; Is there any switch by which i can convey to the indexer that continue indexing
+&gt; and just ignore these exceptions (and the files which could not be added) ?
+&gt; 
+&gt; Please help me know this. FYI, I am using latest 0.7 version.
+&gt; 
+&gt; Thanks,
+&gt; Guntas.
+
+I just found that the indexer is not getting killed because of the exception &quot;java.lang.IndexOutOfBoundsException&quot;.
+
+Rather the indexer is not able to find that there are other projects in ${source_root}.
+
+Could you please help me know that how does the indexer gets to know that what all projects need to be indexed?
+
+Thanks.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>45206</commentid>
+            <who name="Harshit">guntasg</who>
+            <bug_when>2009-07-28 05:57:17 +0000</bug_when>
+            <thetext>(In reply to comment #2)
+&gt; (In reply to comment #1)
+&gt; &gt; I want the indexer to continue indexing the files even after encountering the
+&gt; &gt; above exception.
+&gt; &gt; 
+&gt; &gt; Is there any switch by which i can convey to the indexer that continue indexing
+&gt; &gt; and just ignore these exceptions (and the files which could not be added) ?
+&gt; &gt; 
+&gt; &gt; Please help me know this. FYI, I am using latest 0.7 version.
+&gt; &gt; 
+&gt; &gt; Thanks,
+&gt; &gt; Guntas.
+&gt; 
+&gt; I just found that the indexer is not getting killed because of the exception
+&gt; &quot;java.lang.IndexOutOfBoundsException&quot;.
+&gt; 
+&gt; Rather the indexer is not able to find that there are other projects in
+&gt; ${source_root}.
+&gt; 
+&gt; Could you please help me know that how does the indexer gets to know that what
+&gt; all projects need to be indexed?
+&gt; 
+&gt; Thanks.
+
+I solved the above problem by passing -P option to the indexer. Went through the source code and saw that by using -P option OpenGrok will consider all the top-level folders inside &quot;source-root&quot; as separate project.
+
+Thanks.</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

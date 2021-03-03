@@ -1,0 +1,4 @@
+testapp	C:\Users\seadog\Desktop\test\source\testapp\Program.cs	/^namespace testapp$/;"	namespace	line:3
+Program	C:\Users\seadog\Desktop\test\source\testapp\Program.cs	/^    class Program$/;"	class	line:5	namespace:testapp
+Main	C:\Users\seadog\Desktop\test\source\testapp\Program.cs	/^        static void Main(string[] args)$/;"	method	line:7	class:testapp.Program	signature:(string[] args)
+Hi	C:\Users\seadog\Desktop\test\source\testapp\Program.cs	/^        static void Hi()   $/;"	method	line:11	class:testapp.Program	signature:()

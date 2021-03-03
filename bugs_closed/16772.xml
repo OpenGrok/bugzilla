@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>16772</bug_id>
+          
+          <creation_ts>2010-08-10 20:09:00 +0000</creation_ts>
+          <short_desc>status.jsp should be less chatty in production environments</short_desc>
+          <delta_ts>2010-11-14 20:21:28 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>webapp</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXED</resolution>
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>major</bug_severity>
+          <target_milestone>0.10</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Knut Anders Hatlen">knut.hatlen</reporter>
+          <assigned_to name="Knut Anders Hatlen">knut.hatlen</assigned_to>
+          <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>76441</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2010-08-10 20:09:48 +0000</bug_when>
+            <thetext>The status page should not expose paths, database URLs and similar information in production environments. We should add a configuration option to turn display of this information on/off. Default should be off.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>79168</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2010-11-14 20:21:28 +0000</bug_when>
+            <thetext>Fixed in changeset:   1125:2ae86c146553
+
+Internal settings are no longer shown by default. To re-enable printing of the settings, set the chattyStatusPage property to true in configuration.xml.</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

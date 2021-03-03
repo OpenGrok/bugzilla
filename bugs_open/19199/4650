@@ -1,0 +1,611 @@
+# HG changeset patch
+# User jel+opengrok@cs.uni-magdeburg.de
+# Date 1334458109 -7200
+# Node ID b8e4140829f16bb50ebf4a1bd6753965ffd9f1bf
+# Parent  e0c28a5f46ab386e5764254014efb25e08b264be
+# Parent  56af4c6f366e10945f4c9f0a5e632f84401aa852
+Merge with origin 56af4c6f366e10945f4c9f0a5e632f84401aa852 aka 1392-1414 (2012-04-15 04:48)
+
+diff -r e0c28a5f46ab -r b8e4140829f1 CHANGES.txt
+--- a/CHANGES.txt	Sat Apr 07 03:29:43 2012 +0200
++++ b/CHANGES.txt	Sun Apr 15 04:48:29 2012 +0200
+@@ -1,3 +1,100 @@
++March 2012 update 0.11.1
++-------------------------------------------------
++
++This is a stability improvement release and we suggest to use it instead 0.11
++
++Bug fixes
++
++ avoid unecessary I/O - cache contents of timestamp/{header,footer}_include until reconfiguration occures
++ avoid eftar file test and exception on every page access
++ fix clean button
++ various OpenGrok script fixes (JAVA_OPTS now configurable, can now disable sending config to webapp, 
++ Bug #19181: - ignored list should not contain bin,lib entries
++ Bug #19188: if filename has ":" in its name, the link to it from xref will be wrong
++ Bug #19184: - README file contents are not displayed anymore in directory listing
++
++
++February 2012 update 0.11
++-------------------------------------------------
++
++This is a major update. It is advised that you cleanup your old DATA_ROOT
++(ideally remove it, or move it aside) and run indexing from fresh. Also the web
++application should be replaced, since the new indexes are not compatible with
++the old web application. Note that this doesn't apply to upgrades from the 0.11
++release candidate, since the format of the xrefs didn't change between the
++release candidate and the release. 
++
++New features
++
++    PHP analyzer
++    Visual Basic analyzer
++    Javascript analyzer
++    C# analyzer
++    completely refactored UI, upgraded jquery to 1.4.4
++    SSL, SSO and mod_proxy compatible
++
++Bug fixes
++
++    Bug #17612: Simple PHP Analyzer
++    Bug #17507: indexer hangs when svn requests certificate confirmation
++    Bug #17609: path assumptions & binary names used by installer script need modifications.
++    Bug #17688: File handles leaked in JSPs
++    Bug #13677: xref cache is not updated if code changes in SRC_ROOT
++    Bug #17731: Character encoding improper in Annotation
++    Bug #17817: xref treats include statements with angle brackets and quote marks differently when they contain path part
++    Bug #17816: Link to include file without file extension performs definition search
++    Bug #17936: ArrayIndexOutOfBoundsException when using n=50 as URL query parameter
++    Bug #18163: C++ keywords is not recognized in xref output
++    Bug #18198: ShXref gets confused by here-documents
++    Bug #17885: /**/ comments broke java xref
++    Bug #17584: Beginning of highlighted change in code is not started from absolute zero position in the row
++    Bug #18103: RFE: repository CLI cmds - better error reporting
++    Bug #16895: Maven build doesn't update manifest
++    Bug #18144: indexer will enter infinite cycle if it encounters symlink to dot , Add an "all" target to compile everything and run test cases, pmd, findbugs etc
++    Bug #16894: Maven build lacks info.properties
++    Bug #18585: Exceptions are not logged if severity is higher than CONFIG
++    Bug #18586: ArrayIndexOutOfBoundsException when indexing SQL file
++    Bug #18606: URL suffix for user information not included in history view
++    Bug #18602: JarAnalyzer can run out of memory
++    Bug #18641: Cannot access history for directories
++    Bug #18932: non escaped backslash in output javascript causes issues * Implement the verbatim string support for C# (Bug 18655) to suffixes in the xml analyzer class. (Bug 18687).
++    Bug #18754: opensearch does not work with HTTPS fixing as per Jens Elkner
++    Bug #19116: SQLIntegrityConstraintViolationException when indexing Bazaar history
++    Bug #1720: Add service outage banner at top of webapp pages
++    Bug #19105: convert the link to parent directory to .. and move it to the file listing
++    Bug #19105: use the browser's default fonts update the DirectoryListing test after fix for Bug 19105 and use getParentFile() for better portability
++    Bug #19105: reuse the SimpleDateFormat instance
++    Bug #19145: annotate view for Mercurial displays only first name of the author in some cases
++    Bug #19141: opensearch based searches are broken in mod_proxy environment
++    Bug #19161: Solaris package should not deliver source.war to /var/tomcat6 in any form
++    Bug #19110: Tab expansion problems in 0.11-rctemp - disable of default tabs to mitigate
++
++For bug details refer to Bugzilla -
++https://defect.opensolaris.org/bz/buglist.cgi?product=opengrok&query_format=advanced&target_milestone=0.11&order=bug_id%20DESC
++
++Contributors
++
++We'd like to thank all the people who report bugs, send us ideas for
++improvements or contribute code. Below are just the people who sent patches or
++pushed code, but that doesn't mean that we don't appreciate your work. Reports
++and feedback from the users of OpenGrok is essential to make the developers able
++to continue improving the product. Note that this is just a summary of how many
++changes each person made, which doesn't necessarily reflect how significant each
++change was. Inspect the history log with hg log -v -r 0.10:0.11 to get all
++details.
++
++56 Knut Anders Hatlen <knut.hatlen@oracle.com>
++56 Trond Norbye <trond.norbye@gmail.com>
++24 Vladimir Kotal <Vladimir.Kotal@oracle.com>
++15 Jens Elkner <jel+opengrok@cs.uni-magdeburg.de>
++12 Lubos Kosco <Lubos.Kosco@Oracle.COM>
++1 Chris Eldredge <chris.eldredge@gmail.com>
++1 Felix Annan <felannan@yahoo.com>
++1 Haufe-Lexware - Christoph Hofmann <Christoph.Hofmann@haufe-lexware.com>
++1 Karthik Rajagopalan <Karthik.Rajagopalan@schrodinger.com>
++1 Miroslav Osladil <mira@osladil.cz>
++
++
+ January 2011 update 0.10
+ -------------------------------------------------
+ 
+diff -r e0c28a5f46ab -r b8e4140829f1 OpenGrok
+--- a/OpenGrok	Sat Apr 07 03:29:43 2012 +0200
++++ b/OpenGrok	Sun Apr 15 04:48:29 2012 +0200
+@@ -21,6 +21,9 @@
+ #   - OPENGROK_DISTRIBUTION_BASE  Base Directory of the OpenGrok Distribution
+ #   - OPENGROK_INSTANCE_BASE      Base Directory of the OpenGrok User Data Area
+ #   - EXUBERANT_CTAGS             Full Path to Exuberant CTags
++#   - OPENGROK_CTAGS_OPTIONS_FILE Full path to file with extra command line
++#                                 options for CTags program (for its --options
++#                                 switch), default is DATA_ROOT/etc/ctags.config
+ #   - JAVA_HOME                   Full Path to Java Installation Root
+ #   - JAVA                        Full Path to java binary
+ #   - JAVA_OPTS                   Java options
+@@ -37,7 +40,7 @@
+ #                                 through project, it's good to have Verbose
+ #                                 Mode enabled too, cost of this is one more
+ #                                 traversal of the project before indexing it(*)
+-#   - OPENGROK_REMOTE_REPOS       Disable History Cache for (remote)
++#   - OPENGROK_REMOTE_REPOS_OFF   Disable History Cache for (remote)
+ #                                 Repositories (*)
+ #   - OPENGROK_SCAN_REPOS         Disable Scan for repositories (*)
+ #   - OPENGROK_SCAN_DEPTH         how deep should scanning for repos go
+@@ -182,6 +185,13 @@
+     # REQUIRED: Exuberant CTags (http://ctags.sf.net)
+     EXUBERANT_CTAGS="${EXUBERANT_CTAGS:-`FindExuberantCTags`}"
+ 
++    # OPTIONAL: supply extra command line options to CTags program
++    if [ -n ${OPENGROK_CTAGS_OPTIONS_FILE} ]; then
++        CTAGS_OPTIONS_FILE="${OPENGROK_CTAGS_OPTIONS_FILE}"
++    elif [ -r "${OPENGROK_INSTANCE_BASE}/etc/ctags.config" ]; then
++        CTAGS_OPTIONS_FILE="${OPENGROK_INSTANCE_BASE}/etc/ctags.config"
++    fi
++
+     # REQUIRED: Java Home
+     JAVA_HOME="${JAVA_HOME:-`FindJavaHome`}"
+     export JAVA_HOME
+@@ -208,10 +218,9 @@
+         SCAN_FOR_REPOSITORY=""
+     fi
+ 
+-    # OPTIONAL: Remote Repository Support (CVS or SVN)
+-    #           (Can be very time demanding, uncomment if needed)
++    # OPTIONAL: Disable remote repository support (CVS or SVN) [on by default]
+     REMOTE_REPOSITORIES="-r on"
+-    if [ -n "${OPENGROK_REMOTE_REPOS}" ]
++    if [ -n "${OPENGROK_REMOTE_REPOS_OFF}" ]
+     then
+         REMOTE_REPOSITORIES=""
+     fi
+@@ -729,6 +738,7 @@
+         ${VERBOSE} ${QUIET}                                     \
+         ${PROGRESS}                                             \
+         ${EXUBERANT_CTAGS:+-c} ${EXUBERANT_CTAGS}               \
++        ${CTAGS_OPTIONS_FILE:+-o} ${CTAGS_OPTIONS_FILE}         \
+         ${MAX_INDEXED_WORDS} ${SKIN} ${LEADING_WILDCARD}        \
+         ${READ_XML_CONF}                                        \
+         -W ${XML_CONFIGURATION}                                 \
+diff -r e0c28a5f46ab -r b8e4140829f1 README.txt
+--- a/README.txt	Sat Apr 07 03:29:43 2012 +0200
++++ b/README.txt	Sun Apr 15 04:48:29 2012 +0200
+@@ -368,6 +368,21 @@
+ 
+      This file will contain something like the Context described above.
+ 
++4.4.5 Custom ctags configuration
++--------------------------------
++
++To make ctags recognize additional symbols/definitions/etc. it is possible to
++specify configuration file with extra configuration options for ctags.
++
++This can be done by setting OPENGROK_CTAGS_OPTIONS_FILE environment variable
++when running the OpenGrok shell script (or directly with the -o option for
++opengrok.jar). Default location for the configuration file in the OpenGrok
++shell script is etc/ctags.config under the OpenGrok base directory (by default
++the full path to the file will be /var/opengrok/etc/ctags.config).
++
++Sample configuration file for Solaris code base is delivered in the doc/
++directory.
++
+ 4.5 Using Java DB for history cache
+ -----------------------------------
+ 
+@@ -547,6 +562,18 @@
+ 8. Information for developers
+ -----------------------------
+ 
++8.0 Building
++------------
++
++Just run 'ant' from command line in the top-level directory or use build
++process driven by graphical developer environment such as Netbeans.
++
++8.0.1 Package build
++-----------------
++
++Run 'ant package' to create package (specific for the operating system this is
++being executed on) under the dist/ directory.
++
+ 8.1 Unit testing
+ ----------------
+ 
+diff -r e0c28a5f46ab -r b8e4140829f1 doc/ctags.config
+--- /dev/null	Thu Jan 01 00:00:00 1970 +0000
++++ b/doc/ctags.config	Sun Apr 15 04:48:29 2012 +0200
+@@ -0,0 +1,5 @@
++--regex-asm=/^[ \t]*(ENTRY_NP|ENTRY|RTENTRY)+\(([a-zA-Z0-9_]+)\)/\2/f,function/
++--regex-asm=/^[ \t]*ENTRY2\(([a-zA-Z0-9_]+),[ ]*([a-zA-Z0-9_]+)\)/\1/f,function/
++--regex-asm=/^[ \t]*ENTRY2\(([a-zA-Z0-9_]+),[ ]*([a-zA-Z0-9_]+)\)/\2/f,function/
++--regex-asm=/^[ \t]*ENTRY_NP2\(([a-zA-Z0-9_]+),[ ]*([a-zA-Z0-9_]+)\)/\1/f,function/
++--regex-asm=/^[ \t]*ENTRY_NP2\(([a-zA-Z0-9_]+),[ ]*([a-zA-Z0-9_]+)\)/\2/f,function/
+diff -r e0c28a5f46ab -r b8e4140829f1 platform/solaris/ips/create.sh
+--- a/platform/solaris/ips/create.sh	Sat Apr 07 03:29:43 2012 +0200
++++ b/platform/solaris/ips/create.sh	Sun Apr 15 04:48:29 2012 +0200
+@@ -19,8 +19,10 @@
+ #
+ # CDDL HEADER END
+ #
+-# Copyright 2010 Sun Microsystems, Inc.  All rights reserved.
+-# Use is subject to license terms.
++
++#
++# Copyright (c) 2008, 2012, Oracle and/or its affiliates. All rights reserved.
++#
+ 
+ version=`grep 'name="version"' build.xml | cut -f 4 -d \"`
+ revision=0.`uname -v | perl -ne 's/(\d+)/print "$1\n"/e'`
+@@ -73,6 +75,7 @@
+ PKGSEND add file LICENSE.txt mode=0444 owner=root group=sys path=/usr/opengrok/doc/LICENSE.txt
+ PKGSEND add file NOTICE.txt mode=0444 owner=root group=sys path=/usr/opengrok/doc/NOTICE.txt
+ PKGSEND add file doc/EXAMPLE.txt mode=0444 owner=root group=sys path=/usr/opengrok/doc/EXAMPLE.txt
++PKGSEND add file doc/ctags.config mode=0444 owner=root group=sys path=/usr/opengrok/doc/ctags.config
+ 
+ 
+ # install libs
+diff -r e0c28a5f46ab -r b8e4140829f1 platform/solaris/pkgdef/prototype
+--- a/platform/solaris/pkgdef/prototype	Sat Apr 07 03:29:43 2012 +0200
++++ b/platform/solaris/pkgdef/prototype	Sun Apr 15 04:48:29 2012 +0200
+@@ -55,6 +55,7 @@
+ f none usr/opengrok/doc/CHANGES.txt=CHANGES.txt 0444 root sys
+ f none usr/opengrok/doc/LICENSE.txt=LICENSE.txt 0444 root sys
+ f none usr/opengrok/doc/NOTICE.txt=NOTICE.txt 0444 root sys
++f none usr/opengrok/doc/ctags.config=doc/ctags.config 0444 root sys
+ f none usr/opengrok/doc/paths.tsv=paths.tsv 0444 root sys
+ f none usr/opengrok/doc/EXAMPLE.txt=doc/EXAMPLE.txt 0444 root sys
+ f none usr/opengrok/doc/opengrok-agent.properties=platform/solaris/default/opengrok-agent.properties 0444 root sys
+diff -r e0c28a5f46ab -r b8e4140829f1 src/org/opensolaris/opengrok/analysis/Ctags.java
+--- a/src/org/opensolaris/opengrok/analysis/Ctags.java	Sat Apr 07 03:29:43 2012 +0200
++++ b/src/org/opensolaris/opengrok/analysis/Ctags.java	Sun Apr 15 04:48:29 2012 +0200
+@@ -18,7 +18,7 @@
+  */
+ 
+ /*
+- * Copyright (c) 2005, 2011, Oracle and/or its affiliates. All rights reserved.
++ * Copyright (c) 2005, 2012, Oracle and/or its affiliates. All rights reserved.
+  */
+ 
+ package org.opensolaris.opengrok.analysis;
+@@ -47,12 +47,17 @@
+     private static final String CTAGS_FILTER_TERMINATOR = "__ctags_done_with_file__";
+     //default: setCtags(System.getProperty("org.opensolaris.opengrok.analysis.Ctags", "ctags"));
+     private String binary;
++    private String CTagsExtraOptionsFile = null;
+     private ProcessBuilder processBuilder;
+ 
+     public void setBinary(String binary) {
+         this.binary = binary;
+     }
+ 
++    public void setCTagsExtraOptionsFile(String CTagsExtraOptionsFile) {
++        this.CTagsExtraOptionsFile = CTagsExtraOptionsFile;
++    }
++
+     public void close() {
+         IOUtils.close(ctagsIn);
+         if (ctags != null) {
+@@ -63,6 +68,8 @@
+     private void initialize() throws IOException {
+         if (processBuilder == null) {
+             List<String> command = new ArrayList<String>();
++            String commandStr = "";
++
+             command.add(binary);
+             command.add("--c-kinds=+l");
+             // Workaround for bug #14924: Don't get local variables in Java
+@@ -79,7 +86,18 @@
+             command.add("--fields=-anf+iKnS");
+             command.add("--excmd=pattern");
+             command.add("--langmap=sh:+.kshlib"); // RFE #17849
+-            command.add("--regex-Asm=/^[ \\t]*(ENTRY|ENTRY2|ALTENTRY)[ \\t]*\\(([a-zA-Z0-9_]+)/\\2/f,function/");  // for assmebly definitions
++
++            /* Add extra command line options for ctags. */
++            if (CTagsExtraOptionsFile != null) {
++                log.log(Level.WARNING, "Adding extra options to ctags");
++                command.add("--options=" + CTagsExtraOptionsFile);
++            }
++
++            for (String s : command) {
++                commandStr += s + " ";
++            }
++            log.log(Level.FINE, "Executing ctags command [" + commandStr + "]");
++
+             processBuilder = new ProcessBuilder(command);
+         }
+ 
+diff -r e0c28a5f46ab -r b8e4140829f1 src/org/opensolaris/opengrok/configuration/Configuration.java
+--- a/src/org/opensolaris/opengrok/configuration/Configuration.java	Sat Apr 07 03:29:43 2012 +0200
++++ b/src/org/opensolaris/opengrok/configuration/Configuration.java	Sun Apr 15 04:48:29 2012 +0200
+@@ -112,6 +112,7 @@
+     private int cachePages;
+     private String databaseDriver;
+     private String databaseUrl;
++    private String CTagsExtraOptionsFile;
+     private int scanningDepth;
+     private Set<String> allowedSymlinks;
+     private boolean obfuscatingEMailAddresses;
+@@ -687,6 +688,14 @@
+         this.databaseUrl = databaseUrl;
+     }
+ 
++    public String getCTagsExtraOptionsFile() {
++        return CTagsExtraOptionsFile;
++    }
++
++    public void setCTagsExtraOptionsFile(String filename) {
++        this.CTagsExtraOptionsFile = filename;
++    }
++
+     public Set<String> getAllowedSymlinks() {
+         return allowedSymlinks;
+     }
+diff -r e0c28a5f46ab -r b8e4140829f1 src/org/opensolaris/opengrok/configuration/RuntimeEnvironment.java
+--- a/src/org/opensolaris/opengrok/configuration/RuntimeEnvironment.java	Sat Apr 07 03:29:43 2012 +0200
++++ b/src/org/opensolaris/opengrok/configuration/RuntimeEnvironment.java	Sun Apr 15 04:48:29 2012 +0200
+@@ -18,7 +18,7 @@
+  */
+ 
+ /*
+- * Copyright (c) 2006, 2010, Oracle and/or its affiliates. All rights reserved.
++ * Copyright (c) 2006, 2012, Oracle and/or its affiliates. All rights reserved.
+  */
+ package org.opensolaris.opengrok.configuration;
+ 
+@@ -690,6 +690,14 @@
+         threadConfig.get().setDatabaseUrl(databaseUrl);
+     }
+ 
++    public String getCTagsExtraOptionsFile() {
++        return threadConfig.get().getCTagsExtraOptionsFile();
++    }
++
++    public void setCTagsExtraOptionsFile(String filename) {
++        threadConfig.get().setCTagsExtraOptionsFile(filename);
++    }
++
+     public Set<String> getAllowedSymlinks() {
+         return threadConfig.get().getAllowedSymlinks();
+     }
+diff -r e0c28a5f46ab -r b8e4140829f1 src/org/opensolaris/opengrok/index/CommandLineOptions.java
+--- a/src/org/opensolaris/opengrok/index/CommandLineOptions.java	Sat Apr 07 03:29:43 2012 +0200
++++ b/src/org/opensolaris/opengrok/index/CommandLineOptions.java	Sun Apr 15 04:48:29 2012 +0200
+@@ -18,7 +18,7 @@
+  */
+ 
+ /*
+- * Copyright (c) 2008, 2011, Oracle and/or its affiliates. All rights reserved.
++ * Copyright (c) 2008, 2012, Oracle and/or its affiliates. All rights reserved.
+  *
+  * Portions Copyright 2011 Jens Elkner.
+  */
+@@ -94,6 +94,7 @@
+         options.add(new Option('N', "/path/to/symlink", "Allow this symlink to be followed. Option may be repeated."));
+         options.add(new Option('n', null, "Do not generate indexes, but process all other command line options"));
+         options.add(new Option('O', ON_OFF, "Turn on/off the optimization of the index database as part of the indexing step"));
++        options.add(new Option('o', "path", "File with extra command line options for ctags"));
+         options.add(new Option('P', null, "Generate a project for each of the top-level directories in source root"));
+         options.add(new Option('p', "/path/to/default/project", "This is the path to the project that should be selected by default in the web application(when no other project set either in cookie or in parameter). You should strip off the source root."));
+         options.add(new Option('Q', ON_OFF, "Turn on/off quick context scan. By default only the first 32k of a file is scanned, and a '[..all..]' link is inserted if the file is bigger. Activating this may slow the server down (Note: this is setting only affects the web application)"));
+diff -r e0c28a5f46ab -r b8e4140829f1 src/org/opensolaris/opengrok/index/IndexDatabase.java
+--- a/src/org/opensolaris/opengrok/index/IndexDatabase.java	Sat Apr 07 03:29:43 2012 +0200
++++ b/src/org/opensolaris/opengrok/index/IndexDatabase.java	Sun Apr 15 04:48:29 2012 +0200
+@@ -18,7 +18,7 @@
+  */
+ 
+ /*
+- * Copyright (c) 2008, 2010, Oracle and/or its affiliates. All rights reserved.
++ * Copyright (c) 2008, 2012, Oracle and/or its affiliates. All rights reserved.
+  */
+ 
+ package org.opensolaris.opengrok.index;
+@@ -324,6 +324,13 @@
+             logger.warning("Unable to run ctags! Searching definitions will not work!");
+         }
+ 
++        if (ctags != null) {
++            String filename = RuntimeEnvironment.getInstance().getCTagsExtraOptionsFile();
++            if (filename != null) {
++                ctags.setCTagsExtraOptionsFile(filename);
++            }
++        }
++
+         try {
+             //TODO we might need to add writer.commit after certain phases of index generation, right now it will only happen in the end
+             Analyzer analyzer = AnalyzerGuru.getAnalyzer();
+diff -r e0c28a5f46ab -r b8e4140829f1 src/org/opensolaris/opengrok/index/Indexer.java
+--- a/src/org/opensolaris/opengrok/index/Indexer.java	Sat Apr 07 03:29:43 2012 +0200
++++ b/src/org/opensolaris/opengrok/index/Indexer.java	Sun Apr 15 04:48:29 2012 +0200
+@@ -18,7 +18,7 @@
+  */
+ 
+ /*
+- * Copyright (c) 2005, 2011, Oracle and/or its affiliates. All rights reserved.
++ * Copyright (c) 2005, 2012, Oracle and/or its affiliates. All rights reserved.
+  *
+  * Portions Copyright 2011 Jens Elkner.
+  */
+@@ -225,6 +225,19 @@
+                                 }
+                             }
+                             break;
++                        case 'o':
++                            String CTagsExtraOptionsFile = getopt.getOptarg();
++                            File CTagsFile = new File(CTagsExtraOptionsFile);
++                            if (!(CTagsFile.isFile() && CTagsFile.canRead())) {
++                                System.err.println("ERROR: File '" +
++                                    CTagsExtraOptionsFile +
++                                    "' not found for the -o option");
++                                System.exit(1);
++                            }
++                            System.err.println("INFO: file with extra " +
++                               "options for ctags: " + CTagsExtraOptionsFile);
++                            cfg.setCTagsExtraOptionsFile(CTagsExtraOptionsFile);
++                            break;
+                         case 'O':
+                              {
+                                 boolean oldval = cfg.isOptimizeDatabase();
+diff -r e0c28a5f46ab -r b8e4140829f1 test/org/opensolaris/opengrok/analysis/CtagsTest.java
+--- a/test/org/opensolaris/opengrok/analysis/CtagsTest.java	Sat Apr 07 03:29:43 2012 +0200
++++ b/test/org/opensolaris/opengrok/analysis/CtagsTest.java	Sun Apr 15 04:48:29 2012 +0200
+@@ -18,7 +18,7 @@
+  */
+ 
+ /*
+- * Copyright (c) 2010, 2011, Oracle and/or its affiliates. All rights reserved.
++ * Copyright (c) 2010, 2012, Oracle and/or its affiliates. All rights reserved.
+  */
+ 
+ package org.opensolaris.opengrok.analysis;
+@@ -49,6 +49,16 @@
+     public static void setUpClass() throws Exception {
+         ctags = new Ctags();
+         ctags.setBinary(RuntimeEnvironment.getInstance().getCtags());
++
++        /*
++         * This setting is only needed for bug19195 but it does not seem
++         * that it is possible to specify it just for single test case.
++         * The config file contains assembly specific settings so it should
++         * not be harmful to other test cases.
++         */
++        String extraOptionsFile = "testdata/sources/bug19195/ctags.config";
++        ctags.setCTagsExtraOptionsFile(extraOptionsFile);
++
+         assertTrue("No point in running ctags tests without valid ctags",
+                 RuntimeEnvironment.getInstance().validateExuberantCtags());
+         repository = new TestRepository();
+@@ -108,10 +118,35 @@
+             if (tag.type.startsWith("method")) {
+                 assertTrue("too many methods", count < names.length);
+                 assertEquals("method name", names[count], tag.symbol);
+-                assertEquals("method name", lines[count], tag.line);
++                assertEquals("method line", lines[count], tag.line);
+                 count++;
+             }
+         }
+         assertEquals("method count", names.length, count);
+     }
++
++    /**
++     * Test that multiple extra command line options are processed correctly
++     * for assembler source code. Bug #19195.
++     */
++    @Test
++    public void bug19195() throws Exception {
++        // Expected method names found in the file
++        String[] names = {"foo", "bar", "_fce", "__fce"};
++        // Expected line numbers for the methods
++        int[] lines = {28, 51, 71, 71};
++
++        /* Perform the actual test. */
++        Definitions result = getDefs("bug19195/test.s");
++        int count = 0;
++        for (Definitions.Tag tag : result.getTags()) {
++            if (tag.type.startsWith("function")) {
++                assertTrue("too many functions", count < names.length);
++                assertEquals("function name", names[count], tag.symbol);
++                assertEquals("function line", lines[count], tag.line);
++                count++;
++            }
++        }
++        assertEquals("function count", names.length, count);
++    }
+ }
+diff -r e0c28a5f46ab -r b8e4140829f1 testdata/sources/bug19195/ctags.config
+--- /dev/null	Thu Jan 01 00:00:00 1970 +0000
++++ b/testdata/sources/bug19195/ctags.config	Sun Apr 15 04:48:29 2012 +0200
+@@ -0,0 +1,5 @@
++--regex-asm=/^[ \t]*(ENTRY_NP|ENTRY|RTENTRY)+\(([a-zA-Z0-9_]+)\)/\2/f,function/
++--regex-asm=/^[ \t]*ENTRY2\(([a-zA-Z0-9_]+),[ ]*([a-zA-Z0-9_]+)\)/\1/f,function/
++--regex-asm=/^[ \t]*ENTRY2\(([a-zA-Z0-9_]+),[ ]*([a-zA-Z0-9_]+)\)/\2/f,function/
++--regex-asm=/^[ \t]*ENTRY_NP2\(([a-zA-Z0-9_]+),[ ]*([a-zA-Z0-9_]+)\)/\1/f,function/
++--regex-asm=/^[ \t]*ENTRY_NP2\(([a-zA-Z0-9_]+),[ ]*([a-zA-Z0-9_]+)\)/\2/f,function/
+diff -r e0c28a5f46ab -r b8e4140829f1 testdata/sources/bug19195/test.s
+--- /dev/null	Thu Jan 01 00:00:00 1970 +0000
++++ b/testdata/sources/bug19195/test.s	Sun Apr 15 04:48:29 2012 +0200
+@@ -0,0 +1,85 @@
++/*
++ * CDDL HEADER START
++ *
++ * The contents of this file are subject to the terms of the
++ * Common Development and Distribution License (the "License").
++ * You may not use this file except in compliance with the License.
++ *
++ * You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
++ * or http://www.opensolaris.org/os/licensing.
++ * See the License for the specific language governing permissions
++ * and limitations under the License.
++ *
++ * When distributing Covered Code, include this CDDL HEADER in each
++ * file and include the License file at usr/src/OPENSOLARIS.LICENSE.
++ * If applicable, add the following below this CDDL HEADER, with the
++ * fields enclosed by brackets "[]" replaced with your own identifying
++ * information: Portions Copyright [yyyy] [name of copyright owner]
++ *
++ * CDDL HEADER END
++ */
++
++/*
++ * Copyright (c) 2008, 2012, Oracle and/or its affiliates. All rights reserved.
++ */
++
++/* first function definition */
++
++	ENTRY_NP(foo)
++	set	nwindows, %g1
++	ld	[%g1], %g1
++	mov	%g1, %g2
++
++1:
++	save	%sp, -WINDOWSIZE, %sp
++	brnz	%g2, 1b
++	dec	%g2
++
++	mov	%g1, %g2
++2:
++	restore
++	brnz	%g2, 2b
++	dec	%g2
++
++	retl
++	nop
++
++	SET_SIZE(foo)
++
++/* 2nd function definition */
++
++	ENTRY(bar)
++	rdpr	%otherwin, %g1
++	brz	%g1, 3f
++	clr	%g2
++1:
++	save	%sp, -WINDOWSIZE, %sp
++	rdpr	%otherwin, %g1
++	brnz	%g1, 1b
++	add	%g2, 1, %g2
++2:
++	sub	%g2, 1, %g2		! restore back to orig window
++	brnz	%g2, 2b
++	restore
++3:
++	retl
++	nop
++	SET_SIZE(bar)
++
++/* definitions of the same function twice */
++
++	ENTRY2(_fce,__fce)
++	cmp	%o0, ERESTART
++	be,a	1f
++	mov	EINTR, %o0
++1:
++	save	%sp, -SA(MINFRAME), %sp
++	call	___errno
++	nop
++	st	%i0, [%o0]
++	restore
++	retl
++	mov	-1, %o0
++
++	SET_SIZE(_fce)
++	SET_SIZE(__fce)

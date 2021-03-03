@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>330</bug_id>
+          
+          <creation_ts>2007-12-20 09:38:00 +0000</creation_ts>
+          <short_desc>Trying to view history of repository root (SVN) results in exception</short_desc>
+          <delta_ts>2008-08-25 11:40:47 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>scm</component>
+          <version>unspecified</version>
+          <rep_platform>Other</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXED</resolution>
+          
+          
+          
+          
+          
+          <priority>P1</priority>
+          <bug_severity>critical</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Stephen Lau">stevel</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>914</commentid>
+            <who name="Stephen Lau">stevel</who>
+            <bug_when>2007-12-20 09:38:26 +0000</bug_when>
+            <thetext>http://dingo.songbirdnest.com:8080/source/history/
+
+Which should try to pull the SVN history for the entire repository, instead results in:
+java.lang.IllegalArgumentException: Cannot format given Object as a Date at java.text.DateFormat.format(DateFormat.java:279) at java.text.Format.format(Format.java:133) at org.apache.jsp.history_jsp._jspService(history_jsp.java:475) at org.apache.jasper.runtime.HttpJspBase.service(HttpJspBase.java:98) at javax.servlet.http.HttpServlet.service(HttpServlet.java:803) at org.apache.jasper.servlet.JspServletWrapper.service(JspServletWrapper.java:331) at org.apache.jasper.servlet.JspServlet.serviceJspFile(JspServlet.java:329) at org.apache.jasper.servlet.JspServlet.service(JspServlet.java:265) at javax.servlet.http.HttpServlet.service(HttpServlet.java:803) at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:269) at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:188) at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:213) at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:174) at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:127) at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:117) at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:108) at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:151) at org.apache.coyote.http11.Http11Processor.process(Http11Processor.java:874) at org.apache.coyote.http11.Http11BaseProtocol$Http11ConnectionHandler.processConnection(Http11BaseProtocol.java:665) at org.apache.tomcat.util.net.PoolTcpEndpoint.processSocket(PoolTcpEndpoint.java:528) at org.apache.tomcat.util.net.LeaderFollowerWorkerThread.runIt(LeaderFollowerWorkerThread.java:81) at org.apache.tomcat.util.threads.ThreadPool$ControlRunnable.run(ThreadPool.java:689) at java.lang.Thread.run(Thread.java:595)</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>919</commentid>
+            <who name="Trond Norbye">trond.norbye</who>
+            <bug_when>2007-12-25 14:18:10 +0000</bug_when>
+            <thetext>I suspect that the HitoryReader returned a null-pointer for the date. I have just committed a fix that print out a &quot;space&quot; if it encounters a null-pointer.
+
+Please reopen the bug if you still doesn&apos;t work in your repository.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>922</commentid>
+            <who name="Stephen Lau">stevel</who>
+            <bug_when>2007-12-26 14:58:52 +0000</bug_when>
+            <thetext>The old exception is gone, but now I get a new one.
+java.lang.IndexOutOfBoundsException: No group 1
+	at java.util.regex.Matcher.group(Matcher.java:463)
+	at java.util.regex.Matcher.appendReplacement(Matcher.java:730)
+	at java.util.regex.Matcher.replaceAll(Matcher.java:806)
+	at org.apache.jsp.history_jsp._jspService(history_jsp.java:510)
+	at org.apache.jasper.runtime.HttpJspBase.service(HttpJspBase.java:98)
+	at javax.servlet.http.HttpServlet.service(HttpServlet.java:803)
+	at org.apache.jasper.servlet.JspServletWrapper.service(JspServletWrapper.java:331)
+	at org.apache.jasper.servlet.JspServlet.serviceJspFile(JspServlet.java:329)
+	at org.apache.jasper.servlet.JspServlet.service(JspServlet.java:265)
+	at javax.servlet.http.HttpServlet.service(HttpServlet.java:803)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:269)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:188)
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:213)
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:174)
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:127)
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:117)
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:108)
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:151)
+	at org.apache.coyote.http11.Http11Processor.process(Http11Processor.java:874)
+	at org.apache.coyote.http11.Http11BaseProtocol$Http11ConnectionHandler.processConnection(Http11BaseProtocol.java:665)
+	at org.apache.tomcat.util.net.PoolTcpEndpoint.processSocket(PoolTcpEndpoint.java:528)
+	at org.apache.tomcat.util.net.LeaderFollowerWorkerThread.runIt(LeaderFollowerWorkerThread.java:81)
+	at org.apache.tomcat.util.threads.ThreadPool$ControlRunnable.run(ThreadPool.java:689)
+	at java.lang.Thread.run(Thread.java:595)
+
+
+No group 1</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>923</commentid>
+            <who name="Stephen Lau">stevel</who>
+            <bug_when>2007-12-26 15:14:08 +0000</bug_when>
+            <thetext>Except now it started working again... weird.   I&apos;m leaving it as open in case the exception is of some use in tracking down a bug.
+
+One thing of note is that viewing the history for the repo root is *really* slow (in our repository with 7500+ changesets).  Is this cached at all?</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>924</commentid>
+            <who name="Trond Norbye">trond.norbye</who>
+            <bug_when>2007-12-27 03:50:09 +0000</bug_when>
+            <thetext>replaceAll occurs only once in history.jsp :
+(bugPage != null &amp;&amp; ! bugPage.equals(&quot;&quot;)) ?
+    bugPattern.matcher(Util.Htmlize(hr.getComment())).replaceAll(&quot;&lt;a href=\&quot;&quot; + bugPage + &quot;$1\&quot;&gt;$1&lt;/a&gt;&quot;)
+    :  Util.Htmlize(hr.getComment())
+
+This construct should probably be moved into a try-catch block so we can add extra information on what went wrong to help fix the problem.
+
+As for the cache question: No cache is used if you request history information for a directory because I have no quick method to determine if the cache is stale or not. If you try to get the history for the root directory in Subversion I have to check the date for _ALL_ files in the repository in order to determine if the cache is stale or not. This could have been done by the offline indexer, but the current cache format is a object dump in XML and not very compact so it will consume a lot of disk space. We have been playing with the idea to replace it with a database, so we should probably do some experiments pretty soon..</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>979</commentid>
+            <who name="Stephen Lau">stevel</who>
+            <bug_when>2008-01-10 14:41:21 +0000</bug_when>
+            <thetext>(In reply to comment #4)
+&gt; As for the cache question: No cache is used if you request history information
+&gt; for a directory because I have no quick method to determine if the cache is
+&gt; stale or not. If you try to get the history for the root directory in
+&gt; Subversion I have to check the date for _ALL_ files in the repository in order
+&gt; to determine if the cache is stale or not. This could have been done by the
+&gt; offline indexer, but the current cache format is a object dump in XML and not
+&gt; very compact so it will consume a lot of disk space. We have been playing with
+&gt; the idea to replace it with a database, so we should probably do some
+&gt; experiments pretty soon..
+
+Can you do:
+`svn info` for the directory to determine what revision it&apos;s at, and then see if that revision is in the cache for the history?</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>10978</commentid>
+            <who name="Trond Norbye">trond.norbye</who>
+            <bug_when>2008-08-25 11:40:47 +0000</bug_when>
+            <thetext>The bug in this issue is fixed, and I have created #3052 to track the RFE.</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

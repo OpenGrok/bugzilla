@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>6061</bug_id>
+          
+          <creation_ts>2009-01-09 02:20:00 +0000</creation_ts>
+          <short_desc>make it possible to display recent changes for projects</short_desc>
+          <delta_ts>2009-01-09 02:20:46 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>webapp</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>NEW</bug_status>
+          
+          
+          
+          
+          
+          
+          <priority>P4</priority>
+          <bug_severity>enhancement</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Vladimir Kotal">vladimir.kotal</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          <cc>zdenek.kotala</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>24868</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2009-01-09 02:20:46 +0000</bug_when>
+            <thetext>OpenGrok should be able to display recent changes for Mercurial repositories (and all other SCM types which make it possible) like recently added changes, tags and branches (similar to what hgwebdir.cgi does).
+
+Ideally, this should be done in per-project info page, e.g. by clicking on a project in project list an info page will be displayed (tracked by bug #5882). This info page could contain such data. Internally, this could be done by substituting XML tags with related data. For example there would be XML tag for recent changesets (with optional attribute giving number of changes to be displayed).
+
+This could be done in a static way, e.g. when doing indexing for given project a static list of recent changes, tags, branches etc. will be generated and saved (so it can be later used in producing per-project info page).
+
+As Lubos said in off-line conversation, this nicely adds a meaning to what a project is.</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

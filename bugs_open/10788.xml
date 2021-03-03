@@ -1,0 +1,299 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>10788</bug_id>
+          
+          <creation_ts>2009-08-20 06:56:00 +0000</creation_ts>
+          <short_desc>History Cache not generated</short_desc>
+          <delta_ts>2010-12-02 13:38:27 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>scm</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>Linux</op_sys>
+          <bug_status>NEW</bug_status>
+          
+          
+          
+          
+          
+          
+          <priority>P4</priority>
+          <bug_severity>normal</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Tony Butt">tjb</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          <cc>vladimir.kotal</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>47215</commentid>
+            <who name="Tony Butt">tjb</who>
+            <bug_when>2009-08-20 06:56:57 +0000</bug_when>
+            <thetext>I fetched the latest opengrok source code as Wed 18 Aug 2009, built it, and installed it.
+
+When I run &quot;Opengrok update&quot;, the cross reference is built OK, but the history cache does not build. There are messages reported about generating HistoryCache, some reasonable amount of time is taken, but no cache is built. The symbol xref index builds OK.
+
+I have tried this with both the database backend for the history cache, and without.
+
+With the database (-D option), the database is initialised, but is apparently empty.
+Running the tomcat application reports empty history for all files.
+
+Without the database, no cache directory is generated at all (data/historycache)
+
+Manually creating data/historycache allows on the fly reporting of history by the tomcat application, but (of course) no ability to search.
+
+My version control system is subversion (1.5.6).
+I have checked the tomcat logs, no problems there.
+
+I previously had opengrok 0.7 installed, history cache worked fine then.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>47222</commentid>
+            <who name="Tony Butt">tjb</who>
+            <bug_when>2009-08-20 07:37:49 +0000</bug_when>
+            <thetext>Here is the first part of the log from the initial indexing run:
+
+tomcat55@lion:/srv/opengrok/bin$ ./OpenGrok update
+Loading the default instance configuration ...
+Scanning for repositories...
+20/08/2009 5:17:32 PM org.opensolaris.opengrok.history.HistoryGuru addRepositories
+INFO: Adding &lt;org.opensolaris.opengrok.history.SubversionRepository&gt; repository:
+&lt;/srv/opengrok/source/CEA&gt;
+Done searching for repositories (0s)
+20/08/2009 5:17:32 PM org.opensolaris.opengrok.history.HistoryGuru createCache
+INFO: Create historycache for /srv/opengrok/source/CEA (SubversionRepository)
+...</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>47335</commentid>
+            <who name="Tony Butt">tjb</who>
+            <bug_when>2009-08-21 04:30:16 +0000</bug_when>
+            <thetext>Looking at the processes running while doing this shows that
+
+  svn --log --xml
+
+has started, runs for a while, then stops.
+I started this with a clean database. When this happens, there is a message reported about unable to read file descriptor. I will try to capture it and send record it here (my opengrok machine is isolated from the internet)</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>47530</commentid>
+            <who name="Tony Butt">tjb</who>
+            <bug_when>2009-08-23 23:55:56 +0000</bug_when>
+            <thetext>(In reply to comment #2)
+&gt; Looking at the processes running while doing this shows that
+&gt; 
+&gt;   svn --log --xml
+&gt; 
+&gt; has started, runs for a while, then stops.
+&gt; I started this with a clean database. When this happens, there is a message
+&gt; reported about unable to read file descriptor. I will try to capture it and
+&gt; send record it here (my opengrok machine is isolated from the internet)
+
+I tried limiting the set of revisions for the source code, as the original has about 40000. The history update then worked OK. I am in the process of building this progressively - I will let you kow how it goes.
+
+This is suggesting to me that the svn --log --xml command execevution was timing out. I assume the timeout for the java process executon can be configured in some way?</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>47580</commentid>
+            <who name="Trond Norbye">trond.norbye</who>
+            <bug_when>2009-08-24 11:47:35 +0000</bug_when>
+            <thetext>I&apos;m not aware of any timeouts ??? can you try to monitor the svn process and see how it terminates??? 
+
+Cheers,
+
+Trond</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>48275</commentid>
+              <attachid>2551</attachid>
+            <who name="Tony Butt">tjb</who>
+            <bug_when>2009-08-30 23:54:17 +0000</bug_when>
+            <thetext>Created attachment 2551
+Strace of svn process which collects history
+
+I managed to run an strace on the &apos;svn --log --xml&apos; process which collects the history, the tail of the results are attached. As you will see, it terminates withe a broken pipe error.
+
+Our repository has something more than 40000 checkins, and we seem to be making it down to 5741 before failing.
+
+I don&apos;t think this is related to a specific checkin, as I can update the source checkout to a point in history , say -r 10000, and the history collection works OK.
+
+I have managed to work around by repeating this process, at intervals of 10000 or so, but it is quite tedious. I would imagine if you code break up the history scan into chunks, it would work around the problem, but I am not sure if there is some other underlying problem. Running svn --log --xml from the command line works normally, the output is around 1Mb or so.
+
+This is not helped by a memory consumption problem with svn 1.5.6 which causes it to fail with an out of memory condition when updating a large code base sometimes.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>79669</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2010-12-02 13:38:27 +0000</bug_when>
+            <thetext>(In reply to comment #4)
+&gt; I&apos;m not aware of any timeouts ??? can you try to monitor the svn process and
+&gt; see how it terminates??? 
+
+There are no timeouts for external command execution (which you can see in bug 17507 where the svn command just does not ever complete) but I have just filed an enhancement so that there is such possibility :)
+
+See bug 17510.</thetext>
+          </long_desc>
+      
+          <attachment
+              isobsolete="0"
+              ispatch="0"
+              isprivate="0"
+              isurl="0"
+          >
+            <attachid>2551</attachid>
+            <date>2009-08-30 23:54:00 +0000</date>
+            <delta_ts>2009-08-30 23:54:17 +0000</delta_ts>
+            <desc>Strace of svn process which collects history</desc>
+            <filename>svn_strace.log</filename>
+            <type>text/plain</type>
+            <size>6722</size>
+            <attacher>tjb</attacher>
+            
+              <data encoding="base64">d3JpdGUoMSwgIjxsb2dlbnRyeVxuICAgcmV2aXNpb249XCI1ODEzXCI+XG48YSIuLi4sIDQ0MCkg
+PSA0NDANCndyaXRlKDEsICI8bG9nZW50cnlcbiAgIHJldmlzaW9uPVwiNTgxMlwiPlxuPGEiLi4u
+LCAzODcpID0gMzg3DQp3cml0ZSgxLCAiPGxvZ2VudHJ5XG4gICByZXZpc2lvbj1cIjU4MTFcIj5c
+bjxhIi4uLiwgNDIyKSA9IDQyMg0Kd3JpdGUoMSwgIjxsb2dlbnRyeVxuICAgcmV2aXNpb249XCI1
+ODEwXCI+XG48YSIuLi4sIDI0MykgPSAyNDMNCndyaXRlKDEsICI8bG9nZW50cnlcbiAgIHJldmlz
+aW9uPVwiNTgwOVwiPlxuPGEiLi4uLCA0NDApID0gNDQwDQp3cml0ZSgxLCAiPGxvZ2VudHJ5XG4g
+ICByZXZpc2lvbj1cIjU4MDhcIj5cbjxhIi4uLiwgMjY4KSA9IDI2OA0Kd3JpdGUoMSwgIjxsb2dl
+bnRyeVxuICAgcmV2aXNpb249XCI1ODA3XCI+XG48YSIuLi4sIDIwMCkgPSAyMDANCndyaXRlKDEs
+ICI8bG9nZW50cnlcbiAgIHJldmlzaW9uPVwiNTgwNlwiPlxuPGEiLi4uLCAyOTgpID0gMjk4DQp3
+cml0ZSgxLCAiPGxvZ2VudHJ5XG4gICByZXZpc2lvbj1cIjU4MDVcIj5cbjxhIi4uLiwgMzIzKSA9
+IDMyMw0Kd3JpdGUoMSwgIjxsb2dlbnRyeVxuICAgcmV2aXNpb249XCI1ODA0XCI+XG48YSIuLi4s
+IDI1NikgPSAyNTYNCndyaXRlKDEsICI8bG9nZW50cnlcbiAgIHJldmlzaW9uPVwiNTgwM1wiPlxu
+PGEiLi4uLCAzNjMpID0gMzYzDQp3cml0ZSgxLCAiPGxvZ2VudHJ5XG4gICByZXZpc2lvbj1cIjU4
+MDJcIj5cbjxhIi4uLiwgMjQxKSA9IDI0MQ0Kd3JpdGUoMSwgIjxsb2dlbnRyeVxuICAgcmV2aXNp
+b249XCI1ODAxXCI+XG48YSIuLi4sIDI0NCkgPSAyNDQNCndyaXRlKDEsICI8bG9nZW50cnlcbiAg
+IHJldmlzaW9uPVwiNTgwMFwiPlxuPGEiLi4uLCAyNDApID0gMjQwDQp3cml0ZSgxLCAiPGxvZ2Vu
+dHJ5XG4gICByZXZpc2lvbj1cIjU3OTlcIj5cbjxhIi4uLiwgMjM4KSA9IDIzOA0Kd3JpdGUoMSwg
+Ijxsb2dlbnRyeVxuICAgcmV2aXNpb249XCI1Nzk4XCI+XG48YSIuLi4sIDIzNSkgPSAyMzUNCndy
+aXRlKDEsICI8bG9nZW50cnlcbiAgIHJldmlzaW9uPVwiNTc5N1wiPlxuPGEiLi4uLCAyMzYpID0g
+MjM2DQp3cml0ZSgxLCAiPGxvZ2VudHJ5XG4gICByZXZpc2lvbj1cIjU3OTZcIj5cbjxhIi4uLiwg
+MjM0KSA9IDIzNA0Kd3JpdGUoMSwgIjxsb2dlbnRyeVxuICAgcmV2aXNpb249XCI1Nzk1XCI+XG48
+YSIuLi4sIDIzMCkgPSAyMzANCndyaXRlKDEsICI8bG9nZW50cnlcbiAgIHJldmlzaW9uPVwiNTc5
+NFwiPlxuPGEiLi4uLCAyMjgpID0gMjI4DQp3cml0ZSgxLCAiPGxvZ2VudHJ5XG4gICByZXZpc2lv
+bj1cIjU3OTNcIj5cbjxhIi4uLiwgMjE4KSA9IDIxOA0Kd3JpdGUoMSwgIjxsb2dlbnRyeVxuICAg
+cmV2aXNpb249XCI1NzkyXCI+XG48YSIuLi4sIDIxOCkgPSAyMTgNCndyaXRlKDEsICI8bG9nZW50
+cnlcbiAgIHJldmlzaW9uPVwiNTc5MVwiPlxuPGEiLi4uLCAyMjEpID0gMjIxDQp3cml0ZSgxLCAi
+PGxvZ2VudHJ5XG4gICByZXZpc2lvbj1cIjU3OTBcIj5cbjxhIi4uLiwgMjI2KSA9IDIyNg0Kd3Jp
+dGUoMSwgIjxsb2dlbnRyeVxuICAgcmV2aXNpb249XCI1Nzg5XCI+XG48YSIuLi4sIDIyMikgPSAy
+MjINCndyaXRlKDEsICI8bG9nZW50cnlcbiAgIHJldmlzaW9uPVwiNTc4OFwiPlxuPGEiLi4uLCAz
+NDEpID0gMzQxDQp3cml0ZSgxLCAiPGxvZ2VudHJ5XG4gICByZXZpc2lvbj1cIjU3ODdcIj5cbjxh
+Ii4uLiwgMjEyKSA9IDIxMg0Kd3JpdGUoMSwgIjxsb2dlbnRyeVxuICAgcmV2aXNpb249XCI1Nzg2
+XCI+XG48YSIuLi4sIDIwNikgPSAyMDYNCndyaXRlKDEsICI8bG9nZW50cnlcbiAgIHJldmlzaW9u
+PVwiNTc4NVwiPlxuPGEiLi4uLCAzMjIpID0gMzIyDQp3cml0ZSgxLCAiPGxvZ2VudHJ5XG4gICBy
+ZXZpc2lvbj1cIjU3ODRcIj5cbjxhIi4uLiwgMzI0KSA9IDMyNA0Kd3JpdGUoMSwgIjxsb2dlbnRy
+eVxuICAgcmV2aXNpb249XCI1NzgzXCI+XG48YSIuLi4sIDIzMykgPSAyMzMNCndyaXRlKDEsICI8
+bG9nZW50cnlcbiAgIHJldmlzaW9uPVwiNTc4MlwiPlxuPGEiLi4uLCA0MTkpID0gNDE5DQp3cml0
+ZSgxLCAiPGxvZ2VudHJ5XG4gICByZXZpc2lvbj1cIjU3ODFcIj5cbjxhIi4uLiwgMjQyKSA9IDI0
+Mg0Kd3JpdGUoMSwgIjxsb2dlbnRyeVxuICAgcmV2aXNpb249XCI1NzgwXCI+XG48YSIuLi4sIDIz
+OSkgPSAyMzkNCndyaXRlKDEsICI8bG9nZW50cnlcbiAgIHJldmlzaW9uPVwiNTc3OVwiPlxuPGEi
+Li4uLCAyMzgpID0gMjM4DQp3cml0ZSgxLCAiPGxvZ2VudHJ5XG4gICByZXZpc2lvbj1cIjU3Nzhc
+Ij5cbjxhIi4uLiwgMjM2KSA9IDIzNg0Kd3JpdGUoMSwgIjxsb2dlbnRyeVxuICAgcmV2aXNpb249
+XCI1Nzc3XCI+XG48YSIuLi4sIDIzOSkgPSAyMzkNCndyaXRlKDEsICI8bG9nZW50cnlcbiAgIHJl
+dmlzaW9uPVwiNTc3NlwiPlxuPGEiLi4uLCAyMzIpID0gMjMyDQp3cml0ZSgxLCAiPGxvZ2VudHJ5
+XG4gICByZXZpc2lvbj1cIjU3NzVcIj5cbjxhIi4uLiwgMjM0KSA9IDIzNA0Kd3JpdGUoMSwgIjxs
+b2dlbnRyeVxuICAgcmV2aXNpb249XCI1Nzc0XCI+XG48YSIuLi4sIDIyOCkgPSAyMjgNCndyaXRl
+KDEsICI8bG9nZW50cnlcbiAgIHJldmlzaW9uPVwiNTc3M1wiPlxuPGEiLi4uLCAyMjYpID0gMjI2
+DQp3cml0ZSgxLCAiPGxvZ2VudHJ5XG4gICByZXZpc2lvbj1cIjU3NzJcIj5cbjxhIi4uLiwgMjE2
+KSA9IDIxNg0Kd3JpdGUoMSwgIjxsb2dlbnRyeVxuICAgcmV2aXNpb249XCI1NzcxXCI+XG48YSIu
+Li4sIDIxOSkgPSAyMTkNCndyaXRlKDEsICI8bG9nZW50cnlcbiAgIHJldmlzaW9uPVwiNTc3MFwi
+PlxuPGEiLi4uLCAyMTYpID0gMjE2DQp3cml0ZSgxLCAiPGxvZ2VudHJ5XG4gICByZXZpc2lvbj1c
+IjU3NjlcIj5cbjxhIi4uLiwgMjIwKSA9IDIyMA0Kd3JpdGUoMSwgIjxsb2dlbnRyeVxuICAgcmV2
+aXNpb249XCI1NzY4XCI+XG48YSIuLi4sIDIyNCkgPSAyMjQNCndyaXRlKDEsICI8bG9nZW50cnlc
+biAgIHJldmlzaW9uPVwiNTc2N1wiPlxuPGEiLi4uLCAzNTcpID0gMzU3DQp3cml0ZSgxLCAiPGxv
+Z2VudHJ5XG4gICByZXZpc2lvbj1cIjU3NjZcIj5cbjxhIi4uLiwgMjEwKSA9IDIxMA0Kd3JpdGUo
+MSwgIjxsb2dlbnRyeVxuICAgcmV2aXNpb249XCI1NzY1XCI+XG48YSIuLi4sIDMzNSkgPSAzMzUN
+CndyaXRlKDEsICI8bG9nZW50cnlcbiAgIHJldmlzaW9uPVwiNTc2NFwiPlxuPGEiLi4uLCAyMDkp
+ID0gMjA5DQp3cml0ZSgxLCAiPGxvZ2VudHJ5XG4gICByZXZpc2lvbj1cIjU3NjNcIj5cbjxhIi4u
+LiwgMjExKSA9IDIxMQ0Kd3JpdGUoMSwgIjxsb2dlbnRyeVxuICAgcmV2aXNpb249XCI1NzYyXCI+
+XG48YSIuLi4sIDMwNikgPSAzMDYNCndyaXRlKDEsICI8bG9nZW50cnlcbiAgIHJldmlzaW9uPVwi
+NTc2MVwiPlxuPGEiLi4uLCAyMDQpID0gMjA0DQp3cml0ZSgxLCAiPGxvZ2VudHJ5XG4gICByZXZp
+c2lvbj1cIjU3NjBcIj5cbjxhIi4uLiwgMzAzKSA9IDMwMw0Kd3JpdGUoMSwgIjxsb2dlbnRyeVxu
+ICAgcmV2aXNpb249XCI1NzU5XCI+XG48YSIuLi4sIDIwNSkgPSAyMDUNCndyaXRlKDEsICI8bG9n
+ZW50cnlcbiAgIHJldmlzaW9uPVwiNTc1OFwiPlxuPGEiLi4uLCAyMDkpID0gMjA5DQp3cml0ZSgx
+LCAiPGxvZ2VudHJ5XG4gICByZXZpc2lvbj1cIjU3NTdcIj5cbjxhIi4uLiwgMjg5KSA9IDI4OQ0K
+d3JpdGUoMSwgIjxsb2dlbnRyeVxuICAgcmV2aXNpb249XCI1NzU2XCI+XG48YSIuLi4sIDIwOCkg
+PSAyMDgNCndyaXRlKDEsICI8bG9nZW50cnlcbiAgIHJldmlzaW9uPVwiNTc1NVwiPlxuPGEiLi4u
+LCAzMjIpID0gMzIyDQp3cml0ZSgxLCAiPGxvZ2VudHJ5XG4gICByZXZpc2lvbj1cIjU3NTRcIj5c
+bjxhIi4uLiwgMjQ1KSA9IDI0NQ0Kd3JpdGUoMSwgIjxsb2dlbnRyeVxuICAgcmV2aXNpb249XCI1
+NzUzXCI+XG48YSIuLi4sIDI1OCkgPSAyNTgNCndyaXRlKDEsICI8bG9nZW50cnlcbiAgIHJldmlz
+aW9uPVwiNTc1MlwiPlxuPGEiLi4uLCAxMDI0KSA9IDEwMjQNCndyaXRlKDEsICJzLjwvbXNnPlxu
+IiwgOSkgICAgICAgICAgICAgICA9IDkNCndyaXRlKDEsICI8L2xvZ2VudHJ5PlxuIiwgMTIpICAg
+ICAgICAgICA9IDEyDQp3cml0ZSgxLCAiPGxvZ2VudHJ5XG4gICByZXZpc2lvbj1cIjU3NTFcIj5c
+bjxhIi4uLiwgMjc2KSA9IDI3Ng0Kd3JpdGUoMSwgIjxsb2dlbnRyeVxuICAgcmV2aXNpb249XCI1
+NzUwXCI+XG48YSIuLi4sIDI1MykgPSAyNTMNCndyaXRlKDEsICI8bG9nZW50cnlcbiAgIHJldmlz
+aW9uPVwiNTc0OVwiPlxuPGEiLi4uLCAyNDIpID0gMjQyDQp3cml0ZSgxLCAiPGxvZ2VudHJ5XG4g
+ICByZXZpc2lvbj1cIjU3NDhcIj5cbjxhIi4uLiwgMzg0KSA9IDM4NA0Kd3JpdGUoMSwgIjxsb2dl
+bnRyeVxuICAgcmV2aXNpb249XCI1NzQ3XCI+XG48YSIuLi4sIDIyMCkgPSAyMjANCndyaXRlKDEs
+ICI8bG9nZW50cnlcbiAgIHJldmlzaW9uPVwiNTc0NlwiPlxuPGEiLi4uLCAyMTcpID0gMjE3DQp3
+cml0ZSgxLCAiPGxvZ2VudHJ5XG4gICByZXZpc2lvbj1cIjU3NDVcIj5cbjxhIi4uLiwgODAwKSA9
+IDgwMA0Kd3JpdGUoMSwgIjxsb2dlbnRyeVxuICAgcmV2aXNpb249XCI1NzQ0XCI+XG48YSIuLi4s
+IDM2NSkgPSAzNjUNCndyaXRlKDEsICI8bG9nZW50cnlcbiAgIHJldmlzaW9uPVwiNTc0M1wiPlxu
+PGEiLi4uLCA1MDgpID0gNTA4DQp3cml0ZSgxLCAiPGxvZ2VudHJ5XG4gICByZXZpc2lvbj1cIjU3
+NDJcIj5cbjxhIi4uLiwgNjQ3KSA9IDY0Nw0Kd3JpdGUoMSwgIjxsb2dlbnRyeVxuICAgcmV2aXNp
+b249XCI1NzQxXCI+XG48YSIuLi4sIDEwMjQpID0gLTEgRVBJUEUgKEJyb2tlbiBwaXBlKQ0KLS0t
+IFNJR1BJUEUgKEJyb2tlbiBwaXBlKSBAIDAgKDApIC0tLQ0KLS0tIFNJR1RFUk0gKFRlcm1pbmF0
+ZWQpIEAgMCAoMCkgLS0tDQpydF9zaWdhY3Rpb24oU0lHVEVSTSwge1NJR19JR059LCB7MHg4MDUy
+YjgwLCBbXSwgU0FfSU5URVJSVVBUfSwgOCkgPSAwDQpzaWdyZXR1cm4oKSAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgPSA/IChtYXNrIG5vdyBbUVVJVF0pDQpvcGVuKCIvdXNyL3NoYXJlL2xv
+Y2FsZS9lbl9BVS5VVEYtOC9MQ19NRVNTQUdFUy9saWJjLm1vIiwgT19SRE9OTFkpID0gLTEgRU5P
+RU5UIChObyBzdWNoIGZpbGUgb3IgZGlyZWN0b3J5KQ0Kb3BlbigiL3Vzci9zaGFyZS9sb2NhbGUv
+ZW5fQVUudXRmOC9MQ19NRVNTQUdFUy9saWJjLm1vIiwgT19SRE9OTFkpID0gLTEgRU5PRU5UIChO
+byBzdWNoIGZpbGUgb3IgZGlyZWN0b3J5KQ0Kb3BlbigiL3Vzci9zaGFyZS9sb2NhbGUvZW5fQVUv
+TENfTUVTU0FHRVMvbGliYy5tbyIsIE9fUkRPTkxZKSA9IC0xIEVOT0VOVCAoTm8gc3VjaCBmaWxl
+IG9yIGRpcmVjdG9yeSkNCm9wZW4oIi91c3Ivc2hhcmUvbG9jYWxlL2VuLlVURi04L0xDX01FU1NB
+R0VTL2xpYmMubW8iLCBPX1JET05MWSkgPSAtMSBFTk9FTlQgKE5vIHN1Y2ggZmlsZSBvciBkaXJl
+Y3RvcnkpDQpvcGVuKCIvdXNyL3NoYXJlL2xvY2FsZS9lbi51dGY4L0xDX01FU1NBR0VTL2xpYmMu
+bW8iLCBPX1JET05MWSkgPSAtMSBFTk9FTlQgKE5vIHN1Y2ggZmlsZSBvciBkaXJlY3RvcnkpDQpv
+cGVuKCIvdXNyL3NoYXJlL2xvY2FsZS9lbi9MQ19NRVNTQUdFUy9saWJjLm1vIiwgT19SRE9OTFkp
+ID0gLTEgRU5PRU5UIChObyBzdWNoIGZpbGUgb3IgZGlyZWN0b3J5KQ0Kb3BlbigiL3Vzci9zaGFy
+ZS9sb2NhbGUtbGFuZ3BhY2svZW5fQVUuVVRGLTgvTENfTUVTU0FHRVMvbGliYy5tbyIsIE9fUkRP
+TkxZKSA9IC0xIEVOT0VOVCAoTm8gc3VjaCBmaWxlIG9yIGRpcmVjdG9yeSkNCm9wZW4oIi91c3Iv
+c2hhcmUvbG9jYWxlLWxhbmdwYWNrL2VuX0FVLnV0ZjgvTENfTUVTU0FHRVMvbGliYy5tbyIsIE9f
+UkRPTkxZKSA9IC0xIEVOT0VOVCAoTm8gc3VjaCBmaWxlIG9yIGRpcmVjdG9yeSkNCm9wZW4oIi91
+c3Ivc2hhcmUvbG9jYWxlLWxhbmdwYWNrL2VuX0FVL0xDX01FU1NBR0VTL2xpYmMubW8iLCBPX1JE
+T05MWSkgPSAtMSBFTk9FTlQgKE5vIHN1Y2ggZmlsZSBvciBkaXJlY3RvcnkpDQpvcGVuKCIvdXNy
+L3NoYXJlL2xvY2FsZS1sYW5ncGFjay9lbi5VVEYtOC9MQ19NRVNTQUdFUy9saWJjLm1vIiwgT19S
+RE9OTFkpID0gLTEgRU5PRU5UIChObyBzdWNoIGZpbGUgb3IgZGlyZWN0b3J5KQ0Kb3BlbigiL3Vz
+ci9zaGFyZS9sb2NhbGUtbGFuZ3BhY2svZW4udXRmOC9MQ19NRVNTQUdFUy9saWJjLm1vIiwgT19S
+RE9OTFkpID0gLTEgRU5PRU5UIChObyBzdWNoIGZpbGUgb3IgZGlyZWN0b3J5KQ0Kb3BlbigiL3Vz
+ci9zaGFyZS9sb2NhbGUtbGFuZ3BhY2svZW4vTENfTUVTU0FHRVMvbGliYy5tbyIsIE9fUkRPTkxZ
+KSA9IC0xIEVOT0VOVCAoTm8gc3VjaCBmaWxlIG9yIGRpcmVjdG9yeSkNCmNsb3NlKDQpICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICA9IDANCndyaXRlKDIsICJzdm46IFdyaXRlIGVycm9y
+OiBCcm9rZW4gcGlwZVxuIiwgMzApID0gMzANCm11bm1hcCgweGI3MTMxMDAwLCAyNzAzMzYpICAg
+ICAgICAgICAgICA9IDANCm11bm1hcCgweGI2ZmFkMDAwLCAxMDU2NzY4KSAgICAgICAgICAgICA9
+IDANCm11bm1hcCgweGI2YWVkMDAwLCAyMTA1MzQ0KSAgICAgICAgICAgICA9IDANCmJyaygweDg4
+ZmYwMDApICAgICAgICAgICAgICAgICAgICAgICAgICA9IDB4ODhmZjAwMA0KYnJrKDB4ODBmOTAw
+MCkgICAgICAgICAgICAgICAgICAgICAgICAgID0gMHg4MGY5MDAwDQpleGl0X2dyb3VwKDEpICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgPSA/DQpQcm9jZXNzIDMwMTU0IGRldGFjaGVkDQo=
+</data>
+
+          </attachment>
+      
+
+    </bug>
+
+</bugzilla>

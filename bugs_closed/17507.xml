@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>17507</bug_id>
+          
+          <creation_ts>2010-12-02 12:19:00 +0000</creation_ts>
+          <short_desc>indexer hangs when svn requests certificate confirmation</short_desc>
+          <delta_ts>2011-01-06 08:50:56 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>indexer</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>RESOLVED</bug_status>
+          <resolution>FIXINSOURCE</resolution>
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>blocker</bug_severity>
+          <target_milestone>0.11</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Vladimir Kotal">vladimir.kotal</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          <cc>knut.hatlen</cc>
+    
+    <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>79659</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2010-12-02 12:19:35 +0000</bug_when>
+            <thetext>With OpenGrok 0.10rc the indexer is waiting for the svn process with pid 17211:
+
+            28041 /usr/bin/ksh -p /opt/sync-scripts/bin/sync.ksh -u
+              28049 /usr/bin/ksh -p /opt/sync-scripts/bin/reindex.ksh
+                28051 /bin/sh /usr/opengrok/bin/OpenGrok index /ws-local
+                  28065 /usr/jdk/latest/bin/java -Xmx2048m -Dorg.opensolaris.op
+                    17210 /usr/bin/exctags --c-kinds=+l --java-kinds=+l --sql-k
+                    17211 /usr/bin/svn log --xml -v Apache-Test/Apache-TestItSe
+
+However this process does not finish. This is because it is interactive:
+
+
+root:ba64-v20zd-prg06:/ws-local# pargs 17211
+17211:    /usr/bin/svn log --xml -v Apache-Test/Apache-TestItSelf/Apache-TestMe/Makefile.
+argv[0]: /usr/bin/svn
+argv[1]: log
+argv[2]: --xml
+argv[3]: -v
+argv[4]: Apache-Test/Apache-TestItSelf/Apache-TestMe/Makefile.PL@
+
+root:ba64-v20zd-prg06:/ws-local# pfiles 17211
+17211:    /usr/bin/svn log --xml -v Apache-Test/Apache-TestItSelf/Apache-TestMe/
+  Current rlimit: 65536 file descriptors
+   0: S_IFIFO mode:0000 dev:539,0 ino:4159336 uid:80 gid:80 size:0
+      O_RDWR
+   1: S_IFIFO mode:0000 dev:539,0 ino:4159337 uid:80 gid:80 size:0
+      O_RDWR
+   2: S_IFIFO mode:0000 dev:539,0 ino:4159338 uid:80 gid:80 size:0
+      O_RDWR
+   3: S_IFDOOR mode:0444 dev:551,0 ino:51 uid:0 gid:0 size:0
+      O_RDONLY|O_LARGEFILE FD_CLOEXEC  door to nscd[186]
+      /var/run/name_service_door
+   4: S_IFSOCK mode:0666 dev:550,0 ino:24814 uid:0 gid:0 size:0
+      O_RDWR FD_CLOEXEC
+    SOCK_STREAM
+    SO_SNDBUF(49152),SO_RCVBUF(128592)
+    sockname: AF_INET 129.157.71.59  port: 60184
+    peername: AF_INET 140.211.11.4  port: 443
+
+
+root:ba64-v20zd-prg06:/ws-local# pstack 17211
+17211:    /usr/bin/svn log --xml -v Apache-Test/Apache-TestItSelf/Apache-TestMe/
+ fed24387 pollsys  (8047030, 1, 0, 0)
+ fecc87f4 poll     (8047030, 1, ffffffff, fecf0c1d) + 4c
+ fedece20 apr_poll (80470b0, 1, 80470ac, ffffffff, ffffffff, 6c646e65) + 10c
+ fee3530e wait_for_input (80b1a00, 809b660, 809b660, fee3533a) + 46
+ fee35421 prompt   (804714c, 80b17b0, 0, 80ae598, 809b660, fee4fe24) + f5
+ fee3592a svn_cmdline_auth_ssl_server_trust_prompt (80471e8, 80ae598, 80b1278, 8, 8047250, 1) + 1f2
+ fee3a3ba ssl_server_trust_prompt_first_cred (80471e8, 80471ec, 80ae6f8, 80ae7a8, 80b1278, 809b660) + 8a
+ fee1ef7a svn_auth_first_credentials (8047248, 804724c, fe93ecb4, 80b1278, 80ae730, 80a7ee0) + ba
+ fe93458e server_ssl_callback (80b10d0, 8, 80f0388, fe79cde2) + 196
+ fe79ce8f check_certificate (80c8e10, 80d83a8, 80f0388, fe79d46a) + bb
+ fe79d6a6 ne__negotiate_ssl (80c8e10, 80c8e24, 2, fe78c5a2) + 24a
+ fe78c6d9 open_connection (80c8e10, fe79f110, 2, fe78afe6) + 145
+ fe78b019 send_request (80ca798, 80c9510, 0, fe78b7e2) + 41
+ fe78b85e ne_begin_request (80ca798, fefc47a4, fe9701f8, fe78c076) + 8a
+ fe78c089 ne_request_dispatch (80ca798, fe93c6b0, 68, fe93825e) + 21
+ fe938350 svn_ra_neon__request_dispatch (804752c, 80aef30, 0, fe93c6b0, c8, 0) + 100
+ fe93152f svn_ra_neon__exchange_capabilities (80b10d0, 809b660, 80b10a0, 0) + cf
+ fe9358d3 svn_ra_neon__open (80b1070, 80b0ef8, 80b0f80, 80b0fa8, 809c258, 809b660) + 733
+ feec4735 svn_ra_open3 (8047728, 80b0ef8, 0, 80b0f80, 80b0fa8, 809c258) + 431
+ fef70bf6 svn_client__open_ra_session_internal (8047728, 80b0ef8, 0, 0, 0, 0) + 156
+ fef70ef2 svn_client__ra_session_from_path (80477f4, 80477f8, 80477fc, 80b0ef8, 0, 80478f0) + ce
+ fef62400 svn_client_log5 (80aea40, 80478f0, 809b7e8, 0, 1, 0) + 5dc
+ 0805c6bb svn_cl__log (809b808, 80479f8, 809b660, 80479c0) + 37b
+ 0805e519 main     (5, 8047bb8, 8047bd0, 8047bac) + 1971
+ 0805620d _start   (5, 8047c98, 8047ca5, 8047ca9, 8047caf, 8047cb2) + 7d
+
+It&apos;s basically waiting for this:
+
+# /usr/bin/svn log --xml -v Apache-Test/Apache-TestItSelf/Apache-TestMe/Makefile.PL@
+&lt;?xml version=&quot;1.0&quot;?&gt;
+&lt;log&gt;
+Error validating server certificate for &apos;https://svn.apache.org:443&apos;:
+ - The certificate is not issued by a trusted authority. Use the
+   fingerprint to validate the certificate manually!
+Certificate information:
+ - Hostname: svn.apache.org
+ - Valid: from Thu, 13 Nov 2008 18:56:12 GMT until Thu, 26 Jan 2012 14:18:55 GMT
+ - Issuer: 07969287, http://certificates.godaddy.com/repository, GoDaddy.com, Inc., Scottsdale, Arizona, US
+ - Fingerprint: cc:54:a4:a9:ec:3a:9b:1c:23:ac:2d:57:c6:96:9f:5f:4a:1d:2d:86
+(R)eject, accept (t)emporarily or accept (p)ermanently? 
+
+
+but there is no user to confirm..</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>79660</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2010-12-02 12:21:14 +0000</bug_when>
+            <thetext>The solution would be to add --trust-server-cert (which requires --non-interactive) to the argument vector used for &apos;svn log&apos;.
+
+This might be user configurable but we would appreciate quick solution first since our indexer is hung because of this problem.
+
+more info:
+  http://subversion.tigris.org/ds/viewMessage.do?dsForumId=462&amp;dsMessageId=606407
+  http://blogs.dovetailsoftware.com/blogs/kmiller/archive/2007/04/12/subversion-and-certificate-authorties.aspx</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>79671</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2010-12-02 13:43:57 +0000</bug_when>
+            <thetext>I tried setting the &apos;working&apos; property for the project which causes this problem to false:
+
+&lt;void property=&quot;working&quot;&gt;
+&lt;boolean&gt;false&lt;/boolean&gt;
+&lt;/void&gt; 
+
+but it does not work.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>80050</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2010-12-21 14:33:02 +0000</bug_when>
+            <thetext>One workaround would be to run &quot;svn log&quot; manually in that directory and press &quot;p&quot; to accept the certificate permanently. Then the indexer shouldn&apos;t be asked to accept the certificate the next time it&apos;s run.
+
+Adding --trust-server-cert --non-interactive sounds like a reasonable fix to me.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>80320</commentid>
+            <who name="Trond Norbye">trond.norbye</who>
+            <bug_when>2011-01-06 08:50:56 +0000</bug_when>
+            <thetext>changeset:   1154:5059ce252844</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

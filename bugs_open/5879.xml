@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>5879</bug_id>
+          
+          <creation_ts>2008-12-17 08:24:00 +0000</creation_ts>
+          <short_desc>size of the select menu should be more dynamic or configurable</short_desc>
+          <delta_ts>2008-12-17 08:24:18 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>webapp</component>
+          <version>unspecified</version>
+          <rep_platform>Other</rep_platform>
+          <op_sys>Solaris</op_sys>
+          <bug_status>NEW</bug_status>
+          
+          
+          
+          
+          
+          
+          <priority>P4</priority>
+          <bug_severity>minor</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Vladimir Kotal">vladimir.kotal</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>23846</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2008-12-17 08:24:18 +0000</bug_when>
+            <thetext>By default, the front page displays list of projects in a select menu.
+This is limited by the following expression in web/menu.jspf:
+
+size=&quot;&lt;%=Math.min(5, env.getProjects().size())%&gt;&quot;
+
+For sites with many (tens of) projects this does not scale, the window
+is just too small and cumbersome to navigate which leads to user frustration.
+
+Possible approaches:
+  - configurable (via configuration.xml) lower and upper bound
+    - say the size of the menu will not go below the lower bound
+      and will not go above upper bound:
+  - size based on percentage of HTML page height
+    - say the select box height should be 30% of the page
+    - this could be done via CSS</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

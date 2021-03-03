@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>14663</bug_id>
+          
+          <creation_ts>2010-02-19 12:51:00 +0000</creation_ts>
+          <short_desc>broken syntax highlight in ksh script when ` is used (and when &quot; is escaped)</short_desc>
+          <delta_ts>2010-07-12 19:59:53 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>analyzer</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXED</resolution>
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>minor</bug_severity>
+          <target_milestone>0.10</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Lubos Kosco">Lubos.Kosco</reporter>
+          <assigned_to name="Knut Anders Hatlen">knut.hatlen</assigned_to>
+          <cc>knut.hatlen</cc>
+    
+    <cc>opengrok-dev</cc>
+    
+    <cc>rehak</cc>
+    
+    <cc>zdenek.kotala</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>66788</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2010-02-19 12:51:04 +0000</bug_when>
+            <thetext>http://grok.czech.sun.com:8080/source/xref/stcnv-clone/usr/closed/suites/net/ipfilter/kshlib/trafficfuncs.kshlib#377
+
+from line 377 the syntax is broken</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>72830</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2010-05-12 11:10:28 +0000</bug_when>
+            <thetext>*** Bug 15936 has been marked as a duplicate of this bug. ***</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>75036</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2010-07-02 13:22:06 +0000</bug_when>
+            <thetext>I think bug number 200 didn&apos;t cover all the states, hence the problems with highlighting
+
+will push a fix in a while ;)</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>75305</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2010-07-11 21:53:04 +0000</bug_when>
+            <thetext>Here&apos;s a smaller script that shows the problem:
+
+#!/bin/ksh
+abc `echo testing`
+echo &quot;`abc \&quot; `&quot;
+echo &quot;\&quot;&quot;
+abc `echo testing`</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>75308</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2010-07-12 09:46:15 +0000</bug_when>
+            <thetext>Fixed in changeset 1049:ac6728dc4130.
+
+I&apos;ll see if I can add a test case for it.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>75338</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2010-07-12 19:59:53 +0000</bug_when>
+            <thetext>Added regression test in changeset 1050:c7c846e92e54.</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

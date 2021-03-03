@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>9426</bug_id>
+          
+          <creation_ts>2009-06-11 05:10:00 +0000</creation_ts>
+          <short_desc>ELF analyzer goes south upon seeing ELF object with unusual contents</short_desc>
+          <delta_ts>2009-10-25 19:30:29 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>analyzer</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>DUPLICATE</resolution>
+          <dup_id>10442</dup_id>
+          
+          
+          
+          
+          <priority>P2</priority>
+          <bug_severity>major</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Vladimir Kotal">vladimir.kotal</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          <cc>knut.hatlen</cc>
+    
+    <cc>Lubos.Kosco</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>41371</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2009-06-11 05:10:58 +0000</bug_when>
+            <thetext>Note: The following happened when indexing internal clone of closed tree so the paths are redacted.
+
+WARNING: Failed to add file /ws-local/XXX/scsi875.o
+java.lang.IndexOutOfBoundsException
+        at java.nio.Buffer.checkIndex(Buffer.java:520)
+        at java.nio.DirectByteBuffer.getInt(DirectByteBuffer.java:624)
+        at org.opensolaris.opengrok.analysis.executables.ELFAnalyzer.parseELF(ELFAnalyzer.java:103)
+        at org.opensolaris.opengrok.analysis.executables.ELFAnalyzer.analyze(ELFAnalyzer.java:79)
+        at org.opensolaris.opengrok.analysis.AnalyzerGuru.getDocument(AnalyzerGuru.java:246)
+        at org.opensolaris.opengrok.index.IndexDatabase.addFile(IndexDatabase.java:458)
+        at org.opensolaris.opengrok.index.IndexDatabase.indexDown(IndexDatabase.java:578)
+        at org.opensolaris.opengrok.index.IndexDatabase.indexDown(IndexDatabase.java:561)
+        at org.opensolaris.opengrok.index.IndexDatabase.indexDown(IndexDatabase.java:561)
+        at org.opensolaris.opengrok.index.IndexDatabase.indexDown(IndexDatabase.java:561)
+        at org.opensolaris.opengrok.index.IndexDatabase.indexDown(IndexDatabase.java:561)
+        at org.opensolaris.opengrok.index.IndexDatabase.indexDown(IndexDatabase.java:561)
+        at org.opensolaris.opengrok.index.IndexDatabase.indexDown(IndexDatabase.java:561)
+        at org.opensolaris.opengrok.index.IndexDatabase.update(IndexDatabase.java:251)
+        at org.opensolaris.opengrok.index.IndexDatabase$1.run(IndexDatabase.java:139)
+        at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:441)
+        at java.util.concurrent.FutureTask$Sync.innerRun(FutureTask.java:303)
+        at java.util.concurrent.FutureTask.run(FutureTask.java:138)
+        at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
+        at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
+        at java.lang.Thread.run(Thread.java:619)
+
+
+When running elfdump(1) on the file it reports this:
+
+ELF Header
+  ei_magic:   { 0x7f, E, L, F }
+  ei_class:   ELFCLASS64          ei_data:       ELFDATA2MSB
+  ei_osabi:   ELFOSABI_NONE       ei_abiversion: 0
+  e_machine:  EM_SPARCV9          e_version:     EV_CURRENT
+  e_type:     ET_REL
+  e_flags:    [ EF_SPARCV9_TSO EF_SPARC_SUN_US1 ]
+  e_entry:                     0  e_ehsize:     64  e_shstrndx:  1
+  e_shoff:                0x3918  e_shentsize:  64  e_shnum:     5
+  e_phoff:                     0  e_phentsize:   0  e_phnum:     0
+
+Section Header[1]:  sh_name: .shstrtab
+    sh_addr:      0                   sh_flags:   0
+    sh_size:      0x21                sh_type:    [ SHT_STRTAB ]
+    sh_offset:    0x40                sh_entsize: 0
+    sh_link:      0                   sh_info:    0
+    sh_addralign: 0x1               
+
+Section Header[2]:  sh_name: .data
+    sh_addr:      0                   sh_flags:   [ SHF_WRITE SHF_ALLOC ]
+    sh_size:      0x37f0              sh_type:    [ SHT_PROGBITS ]
+    sh_offset:    0x64                sh_entsize: 0
+    sh_link:      0                   sh_info:    0
+    sh_addralign: 0x4               
+
+Section Header[3]:  sh_name: .symtab
+    sh_addr:      0                   sh_flags:   [ SHF_ALLOC ]
+    sh_size:      0x90                sh_type:    [ SHT_SYMTAB ]
+    sh_offset:    0x3858              sh_entsize: 0x18 (6 entries)
+    sh_link:      4                   sh_info:    2
+    sh_addralign: 0x8               
+
+Section Header[4]:  sh_name: .strtab
+    sh_addr:      0                   sh_flags:   [ SHF_ALLOC ]
+    sh_size:      0x2b                sh_type:    [ SHT_STRTAB ]
+    sh_offset:    0x38e8              sh_entsize: 0
+    sh_link:      0                   sh_info:    0
+    sh_addralign: 0x1               
+
+Symbol Table Section:  .symtab
+     index    value              size              type bind oth ver shndx          name
+       [0]  0x0000000000000000 0x0000000000000000  NOTY LOCL  D    0 UNDEF          
+       [1]  0x0000000000000000 0x0000000000000000  SECT LOCL  D    0 .data          
+       [2]  0x0000000000000000 0x0000000000000001  OBJT GLOB  D    0 .data          _ncrscsi
+/ws-local/XXX/scsi875.o: .symtab: index[3]: bad symbol entry: end_ncrscsi: section[2] size: 0x37f0: symbol (address 0x37f0, size 0x1) lies outside of containing section
+       [3]  0x00000000000037f0 0x0000000000000001  OBJT GLOB  D    0 .data          end_ncrscsi
+/ws-local/XXX/scsi875.o: .symtab: index[4]: bad symbol entry: _end_ncrscsi: section[2] size: 0x37f0: symbol (address 0x37f0, size 0x1) lies outside of containing section
+       [4]  0x00000000000037f0 0x0000000000000001  OBJT GLOB  D    0 .data          _end_ncrscsi
+       [5]  0x0000000000000000 0x0000000000000001  OBJT GLOB  D    0 .data          ncrscsi
+
+
+It looks like the ELF analyzer should be more resistant against invalid ELF sections.
+
+This is on Nevada build 113 and OpenGrok 0.7, running on sun4u machine.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>54074</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2009-10-24 21:26:35 +0000</bug_when>
+            <thetext>*** Bug 10441 has been marked as a duplicate of this bug. ***</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>54099</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2009-10-25 19:30:29 +0000</bug_when>
+            <thetext>The problem here looks similar to the case discussed in bug #10442. Closing as duplicate.
+
+Bug #10442 was fixed by only logging the stack trace if log level was FINE. If you think the solution is not appropriate for this bug, feel free to reopen it.
+
+*** This bug has been marked as a duplicate of bug 10442 ***</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

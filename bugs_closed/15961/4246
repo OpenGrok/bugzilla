@@ -1,0 +1,79 @@
+# HG changeset patch
+# Parent 14b3118bf342b68a0972c440b6c7f758e562a574
+diff -r 14b3118bf342 -r ae5af383a480 src/org/opensolaris/opengrok/configuration/RuntimeEnvironment.java
+--- a/src/org/opensolaris/opengrok/configuration/RuntimeEnvironment.java	Thu Aug 05 17:24:29 2010 -0600
++++ b/src/org/opensolaris/opengrok/configuration/RuntimeEnvironment.java	Fri Aug 06 17:52:13 2010 -0600
+@@ -175,23 +175,18 @@
+      * @return Path relative to source root
+      */
+     public String getPathRelativeToSourceRoot(File file, int stripCount) throws IOException {
+-        try {
+-            String canonicalPath = file.getCanonicalPath();
+-            String sourceRoot = getSourceRootPath();
+-            if (canonicalPath.startsWith(sourceRoot)) {
+-                return canonicalPath.substring(sourceRoot.length() + stripCount);
+-            } 
+-            for (String allowedSymlink : getAllowedSymlinks()) {
+-                String allowedTarget = new File(allowedSymlink).getCanonicalPath();
+-                if (canonicalPath.startsWith(allowedTarget)) {
+-                    return canonicalPath.substring(allowedTarget.length() + stripCount);
+-                }
++        String canonicalPath = file.getCanonicalPath();
++        String sourceRoot = getSourceRootPath();
++        if (canonicalPath.startsWith(sourceRoot)) {
++            return canonicalPath.substring(sourceRoot.length() + stripCount);
++        } 
++        for (String allowedSymlink : getAllowedSymlinks()) {
++            String allowedTarget = new File(allowedSymlink).getCanonicalPath();
++            if (canonicalPath.startsWith(allowedTarget)) {
++                return canonicalPath.substring(allowedTarget.length() + stripCount);
+             }
+-            throw new FileNotFoundException("Failed to resolve ["+canonicalPath+"] relative to source root ["+sourceRoot+"]");
+-        } catch (IOException e) {
+-            OpenGrokLogger.getLogger().log(Level.SEVERE, "Failed to get canonical path", e);
+-            throw e;
+         }
++        throw new FileNotFoundException("Failed to resolve ["+canonicalPath+"] relative to source root ["+sourceRoot+"]");
+     }
+     
+     /**
+diff -r 14b3118bf342 -r ae5af383a480 src/org/opensolaris/opengrok/history/GitHistoryParser.java
+--- a/src/org/opensolaris/opengrok/history/GitHistoryParser.java	Thu Aug 05 17:24:29 2010 -0600
++++ b/src/org/opensolaris/opengrok/history/GitHistoryParser.java	Fri Aug 06 17:52:13 2010 -0600
+@@ -66,6 +66,8 @@
+ 
+         BufferedReader in = new BufferedReader(new InputStreamReader(input));
+         
++        RuntimeEnvironment env = RuntimeEnvironment.getInstance();
++
+         history = new History();
+         HistoryEntry entry = null;
+         ParseState state = ParseState.HEADER;
+@@ -116,14 +118,12 @@
+                     continue; // Parse this line again - do not read a new line
+                 } else {
+                     if (entry != null) {
+-                        File f = new File(myDir, s);
+                         try {
+-                            String name = RuntimeEnvironment.getInstance().getPathRelativeToSourceRoot(f, 0);
+-                            entry.addFile(name);
++                            File f = new File(myDir, s);
++                            entry.addFile(env.getPathRelativeToSourceRoot(f, 0));
+                         } catch (FileNotFoundException e) {
+-                            // TODO: this was added to make the junit tests pass,
+-                            // but I think the tests are broken
+-                            entry.addFile(f.getAbsolutePath()); // add even if not under source root
++                            // If the file is not located under the source root,
++                            // ignore it (bug #11664).
+                         }
+                     }
+                 }
+@@ -172,7 +172,7 @@
+      * @throws IOException if we fail to parse the buffer
+      */
+     History parse(String buffer) throws IOException {
+-        myDir = File.separator;
++        myDir = RuntimeEnvironment.getInstance().getSourceRootPath();
+         processStream(new ByteArrayInputStream(buffer.getBytes("UTF-8")));
+         return history;
+     }

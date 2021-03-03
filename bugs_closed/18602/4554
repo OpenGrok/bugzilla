@@ -1,0 +1,1971 @@
+# HG changeset patch
+# User jel+opengrok@cs.uni-magdeburg.de
+# Date 1309496802 -7200
+# Node ID 1cd5464bbd9a3e2448b19ef34d4e29161b4f1768
+# Parent  3d56f3369ec7ed60b99e96bea4c621afccbf8da6
+JarAnalyzer: reduce memory footprint (~50% -> depends on xref size) and improve speed (~10%+)
+
+diff -r 3d56f3369ec7 -r 1cd5464bbd9a src/org/opensolaris/opengrok/analysis/List2TokenStream.java
+--- a/src/org/opensolaris/opengrok/analysis/List2TokenStream.java	Sun Jun 26 16:26:17 2011 +0200
++++ b/src/org/opensolaris/opengrok/analysis/List2TokenStream.java	Fri Jul 01 07:06:42 2011 +0200
+@@ -33,6 +33,7 @@
+     private String[] subTokens;
+     private int si;
+     private final TermAttribute termAtt = addAttribute(TermAttribute.class);
++    private int cursor;
+ 
+     public List2TokenStream(List<String> l) {
+         if (l == null) {
+@@ -44,13 +45,13 @@
+ 
+     @Override
+     public boolean incrementToken() {
+-        if (l.isEmpty()) {
++        if (l.isEmpty() || cursor == l.size()) {
+             // reached end of stream
+             return false;
+         }
+ 
+         if (subTokens == null || subTokens.length == si) {
+-            String tok = l.remove(0);
++            String tok = l.get(cursor++);
+             if (tok == null) {
+                 return false;
+             }
+diff -r 3d56f3369ec7 -r 1cd5464bbd9a src/org/opensolaris/opengrok/analysis/executables/JarAnalyzer.java
+--- a/src/org/opensolaris/opengrok/analysis/executables/JarAnalyzer.java	Sun Jun 26 16:26:17 2011 +0200
++++ b/src/org/opensolaris/opengrok/analysis/executables/JarAnalyzer.java	Fri Jul 01 07:06:42 2011 +0200
+@@ -18,23 +18,25 @@
+  */
+ 
+ /*
+- * Copyright 2005 Sun Microsystems, Inc.  All rights reserved.
+- * Use is subject to license terms.
++ * Copyright (c) 2005 Oracle and/or its affiliates. All rights reserved.
++ * Portions Copyright 2011 Jens Elkner.
+  */
+ package org.opensolaris.opengrok.analysis.executables;
+ 
+-import java.io.BufferedInputStream;
+ import java.io.ByteArrayInputStream;
+ import java.io.IOException;
+ import java.io.InputStream;
+ import java.io.Reader;
+ import java.io.StringReader;
+-import java.io.StringWriter;
+ import java.io.Writer;
+-import java.util.LinkedList;
++import java.util.ArrayList;
++import java.util.Arrays;
+ import java.util.List;
++import java.util.logging.Level;
++import java.util.logging.Logger;
+ import java.util.zip.ZipEntry;
+ import java.util.zip.ZipInputStream;
++
+ import org.apache.lucene.analysis.TokenStream;
+ import org.apache.lucene.document.Document;
+ import org.apache.lucene.document.Field;
+@@ -44,70 +46,95 @@
+ import org.opensolaris.opengrok.analysis.List2TokenStream;
+ import org.opensolaris.opengrok.analysis.TagFilter;
+ import org.opensolaris.opengrok.analysis.plain.PlainFullTokenizer;
++import org.opensolaris.opengrok.util.IOUtils;
++import org.opensolaris.opengrok.util.XtCharArray;
+ 
+ /**
+  * Analyzes JAR, WAR, EAR (Java Archive) files.
+- * Created on September 22, 2005
+  *
+  * @author Chandan
++ * @author Jens Elkner (optimization: use shared char buffers, ~ 10% faster)
+  */
+ 
+ public class JarAnalyzer extends FileAnalyzer {
+-    private byte[] content;
++    private static final Logger log = Logger.getLogger(JarAnalyzer.class.getName());
+ 
+     private List<String> defs;
+     private List<String> refs;
+-    private StringWriter xref;
++    private int[] xrefs;
++    private int xrefCount;
++    private XtCharArray fullText = new XtCharArray(1<<20);
+ 
+     private static final Reader dummy = new StringReader("");
+     protected JarAnalyzer(FileAnalyzerFactory factory) {
+         super(factory);
+-        content = new byte[16 * 1024];
+     }
+ 
++    private final void addXref(int start, int len) {
++        if (xrefCount == xrefs.length) {
++            xrefs = Arrays.copyOf(xrefs, xrefs.length << 1);
++        }
++        xrefs[xrefCount++] = start;
++        xrefs[xrefCount++] = len;
++    }
++
++    @Override
+     public void analyze(Document doc, InputStream in) throws IOException {
+-        defs = new LinkedList<String>();
+-        refs = new LinkedList<String>();
+-        StringBuilder fullText = new StringBuilder();
+-        xref = new StringWriter();
++        defs = new ArrayList<String>(64); // retained ~= 100 B/entry 
++        refs = new ArrayList<String>(64); // retained ~= 8x retainedOf(defs)
++        xrefs = new int[1024]; // aka 64 files a 4 xrefs
++        xrefCount = 0;
+ 
++        byte[] content = new byte[1<<14]; // 16 K
+         ZipInputStream zis = new ZipInputStream(in);
+         ZipEntry entry;
+-        byte buf[] = new byte[1024];
++        byte buf[] = new byte[1<<11]; // 2 K
++        int count = 0;
+         while ((entry = zis.getNextEntry()) != null) {
+             String ename = entry.getName();
+-            xref.write("<br/><b>"+ ename + "</b>");
+-            fullText.append(ename);
+-            fullText.append('\n');
++            if (log.isLoggable(Level.FINE)) {
++                log.fine("Analyzing file " + count++ + ": " + ename + "...");
++            }
++            int pos = fullText.length();
++            fullText.write(ename);
++            fullText.write('\n');
++            addXref(pos, ename.length());
+             int len = 0;
+             FileAnalyzerFactory fac = AnalyzerGuru.find(ename);
+             if (fac instanceof JavaClassAnalyzerFactory) {
+                 JavaClassAnalyzer jca =
+                     (JavaClassAnalyzer) fac.getAnalyzer();
+-                BufferedInputStream bif = new BufferedInputStream(zis);
+                 int r;
+-                while((r = bif.read(buf)) > 0) {
++                while((r = zis.read(buf)) >= 0) {
++                    // IOUtils.quantify(getClass(), "zip read", r);
+                     if( len + r > content.length) {
+-                        byte[] content2 = new byte[content.length*2];
++                        if (log.isLoggable(Level.FINE)) {
++                            IOUtils.quantify(getClass(), "content", content.length);
++                        }
++                        byte[] content2 = new byte[content.length<<1];
+                         System.arraycopy(content, 0, content2, 0, len);
+                         content = content2;
+                     }
+                     System.arraycopy(buf, 0, content, len, r);
+                     len += r;
+                 }
+-                jca.analyze(doc, new ByteArrayInputStream(content));
++                // we rely on the fact, that the xref section of the jca is the 
++                // first part of jca's fulltext and thus share this section
++                pos = fullText.length();
++                jca.analyze(doc, new ByteArrayInputStream(content, 0, len), fullText);
++                addXref(pos, jca.getXrefLength());
+                 doc.removeField("defs");
+                 doc.removeField("refs");
+                 doc.removeField("full");
+                 defs.addAll(jca.getDefs());
+                 refs.addAll(jca.getRefs());
+-                fullText.append(jca.getFull());
+-                xref.write("<pre>");
+-                jca.writeXref(xref);
+-                xref.write("</pre>");
++            } else {
++                // we rely on the fact, that each xref name marker is followed
++                // by an xref section marker - see writeXref
++                addXref(0, 0);
+             }
+         }
+-        doc.add(new Field("full", new TagFilter(new StringReader(fullText.toString()))));
++        doc.add(new Field("full", new TagFilter(fullText.getReader())));
+         if(!defs.isEmpty()) {
+             doc.add(new Field("defs",dummy));
+         }
+@@ -116,6 +143,7 @@
+         }
+     }
+ 
++    @Override
+     public TokenStream tokenStream(String fieldName, Reader reader) {
+         if ("defs".equals(fieldName)) {
+             return new List2TokenStream(defs);
+@@ -131,7 +159,24 @@
+      * Write a cross referenced HTML file.
+      * @param out Writer to write HTML cross-reference
+      */
++    @Override
+     public void writeXref(Writer out) throws IOException {
+-        out.write(xref.toString());
++        if (xrefs == null || xrefCount == 0) {
++            return;
++        }
++        
++        char[] name_prefix = "<br/><b>".toCharArray();
++        char[] name_suffix = "</b>".toCharArray();
++        char[] pre_start = "<pre>".toCharArray();
++        char[] pre_end = "</pre>".toCharArray();
++        
++        for (int i=0; i < xrefCount; i += 4) {
++            out.write(name_prefix);
++            fullText.writeTo(out, xrefs[i], xrefs[i+1]);
++            out.write(name_suffix);
++            out.write(pre_start);
++            fullText.writeTo(out, xrefs[i+2], xrefs[i+3]);
++            out.write(pre_end);
++        }
+     }
+ }
+diff -r 3d56f3369ec7 -r 1cd5464bbd9a src/org/opensolaris/opengrok/analysis/executables/JavaClassAnalyzer.java
+--- a/src/org/opensolaris/opengrok/analysis/executables/JavaClassAnalyzer.java	Sun Jun 26 16:26:17 2011 +0200
++++ b/src/org/opensolaris/opengrok/analysis/executables/JavaClassAnalyzer.java	Fri Jul 01 07:06:42 2011 +0200
+@@ -18,8 +18,8 @@
+  */
+ 
+ /*
+- * Copyright 2010 Sun Microsystems, Inc.  All rights reserved.
+- * Use is subject to license terms.
++ * Copyright (c) 2005, 2010 Oracle and/or its affiliates. All rights reserved.
++ * Portions Copyright 2011 Jens Elkner.
+  */
+ package org.opensolaris.opengrok.analysis.executables;
+ 
+@@ -27,11 +27,12 @@
+ import java.io.InputStream;
+ import java.io.Reader;
+ import java.io.StringReader;
+-import java.io.StringWriter;
+ import java.io.Writer;
+ import java.util.ArrayList;
+-import java.util.LinkedList;
+ import java.util.List;
++import java.util.logging.Level;
++import java.util.logging.Logger;
++
+ import org.apache.bcel.classfile.Attribute;
+ import org.apache.bcel.classfile.ClassFormatException;
+ import org.apache.bcel.classfile.ClassParser;
+@@ -61,16 +62,20 @@
+ import org.opensolaris.opengrok.analysis.TagFilter;
+ import org.opensolaris.opengrok.analysis.plain.PlainFullTokenizer;
+ import org.opensolaris.opengrok.configuration.RuntimeEnvironment;
++import org.opensolaris.opengrok.util.IOUtils;
++import org.opensolaris.opengrok.util.XtCharArray;
+ 
+ /**
+- * Ananlyzes Java Class files
+- * Created on September 23, 2005
++ * Analyzes Java Class files.
+  *
+  * @author Chandan
+- * @author Lubos Kosco , January 2010 , updated bcel, comment on thread safety
++ * @author Lubos Kosco (updated bcel, comment on thread safety)
++ * @author Jens Elkner (optimization: use shared char buffers to reduce mem footprint)
+  */
+ public class JavaClassAnalyzer extends FileAnalyzer {
+ 
++    private static final Logger log = 
++        Logger.getLogger(JavaClassAnalyzer.class.getName());
+     private final String urlPrefix = RuntimeEnvironment.getInstance().getUrlPrefix();
+ 
+     /** Creates a new instance of JavaClassAnalyzer
+@@ -82,37 +87,56 @@
+     private List<String> defs;
+     private List<String> refs;
+     private List<String> full;
+-    private String xref;
+-    private String fullText;
++    private XtCharArray fullText;
++    private int xrefLen;
+     private JavaClass c;
+-    private final Reader dummy = new StringReader("");
++    private static final Reader dummy = new StringReader("");
+ 
++    /**
++     * {@inheritDoc}
++     */
+     @Override
+     public void analyze(Document doc, InputStream in) throws IOException {
+-        defs = new LinkedList<String>();
+-        refs = new LinkedList<String>();
+-        full = new LinkedList<String>();
+-        fullText = null;
+-        xref = null;
++        analyze(doc, in, new XtCharArray(1<<12));
++    }
++
++    /**
++     * Analyze the given byte input stream.
++     * @param doc   where to add fields
++     * @param in    the java class byte stream to analyze
++     * @param fullText  the shared buffer, where to append the full text section.
++     *  If {@code null} an internal buffer will be used instead.
++     * @throws IOException
++     */
++    public void analyze(Document doc, InputStream in, XtCharArray fullText) throws IOException {
++        defs = new ArrayList<String>();
++        refs = new ArrayList<String>();
++        full = new ArrayList<String>();
+ 
+         ClassParser classparser = new ClassParser(in, doc.get("path"));
+         c = classparser.parse();
+-        StringWriter out = new StringWriter();
+-        getContent(out);
+-        xref = out.toString();
++        if (fullText == null) {
++            fullText = new XtCharArray(1<<12);
++        }
++        int fullStart = fullText.length();
++        getContent(fullText);
++        xrefLen = fullText.length() - fullStart;
+         for (String fl : full) {
+-            out.write(fl);
+-            out.write('\n');
++            fullText.write(fl);
++            fullText.write('\n');
+         }
+-        fullText = out.toString();
+-
+-        if (fullText != null && fullText.length() > 0) {
++        this.fullText = fullText.subSequence(fullStart, fullText.length());
++        if (this.fullText.length() > 0) {
+             doc.add(new Field("defs", dummy));
+             doc.add(new Field("refs", dummy));
+             doc.add(new Field("full", dummy));
+         }
++        if (log.isLoggable(Level.FINE)) {
++            IOUtils.quantify(this.getClass(), "fullText", this.fullText.length());
++            IOUtils.quantify(this.getClass(), "xref", xrefLen);
++        }
+     }
+-
++    
+     public List<String> getDefs() {
+         return defs;
+     }
+@@ -121,9 +145,22 @@
+         return refs;
+     }
+ 
+-    public String getFull() {
+-        return fullText;
++    public XtCharArray getFull() {
++        return fullText.slice();
+     }
++    
++    /**
++     * Get the length of the xref section. The xref section is the first section
++     * of {@link #getFull()} starting at index 0. If called before 
++     * {@link #analyze(Document, InputStream)} has been called, a cached value 
++     * from a previous run is returned. 
++     * 
++     * @return the length of the xref section.
++     */
++    public int getXrefLength() {
++        return xrefLen;
++    }
++
+     private int[] v;
+     private ConstantPool cp;
+ 
+@@ -134,7 +171,7 @@
+         } else if ("refs".equals(fieldName)) {
+             return new List2TokenStream(refs);
+         } else if ("full".equals(fieldName)) {
+-            return new PlainFullTokenizer(new TagFilter(new StringReader(fullText)));
++            return new PlainFullTokenizer(new TagFilter(fullText.getReader()));
+         }
+         return super.tokenStream(fieldName, reader);
+     }
+@@ -303,8 +340,8 @@
+      */
+     @Override
+     public void writeXref(Writer out) throws IOException {
+-        if (xref != null) {
+-            out.write(xref);
++        if (xrefLen != 0) {
++            fullText.writeTo(out, 0, xrefLen);
+         }
+     }
+ 
+diff -r 3d56f3369ec7 -r 1cd5464bbd9a src/org/opensolaris/opengrok/index/IndexDatabase.java
+--- a/src/org/opensolaris/opengrok/index/IndexDatabase.java	Sun Jun 26 16:26:17 2011 +0200
++++ b/src/org/opensolaris/opengrok/index/IndexDatabase.java	Fri Jul 01 07:06:42 2011 +0200
+@@ -36,6 +36,7 @@
+ import java.util.concurrent.ExecutorService;
+ import java.util.logging.Level;
+ import java.util.logging.Logger;
++
+ import org.apache.lucene.document.DateTools;
+ import org.apache.lucene.document.Document;
+ import org.apache.lucene.document.Fieldable;
+@@ -63,7 +64,6 @@
+ import org.opensolaris.opengrok.history.HistoryException;
+ import org.opensolaris.opengrok.history.HistoryGuru;
+ import org.opensolaris.opengrok.search.QueryBuilder;
+-import org.opensolaris.opengrok.util.Executor;
+ import org.opensolaris.opengrok.web.Util;
+ 
+ /**
+@@ -154,11 +154,18 @@
+ 
+                 @Override
+                 public void run() {
++                    long start = System.currentTimeMillis();
+                     try {
+                         db.update();
+                     } catch (Throwable e) {
+-                        log.log(Level.SEVERE,"Problem updating lucene index database: ",e);
++                        long stop = System.currentTimeMillis();
++                        log.log(Level.SEVERE,"Problem after runnning " 
++                            + (stop-start) 
++                            + " ms when updating lucene index database",e);
+                     }
++                    long stop = System.currentTimeMillis();
++                    log.info("IndexDB update for '" + db.project.getDescription()
++                        + "' done ("+ (stop-start) + " ms)");
+                 }
+             });
+         }
+@@ -346,9 +353,7 @@
+                     if (RuntimeEnvironment.getInstance().isPrintProgress()) {
+                      log.log(Level.INFO, "Counting files in {0} ...", dir);
+                      file_cnt = indexDown(sourceRoot, dir, true, 0, 0);
+-                     if (log.isLoggable(Level.INFO)) {
+-                      log.log(Level.INFO, "Need to process: {0} files for {1}", new Object[]{file_cnt,dir});
+-                     }
++                     log.log(Level.INFO, "Need to process: {0} files for {1}", new Object[]{file_cnt,dir});
+                     }
+ 
+                     indexDown(sourceRoot, dir, false, 0, file_cnt);
+@@ -584,10 +589,10 @@
+                 d = analyzerGuru.getDocument(file, in, path, fa);
+             } catch (Exception e) {
+                 log.log(Level.INFO,
+-                        "Skipped file ''{0}'' because the analyzer didn''t " +
+-                        "understand it.",
+-                        path);
+-                log.log(Level.FINE, "Exception from analyzer:", e);
++                    "Skipped file ''{0}'' because of an analyzer problem: "
++                    + e.getLocalizedMessage(),
++                    path);
++                log.log(Level.FINE, "addFile", e);
+                 return;
+             }
+ 
+diff -r 3d56f3369ec7 -r 1cd5464bbd9a src/org/opensolaris/opengrok/index/Indexer.java
+--- a/src/org/opensolaris/opengrok/index/Indexer.java	Sun Jun 26 16:26:17 2011 +0200
++++ b/src/org/opensolaris/opengrok/index/Indexer.java	Fri Jul 01 07:06:42 2011 +0200
+@@ -56,6 +56,7 @@
+ import org.opensolaris.opengrok.history.RepositoryInfo;
+ import org.opensolaris.opengrok.util.Executor;
+ import org.opensolaris.opengrok.util.Getopt;
++import org.opensolaris.opengrok.util.IOUtils;
+ 
+ /**
+  * Creates and updates an inverted source index
+@@ -513,6 +514,9 @@
+                 log.log(Level.SEVERE, "Unexpected Exception", e);
+                 System.exit(1);
+             }
++            if (log.isLoggable(Level.FINE) ) {
++                IOUtils.dumpQuantifiers();
++            }
+         }
+ 
+     }
+diff -r 3d56f3369ec7 -r 1cd5464bbd9a src/org/opensolaris/opengrok/util/IOUtils.java
+--- a/src/org/opensolaris/opengrok/util/IOUtils.java	Sun Jun 26 16:26:17 2011 +0200
++++ b/src/org/opensolaris/opengrok/util/IOUtils.java	Fri Jul 01 07:06:42 2011 +0200
+@@ -25,8 +25,12 @@
+ 
+ import java.io.Closeable;
+ import java.io.IOException;
++import java.io.PrintWriter;
++import java.io.StringWriter;
+ import java.net.ServerSocket;
+ import java.net.Socket;
++import java.util.HashMap;
++import java.util.Map.Entry;
+ import java.util.logging.Level;
+ import java.util.logging.Logger;
+ 
+@@ -73,4 +77,60 @@
+             }
+         }
+     }
++    
++    private static HashMap<String, int[]> quantis = new HashMap<String, int[]>();
++    
++    /**
++     * Quantify the given value (just for development analysis. Not thread safe).
++     * @param clazz the class to assign to the given value
++     * @param name  the quantify collection name to use
++     * @param value the value to quantify
++     */
++    public static void quantify(Class<?> clazz, String name, int value) {
++        String key = clazz.getSimpleName() + ":" + name;
++        int[] vals = quantis.get(key);
++        if (vals == null) {
++            vals = new int[32];
++            quantis.put(key, vals);
++        }
++        vals[32-Integer.numberOfLeadingZeros(value)]++;
++    }
++    
++    /**
++     * Dump all collected quantify collections (not thread safe).
++     * @return a possible empty string
++     */
++    @SuppressWarnings("boxing")
++    public static String dumpQuantifiers() {
++        StringWriter w = new StringWriter();
++        PrintWriter out = new PrintWriter(w);
++        for (Entry<String, int[]> e: quantis.entrySet()) {
++            out.println();
++            out.println("################  " + e.getKey() + " Quantification "
++                + "  ################");
++            long val = 1;
++            int[] quantify = e.getValue();
++            for (int i=0; i < 32; i++, val <<= 1) {
++                if (quantify[i] != 0) {
++                    out.printf("%2d: %10d < %10d: %d%n", 
++                        i, val>>1, val, quantify[i]);
++                }
++            }
++        }
++        out.close();
++        return w.toString();
++    }
++    
++    /**
++     * Get a reference to the quanti values wrt. the given parameters.
++     * @param clazz
++     * @param name
++     * @return {@code null} if not found, an int[32] array otherwise, whereby
++     *  field n contains number of quantify calls for values in the range of
++     *  2<sup>n-1</sup>..2<sup>n</sup> excl.
++     */
++    public static int[] getQuantiVals(Class<?> clazz, String name) {
++        String key = clazz.getSimpleName() + ":" + name;
++        return quantis.get(key);
++    }
+ }
+diff -r 3d56f3369ec7 -r 1cd5464bbd9a src/org/opensolaris/opengrok/util/XtCharArray.java
+--- /dev/null	Thu Jan 01 00:00:00 1970 +0000
++++ b/src/org/opensolaris/opengrok/util/XtCharArray.java	Fri Jul 01 07:06:42 2011 +0200
+@@ -0,0 +1,562 @@
++/**
++ * $Id$
++ *
++ * CDDL HEADER START
++ *
++ * The contents of this file are subject to the terms of the
++ * Common Development and Distribution License (the "License").
++ * You may not use this file except in compliance with the License.
++ *
++ * See LICENSE.txt included in this distribution for the specific
++ * language governing permissions and limitations under the License.
++ *
++ * When distributing Covered Code, include this CDDL HEADER in each
++ * file and include the License file at LICENSE.txt.
++ * If applicable, add the following below this CDDL HEADER, with the
++ * fields enclosed by brackets "[]" replaced with your own identifying
++ * information: Portions Copyright [yyyy] [name of copyright owner]
++ *
++ * CDDL HEADER END
++ *
++ * Copyright 2011 - 2011 Jens Elkner.  All rights reserved.
++ */
++
++package org.opensolaris.opengrok.util;
++
++import java.io.CharArrayReader;
++import java.io.CharArrayWriter;
++import java.io.IOException;
++import java.io.StringWriter;
++import java.io.Writer;
++import java.nio.CharBuffer;
++import java.util.Arrays;
++import java.util.logging.Level;
++import java.util.logging.Logger;
++
++/**
++ * A character collector, which can be used to construct a shared char arrays 
++ * efficiently and write its content directly to a stream. Per default, it 
++ * doubles the capacity of its internal buffer until a certain threshold has 
++ * been reached. At this point gets extended by a fixed amount or if not 
++ * sufficient the amount which is necessary to collect the given characters. 
++ * So it is especially useful as an alternative for {@link StringBuilder}s, 
++ * {@link CharBuffer} or {@link StringWriter}s, which are expected to get
++ * pretty large.
++ * <p>
++ * NOTE: This class is NOT thread safe, uses no synchronization! Also, one 
++ * should prefer the {@code write()} methods in favor to the {@code append()}
++ * method, to avoid unnecessary mem copying and allocation.
++ * <p>
++ * Closing a <tt>XtCharArrayWriter</tt> has no effect. The methods in this class
++ * can be called after the stream has been closed without generating an
++ * <tt>IOException</tt>.
++ * 
++ * @author 	Jens Elkner
++ * @version	$Revision$
++ */
++public class XtCharArray extends CharArrayWriter implements CharSequence {
++    private static final Logger log = Logger.getLogger(XtCharArray.class.getName());
++    /** the default capacity of this writer */
++    public static final int DEFAULT_CAPACITY = 1 << 12; // 4 K
++    /** The capacity of the internal buffer at which the re-allocation algorithm
++     * should be switched from doubling to extending it. */
++    public static final int DEFAULT_THRESHOLD = 1 << 30; // 1 G
++    /** The size the capacity of the internal buffer should be extended, if an
++     * extension is necessary. */
++    public static final int DEFAULT_EXTENT = 1 << 24; // 16 M
++    
++    private int threshold;
++    private int extent;
++    private int offset;
++    private boolean isShared;
++    
++    /**
++     * Create a new writer with a default buffer capacity (for now 
++     * {@value #DEFAULT_CAPACITY}), threshold (for now {@value #DEFAULT_THRESHOLD})
++     * and extent (for now {@value #DEFAULT_EXTENT}).
++     */
++    public XtCharArray() {
++        this(DEFAULT_CAPACITY);
++    }
++
++    /**
++     * Create a new writer with the given initial buffer size and a default 
++     * threshold (for now {@value #DEFAULT_THRESHOLD})
++     * and extent (for now {@value #DEFAULT_EXTENT}).
++     * @param capacity initial capacity of the internal buffer to use. 
++     */
++    public XtCharArray(int capacity) {
++        this(capacity, DEFAULT_EXTENT);
++    }
++
++    /**
++     * Create a new writer with the given initial buffer size and extent as well
++     * as a default threshold (for now {@value #DEFAULT_THRESHOLD}).
++     * @param capacity initial capacity of the internal buffer to use.
++     * @param extent the amount the capacity of the internal buffer should be 
++     *  increased, if necessary.
++     */
++    public XtCharArray(int capacity, int extent) {
++        this(capacity, extent, DEFAULT_THRESHOLD);
++    }
++
++    /**
++     * Create a new writer with the given initial buffer size, extent and 
++     * threshold.
++     * @param capacity initial capacity of the internal buffer to use.
++     * @param extent the amount the capacity of the internal buffer should be 
++     *  increased, if necessary.
++     * @param threshold the capacity of the internal buffer, at which the 
++     *  re-allocation algorithm should be switched from doubling to extending.
++     */
++    public XtCharArray(int capacity, int extent, int threshold) {
++        super(capacity);
++        setThreshold(threshold);
++        setExtent(extent);
++        offset = 0;
++    }
++
++    /**
++     * Create a new writer by using the reference to the given char array's as 
++     * its initial internal buffer (until it gets modified) and default values
++     * for threshold and extent. 
++     * 
++     * @param buf       char array to wrap
++     *  @see XtCharArray#XtCharArray(char[], int, int, int, int)
++     */
++    public XtCharArray(char[] buf)  {
++        this(buf, 0, buf.length, DEFAULT_EXTENT, DEFAULT_THRESHOLD);
++    }
++
++    /**
++     * Create a new writer by using the reference to the given char array's as 
++     * its initial internal buffer (until it gets modified) and default values
++     * for threshold and extent. 
++     * 
++     * @param buf       char array to wrap
++     * @param start     the index of the start of the char sequence in the buffer.
++     * @param len       the length of the initial char sequence in the buffer.
++     *  @see XtCharArray#XtCharArray(char[], int, int, int, int)
++     */
++    public XtCharArray(char[] buf, int start, int len)  {
++        this(buf, start, len, DEFAULT_EXTENT, DEFAULT_THRESHOLD);
++    }
++
++    /**
++     * Create a new writer by using the reference to the given char array's as 
++     * its initial internal buffer (until it gets modified).
++     * 
++     * @param buf       char array to wrap
++     * @param start     the index of the start of the char sequence in the buffer.
++     * @param len       the length of the initial char sequence in the buffer.
++     * @param extent    the extent to use, if the internal buffer needs to be
++     *      extended
++     * @param threshold the threshold to use to determine, wether to double or
++     *  extent the internal buffer if necessary.
++     *  @see #offset()
++     *  @see #length()
++     *  @see #setExtent(int)
++     *  @see #setThreshold(int)
++     *  @throws NullPointerException if the given char array is {@code null}
++     *  @throws IndexOutOfBoundsException if start or len argument is invalid or
++     *      not consistent wrt. to the given char array
++     *  @throws IllegalArgumentException if extent or threshold have an invalid 
++     *      value
++     */
++    public XtCharArray(char[] buf, int start, int len, 
++        int extent, int threshold) 
++    {
++        if (buf == null) {
++            throw new IllegalArgumentException("null buffer not allowed");
++        }
++        if (start < 0 || len < 0 || start + len > buf.length) {
++            throw new IndexOutOfBoundsException(start + "," + start+len);
++        }
++        setExtent(extent);
++        setThreshold(threshold);
++        this.buf = buf;
++        offset = start;
++        count = start + len;
++        isShared = true;
++    }
++
++    /**
++     * Get the current capacity. The capacity is the amount characters, which 
++     * can be stored without allocating a new internal buffer. It might be 
++     * different than {@link #size()}, since the latter actually returns the
++     * position of the char sequence end marker, which is usually less than
++     * the capacity of the buffer. It might be different to {@link #length()}
++     * as well, since the latter returns the length of the wrapped char sequence
++     * which may or may not start at the buffer's index 0. 
++     *
++     * @return  the current capacity.
++     * @see #offset()
++     * @see #length()
++     */
++    public int capacity() {
++        return buf.length;
++    }
++    
++    /**
++     * Increases the capacity of this instance, if necessary, to ensure that it 
++     * can hold at least the number of characters specified by the minimum 
++     * capacity argument.
++     * <p>
++     * NOTE: If this instance's internal buffer is shared with another origin,
++     * this method creates a copy of the shared buffer and discards the 
++     * reference to the previously shared buffer.
++     *
++     * @param   minCapacity   the desired minimum capacity
++     */
++    public final void ensureCapacity(int minCapacity) {
++        if (isShared) {
++            int len = length();
++            int newLen = minCapacity - offset;
++            int align = Integer.highestOneBit(newLen) << 1;
++            if (align > threshold) {
++                newLen = newLen <= threshold
++                    ? threshold
++                    : (((newLen - threshold) / extent) + 1) * extent + threshold;
++            } else {
++                newLen = align;
++            }
++            if (log.isLoggable(Level.FINE)) {
++                log.fine("Discarding shared buffer. Creating local buffer for "
++                    + newLen + "{} chars.");
++            }
++            char[] tmp = new char[newLen];
++            System.arraycopy(buf, offset, tmp, 0, len);
++            offset = 0;
++            count = len;
++            buf = tmp;
++            isShared = false;
++        } else if (minCapacity > buf.length) {
++            int n = buf.length < threshold ? buf.length << 1 : buf.length + extent;
++            if (log.isLoggable(Level.FINE)) {
++                log.fine("Re-allocating buffer for " + n + "chars");
++            }
++            buf = Arrays.copyOf(buf, Math.max(n, minCapacity));
++        }
++    }
++    
++    /**
++     * Adjust the size of the internal buffer to the length of the char sequence
++     * it represents. Does nothing, as long as the internal buffer is shared 
++     * with another origin.
++     * @see #ensureCapacity(int)
++     */
++    public void trimToSize() {
++        if (isShared || (offset == 0 && length() == buf.length)) {
++            return;
++        }
++        if (log.isLoggable(Level.FINE)) {
++            log.fine("Re-allocating buffer for " + length() + "chars");
++        }
++        char[] tmp = new char[length()];
++        System.arraycopy(buf, offset, tmp, 0, tmp.length);
++        offset = 0;
++        count = tmp.length;
++        buf = tmp;
++        isShared = false;
++    }
++    
++    /**
++     * Get the threshold for the internal buffer. If the number of characters
++     * of the char sequence represented by this instance exceeds the threshold,
++     * buffer re-allocation strategy switches from simply doubling to just 
++     * extending the buffer for a certain amoount.
++     * @return the threshold is use.
++     * @see #setThreshold(int)
++     * @see #getExtent()
++     */
++    public int getThreshold() {
++        return threshold;
++    }
++
++    /**
++     * Set the threshold for the internal buffer. If the number of characters
++     * of the char sequence represented by this instance exceeds the threshold,
++     * buffer re-allocation strategy switches from simply doubling to just 
++     * extending the buffer for a certain amoount.
++     * @param threshold threshold to set.
++     * @throws IllegalArgumentException if the given argument is &lt; 0
++     * @see #getThreshold()
++     * @see #setExtent(int)
++     */
++    public void setThreshold(int threshold) {
++        if (threshold < 0) {
++            throw new IllegalArgumentException("threshold too low (" + threshold + ")");
++        }
++        this.threshold = threshold;
++    }
++
++    /**
++     * Get the amount of characters, the internal buffer gets extended if 
++     * necessary.
++     * @return the extent currently in use.
++     * @see #setExtent(int)
++     * @see #getThreshold()
++     */
++    public int getExtent() {
++        return extent;
++    }
++
++    /**
++     * Set the amount of characters, the internal buffer gets extended if 
++     * necessary.
++     * @param extent extent to set.
++     * @throws IllegalArgumentException if the given argument is &lt; 1
++     * @see #getExtent()
++     * @see #setThreshold(int)
++     */
++    public void setExtent(int extent) {
++        if (extent < 1) {
++            throw new IllegalArgumentException("extent too low (" + extent + ")");
++        }
++        this.extent = extent;
++    }
++
++    /**
++     * Writes a character to the buffer.
++     * @see #ensureCapacity(int)
++     */
++    @Override
++    public void write(int c) {
++        int newcount = count + 1;
++        ensureCapacity(newcount);
++        buf[count] = (char) c;
++        count = newcount;
++    }
++
++    /**
++     * Writes characters to the buffer.
++     * @param c the data to be written
++     * @param off   the start offset in the data
++     * @param len   the number of chars that are written
++     * @see #ensureCapacity(int)
++     */
++    @Override
++    public void write(char c[], int off, int len) {
++        if ((off < 0) || (off > c.length) || (len < 0) 
++            || ((off + len) > c.length) || ((off + len) < 0)) 
++        {
++            throw new IndexOutOfBoundsException();
++        }
++        if (len == 0) {
++            return;
++        }
++        int newcount = count + len;
++        ensureCapacity(newcount);
++        System.arraycopy(c, off, buf, count, len);
++        count = newcount;
++    }
++
++    /**
++     * Write a portion of a string to the buffer.
++     * @param  str  String to be written from
++     * @param  off  Offset from which to start reading characters
++     * @param  len  Number of characters to be written
++     * @see #ensureCapacity(int)
++     */
++    @Override
++    public void write(String str, int off, int len) {
++        int newcount = count + len;
++        ensureCapacity(newcount);
++        str.getChars(off, off + len, buf, count);
++        count = newcount;
++    }
++
++    /**
++     * Append the content of the given StringBuilder without calling its
++     * toString() method. It is especially useful for {@link StringBuilder}s 
++     * having a length &gt;= this writers internal buffer size.
++     * 
++     * @param buf   the src of characters
++     * @see #ensureCapacity(int)
++     */
++    public void write(StringBuilder buf) {
++        write(buf, 0, buf.length());
++    }
++
++    /**
++     * Writes a portion of characters of the given StringBuilder without calling 
++     * its toString() method. It is especially useful if <var>len</var &gt;= this 
++     * writers internal buffer size.
++     * 
++     * @param buf   the src of characters
++     * @param off   offset from which to start writing characters
++     * @param len   number of characters to write
++     * @throws IndexOutOfBoundsException if invalid offset or length is given
++     * @see #ensureCapacity(int)
++     */
++    public void write(StringBuilder buf, int off, int len) {
++        int newcount = count + len;
++        ensureCapacity(newcount);
++        buf.getChars(off, off + len, this.buf, count);
++        count = newcount;
++    }
++    
++    /**
++     * Writes the contents of the buffer to another character stream.
++     *
++     * @param out   the output stream to write to
++     * @throws IOException If an I/O error occurs.
++     */
++    @Override
++    public void writeTo(Writer out) throws IOException {
++        writeTo(out, 0, length());
++    }
++    
++    /**
++     * Writes a sub sequence of the buffer to another character stream.
++     * @param out       the output stream to write to
++     * @param start     offset from which to start writing characters
++     * @param len       number of characters to write
++     * @throws IndexOutOfBoundsException if start or len is out of range 
++     *      (0..{@link #length()}) 
++     * @throws IOException on I/O error
++     */
++    public void writeTo(Writer out, int start, int len) throws IOException {
++        out.write(buf, start+offset, len);
++    }
++
++    /**
++     * Resets the buffer so that you can use it again without throwing away the 
++     * already allocated buffer as long as it is not greater than the extent 
++     * threshold of this instance. However, if the underlying internal buffer 
++     * is shared, the reference to the shared buffer gets discarded.
++     * 
++     * @see #getExtent()
++     */
++    @Override
++    public void reset() {
++        if (buf.length > threshold || isShared) {
++            buf = new char[0];
++            isShared = false;
++        }
++        count = 0;
++        offset = 0;
++    }
++    
++    /**
++     * Sets the length of the char sequence represented by this instance. If
++     * the internal buffer is shared with another origin, the reference to the
++     * shared buffer is kept since not modified (it is just a local marker change).
++     * <p>
++     * NOTE: If this instance is the origin for other consumers, reducing the 
++     * length might break them because they may refer to a sub sequence which
++     * is now larger than this one, etc.!
++     * 
++     * @param length a value &gt;= 0 and &lt;= the current length of the 
++     *  char sequence .
++     */
++    public void setLength(int length) {
++        if (length < 0 || length > length()) {
++            throw new IndexOutOfBoundsException("" + length);
++        }
++        count = offset + length;
++    }
++
++    /**
++     * Get the length of the char sequence represented by this instance.
++     * 
++     * @return the length of the stored char sequence, which might be &lt;= the
++     *  capacity of this instance.
++     * @see #capacity()
++     * @see #offset()
++     * @see #size()
++     */
++    @Override
++    public int length() {
++        return count - offset;
++    }
++
++    /**
++     * {@inheritDoc}
++     */
++    @Override
++    public char charAt(int index) {
++        if ((index < 0) || (index >= length())) {
++            throw new IndexOutOfBoundsException("" + index);
++        }
++        return buf[index+offset];
++    }
++
++    /**
++     * {@inheritDoc}
++     */
++    @Override
++    public XtCharArray subSequence(int start, int end) {
++        if (end < start || start < 0 || end > length()) {
++            throw new IndexOutOfBoundsException(start + "," + end);
++        }
++        return new XtCharArray(buf, offset+start, end-start, extent, threshold);
++    }
++    
++    /**
++     * Get the offset of the char sequence this instance represents wrt. the 
++     * internal buffer.
++     *
++     * @return  The char sequence offset within this instance's internal buffer.
++     * @see #capacity()
++     * @see #length()
++     */
++    public int offset() {
++        return offset;
++    }
++
++    /**
++     * Check, whether this instance currently shares its internal buffer with 
++     * another object.
++     * 
++     * @return {@code true} if shared.
++     */
++    public boolean isShared() {
++        return isShared;
++    }
++    
++    /**
++     * Create a new instance whose content is initially a shared subsequence of 
++     * this instance's internal buffer.
++     * @return a new instance, with the same threshold and extent settings as
++     *  this instance.
++     *  @see #subSequence(int, int)
++     *  @see #offset()
++     */
++    public XtCharArray slice() {
++        return subSequence(0, length());
++    }
++    
++    /**
++     * {@inheritDoc}
++     */
++    @Override
++    public char[] toCharArray() {
++        return Arrays.copyOfRange(buf, offset, count);
++    }
++
++    /**
++     * Get a <tt>CharArrayReader</tt>, which wraps the char sequence currently
++     * stored by this instance. A change wrt. to the length of the underlying 
++     * buffer gets not reflected to the returned reader. However, as long as
++     * the current buffer does not get re-allocated, modifications of not yet
++     * read characters may affect the reader!
++     * 
++     * @return a new instance.
++     * @see #offset()
++     * @see #length()
++     * @see CharArrayReader#CharArrayReader(char[], int, int)
++     */
++    public CharArrayReader getReader() {
++        return new CharArrayReader(buf, offset, length());
++    }
++
++    /**
++     * {@inheritDoc}
++     */
++    @Override
++    public String toString() {
++        return new String(buf, offset, length());
++    }
++
++}
+diff -r 3d56f3369ec7 -r 1cd5464bbd9a test/org/opensolaris/opengrok/util/XtCharArrayTest.java
+--- /dev/null	Thu Jan 01 00:00:00 1970 +0000
++++ b/test/org/opensolaris/opengrok/util/XtCharArrayTest.java	Fri Jul 01 07:06:42 2011 +0200
+@@ -0,0 +1,847 @@
++/**
++ * $Id$
++ *
++ * CDDL HEADER START
++ *
++ * The contents of this file are subject to the terms of the
++ * Common Development and Distribution License (the "License").
++ * You may not use this file except in compliance with the License.
++ *
++ * See LICENSE.txt included in this distribution for the specific
++ * language governing permissions and limitations under the License.
++ *
++ * When distributing Covered Code, include this CDDL HEADER in each
++ * file and include the License file at LICENSE.txt.
++ * If applicable, add the following below this CDDL HEADER, with the
++ * fields enclosed by brackets "[]" replaced with your own identifying
++ * information: Portions Copyright [yyyy] [name of copyright owner]
++ *
++ * CDDL HEADER END
++ *
++ * Copyright 2011 - 2011 Jens Elkner.  All rights reserved.
++ */
++package org.opensolaris.opengrok.util;
++
++import static org.junit.Assert.assertEquals;
++import static org.junit.Assert.assertTrue;
++import static org.junit.Assert.fail;
++
++import java.io.CharArrayReader;
++import java.io.IOException;
++import java.io.StringWriter;
++import java.util.Arrays;
++
++import org.junit.Test;
++
++/**
++ * Tests for XtCharArrayTest
++ * @author 	Jens Elkner
++ * @version	$Revision$
++ */
++public class XtCharArrayTest {
++    /**
++     * Test method for {@link org.opensolaris.opengrok.util.XtCharArray#write(int)}.
++     */
++    @Test
++    public void testWriteInt() {
++        XtCharArray a = new XtCharArray();
++        a.write('a');
++        assertEquals("a", a.toString());
++    }
++
++    /**
++     * Test method for {@link org.opensolaris.opengrok.util.XtCharArray#write(char[], int, int)}.
++     */
++    @Test
++    public void testWriteCharArrayIntInt() {
++        XtCharArray a = new XtCharArray();
++        char[] c = "01234567890".toCharArray();
++        a.write(c, 0, 0);
++        assertEquals("", a.toString());
++        a.write(c, c.length, 0);
++        assertEquals("", a.toString());
++        a.write(c, 0, c.length);
++        assertEquals(new String(c), a.toString());
++        a.reset();
++        a.write(c, 5, 5);
++        assertEquals(new String(c, 5, 5), a.toString());
++        try {
++            a.write(c, -1, 5);
++            fail("exception not thrown for invalid offset");
++        } catch (IndexOutOfBoundsException e) {
++            // ok
++        }
++        try {
++            a.write(c, 0, c.length + 1);
++            fail("exception not thrown for invalid length");
++        } catch (IndexOutOfBoundsException e) {
++            // ok
++        }
++        try {
++            a.write(c, 5, -1);
++            fail("exception not thrown for invalid length");
++        } catch (IndexOutOfBoundsException e) {
++            // ok
++        }
++        try {
++            a.write((char[]) null, 5, 1);
++            fail("exception not thrown for null arg");
++        } catch (NullPointerException e) {
++            // ok
++        }
++    }
++
++    /**
++     * Test method for {@link org.opensolaris.opengrok.util.XtCharArray#reset()}.
++     */
++    @Test
++    public void testReset() {
++        char[] abc = "abc".toCharArray();
++        XtCharArray a = new XtCharArray(abc);
++        assertEquals(new String(abc), a.toString());
++        assertTrue(a.isShared());
++        a.reset();
++        assertEquals("", a.toString());
++        assertTrue(a.length() == 0);
++        assertTrue(a.offset() == 0);
++        assertTrue(!a.isShared());
++    }
++
++    /**
++     * Test method for {@link org.opensolaris.opengrok.util.XtCharArray#toCharArray()}.
++     */
++    @Test
++    public void testToCharArray() {
++        char[] abc = "abc".toCharArray();
++        XtCharArray a = new XtCharArray(abc);
++        assertTrue(Arrays.equals(abc, a.toCharArray()));
++        assertTrue(abc != a.toCharArray()); // must be a copy
++    }
++
++    /**
++     * Test method for {@link org.opensolaris.opengrok.util.XtCharArray#XtCharArray()}.
++     */
++    @Test
++    public void testXtCharArray() {
++        XtCharArray a = new XtCharArray();
++        assertTrue(a.capacity() == XtCharArray.DEFAULT_CAPACITY);
++        assertTrue(a.getExtent() == XtCharArray.DEFAULT_EXTENT);
++        assertTrue(a.getThreshold() == XtCharArray.DEFAULT_THRESHOLD);
++    }
++
++    /**
++     * Test method for {@link org.opensolaris.opengrok.util.XtCharArray#XtCharArray(int)}.
++     */
++    @Test
++    public void testXtCharArrayInt() {
++        int size = XtCharArray.DEFAULT_CAPACITY + 10; 
++        XtCharArray a = new XtCharArray(size);
++        assertTrue(a.capacity() == size);
++        assertTrue(a.getExtent() == XtCharArray.DEFAULT_EXTENT);
++        assertTrue(a.getThreshold() == XtCharArray.DEFAULT_THRESHOLD);
++        a = new XtCharArray(0);
++        try {
++            a = new XtCharArray(-1);
++            fail("exception for negative arg expected");
++        } catch (IllegalArgumentException e) {
++            // ok
++        }
++    }
++
++    /**
++     * Test method for {@link org.opensolaris.opengrok.util.XtCharArray#XtCharArray(int, int)}.
++     */
++    @Test
++    public void testXtCharArrayIntInt() {
++        int size = XtCharArray.DEFAULT_CAPACITY + 10; 
++        int extent = XtCharArray.DEFAULT_EXTENT + 10; 
++        XtCharArray a = new XtCharArray(size, extent);
++        assertTrue(a.capacity() == size);
++        assertTrue(a.getExtent() == extent);
++        assertTrue(a.getThreshold() == XtCharArray.DEFAULT_THRESHOLD);
++        a = new XtCharArray(0, 10);
++        try {
++            a = new XtCharArray(-1, 10);
++            fail("exception for negative arg expected");
++        } catch (IllegalArgumentException e) {
++            // ok
++        }
++        try {
++            a = new XtCharArray(0, -10);
++            fail("exception for negative arg expected");
++        } catch (IllegalArgumentException e) {
++            // ok
++        }
++        try {
++            a = new XtCharArray(0, 0);
++            fail("exception for zero arg expected");
++        } catch (IllegalArgumentException e) {
++            // ok
++        }
++    }
++
++    /**
++     * Test method for {@link org.opensolaris.opengrok.util.XtCharArray#XtCharArray(int, int, int)}.
++     */
++    @Test
++    public void testXtCharArrayIntIntInt() {
++        int size = XtCharArray.DEFAULT_CAPACITY + 10; 
++        int extent = XtCharArray.DEFAULT_EXTENT + 10; 
++        int threshold = XtCharArray.DEFAULT_THRESHOLD + 10; 
++        XtCharArray a = new XtCharArray(size, extent, threshold);
++        assertTrue(a.capacity() == size);
++        assertTrue(a.getExtent() == extent);
++        assertTrue(a.getThreshold() == threshold);
++        a = new XtCharArray(0, 10, 0);
++        try {
++            a = new XtCharArray(-1, 10, 10);
++            fail("exception for negative arg expected");
++        } catch (IllegalArgumentException e) {
++            // ok
++        }
++        try {
++            a = new XtCharArray(0, -10, 10);
++            fail("exception for negative arg expected");
++        } catch (IllegalArgumentException e) {
++            // ok
++        }
++        try {
++            a = new XtCharArray(0, 0, 10);
++            fail("exception for zero arg expected");
++        } catch (IllegalArgumentException e) {
++            // ok
++        }
++        try {
++            a = new XtCharArray(0, 10, -10);
++            fail("exception for negative arg expected");
++        } catch (IllegalArgumentException e) {
++            // ok
++        }
++    }
++
++    /**
++     * Test method for {@link org.opensolaris.opengrok.util.XtCharArray#XtCharArray(char[])}.
++     */
++    @Test
++    public void testXtCharArrayCharArray() {
++        char[] abc = "abc".toCharArray();
++        XtCharArray a = new XtCharArray(abc);
++        assertTrue(a.isShared());
++        assertEquals(new String(abc), a.toString());
++        assertTrue(a.capacity() == abc.length);
++        assertTrue(a.getExtent() == XtCharArray.DEFAULT_EXTENT);
++        assertTrue(a.getThreshold() == XtCharArray.DEFAULT_THRESHOLD);
++    }
++
++    /**
++     * Test method for {@link org.opensolaris.opengrok.util.XtCharArray#XtCharArray(char[], int, int)}.
++     */
++    @Test
++    public void testXtCharArrayCharArrayIntInt() {
++        char[] c = "01234567890".toCharArray();
++        XtCharArray a = new XtCharArray(c, 0, 0);
++        assertTrue(a.isShared());
++        assertTrue(a.offset() == 0);
++        assertTrue(a.length() == 0);
++        assertEquals("", a.toString());
++        assertTrue(a.capacity() == c.length);
++        assertTrue(a.getExtent() == XtCharArray.DEFAULT_EXTENT);
++        assertTrue(a.getThreshold() == XtCharArray.DEFAULT_THRESHOLD);
++
++        a = new XtCharArray(c, c.length, 0);
++        assertTrue(a.isShared());
++        assertTrue(a.offset() == c.length);
++        assertTrue(a.length() == 0);
++        assertEquals("", a.toString());
++        assertTrue(a.capacity() == c.length);
++        assertTrue(a.getExtent() == XtCharArray.DEFAULT_EXTENT);
++        assertTrue(a.getThreshold() == XtCharArray.DEFAULT_THRESHOLD);
++
++        a = new XtCharArray(c, 0, c.length);
++        assertTrue(a.isShared());
++        assertTrue(a.offset() == 0);
++        assertTrue(a.length() == c.length);
++        assertEquals(new String(c), a.toString());
++        assertTrue(a.capacity() == c.length);
++        assertTrue(a.getExtent() == XtCharArray.DEFAULT_EXTENT);
++        assertTrue(a.getThreshold() == XtCharArray.DEFAULT_THRESHOLD);
++
++        a = new XtCharArray(c, 5, c.length-5);
++        assertTrue(a.isShared());
++        assertTrue(a.offset() == 5);
++        assertTrue(a.length() == c.length-5);
++        assertEquals(new String(c, 5, c.length-5), a.toString());
++        assertTrue(a.capacity() == c.length);
++        assertTrue(a.getExtent() == XtCharArray.DEFAULT_EXTENT);
++        assertTrue(a.getThreshold() == XtCharArray.DEFAULT_THRESHOLD);
++
++        try {
++            a = new XtCharArray(c, -1, 5);
++            fail("exception not thrown for invalid offset");
++        } catch (IndexOutOfBoundsException e) {
++            // ok
++        }
++        try {
++            a = new XtCharArray(c, 0, c.length +1);
++            fail("exception not thrown for invalid length");
++        } catch (IndexOutOfBoundsException e) {
++            // ok
++        }
++        try {
++            a = new XtCharArray(c, 5, -1);
++            fail("exception not thrown for invalid length");
++        } catch (IndexOutOfBoundsException e) {
++            // ok
++        }
++        try {
++            a = new XtCharArray((char[]) null, 5, 1);
++            fail("exception not thrown for null arg");
++        } catch (IllegalArgumentException e) {
++            // ok
++        }
++    }
++
++    /**
++     * Test method for {@link org.opensolaris.opengrok.util.XtCharArray#XtCharArray(char[], int, int, int, int)}.
++     */
++    @Test
++    public void testXtCharArrayCharArrayIntIntIntInt() {
++        char[] c = "01234567890".toCharArray();
++        XtCharArray a = new XtCharArray(c, 0, 0, 10, 0);
++        assertTrue(a.isShared());
++        assertTrue(a.offset() == 0);
++        assertTrue(a.length() == 0);
++        assertEquals("", a.toString());
++        assertTrue(a.capacity() == c.length);
++        assertTrue(a.getExtent() == 10);
++        assertTrue(a.getThreshold() == 0);
++
++        a = new XtCharArray(c, c.length, 0, 10, 0);
++        assertTrue(a.isShared());
++        assertTrue(a.offset() == c.length);
++        assertTrue(a.length() == 0);
++        assertEquals("", a.toString());
++        assertTrue(a.capacity() == c.length);
++        assertTrue(a.getExtent() == 10);
++        assertTrue(a.getThreshold() == 0);
++
++        a = new XtCharArray(c, 0, c.length, 10, 0);
++        assertTrue(a.isShared());
++        assertTrue(a.offset() == 0);
++        assertTrue(a.length() == c.length);
++        assertEquals(new String(c), a.toString());
++        assertTrue(a.capacity() == c.length);
++        assertTrue(a.getExtent() == 10);
++        assertTrue(a.getThreshold() == 0);
++
++        a = new XtCharArray(c, 5, c.length-5, 10, 0);
++        assertTrue(a.isShared());
++        assertTrue(a.offset() == 5);
++        assertTrue(a.length() == c.length-5);
++        assertEquals(new String(c, 5, c.length-5), a.toString());
++        assertTrue(a.capacity() == c.length);
++        assertTrue(a.getExtent() == 10);
++        assertTrue(a.getThreshold() == 0);
++
++        try {
++            a = new XtCharArray(c, -1, 5, 10, 0);
++            fail("exception not thrown for invalid offset");
++        } catch (IndexOutOfBoundsException e) {
++            // ok
++        }
++        try {
++            a = new XtCharArray(c, 0, c.length +1, 10, 0);
++            fail("exception not thrown for invalid length");
++        } catch (IndexOutOfBoundsException e) {
++            // ok
++        }
++        try {
++            a = new XtCharArray(c, 5, -1, 10, 0);
++            fail("exception not thrown for invalid length");
++        } catch (IndexOutOfBoundsException e) {
++            // ok
++        }
++        try {
++            a = new XtCharArray((char[]) null, 5, 1, 10, 0);
++            fail("exception not thrown for null arg");
++        } catch (IllegalArgumentException e) {
++            // ok
++        }
++        try {
++            a = new XtCharArray(c, 0, c.length, 0, 0);
++            fail("exception not thrown for invalid extent");
++        } catch (IllegalArgumentException e) {
++            // ok
++        }
++        try {
++            a = new XtCharArray(c, 0, c.length, -10, 0);
++            fail("exception not thrown for invalid extent");
++        } catch (IllegalArgumentException e) {
++            // ok
++        }
++        try {
++            a = new XtCharArray(c, 0, c.length, 10, -10);
++            fail("exception not thrown for invalid threshold");
++        } catch (IllegalArgumentException e) {
++            // ok
++        }
++    }
++
++    /**
++     * Test method for {@link org.opensolaris.opengrok.util.XtCharArray#capacity()}.
++     * Test method for {@link org.opensolaris.opengrok.util.XtCharArray#ensureCapacity(int)}.
++     */
++    @Test
++    public void testCapacity() {
++        char[] c = "01234567890".toCharArray();
++        XtCharArray a = new XtCharArray(c);
++        assertTrue(a.capacity() == c.length);
++        a.ensureCapacity(XtCharArray.DEFAULT_CAPACITY<<1);
++        assertTrue(a.capacity() >= (XtCharArray.DEFAULT_CAPACITY<<1));
++        a = new XtCharArray();
++        assertTrue(a.capacity() == XtCharArray.DEFAULT_CAPACITY);
++    }
++
++    /**
++     * Test method for {@link org.opensolaris.opengrok.util.XtCharArray#trimToSize()}.
++     * @throws IOException 
++     */
++    @Test
++    public void testTrimToSize() throws IOException {
++        XtCharArray a = new XtCharArray();
++        assertTrue(a.capacity() == XtCharArray.DEFAULT_CAPACITY);
++        a.trimToSize();
++        assertTrue(a.capacity() == 0);
++        char[] c = "01234567890".toCharArray();
++        a.write(c);
++        assertTrue(a.capacity() >= c.length);
++        a.trimToSize();
++        assertTrue(a.capacity() == c.length);
++    }
++
++    /**
++     * Test method for {@link org.opensolaris.opengrok.util.XtCharArray#getThreshold()}.
++     * Test method for {@link org.opensolaris.opengrok.util.XtCharArray#setThreshold(int)}.
++     */
++    @Test
++    public void testGetThreshold() {
++        XtCharArray a = new XtCharArray(10);
++        assertTrue(a.getThreshold() == XtCharArray.DEFAULT_THRESHOLD);
++        a.setThreshold(10);
++        assertTrue(a.getThreshold() == 10);
++        a.setThreshold(0);
++        assertTrue(a.getThreshold() == 0);
++        try {
++            a.setThreshold(-1);
++            fail("exception for negative threshold expected");
++        } catch (IllegalArgumentException e) {
++            // ok
++        }
++        // extent above threshold
++        assertTrue(a.capacity() == 10);
++        a.ensureCapacity(10+1);
++        assertTrue(a.capacity() == 10 + XtCharArray.DEFAULT_EXTENT);
++        // double below threshold
++        int l = a.capacity();
++        a.setThreshold(l << 2);
++        a.ensureCapacity(l+1);
++        assertTrue(a.capacity() == l << 1); 
++    }
++
++    /**
++     * Test method for {@link org.opensolaris.opengrok.util.XtCharArray#getExtent()}.
++     * Test method for {@link org.opensolaris.opengrok.util.XtCharArray#setExtent(int)}.
++     */
++    @Test
++    public void testGetExtent() {
++        XtCharArray a = new XtCharArray(10);
++        assertTrue(a.getExtent() == XtCharArray.DEFAULT_EXTENT);
++        a.setExtent(10);
++        assertTrue(a.getExtent() == 10);
++        try {
++            a.setExtent(0);
++            fail("exception for zero extent expected");
++        } catch (IllegalArgumentException e) {
++            // ok
++        }
++        try {
++            a.setExtent(-1);
++            fail("exception for negative extent expected");
++        } catch (IllegalArgumentException e) {
++            // ok
++        }
++        assertTrue(a.capacity() == 10);
++        a.ensureCapacity(10+1);
++        assertTrue(a.capacity() >= 10+10);
++    }
++
++    /**
++     * Test method for {@link org.opensolaris.opengrok.util.XtCharArray#write(java.lang.String, int, int)}.
++     */
++    @Test
++    public void testWriteStringIntInt() {
++        String s = "01234567890";
++        XtCharArray a = new XtCharArray();
++        a.write(s, 0, 0);
++        assertEquals("", a.toString());
++        a.write(s, 0, s.length());
++        assertEquals(s, a.toString());
++        a.write(s, 0, s.length());
++        assertEquals(s + s, a.toString());
++        a.write(s, 2, 4);
++        assertEquals(s + s + s.substring(2, 2+4), a.toString());
++        try {
++            a.write(s, -1, 1);
++            fail("exception for negative offset expected");
++        } catch (IndexOutOfBoundsException e) {
++            // ok
++        }
++        try {
++            a.write(s, 0, -1);
++            fail("exception for negative length expected");
++        } catch (IndexOutOfBoundsException e) {
++            // ok
++        }
++        try {
++            a.write(s, 0, s.length()+1);
++            fail("exception for oversized length expected");
++        } catch (IndexOutOfBoundsException e) {
++            // ok
++        }
++        try {
++            a.write((String) null, 0, 1);
++            fail("exception for null arg expected");
++        } catch (NullPointerException e) {
++            // ok
++        }
++    }
++
++    /**
++     * Test method for {@link org.opensolaris.opengrok.util.XtCharArray#write(java.lang.StringBuilder)}.
++     */
++    @Test
++    public void testWriteStringBuilder() {
++        String s = "01234567890";
++        StringBuilder sb = new StringBuilder(s);
++        XtCharArray a = new XtCharArray();
++        a.write(sb);
++        assertEquals(s, a.toString());
++        a.write(sb);
++        assertEquals(s + s, a.toString());
++        sb.setLength(0);
++        a.write(sb);
++        assertEquals(s + s, a.toString());
++        try {
++            a.write((StringBuilder) null);
++            fail("exception for null arg expected");
++        } catch (NullPointerException e) {
++            // ok
++        }
++    }
++
++    /**
++     * Test method for {@link org.opensolaris.opengrok.util.XtCharArray#write(java.lang.StringBuilder, int, int)}.
++     */
++    @Test
++    public void testWriteStringBuilderIntInt() {
++        String s = "01234567890";
++        StringBuilder sb = new StringBuilder(s);
++        XtCharArray a = new XtCharArray();
++        a.write(sb, 0, 0);
++        assertEquals("", a.toString());
++        a.write(sb, 0, s.length());
++        assertEquals(s, a.toString());
++        a.write(sb, 0, s.length());
++        assertEquals(s + s, a.toString());
++        a.write(sb, 2, 4);
++        assertEquals(s + s + s.substring(2, 2+4), a.toString());
++        try {
++            a.write(sb, -1, 1);
++            fail("exception for negative offset expected");
++        } catch (IndexOutOfBoundsException e) {
++            // ok
++        }
++        try {
++            a.write(sb, 0, -1);
++            fail("exception for negative length expected");
++        } catch (IndexOutOfBoundsException e) {
++            // ok
++        }
++        try {
++            a.write(sb, 0, s.length()+1);
++            fail("exception for oversized length expected");
++        } catch (IndexOutOfBoundsException e) {
++            // ok
++        }
++        try {
++            a.write((StringBuilder) null, 0, 1);
++            fail("exception for null arg expected");
++        } catch (NullPointerException e) {
++            // ok
++        }
++    }
++
++    /**
++     * Test method for {@link org.opensolaris.opengrok.util.XtCharArray#writeTo(java.io.Writer)}.
++     * @throws IOException 
++     */
++    @Test
++    public void testWriteToWriter() throws IOException {
++        String s = "01234567890";
++        StringWriter out = new StringWriter(s.length());
++        XtCharArray a = new XtCharArray();
++        a.write(s);
++        assertEquals(s, a.toString());
++        a.writeTo(out);
++        assertEquals(s, out.toString());
++        a.writeTo(out);
++        assertEquals(s + s, out.toString());
++        a.setLength(0);
++        a.writeTo(out);
++        assertEquals(s + s, out.toString());
++        try {
++            a.writeTo(null);
++            fail("exception for null arg expected");
++        } catch (NullPointerException e) {
++            // ok
++        }
++    }
++
++    /**
++     * Test method for {@link org.opensolaris.opengrok.util.XtCharArray#writeTo(java.io.Writer, int, int)}.
++     * @throws IOException 
++     */
++    @Test
++    public void testWriteToWriterIntInt() throws IOException {
++        String s = "01234567890";
++        StringWriter out = new StringWriter(s.length());
++        XtCharArray a = new XtCharArray(s.toCharArray());
++        a.writeTo(out, 0, 0);
++        assertEquals("", out.toString());
++        a.writeTo(out, 0, s.length());
++        assertEquals(s, out.toString());
++        a.writeTo(out, 0, s.length());
++        assertEquals(s + s, out.toString());
++        a.writeTo(out, 2, 4);
++        assertEquals(s + s + s.substring(2, 2+4), out.toString());
++        try {
++            a.writeTo(out, -1, 1);
++            fail("exception for negative offset expected");
++        } catch (IndexOutOfBoundsException e) {
++            // ok
++        }
++        try {
++            a.writeTo(out, 0, -1);
++            fail("exception for negative length expected");
++        } catch (IndexOutOfBoundsException e) {
++            // ok
++        }
++        try {
++            a.writeTo(out, 0, a.length()+1);
++            fail("exception for oversized length expected");
++        } catch (IndexOutOfBoundsException e) {
++            // ok
++        }
++        try {
++            a.writeTo(null, 0, 1);
++            fail("exception for null arg expected");
++        } catch (NullPointerException e) {
++            // ok
++        }
++    }
++
++    /**
++     * Test method for {@link org.opensolaris.opengrok.util.XtCharArray#setLength(int)}.
++     * Test method for {@link org.opensolaris.opengrok.util.XtCharArray#length()}.
++     */
++    @Test
++    public void testSetLength() {
++        String s = "01234567890";
++        XtCharArray a = new XtCharArray(s.toCharArray());
++        assertTrue(a.length() == s.length());
++        a.setLength(5);
++        assertTrue(a.length() == 5);
++        assertEquals(s.substring(0, 5), a.toString());
++        try {
++            a.setLength(-1);
++            fail("exception for negative length expected");
++        } catch (IndexOutOfBoundsException e) {
++            // ok
++        }
++        try {
++            a.setLength(6);
++            fail("exception for oversized length expected");
++        } catch (IndexOutOfBoundsException e) {
++            // ok
++        }
++    }
++
++    /**
++     * Test method for {@link org.opensolaris.opengrok.util.XtCharArray#charAt(int)}.
++     */
++    @Test
++    public void testCharAt() {
++        char[] s = "01234567890".toCharArray();
++        XtCharArray a = new XtCharArray(s);
++        for (int i=s.length-1; i >= 0; i--) {
++            assertTrue(s[i] == a.charAt(i));
++        }
++        try {
++            a.charAt(-1);
++            fail("exception for negative offset expected");
++        } catch (IndexOutOfBoundsException e) {
++            // ok
++        }
++        try {
++            a.charAt(a.length());
++            fail("exception for out of bounds offset expected");
++        } catch (IndexOutOfBoundsException e) {
++            // ok
++        }
++        a.setLength(a.length()-1);
++        try {
++            a.charAt(a.length()+1);
++            fail("exception for out of bounds offset expected");
++        } catch (IndexOutOfBoundsException e) {
++            // ok
++        }
++        a = new XtCharArray(s, 5, 3);
++        for (int i=a.length()-1; i >= 0; i--) {
++            assertTrue(s[i+5] == a.charAt(i));
++        }
++    }
++
++    /**
++     * Test method for {@link org.opensolaris.opengrok.util.XtCharArray#subSequence(int, int)}.
++     */
++    @SuppressWarnings("cast")
++    @Test
++    public void testSubSequence() {
++        String s = "01234567890";
++        XtCharArray a = new XtCharArray(s.toCharArray());
++        assertEquals("", a.subSequence(0, 0).toString());
++        assertTrue(a.subSequence(0, 0) instanceof XtCharArray);
++        assertEquals(s, a.subSequence(0, a.length()).toString());
++        XtCharArray b = a.subSequence(2, 2+4);
++        assertEquals(s.substring(2, 2+4), b.toString());
++        assertTrue(b.isShared());
++        assertTrue(b.offset() == 2);
++        assertTrue(b.length() == 4);
++        try {
++            b.subSequence(-1, 1);
++            fail("exception for negative offset expected");
++        } catch (IndexOutOfBoundsException e) {
++            // ok
++        }
++        try {
++            b.subSequence(0, -1);
++            fail("exception for negative end expected");
++        } catch (IndexOutOfBoundsException e) {
++            // ok
++        }
++        try {
++            b.subSequence(b.length()+1, 0);
++            fail("exception for oversized length expected");
++        } catch (IndexOutOfBoundsException e) {
++            // ok
++        }
++        try {
++            b.subSequence(0, b.length()+1);
++            fail("exception for oversized length expected");
++        } catch (IndexOutOfBoundsException e) {
++            // ok
++        }
++    }
++
++    /**
++     * Test method for {@link org.opensolaris.opengrok.util.XtCharArray#offset()}.
++     * Test method for {@link org.opensolaris.opengrok.util.XtCharArray#isShared()}.
++     */
++    @Test
++    public void testOffset() {
++        String s = "01234567890";
++        XtCharArray a = new XtCharArray();
++        assertTrue(a.offset() == 0);
++        assertTrue(!a.isShared());
++        a = new XtCharArray(s.toCharArray(), 5, 3);
++        assertTrue(a.offset() == 5);
++        assertTrue(a.isShared());
++        a = new XtCharArray(s.toCharArray());
++        assertTrue(a.offset() == 0);
++        assertTrue(a.isShared());
++        XtCharArray b = a.subSequence(5,5+4);
++        assertTrue(b.offset() == 5);
++        assertTrue(b.isShared());
++        XtCharArray c = b.slice();
++        assertTrue(c.offset() == 5);
++        assertTrue(c.isShared());
++        c.write('a');   // modify -> unshare, compact
++        assertTrue(!c.isShared());
++        assertTrue(c.offset() == 0);
++        a.trimToSize();
++        assertTrue(a.offset() == 0);
++        assertTrue(a.isShared()); // shared buffers do not get resized
++        b.reset();
++        assertTrue(b.offset() == 0);
++        assertTrue(!b.isShared());
++        
++    }
++
++    /**
++     * Test method for {@link org.opensolaris.opengrok.util.XtCharArray#slice()}.
++     */
++    @Test
++    public void testSlice() {
++        String s = "01234567890";
++        XtCharArray a = new XtCharArray();
++        XtCharArray slice = a.slice();
++        assertEquals(slice.toString(), a.toString());
++        assertTrue(slice.isShared());
++        a.append(s);
++        a = a.subSequence(5, 5+4);
++        XtCharArray b = a.slice();
++        assertTrue(b.isShared());
++        assertTrue(b.offset() == 5);
++        assertTrue(b.length() == 4);
++        assertEquals(b.toString(), s.substring(5, 5+4));
++    }
++
++    /**
++     * Test method for {@link org.opensolaris.opengrok.util.XtCharArray#getReader()}.
++     * @throws IOException 
++     */
++    @SuppressWarnings("null")
++    @Test
++    public void testGetReader() throws IOException {
++        char[] s = "01234567890".toCharArray();
++        XtCharArray a = new XtCharArray();
++        CharArrayReader in = a.getReader();
++        assertTrue(in != null);
++        assertTrue(in.read() == -1);
++        // reader is immune against buffer length modification
++        a.write(s);
++        assertTrue(in.read() == -1);
++        in = a.getReader();
++        a.setLength(s.length-1);
++        char[] t = new char[s.length];
++        int c = 0;
++        int r;
++        while (c < t.length && (r = in.read(t, c, t.length - c)) != -1) {
++            c += r;
++        }
++        assertTrue(Arrays.equals(s, t));
++    }
++
++    /**
++     * Test method for {@link org.opensolaris.opengrok.util.XtCharArray#toString()}.
++     */
++    @Test
++    public void testToString() {
++        String s = "01234567890";
++        XtCharArray a = new XtCharArray();
++        String x = a.toString();
++        assertEquals("", x);
++        a.append(s);
++        assertEquals(s, a.toString());
++    }
++}

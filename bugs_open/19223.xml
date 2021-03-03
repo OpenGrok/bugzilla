@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>19223</bug_id>
+          
+          <creation_ts>2012-07-04 16:29:00 +0000</creation_ts>
+          <short_desc>SearchEngineTest.testSearch fails</short_desc>
+          <delta_ts>2012-07-05 17:00:15 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>tests</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>NEW</bug_status>
+          
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>major</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Vladimir Kotal">vladimir.kotal</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          <cc>knut.hatlen</cc>
+    
+    <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>86519</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2012-07-04 16:29:21 +0000</bug_when>
+            <thetext>Recent jenkins build revealed this test case failure:
+
+Error Message
+
+expected:&lt;8&gt; but was:&lt;7&gt;
+
+Stacktrace
+
+junit.framework.AssertionFailedError: expected:&lt;8&gt; but was:&lt;7&gt;
+	at org.opensolaris.opengrok.search.SearchEngineTest.testSearch(SearchEngineTest.java:176)
+
+
+This corresponds to this piece of code in test/org/opensolaris/opengrok/search/SearchEngineTest.java:
+
+172        instance = new SearchEngine();
+173        instance.setSymbol(&quot;printf&quot;);
+174        instance.setFile(&quot;main.c&quot;);
+175        noHits = instance.search();
+176        assertEquals(8, noHits);
+
+Looking under testdata directory there are indeed 7 files named main.c:
+
+$ find /var/opengrok/src/opengrok-dev/testdata/ -type f -name main.c  
+/var/opengrok/src/opengrok-dev/testdata/sources/c/main.c
+/var/opengrok/src/opengrok-dev/testdata/repositories/bazaar/main.c
+/var/opengrok/src/opengrok-dev/testdata/repositories/git/main.c
+/var/opengrok/src/opengrok-dev/testdata/repositories/mercurial/main.c
+/var/opengrok/src/opengrok-dev/testdata/repositories/teamware/main.c
+/var/opengrok/src/opengrok-dev/testdata/repositories/cvs/cvsrepo/main.c
+/var/opengrok/src/opengrok-dev/testdata/repositories/rcs/main.c
+
+The value was bumped from 7 to 8 with the addition of Razor repository support with:
+
+736:b7008f56813e 		10-Feb-2009 	Knut Anders Hatlen &lt;Knut.Hatlen@Sun.COM&gt; 	Wire the sample Razor repository into the tests
+
+However, the main.c file of the Razor repository is present outside of &apos;testdata&apos; directory (in ext/SampleRazorRepository/UserSandbox/SimpleCProgram/) which is to my understanding used for the test.
+
+It is not entirely clear why the test case was not failing before.
+
+It looks like a test Razor repository containing main.c with call to printf() should be added under testdata directory.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86522</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2012-07-05 17:00:15 +0000</bug_when>
+            <thetext>(In reply to comment #0)
+&gt; However, the main.c file of the Razor repository is present outside of
+&gt; &apos;testdata&apos; directory (in ext/SampleRazorRepository/UserSandbox/SimpleCProgram/)
+&gt; which is to my understanding used for the test.
+
+build.xml has a target that copies the files from ext/SampleRazorRepository/... into testdata/repositories/razor/ so it should end up in repositories.zip.
+
+Maybe you could find the repositories.zip file produced by the failing Jenkins job and see which main.c file is missing from it. Here are the ones I see in my environment:
+
+% unzip -l build/test/classes/org/opensolaris/opengrok/history/repositories.zip | grep &apos;/main.c$&apos;
+      266  2011-11-16 23:27   bazaar/main.c
+      270  2011-11-16 23:27   cvs/cvsrepo/main.c
+      266  2011-11-16 23:27   git/main.c
+      266  2011-11-16 23:27   mercurial/main.c
+      758  2012-07-05 14:22   razor/Razor-Simple/SimpleCProgram/.razor/History/SimpleCProgram/main.c
+      327  2012-07-05 14:22   razor/Razor-Simple/SimpleCProgram/.razor/Info/SimpleCProgram/main.c
+      266  2012-07-05 14:22   razor/Razor-Simple/SimpleCProgram/main.c
+      266  2011-11-16 23:27   rcs/main.c
+      730  2012-07-05 14:22   svn/c/main.c
+      266  2011-11-16 23:27   teamware/main.c</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

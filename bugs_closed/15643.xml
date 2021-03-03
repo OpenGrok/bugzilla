@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>15643</bug_id>
+          
+          <creation_ts>2010-04-15 22:22:00 +0000</creation_ts>
+          <short_desc>Simplify CLASSPATH in ogindexd</short_desc>
+          <delta_ts>2010-04-16 08:21:12 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>misc</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXED</resolution>
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>minor</bug_severity>
+          <target_milestone>0.9</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Knut Anders Hatlen">knut.hatlen</reporter>
+          <assigned_to name="Knut Anders Hatlen">knut.hatlen</assigned_to>
+          <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>71476</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2010-04-15 22:22:18 +0000</bug_when>
+            <thetext>Currently, the classpath in ogindexd is defined like this:
+
+CLASSPATH=$LIBDIR/ant.jar:$LIBDIR/bcel-5.2.jar:$LIBDIR/jakarta-oro-2.0.8.jar:$LIBDIR/lucene-core-3.0.1.jar:$LIBDIR/lucene-spellchecker-3.0.1.jar:$LIBDIR/org.apache.commons.jrcs.diff.jar:$LIBDIR/org.apache.commons.jrcs.rcs.jar:$LIBDIR/swing-layout-0.9.jar:$LIBDIR/opengrok.jar
+
+Because opengrok.jar has a manifest file that automatically adds all the other jar files to the classpath, I believe this could be simplified to:
+
+CLASSPATH=$LIBDIR/opengrok.jar
+
+This would be easier to maintain, since we wouldn&apos;t need to update ogindexd when we upgrade Lucene or some of the other libraries.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>71502</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2010-04-16 08:21:12 +0000</bug_when>
+            <thetext>Fixed.
+
+changeset:   982:cfe9fece5b2f
+user:        Knut Anders Hatlen &lt;Knut.Hatlen@Sun.COM&gt;
+date:        Fri Apr 16 10:18:58 2010 +0200
+summary:     Bug #15643: Simplify CLASSPATH in ogindexd</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

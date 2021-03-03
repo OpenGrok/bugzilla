@@ -1,0 +1,35 @@
+
+
+Build
+
+	<Below is an example>
+
+	* Source
+
+	see also {{{source-repository.html}source-repository}}
+
+	* Build
+
+		see also {{{integration.html}integration}}
+
+		* Client
+
+		compiles with Java 1.4
+
+		Build: {{http://ci.uat.jamba.net/hudson/job/infra-soa-requestdescriptor-build-HEAD/}}
+
+		* Services
+
+		compiles with Java 1.5
+
+		Build: {{http://ci.uat.jamba.net/hudson/job/infra-soa-requestdescriptor-build-HEAD/}}
+
+		* Maven Doc (once a day)
+
+		Build: {{http://ci.uat.jamba.net/hudson/job/infra-soa-requestdescriptor-doc-HEAD/}}
+
+		Show: {{http://mavendoc.uat.jamba.net/infra-soa-requestdescriptor-doc-HEAD/SNAPSHOT/JambaModules.html}}
+
+	* Maven Repository
+
+	{{http://mavenrep.uat.jamba.net/inhouse/}} and {{http://mavenrep.uat.jamba.net/inhouse_snapshot/}}

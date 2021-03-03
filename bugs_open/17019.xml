@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>17019</bug_id>
+          
+          <creation_ts>2010-09-10 11:32:00 +0000</creation_ts>
+          <short_desc>Revision in directory history is a not a link</short_desc>
+          <delta_ts>2010-09-10 13:38:41 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>webapp</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>Windows</op_sys>
+          <bug_status>NEW</bug_status>
+          
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>normal</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Moisei">moisei</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          <cc>knut.hatlen</cc>
+    
+    <cc>moisei</cc>
+    
+    <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>77501</commentid>
+            <who name="Moisei">moisei</who>
+            <bug_when>2010-09-10 11:32:27 +0000</bug_when>
+            <thetext>reproduce:
+browse to some directory and click History
+Expected: Revision field to be a link, the same as at History on file.
+Result: Revision field is not a link
+Sample URL:
+http://localhost:8080/searchDaletPlus/history/3.4/src/java/DaletNotifierClient/
+
+Env:
+OpenGrok 0.9 - last release
+Tomcat 6
+java 6
+any browser
+Windows 2003</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>77502</commentid>
+            <who name="Moisei">moisei</who>
+            <bug_when>2010-09-10 11:34:12 +0000</bug_when>
+            <thetext>forgot to mention: &quot;link&quot; means a link to the log of subversion revision.
+svn 1.6</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>77504</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2010-09-10 12:41:30 +0000</bug_when>
+            <thetext>If we implement this, should the link give you a snapshot of the contents of the directory at that revision? Or should it just show the log message for that commit?</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>77505</commentid>
+            <who name="Moisei">moisei</who>
+            <bug_when>2010-09-10 12:52:22 +0000</bug_when>
+            <thetext>(In reply to comment #2)
+&gt; If we implement this, should the link give you a snapshot of the contents of
+&gt; the directory at that revision? Or should it just show the log message for that
+&gt; commit?
+
+I would expect the same behavior as in &quot;Annotated&quot; page:
+- when mouse over the revision - show a tooltip with log message
+- when revision link is clicked  - browse to the snapshot.
+
+I just found, by the way, that tootip window is only shown in the annotated
+page but not in the history. Would you like me to open another issue on that,
+or it is enough to mention it here?</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>77506</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2010-09-10 13:38:41 +0000</bug_when>
+            <thetext>Feel free to open another issue for tooltip in the history view. I&apos;m not sure about its usefulness, though, since you&apos;ll have the log message readily available on the same line anyway.</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

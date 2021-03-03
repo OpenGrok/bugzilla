@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>2541</bug_id>
+          
+          <creation_ts>2008-07-15 05:34:00 +0000</creation_ts>
+          <short_desc>Provide ARC case expansion in History view</short_desc>
+          <delta_ts>2008-07-18 05:55:35 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>webapp</component>
+          <version>unspecified</version>
+          <rep_platform>Other</rep_platform>
+          <op_sys>Solaris</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXED</resolution>
+          
+          
+          
+          
+          
+          <priority>P4</priority>
+          <bug_severity>enhancement</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Vladimir Kotal">vladimir.kotal</reporter>
+          <assigned_to name="Lubos Kosco">Lubos.Kosco</assigned_to>
+          
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>8965</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2008-07-15 05:34:22 +0000</bug_when>
+            <thetext>Similarly to webrev script OpenGrok should expand PSARC case numbers
+to links to particular case in OpenSolaris ARC community.
+
+The putback comments look e.g. like this:
+
+PSARC 2008/305 strsep() in libc
+4383867 need strsep() in libc
+
+There can be multiple PSARC cases in single putback comment.
+
+The HTTP link should span just the PSARC keyword and number, not the
+ARC case name.
+
+The default prefix of the ARC expansion should be http://www.opensolaris.org/os/community/arc/caselog/
+
+So, for the above PSARC case the link would be:
+  http://www.opensolaris.org/os/community/arc/caselog/2008/305
+
+This is somewhat related to bug 327 since ARC case expansion should be
+configurable per project.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>9121</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2008-07-18 05:55:35 +0000</bug_when>
+            <thetext>In revision: 49fc36ee93d7f53987e779c34591d43b289f4d0c
+
+changeset 318:49fc36ee93d7</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

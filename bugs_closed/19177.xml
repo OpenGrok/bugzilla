@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>19177</bug_id>
+          
+          <creation_ts>2012-02-15 16:19:00 +0000</creation_ts>
+          <short_desc>JAVA_OPTS should be configurable in OpenGrok shell script</short_desc>
+          <delta_ts>2012-08-10 15:32:41 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>indexer</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXINSOURCE</resolution>
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>enhancement</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Vladimir Kotal">vladimir.kotal</reporter>
+          <assigned_to name="Vladimir Kotal">vladimir.kotal</assigned_to>
+          <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>86204</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2012-02-15 16:19:42 +0000</bug_when>
+            <thetext>OpenGrok shell script has these Java related options:
+
+JAVA_HOME
+JAVA (based on JAVA_HOME)
+JAVA_OPTS
+
+Out of these only JAVA and JAVA_HOME are user settable. JAVA_OPTS defaults to -Xmx2048m. This means if anyone wants to run say 64-bit Java to get more memory, it will not help because JAVA_OPTS will still restrain this to 2 GB. For such cases it would help if JAVA_OPTS was user settable.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86205</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2012-02-15 16:30:35 +0000</bug_when>
+            <thetext>fixed with:
+
+changeset:   1333:ea2876042135
+tag:         tip
+user:        Vladimir Kotal &lt;Vladimir.Kotal@oracle.com&gt;
+date:        Wed Feb 15 17:30:48 2012 +0100
+
+description:
+	Bug 19177 - JAVA_OPTS should be configurable in OpenGrok shell script
+
+modified:
+   OpenGrok
+
+
+reviewed by Lubos Kosco.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86575</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2012-08-10 15:32:41 +0000</bug_when>
+            <thetext>*** Bug 18613 has been marked as a duplicate of this bug. ***</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

@@ -1,0 +1,279 @@
+# HG changeset patch
+# User jel+opengrok@cs.uni-magdeburg.de
+# Date 1333181327 -7200
+# Node ID 1c62bc7908a0259c787088588fbcc17408b00565
+# Parent  f39c5bdd9276d61c039cbf7ded2306b9a5fb3587
+add XrefReader class - fix classes still using '.gz' wrt. xrefs, removed overhead, make AnnotationTest happy
+
+diff -r f39c5bdd9276 -r 1c62bc7908a0 src/org/opensolaris/opengrok/analysis/XrefInputStream.java
+--- a/src/org/opensolaris/opengrok/analysis/XrefInputStream.java	Fri Mar 30 08:57:14 2012 +0200
++++ b/src/org/opensolaris/opengrok/analysis/XrefInputStream.java	Sat Mar 31 10:08:47 2012 +0200
+@@ -41,7 +41,8 @@
+ /**
+  * A {@link FilterInputStream} for Opengrok crossfiles.
+  * It uses a {@link BufferedInputStream} or {@link GZIPInputStream} as 
+- * underlying stream to provide the required functionality.
++ * underlying stream to provide the required functionality. So there is usually
++ * no need to wrap it into another BufferedInputStream etc. .
+  * 
+  * @see BufferedInputStream
+  * @see GZIPInputStream
+diff -r f39c5bdd9276 -r 1c62bc7908a0 src/org/opensolaris/opengrok/analysis/XrefReader.java
+--- /dev/null	Thu Jan 01 00:00:00 1970 +0000
++++ b/src/org/opensolaris/opengrok/analysis/XrefReader.java	Sat Mar 31 10:08:47 2012 +0200
+@@ -0,0 +1,46 @@
++/**
++ * $Id$ 
++ * 
++ * Copyright (c) 2011-2012 Jens Elkner.
++ * All Rights Reserved.
++ *
++ * This software is the proprietary information of Jens Elkner.
++ * Use is subject to license terms.
++ */
++package org.opensolaris.opengrok.analysis;
++
++import java.io.File;
++import java.io.IOException;
++import java.io.InputStreamReader;
++import java.io.UnsupportedEncodingException;
++
++/**
++ * Convinience class to read xref aka cross files.
++ * NOTE: There is no need to wrap this reader into a buffered reader, since the
++ * underlying input stream is already buffered.
++ * 
++ * @author 	Jens Elkner
++ * @version	$Revision$
++ */
++public class XrefReader extends InputStreamReader {
++    /**
++     * Create a new reader from the given stream.
++     * @param in stream to use for reading. NOTE: on-the-fly decompression must 
++     *  be enabled for the given stream.
++     * @throws UnsupportedEncodingException 
++     * @see XrefInputStream#XrefInputStream(File, boolean)
++     */
++    public XrefReader(XrefInputStream in) throws UnsupportedEncodingException {
++        super(in, "UTF-8");
++    }
++
++    /**
++     * Create a new reader from the given file.
++     * @param file  file to read.
++     * @throws IOException 
++     * @throws UnsupportedEncodingException 
++     */
++    public XrefReader(File file) throws UnsupportedEncodingException, IOException {
++        this (new XrefInputStream(file, true));
++    }
++}
+diff -r f39c5bdd9276 -r 1c62bc7908a0 src/org/opensolaris/opengrok/history/Annotation.java
+--- a/src/org/opensolaris/opengrok/history/Annotation.java	Fri Mar 30 08:57:14 2012 +0200
++++ b/src/org/opensolaris/opengrok/history/Annotation.java	Sat Mar 31 10:08:47 2012 +0200
+@@ -55,7 +55,7 @@
+     }
+ 
+     private final int getRID(int line) {
+-        if (line >= lines.size()) {
++        if (line > lines.size()) {
+             return -1;
+         }
+         return lines.get(line-1).intValue();
+@@ -129,7 +129,7 @@
+         Desc desc;           // tooltip infos
+         public RevInfo(String rev, String author, Desc desc) {
+             this.rev = rev;
+-            this.author = author == null ? "" : author;
++            this.author = author;
+             this.desc = desc;
+         }
+     }
+@@ -143,6 +143,12 @@
+      * @param author author name
+      */
+     void addLine(String revision, String author) {
++        if (revision == null) {
++            revision = "";
++        }
++        if (author == null) {
++            author = "";
++        }
+         Integer rid = rev2rid.get(revision);
+         if (rid == null) {
+             RevInfo info = new RevInfo(revision, author, null);
+diff -r f39c5bdd9276 -r 1c62bc7908a0 src/org/opensolaris/opengrok/index/IndexDatabase.java
+--- a/src/org/opensolaris/opengrok/index/IndexDatabase.java	Fri Mar 30 08:57:14 2012 +0200
++++ b/src/org/opensolaris/opengrok/index/IndexDatabase.java	Sat Mar 31 10:08:47 2012 +0200
+@@ -548,12 +548,7 @@
+         }
+         writer.deleteDocuments(uidIter.term());
+ 
+-        File xrefFile;
+-        if (RuntimeEnvironment.getInstance().isCompressXref()) {
+-            xrefFile = new File(xrefDir, path + ".gz");
+-        } else {
+-            xrefFile = new File(xrefDir, path);
+-        }
++        File xrefFile = new File(xrefDir, path);
+         File parent = xrefFile.getParentFile();
+ 
+         if (!xrefFile.delete() && xrefFile.exists()) {
+diff -r f39c5bdd9276 -r 1c62bc7908a0 src/org/opensolaris/opengrok/search/Results.java
+--- a/src/org/opensolaris/opengrok/search/Results.java	Fri Mar 30 08:57:14 2012 +0200
++++ b/src/org/opensolaris/opengrok/search/Results.java	Sat Mar 31 10:08:47 2012 +0200
+@@ -25,10 +25,8 @@
+ 
+ import java.io.BufferedReader;
+ import java.io.File;
+-import java.io.FileInputStream;
+ import java.io.FileReader;
+ import java.io.IOException;
+-import java.io.InputStreamReader;
+ import java.io.Reader;
+ import java.io.Writer;
+ import java.util.ArrayList;
+@@ -36,7 +34,6 @@
+ import java.util.Map;
+ import java.util.logging.Level;
+ import java.util.logging.Logger;
+-import java.util.zip.GZIPInputStream;
+ 
+ import org.apache.lucene.document.Document;
+ import org.apache.lucene.document.Fieldable;
+@@ -46,6 +43,7 @@
+ import org.opensolaris.opengrok.analysis.Definitions;
+ import org.opensolaris.opengrok.analysis.FileAnalyzer.Genre;
+ import org.opensolaris.opengrok.analysis.TagFilter;
++import org.opensolaris.opengrok.analysis.XrefReader;
+ import org.opensolaris.opengrok.history.HistoryException;
+ import org.opensolaris.opengrok.util.IOUtils;
+ import org.opensolaris.opengrok.web.Prefix;
+@@ -92,34 +90,26 @@
+         return dirHash;
+     }
+ 
+-    private static String getTags(File basedir, String path, boolean compressed) {
++    private static String getTags(File basedir, String path, boolean isXref) {
+         char[] content = new char[1024 * 8];
+-        FileInputStream fis = null;
+-        GZIPInputStream gis = null;
+-        FileReader fr = null;
+         Reader r = null;
+         // Grrrrrrrrrrrrr - TagFilter takes Readers, only!!!!
+         // Why? Is it CS sensible?
++        File file = new File(basedir, path);
+         try {
+-            if (compressed) {
+-                fis = new FileInputStream(new File(basedir, path + ".gz"));
+-                gis = new GZIPInputStream(fis);
+-                r = new TagFilter(new BufferedReader(new InputStreamReader(gis)));
++            if (isXref) {
++                r = new TagFilter(new XrefReader(file));
+             } else {
+-                fr = new FileReader(new File(basedir, path));
+-                r = new TagFilter(new BufferedReader(fr));
++                r = new TagFilter(new BufferedReader(new FileReader(file)));
+             }
+             int len = r.read(content);
+             return new String(content, 0, len);
+         } catch (Exception e) {
+-            logger.warning("An error reading tags from '" + basedir + path
+-                    + (compressed ? ".gz': " : "': ") + e.getMessage());
++            logger.warning("An error reading tags from '" + file + "': " 
++                + e.getMessage());
+             logger.log(Level.FINE, "getTags", e);
+         } finally {
+             IOUtils.close(r);
+-            IOUtils.close(gis);
+-            IOUtils.close(fis);
+-            IOUtils.close(fr);
+         }
+         return "";
+     }
+@@ -135,7 +125,6 @@
+      * <li>{@link SearchHelper#historyContext} (ignored if {@code null})</li>
+      * <li>{@link SearchHelper#sourceContext} (ignored if {@code null})</li>
+      * <li>{@link SearchHelper#summerizer} (if sourceContext is not {@code null})</li>
+-     * <li>{@link SearchHelper#compressed} (if sourceContext is not {@code null})</li>
+      * <li>{@link SearchHelper#sourceRoot} (if sourceContext or historyContext
+      *  is not {@code null})</li>
+      * </ul>
+@@ -204,7 +193,7 @@
+                         tags = Definitions.deserialize(tagsField.getBinaryValue());
+                     }
+                     if (Genre.XREFABLE == genre && sh.summerizer != null) {
+-                        String xtags = getTags(xrefDataDir, rpath, sh.compressed);
++                        String xtags = getTags(xrefDataDir, rpath, true);
+                         // FIXME use Highlighter from lucene contrib here,
+                         // instead of summarizer, we'd also get rid of
+                         // apache lucene in whole source ...
+diff -r f39c5bdd9276 -r 1c62bc7908a0 src/org/opensolaris/opengrok/search/SearchEngine.java
+--- a/src/org/opensolaris/opengrok/search/SearchEngine.java	Fri Mar 30 08:57:14 2012 +0200
++++ b/src/org/opensolaris/opengrok/search/SearchEngine.java	Sat Mar 31 10:08:47 2012 +0200
+@@ -24,11 +24,9 @@
+ 
+ package org.opensolaris.opengrok.search;
+ 
+-import java.io.BufferedReader;
+ import java.io.File;
+ import java.io.FileInputStream;
+ import java.io.FileNotFoundException;
+-import java.io.FileReader;
+ import java.io.IOException;
+ import java.io.InputStreamReader;
+ import java.io.Reader;
+@@ -38,7 +36,6 @@
+ import java.util.concurrent.Executors;
+ import java.util.logging.Level;
+ import java.util.logging.Logger;
+-import java.util.zip.GZIPInputStream;
+ 
+ import org.apache.lucene.document.Document;
+ import org.apache.lucene.document.Fieldable;
+@@ -54,6 +51,7 @@
+ import org.opensolaris.opengrok.analysis.Definitions;
+ import org.opensolaris.opengrok.analysis.FileAnalyzer.Genre;
+ import org.opensolaris.opengrok.analysis.TagFilter;
++import org.opensolaris.opengrok.analysis.XrefReader;
+ import org.opensolaris.opengrok.configuration.Project;
+ import org.opensolaris.opengrok.configuration.RuntimeEnvironment;
+ import org.opensolaris.opengrok.history.HistoryException;
+@@ -362,11 +360,8 @@
+                                     tags, nhits > 100, ret);
+                         } else if (Genre.XREFABLE == genre && data != null && summarizer != null){
+                             int l = 0;
+-                            Reader r=null;
+-                            if ( RuntimeEnvironment.getInstance().isCompressXref() ) {
+-                                    r = new TagFilter(new BufferedReader(new InputStreamReader(new GZIPInputStream(new FileInputStream(data + "/xref" + filename+".gz"))))); }
+-                            else {
+-                                    r = new TagFilter(new BufferedReader(new FileReader(data + "/xref" + filename))); }
++                            File file = new File(data + "/xref" + filename);
++                            Reader r = new TagFilter(new XrefReader(file));
+                             try {
+                                 l = r.read(content);
+                             } finally {
+diff -r f39c5bdd9276 -r 1c62bc7908a0 src/org/opensolaris/opengrok/web/PageConfig.java
+--- a/src/org/opensolaris/opengrok/web/PageConfig.java	Fri Mar 30 08:57:14 2012 +0200
++++ b/src/org/opensolaris/opengrok/web/PageConfig.java	Sat Mar 31 10:08:47 2012 +0200
+@@ -1121,7 +1121,6 @@
+         // jel: this should be IMHO a config param since not only core dependend
+         sh.parallel = Runtime.getRuntime().availableProcessors() > 1;
+         sh.isCrossRefSearch = getPrefix() == Prefix.SEARCH_R;
+-        sh.compressed = env.isCompressXref();
+         sh.desc = getEftarReader();
+         sh.sourceRoot = new File(getSourceRootPath());
+         return sh;
+diff -r f39c5bdd9276 -r 1c62bc7908a0 src/org/opensolaris/opengrok/web/SearchHelper.java
+--- a/src/org/opensolaris/opengrok/web/SearchHelper.java	Fri Mar 30 08:57:14 2012 +0200
++++ b/src/org/opensolaris/opengrok/web/SearchHelper.java	Sat Mar 31 10:08:47 2012 +0200
+@@ -74,9 +74,6 @@
+     /** context path, i.e. the applications context path (usually /source) to
+      * use when generating a redirect URL */
+     public String contextPath;
+-    /** piggyback: if {@code true}, files in opengrok's data directory are
+-     * gzipped compressed. */
+-    public boolean compressed;
+     /** piggyback: the source root directory. */
+     public File sourceRoot;
+     /** piggyback: the eftar filereader to use. */

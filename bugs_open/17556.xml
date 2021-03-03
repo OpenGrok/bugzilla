@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>17556</bug_id>
+          
+          <creation_ts>2010-12-06 15:48:00 +0000</creation_ts>
+          <short_desc>Browser&apos;s Back button doesn&apos;t goes back between anchors on the same page</short_desc>
+          <delta_ts>2011-07-25 09:22:22 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>webapp</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>NEW</bug_status>
+          
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>minor</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Miroslav Osladil">mira</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          <cc>gonufer</cc>
+    
+    <cc>Lubos.Kosco</cc>
+    
+    <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>79775</commentid>
+            <who name="Miroslav Osladil">mira</who>
+            <bug_when>2010-12-06 15:48:39 +0000</bug_when>
+            <thetext>Steps to reproduce:
+1. Search for some function
+2. Select some result and jump into by line anchor
+3. Click on the function on that line which switch you on the place where it is defined
+4. Let&apos;s assume that it is the same file
+5. Now, click on Back button in your browser
+
+Expected result:
+You stay on the line by function anchor, after browser Back, page is back on line anchor.
+
+Actual result:
+First Back action - nothing happens.
+Second Back action - you are back on search result
+
+You can try to use attached file by opening sample.cpp#68 and then by clicking on function().
+
+Seems Windows affected only using IE7/FF3.6. I&apos;m not able to reproduce it on Mac.
+
+Used software:
+OpenGrok 0.10-rc, Apache Tomcat 6.0.29, Sun Java 6 1.6.0_20-b02, Debian GNU/Linux 5.0, IE</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>79776</commentid>
+              <attachid>4416</attachid>
+            <who name="Miroslav Osladil">mira</who>
+            <bug_when>2010-12-06 15:49:13 +0000</bug_when>
+            <thetext>Created attachment 4416
+Sample code</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>79888</commentid>
+            <who name="Miroslav Osladil">mira</who>
+            <bug_when>2010-12-09 12:15:08 +0000</bug_when>
+            <thetext>*** Bug 17555 has been marked as a duplicate of this bug. ***</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>81327</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2011-02-23 16:38:57 +0000</bug_when>
+            <thetext>https://bugzilla.mozilla.org/show_bug.cgi?id=565008
+
+FF bug as above
+
+for IE I will retest, but I&apos;d like to see if IE8 can reproduce this</thetext>
+          </long_desc>
+      
+          <attachment
+              isobsolete="0"
+              ispatch="0"
+              isprivate="0"
+              isurl="0"
+          >
+            <attachid>4416</attachid>
+            <date>2010-12-06 15:49:00 +0000</date>
+            <delta_ts>2010-12-06 15:49:13 +0000</delta_ts>
+            <desc>Sample code</desc>
+            <filename>sample.cpp</filename>
+            <type>text/plain</type>
+            <size>7171</size>
+            <attacher>mira</attacher>
+            
+              <data encoding="base64">LyoKCUxvcmVtIGlwc3VtIGRvbG9yIHNpdCBhbWV0LCBjb25zZWN0ZXR1ciBhZGlwaXNjaW5nIGVs
+aXQuCglVdCBhdWN0b3Igc2FwaWVuIHNpdCBhbWV0IG1hdXJpcyBpbXBlcmRpZXQgY29uZ3VlLgoJ
+TWFlY2VuYXMgcG9zdWVyZSBzb2RhbGVzIHZlbGl0LCBuZWMgdWxsYW1jb3JwZXIgbWFnbmEgcHVs
+dmluYXIgc3VzY2lwaXQuCglWaXZhbXVzIHNjZWxlcmlzcXVlIGZlbGlzIGEgbGVvIHNvZGFsZXMg
+c2VtcGVyLgoJRG9uZWMgdGluY2lkdW50IHNhcGllbiBkdWksIGRpZ25pc3NpbSBncmF2aWRhIG5p
+c2kuCglBbGlxdWFtIHRpbmNpZHVudCBzZW0gZXQgdXJuYSBwdWx2aW5hciBzY2VsZXJpc3F1ZS4K
+CVByb2luIHBoYXJldHJhIHNlbSBtYXNzYSwgaW4gc3VzY2lwaXQgdXJuYS4KCUNyYXMgcnV0cnVt
+IGZyaW5naWxsYSBhcmN1LCBuZWMgYmliZW5kdW0gbGFjdXMgY29uZ3VlIGlkLgoJU2VkIG5vbiBt
+YWduYSBpbiBsZW8gYWNjdW1zYW4gY29uZGltZW50dW0uCglWZXN0aWJ1bHVtIHBvc3VlcmUgbnVs
+bGEgbmVjIGxpZ3VsYSBlbGVpZmVuZCBhIHVsbGFtY29ycGVyIHZlbGl0IHVsdHJpY2VzLgoJU2Vk
+IGlkIGVyb3MgYSBvZGlvIGJsYW5kaXQgY29uZGltZW50dW0gbmVjIHZlbCBpcHN1bS4KCU1vcmJp
+IGJsYW5kaXQgbmVxdWUgbmVjIG5pc2kgYmxhbmRpdCBlZ2VzdGFzLgoJRXRpYW0gY3Vyc3VzIHNl
+bSBldSBtaSB2ZWhpY3VsYSBwb3J0dGl0b3IuCglVdCBlZ2V0IGxpYmVybyBuZWMgZG9sb3IgdWx0
+cmljZXMgZGFwaWJ1cyBhdCB2aXRhZSBpcHN1bS4KCVByb2luIHZpdGFlIGxlY3R1cyBsaWJlcm8s
+IHV0IHBvcnR0aXRvciBtZXR1cy4KCVZlc3RpYnVsdW0gYWxpcXVldCBwb3J0dGl0b3IgdXJuYSwg
+bG9ib3J0aXMgdGVtcHVzIG1pIGNvbnZhbGxpcyBldS4KCVNlZCBzZWQganVzdG8gcmlzdXMsIGlu
+IGx1Y3R1cyBhdWd1ZS4KCVV0IGZlcm1lbnR1bSBsb3JlbSBldSBwdXJ1cyBpbnRlcmR1bSBmcmlu
+Z2lsbGEuCglNb3JiaSBhIG1pIGluIGVyb3Mgc2NlbGVyaXNxdWUgc29kYWxlcy4KCVBoYXNlbGx1
+cyB2ZWwgbmlzaSBpbiBudWxsYSBjb21tb2RvIGRpY3R1bSBpZCBpbiBsZW8uCglEdWlzIHZlaGlj
+dWxhIG1hc3NhIGF0IGp1c3RvIGNvbnNlcXVhdCBldSB2ZWhpY3VsYSBkaWFtIGF1Y3Rvci4KCVNl
+ZCB2ZWwgbGliZXJvIG1ldHVzLCBldCBlbGVpZmVuZCBvZGlvLgoJSW50ZWdlciBxdWlzIGRpYW0g
+bHVjdHVzIGVyb3Mgc2NlbGVyaXNxdWUgdm9sdXRwYXQgYXQgYWMgbGVjdHVzLgoJTnVuYyBtb2xs
+aXMgc2VtIGF0IGVyb3MgY29uc2VjdGV0dXIgdmVzdGlidWx1bS4KCUZ1c2NlIHNjZWxlcmlzcXVl
+IGp1c3RvIGluIGxpYmVybyBzYWdpdHRpcyBhY2N1bXNhbiB2aXRhZSB1dCB0ZWxsdXMuCglOdWxs
+YW0gYWxpcXVldCBmZXVnaWF0IGxpZ3VsYSwgaW4gaW1wZXJkaWV0IG9yY2kgZGljdHVtIGVnZXQu
+CglBZW5lYW4gaW4gbnVsbGEgZWdldCBmZWxpcyBlbGVtZW50dW0gdm9sdXRwYXQuCglOdW5jIHN1
+c2NpcGl0IGRpY3R1bSBlbGl0LCBuZWMgdWx0cmljaWVzIGRpYW0gcHJldGl1bSBlZ2V0LgoJTWF1
+cmlzIGlkIGR1aSBhcmN1LCB2ZWwgYWxpcXVldCBsYWN1cy4KCU51bmMgdHJpc3RpcXVlIGZldWdp
+YXQgcHVydXMsIG5lYyB2YXJpdXMgdGVsbHVzIGZhY2lsaXNpcyBpbi4KCVF1aXNxdWUgcHJldGl1
+bSBpbXBlcmRpZXQgbmliaCwgdmVsIGRpZ25pc3NpbSBkdWkgc29kYWxlcyBhdC4KCUN1cmFiaXR1
+ciB1dCBtYXNzYSBpbiBlbGl0IHBvc3VlcmUgYWRpcGlzY2luZy4KCVByYWVzZW50IGluIG5pYmgg
+cmlzdXMsIHNlZCBzY2VsZXJpc3F1ZSBkaWFtLgoJRG9uZWMgdWx0cmljZXMgdGVsbHVzIGluIGlw
+c3VtIHBvcnRhIGFsaXF1ZXQgcGVsbGVudGVzcXVlIGVzdCB0ZW1wdXMuCglEb25lYyBiaWJlbmR1
+bSBlcm9zIHRyaXN0aXF1ZSBkdWkgcGVsbGVudGVzcXVlIHBvcnR0aXRvciBzaXQgYW1ldCBub24g
+cXVhbS4KCURvbmVjIG5lYyB1cm5hIGV1IHJpc3VzIHRlbXBvciBwZWxsZW50ZXNxdWUgaWQgaWQg
+bnVuYy4KCU1vcmJpIGluIG9yY2kgbGVvLCBzZWQgcmhvbmN1cyBudWxsYS4KCVV0IHNpdCBhbWV0
+IHJpc3VzIGluIHNlbSBsYWNpbmlhIGxhY2luaWEgdml0YWUgYSBwdXJ1cy4KCUV0aWFtIHF1aXMg
+bWFnbmEgdXJuYSwgbm9uIHN1c2NpcGl0IG5pc2wuCglWZXN0aWJ1bHVtIGZlcm1lbnR1bSBzb2Rh
+bGVzIG5pc2ksIGV1IGRpY3R1bSBsZW8gdmFyaXVzIHF1aXMuCglVdCBuZWMgbGlndWxhIGF0IGZl
+bGlzIHVsdHJpY2llcyBtYWxlc3VhZGEuCglTZWQgdml0YWUgbWkgc2VkIG9yY2kgbW9sZXN0aWUg
+dWx0cmljaWVzIG5lYyBpbiBvZGlvLgoJSW50ZWdlciBhZGlwaXNjaW5nIG5pc2kgZWdldCBvZGlv
+IGxhY2luaWEgYXQgYWNjdW1zYW4gZG9sb3IgYmliZW5kdW0uCglDcmFzIHZlbCBkb2xvciBhYyBm
+ZWxpcyB1bHRyaWNlcyBwb3J0dGl0b3IuCglQcm9pbiBpYWN1bGlzIGlwc3VtIHV0IG1pIHVsdHJp
+Y2VzIHZlbCBhbGlxdWV0IG9kaW8gZGlnbmlzc2ltLgoJSW4gc2l0IGFtZXQgc2FwaWVuIGluIG5l
+cXVlIGlhY3VsaXMgc3VzY2lwaXQgYWMgc29kYWxlcyBsaWJlcm8uCglEdWlzIGVnZXN0YXMgdGVs
+bHVzIGV1IGZlbGlzIHBsYWNlcmF0IGEgZGFwaWJ1cyBqdXN0byB1bHRyaWNpZXMuCglTZWQgYSBs
+ZWN0dXMgZHVpLCBkaWduaXNzaW0gaW50ZXJkdW0gbGFjdXMuCglNYXVyaXMgaW4gdmVsaXQgZXUg
+bnVuYyBpbXBlcmRpZXQgYXVjdG9yIHNlZCBzZWQgbmlzaS4KCU1hdXJpcyBlZ2V0IGxvcmVtIG5v
+biBkb2xvciBydXRydW0gYWRpcGlzY2luZyBpbiBzZWQgZGlhbS4KCU1hdXJpcyBzZW1wZXIgYWxp
+cXVhbSBuaXNsLCBlZ2V0IGF1Y3RvciB0ZWxsdXMgcG9ydHRpdG9yIGEuCglTdXNwZW5kaXNzZSB0
+cmlzdGlxdWUgYW50ZSBpbiBudW5jIG1vbGxpcyBhdCBjb25zZWN0ZXR1ciBlcmF0IGF1Y3Rvci4K
+CVBoYXNlbGx1cyBtb2xlc3RpZSBtb2xsaXMgc2VtLCBldSBjb25zZXF1YXQgbWkgbGFvcmVldCBl
+dC4KCVZlc3RpYnVsdW0gc2l0IGFtZXQgbWF1cmlzIGRvbG9yLCBzaXQgYW1ldCBjdXJzdXMgbWFz
+c2EuCglDdXJhYml0dXIgcHJldGl1bSBtZXR1cyBpbiBkdWkgaW50ZXJkdW0gaW4gY29uZGltZW50
+dW0gbWF1cmlzIGdyYXZpZGEuCglBZW5lYW4gaW4gdGVsbHVzIHNpdCBhbWV0IGFyY3UgdGVtcHVz
+IGF1Y3Rvci4KCUFlbmVhbiBtYWxlc3VhZGEgZWdlc3RhcyBvZGlvLCB2ZWwgdWx0cmljZXMgbmlz
+aSBzYWdpdHRpcyBpZC4KCURvbmVjIGlkIGVzdCBhdCBtYXNzYSBwbGFjZXJhdCBjb21tb2RvLgoJ
+UGVsbGVudGVzcXVlIGZhY2lsaXNpcyBuaWJoIGFjIGVsaXQgdmVuZW5hdGlzIG5vbiB2aXZlcnJh
+IG1pIHBvcnRhLgoJVXQgYmxhbmRpdCBsYWN1cyBldSBtYXVyaXMgdnVscHV0YXRlIHNvbGxpY2l0
+dWRpbi4KCU51bGxhbSBmZXJtZW50dW0gZmF1Y2lidXMgZW5pbSwgZWdldCBjb25zZXF1YXQgbWV0
+dXMgcnV0cnVtIHV0LgoJRG9uZWMgdml0YWUgbGliZXJvIHNlZCB0dXJwaXMgdWx0cmljaWVzIHBv
+c3VlcmUuCglDcmFzIGdyYXZpZGEgc2FwaWVuIHV0IG1hdXJpcyBwb3J0dGl0b3IgYWMgbHVjdHVz
+IHNlbSBwdWx2aW5hci4KKi8KY2xhc3MgQSB7CnB1YmxpYzogCiAgICB2b2lkIGZ1bmN0aW9uKCk7
+Cn07CgovKgoJTG9yZW0gaXBzdW0gZG9sb3Igc2l0IGFtZXQsIGNvbnNlY3RldHVyIGFkaXBpc2Np
+bmcgZWxpdC4KCVV0IGF1Y3RvciBzYXBpZW4gc2l0IGFtZXQgbWF1cmlzIGltcGVyZGlldCBjb25n
+dWUuCglNYWVjZW5hcyBwb3N1ZXJlIHNvZGFsZXMgdmVsaXQsIG5lYyB1bGxhbWNvcnBlciBtYWdu
+YSBwdWx2aW5hciBzdXNjaXBpdC4KCVZpdmFtdXMgc2NlbGVyaXNxdWUgZmVsaXMgYSBsZW8gc29k
+YWxlcyBzZW1wZXIuCglEb25lYyB0aW5jaWR1bnQgc2FwaWVuIGR1aSwgZGlnbmlzc2ltIGdyYXZp
+ZGEgbmlzaS4KCUFsaXF1YW0gdGluY2lkdW50IHNlbSBldCB1cm5hIHB1bHZpbmFyIHNjZWxlcmlz
+cXVlLgoJUHJvaW4gcGhhcmV0cmEgc2VtIG1hc3NhLCBpbiBzdXNjaXBpdCB1cm5hLgoJQ3JhcyBy
+dXRydW0gZnJpbmdpbGxhIGFyY3UsIG5lYyBiaWJlbmR1bSBsYWN1cyBjb25ndWUgaWQuCglTZWQg
+bm9uIG1hZ25hIGluIGxlbyBhY2N1bXNhbiBjb25kaW1lbnR1bS4KCVZlc3RpYnVsdW0gcG9zdWVy
+ZSBudWxsYSBuZWMgbGlndWxhIGVsZWlmZW5kIGEgdWxsYW1jb3JwZXIgdmVsaXQgdWx0cmljZXMu
+CglTZWQgaWQgZXJvcyBhIG9kaW8gYmxhbmRpdCBjb25kaW1lbnR1bSBuZWMgdmVsIGlwc3VtLgoJ
+TW9yYmkgYmxhbmRpdCBuZXF1ZSBuZWMgbmlzaSBibGFuZGl0IGVnZXN0YXMuCglFdGlhbSBjdXJz
+dXMgc2VtIGV1IG1pIHZlaGljdWxhIHBvcnR0aXRvci4KCVV0IGVnZXQgbGliZXJvIG5lYyBkb2xv
+ciB1bHRyaWNlcyBkYXBpYnVzIGF0IHZpdGFlIGlwc3VtLgoJUHJvaW4gdml0YWUgbGVjdHVzIGxp
+YmVybywgdXQgcG9ydHRpdG9yIG1ldHVzLgoJVmVzdGlidWx1bSBhbGlxdWV0IHBvcnR0aXRvciB1
+cm5hLCBsb2JvcnRpcyB0ZW1wdXMgbWkgY29udmFsbGlzIGV1LgoJU2VkIHNlZCBqdXN0byByaXN1
+cywgaW4gbHVjdHVzIGF1Z3VlLgoJVXQgZmVybWVudHVtIGxvcmVtIGV1IHB1cnVzIGludGVyZHVt
+IGZyaW5naWxsYS4KCU1vcmJpIGEgbWkgaW4gZXJvcyBzY2VsZXJpc3F1ZSBzb2RhbGVzLgoJUGhh
+c2VsbHVzIHZlbCBuaXNpIGluIG51bGxhIGNvbW1vZG8gZGljdHVtIGlkIGluIGxlby4KCUR1aXMg
+dmVoaWN1bGEgbWFzc2EgYXQganVzdG8gY29uc2VxdWF0IGV1IHZlaGljdWxhIGRpYW0gYXVjdG9y
+LgoJU2VkIHZlbCBsaWJlcm8gbWV0dXMsIGV0IGVsZWlmZW5kIG9kaW8uCglJbnRlZ2VyIHF1aXMg
+ZGlhbSBsdWN0dXMgZXJvcyBzY2VsZXJpc3F1ZSB2b2x1dHBhdCBhdCBhYyBsZWN0dXMuCglOdW5j
+IG1vbGxpcyBzZW0gYXQgZXJvcyBjb25zZWN0ZXR1ciB2ZXN0aWJ1bHVtLgoJRnVzY2Ugc2NlbGVy
+aXNxdWUganVzdG8gaW4gbGliZXJvIHNhZ2l0dGlzIGFjY3Vtc2FuIHZpdGFlIHV0IHRlbGx1cy4K
+CU51bGxhbSBhbGlxdWV0IGZldWdpYXQgbGlndWxhLCBpbiBpbXBlcmRpZXQgb3JjaSBkaWN0dW0g
+ZWdldC4KCUFlbmVhbiBpbiBudWxsYSBlZ2V0IGZlbGlzIGVsZW1lbnR1bSB2b2x1dHBhdC4KCU51
+bmMgc3VzY2lwaXQgZGljdHVtIGVsaXQsIG5lYyB1bHRyaWNpZXMgZGlhbSBwcmV0aXVtIGVnZXQu
+CglNYXVyaXMgaWQgZHVpIGFyY3UsIHZlbCBhbGlxdWV0IGxhY3VzLgoJTnVuYyB0cmlzdGlxdWUg
+ZmV1Z2lhdCBwdXJ1cywgbmVjIHZhcml1cyB0ZWxsdXMgZmFjaWxpc2lzIGluLgoJUXVpc3F1ZSBw
+cmV0aXVtIGltcGVyZGlldCBuaWJoLCB2ZWwgZGlnbmlzc2ltIGR1aSBzb2RhbGVzIGF0LgoJQ3Vy
+YWJpdHVyIHV0IG1hc3NhIGluIGVsaXQgcG9zdWVyZSBhZGlwaXNjaW5nLgoJUHJhZXNlbnQgaW4g
+bmliaCByaXN1cywgc2VkIHNjZWxlcmlzcXVlIGRpYW0uCglEb25lYyB1bHRyaWNlcyB0ZWxsdXMg
+aW4gaXBzdW0gcG9ydGEgYWxpcXVldCBwZWxsZW50ZXNxdWUgZXN0IHRlbXB1cy4KCURvbmVjIGJp
+YmVuZHVtIGVyb3MgdHJpc3RpcXVlIGR1aSBwZWxsZW50ZXNxdWUgcG9ydHRpdG9yIHNpdCBhbWV0
+IG5vbiBxdWFtLgoJRG9uZWMgbmVjIHVybmEgZXUgcmlzdXMgdGVtcG9yIHBlbGxlbnRlc3F1ZSBp
+ZCBpZCBudW5jLgoJTW9yYmkgaW4gb3JjaSBsZW8sIHNlZCByaG9uY3VzIG51bGxhLgoJVXQgc2l0
+IGFtZXQgcmlzdXMgaW4gc2VtIGxhY2luaWEgbGFjaW5pYSB2aXRhZSBhIHB1cnVzLgoJRXRpYW0g
+cXVpcyBtYWduYSB1cm5hLCBub24gc3VzY2lwaXQgbmlzbC4KCVZlc3RpYnVsdW0gZmVybWVudHVt
+IHNvZGFsZXMgbmlzaSwgZXUgZGljdHVtIGxlbyB2YXJpdXMgcXVpcy4KCVV0IG5lYyBsaWd1bGEg
+YXQgZmVsaXMgdWx0cmljaWVzIG1hbGVzdWFkYS4KCVNlZCB2aXRhZSBtaSBzZWQgb3JjaSBtb2xl
+c3RpZSB1bHRyaWNpZXMgbmVjIGluIG9kaW8uCglJbnRlZ2VyIGFkaXBpc2NpbmcgbmlzaSBlZ2V0
+IG9kaW8gbGFjaW5pYSBhdCBhY2N1bXNhbiBkb2xvciBiaWJlbmR1bS4KCUNyYXMgdmVsIGRvbG9y
+IGFjIGZlbGlzIHVsdHJpY2VzIHBvcnR0aXRvci4KCVByb2luIGlhY3VsaXMgaXBzdW0gdXQgbWkg
+dWx0cmljZXMgdmVsIGFsaXF1ZXQgb2RpbyBkaWduaXNzaW0uCglJbiBzaXQgYW1ldCBzYXBpZW4g
+aW4gbmVxdWUgaWFjdWxpcyBzdXNjaXBpdCBhYyBzb2RhbGVzIGxpYmVyby4KCUR1aXMgZWdlc3Rh
+cyB0ZWxsdXMgZXUgZmVsaXMgcGxhY2VyYXQgYSBkYXBpYnVzIGp1c3RvIHVsdHJpY2llcy4KCVNl
+ZCBhIGxlY3R1cyBkdWksIGRpZ25pc3NpbSBpbnRlcmR1bSBsYWN1cy4KCU1hdXJpcyBpbiB2ZWxp
+dCBldSBudW5jIGltcGVyZGlldCBhdWN0b3Igc2VkIHNlZCBuaXNpLgoJTWF1cmlzIGVnZXQgbG9y
+ZW0gbm9uIGRvbG9yIHJ1dHJ1bSBhZGlwaXNjaW5nIGluIHNlZCBkaWFtLgoJTWF1cmlzIHNlbXBl
+ciBhbGlxdWFtIG5pc2wsIGVnZXQgYXVjdG9yIHRlbGx1cyBwb3J0dGl0b3IgYS4KCVN1c3BlbmRp
+c3NlIHRyaXN0aXF1ZSBhbnRlIGluIG51bmMgbW9sbGlzIGF0IGNvbnNlY3RldHVyIGVyYXQgYXVj
+dG9yLgoJUGhhc2VsbHVzIG1vbGVzdGllIG1vbGxpcyBzZW0sIGV1IGNvbnNlcXVhdCBtaSBsYW9y
+ZWV0IGV0LgoJVmVzdGlidWx1bSBzaXQgYW1ldCBtYXVyaXMgZG9sb3IsIHNpdCBhbWV0IGN1cnN1
+cyBtYXNzYS4KCUN1cmFiaXR1ciBwcmV0aXVtIG1ldHVzIGluIGR1aSBpbnRlcmR1bSBpbiBjb25k
+aW1lbnR1bSBtYXVyaXMgZ3JhdmlkYS4KCUFlbmVhbiBpbiB0ZWxsdXMgc2l0IGFtZXQgYXJjdSB0
+ZW1wdXMgYXVjdG9yLgoJQWVuZWFuIG1hbGVzdWFkYSBlZ2VzdGFzIG9kaW8sIHZlbCB1bHRyaWNl
+cyBuaXNpIHNhZ2l0dGlzIGlkLgoJRG9uZWMgaWQgZXN0IGF0IG1hc3NhIHBsYWNlcmF0IGNvbW1v
+ZG8uCglQZWxsZW50ZXNxdWUgZmFjaWxpc2lzIG5pYmggYWMgZWxpdCB2ZW5lbmF0aXMgbm9uIHZp
+dmVycmEgbWkgcG9ydGEuCglVdCBibGFuZGl0IGxhY3VzIGV1IG1hdXJpcyB2dWxwdXRhdGUgc29s
+bGljaXR1ZGluLgoJTnVsbGFtIGZlcm1lbnR1bSBmYXVjaWJ1cyBlbmltLCBlZ2V0IGNvbnNlcXVh
+dCBtZXR1cyBydXRydW0gdXQuCglEb25lYyB2aXRhZSBsaWJlcm8gc2VkIHR1cnBpcyB1bHRyaWNp
+ZXMgcG9zdWVyZS4KCUNyYXMgZ3JhdmlkYSBzYXBpZW4gdXQgbWF1cmlzIHBvcnR0aXRvciBhYyBs
+dWN0dXMgc2VtIHB1bHZpbmFyLgoqLwoKdm9pZCBBOjpmdW5jdGlvbigpCnsKfQ==
+</data>
+
+          </attachment>
+      
+
+    </bug>
+
+</bugzilla>

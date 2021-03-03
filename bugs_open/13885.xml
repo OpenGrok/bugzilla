@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>13885</bug_id>
+          
+          <creation_ts>2010-01-14 11:45:00 +0000</creation_ts>
+          <short_desc>indexer hangs because of interactive process</short_desc>
+          <delta_ts>2010-07-27 09:45:05 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>indexer</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>NEW</bug_status>
+          
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>normal</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Vladimir Kotal">vladimir.kotal</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          <cc>knut.hatlen</cc>
+    
+    <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>62377</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2010-01-14 11:45:31 +0000</bug_when>
+            <thetext>When I started mirroring OpenSSL CVS repository (anonymous@cvs.openssl.org:/openssl-cvs) over SSH I did not setup the host keys. This resulted in the indexer to hang because of ssh client asked for the host keys (the classical yes/no question to verify the fingerprint).
+
+The indexer should probably detect this sort of hang which is preventing it from proceeding.
+
+I don&apos;t know whether this is just a problem with CVS indexer or it&apos;s common also for the other SCMs.
+
+This is happening with 0.8.1.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>75904</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2010-07-26 19:32:02 +0000</bug_when>
+            <thetext>I see the same problem if I first check out the OpenSSL sources and then remove cvs.openssl.org from ~/.ssh/known_host before I try to index the sources.
+
+I was hoping this could be solved by calling getOutputStream().close() on the Process object (and make it fail instead of hanging), but it seems like the input/output from the ssh process is not redirected along with the input/output from the parent process. Instead, it goes directly to the terminal. I found that even writing &quot;yes\n&quot; to the cvs process didn&apos;t help, since it was not forwarded to the ssh sub-process.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>75919</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2010-07-27 09:45:05 +0000</bug_when>
+            <thetext>(In reply to comment #1)
+&gt; I see the same problem if I first check out the OpenSSL sources and then remove
+&gt; cvs.openssl.org from ~/.ssh/known_host before I try to index the sources.
+&gt; 
+&gt; I was hoping this could be solved by calling getOutputStream().close() on the
+&gt; Process object (and make it fail instead of hanging), but it seems like the
+&gt; input/output from the ssh process is not redirected along with the input/output
+&gt; from the parent process. Instead, it goes directly to the terminal. I found
+&gt; that even writing &quot;yes\n&quot; to the cvs process didn&apos;t help, since it was not
+&gt; forwarded to the ssh sub-process.
+
+A robust solution would be to set a time out (if no data are produced by the process) and then kill it.</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

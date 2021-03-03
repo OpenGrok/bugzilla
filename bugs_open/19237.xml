@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>19237</bug_id>
+          
+          <creation_ts>2012-09-14 21:52:00 +0000</creation_ts>
+          <short_desc>OpenGrok doesn&apos;t handle case insensitivity for Fortran definitions/symbols</short_desc>
+          <delta_ts>2012-09-14 21:53:31 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>misc</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>NEW</bug_status>
+          
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>normal</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Alan Kaplan">skywalker</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          <cc>opengrok-dev</cc>
+    
+    <cc>skywalker</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>86607</commentid>
+            <who name="Alan Kaplan">skywalker</who>
+            <bug_when>2012-09-14 21:52:27 +0000</bug_when>
+            <thetext>I am currently running version 0.11.1. I think this has been a bug forever. But when you search for a fortran definition or symbol, it is not case insensitive, so it doesn&apos;t find the symbol. Perhaps this can be fixed in the next release. There may already be another bug for this, which you can link this request. Thank you.</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

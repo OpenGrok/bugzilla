@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>9468</bug_id>
+          
+          <creation_ts>2009-06-15 09:35:00 +0000</creation_ts>
+          <short_desc>history of renamed files is lost (mercurial)</short_desc>
+          <delta_ts>2009-09-02 09:17:35 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>analyzer</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXED</resolution>
+          
+          
+          
+          
+          
+          <priority>P2</priority>
+          <bug_severity>major</bug_severity>
+          <target_milestone>0.8</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="vita">vitezslav.batrla</reporter>
+          <assigned_to name="Lubos Kosco">Lubos.Kosco</assigned_to>
+          <cc>Lubos.Kosco</cc>
+    
+    <cc>vladimir.kotal</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>41608</commentid>
+            <who name="vita">vitezslav.batrla</who>
+            <bug_when>2009-06-15 09:35:55 +0000</bug_when>
+            <thetext>By default, if a file was renamed, &quot;hg log -v&quot; stops at point, when the file was renamed. Changesets before renaming are not shown. As result OpenGrok incorrectly displays history of renamed files.
+
+To show changesets prior renaming, -f option has to be explicitly used:
+
+hg log [OPTION]... [FILE]
+
+aliases: history
+
+show revision history of entire repository or files
+
+    Print the revision history of the specified files or the entire
+    project.
+
+    File history is shown without following rename or copy history of
+    files.  Use -f/--follow with a file name to follow history across
+    renames and copies. --follow without a file name will only show
+    ancestors or descendants of the starting revision. --follow-first
+    only follows the first parent of merge revisions.
+
+Suggested fix:
+
+diff -r 85c934b53b1e src/org/opensolaris/opengrok/history/MercurialRepository.java
+--- a/src/org/opensolaris/opengrok/history/MercurialRepository.java     Tue Nov 11 15:32:05 2008 +0100
++++ b/src/org/opensolaris/opengrok/history/MercurialRepository.java     Mon Jun 15 18:12:50 2009 +0200
+@@ -84,6 +84,7 @@
+         List&lt;String&gt; cmd = new ArrayList&lt;String&gt;();
+         cmd.add(getCommand());
+         cmd.add(&quot;log&quot;);
++        cmd.add(&quot;-f&quot;);
+         cmd.add(&quot;--template&quot;);
+         cmd.add(file.isDirectory() ? DIR_TEMPLATE : TEMPLATE);
+         cmd.add(filename);
+
+
+Looks to me like adding -f has  performance impact on files which were not renamed. But of course it has performance impact on renamed files as it needs to display all past changesets.
+
+
+Example (without -f, the output shows only one changeset which renamed the file):
+
+--- 8&lt; ---
+$ hg log usr/src/uts/intel/io/dnet/dnet.c
+changeset:   9860:20e31304c39b
+user:        Garrett D&apos;Amore &lt;gdamore@opensolaris.org&gt;
+date:        Fri Jun 12 14:33:37 2009 -0700
+description:
+        PSARC 2009/319 MII &amp; GMII Common Layer
+        6730277 Generic 802.3 MII/GMII Support for GLDv3
+        6845677 dmfe driver not suspend/resume safe
+        6845682 dmfe driver should support Brussels
+        6845684 dmfe driver should use new style netlb ioctls
+        6547496 RFE: convert DMFE_DEBUGs to dtrace SDTs
+        6848129 afe should support flow control and netlbtest
+        6848136 don&apos;t deliver dnet header
+--- 8&lt; ---
+
+Example (with -f):
+--- 8&lt; ---
+hg log -f usr/src/uts/intel/io/dnet/dnet.c
+changeset:   9860:20e31304c39b
+user:        Garrett D&apos;Amore &lt;gdamore@opensolaris.org&gt;
+date:        Fri Jun 12 14:33:37 2009 -0700
+description:
+        PSARC 2009/319 MII &amp; GMII Common Layer
+        6730277 Generic 802.3 MII/GMII Support for GLDv3
+        6845677 dmfe driver not suspend/resume safe
+        6845682 dmfe driver should support Brussels
+        6845684 dmfe driver should use new style netlb ioctls
+        6547496 RFE: convert DMFE_DEBUGs to dtrace SDTs
+        6848129 afe should support flow control and netlbtest
+        6848136 don&apos;t deliver dnet header
+
+changeset:   9316:241870bff81e
+user:        vitezslav batrla - Sun Microsystems - Prague Czech Republic &lt;Vitezs
+lav.Batrla@Sun.COM&gt;
+date:        Thu Apr 09 09:27:33 2009 +0200
+description:
+        6768204 dnet interface takes a long time to resume after plumb/unplumb in Hyper-V virtual machine
+
+changeset:   7656:2621e50fdf4a
+user:        Sherry Moore &lt;Sherry.Moore@Sun.COM&gt;
+date:        Mon Sep 22 16:30:26 2008 -0700
+description:
+        PSARC 2008/382 Fast Reboot
+        6714038 Fast Reboot support for x86 platforms
+
+changeset:   5835:0c32aa58ebac
+user:        gd78059
+date:        Mon Jan 14 15:35:51 2008 -0800
+description:
+        Contributed by Masa Murayama.
+        6574580 dnet doesn&apos;t work for 21143 based nic card in 100Mbps
+
+changeset:   5607:ece69f7cb91a
+user:        gd78059
+date:        Wed Dec 05 19:58:32 2007 -0800
+description:
+        6540812 amd64 dnet driver missing
+        6622301 dnet should support suspend/resume
+        6632441 dnet driver does not report link state for MII link
+
+changeset:   5445:7cb529554cc9
+user:        vb160487
+date:        Fri Nov 09 13:00:18 2007 -0800
+description:
+        6592519 dnet driver stops responding when running under Virtual Server
+
+[... and more changesets are displayed ]
+--- 8&lt; ---</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>48088</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2009-08-28 09:39:27 +0000</bug_when>
+            <thetext>fixed in
+changeset 821	9270f0f0cfcc</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>48603</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2009-09-02 09:17:35 +0000</bug_when>
+            <thetext>with changeset 822	12919bf735cc  I limited this bug only to files, not directories (because of hg behaviour when doing log and -f from other directory and our broken junit tests because of that ;) )</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>19222</bug_id>
+          
+          <creation_ts>2012-07-04 16:24:00 +0000</creation_ts>
+          <short_desc>matching of C files is too weak</short_desc>
+          <delta_ts>2012-07-04 16:24:47 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>analyzer</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>NEW</bug_status>
+          
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>normal</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Vladimir Kotal">vladimir.kotal</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>86518</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2012-07-04 16:24:47 +0000</bug_when>
+            <thetext>When debugging another problem I noticed that main.c.i file is recognized by CAnalyzer:
+
+2012-07-04 17:51:35.448+0200 INFO t15 DefaultIndexChangedListener.fileAdd: Add: /opengrok-dev/testdata/repositories/mercurial/hg/store/data/main.c.i (CAnalyzer)
+2012-07-04 17:51:35.451+0200 FINER t15 DefaultIndexChangedListener.fileAdded: Added: /opengrok-dev/testdata/repositories/mercurial/hg/store/data/main.c.i (CAnalyzer)
+
+This is most likely thanks to it&apos;s .i suffix which is listed in suffixes of CAnalyzer.
+
+However, this file contains just unstructured data:
+
+$ file /var/opengrok/src/opengrok-dev/testdata/repositories/mercurial/hg/store/data/main.c.i
+/var/opengrok/src/opengrok-dev/testdata/repositories/mercurial/hg/store/data/main.c.i:  data
+$ od -t c /var/opengrok/src/opengrok-dev/testdata/repositories/mercurial/hg/store/data/main.c.i
+0000000  \0 001  \0 001  \0  \0  \0  \0  \0  \0  \0 274  \0  \0  \0 370
+0000020  \0  \0  \0  \0  \0  \0  \0 001 377 377 377 377 377 377 377 377
+0000040   Z 225 222 355 301   H 360 260 362   ( 207   ? 226 336   . 336
+0000060   I   X 206   r  \0  \0  \0  \0  \0  \0  \0  \0  \0  \0  \0  \0
+0000100   x 234   M 216 301  \n 202   @ 020 206 357 373 024   ?   F   `
+0000120   %   Q 327 254   S   t 350 026   X 020 224 304 242 243 273 240
+0000140   k 214 253 005 321 273 267   + 005 315   e   f 376 201 357 233
+0000160 221   6   Y 325 345 204   @ 221 314 211 347   * 020   B 033 213
+0000200   Z   j 023 372   A   r 231   E 310 224   d   L 247   n 351   &apos;
+0000220   x  \t 001 340 316 356   \ 204 301 201 233 222   e 215   q  \v
+0000240   z   R 326   Y 312 361 320   V 301   *   B 321   T   U 363 320
+0000260 246 364 234 256   &amp;   c 333 325 325 004 221   _ 373 313   &quot; 235
+0000300 304 036   U   4 214   A 246 261 301   2   v   m   =   x   c 314
+0000320   f 332 373   0 324 317   x 031 267   )   ~  \f 375   e 274 377
+0000340 177   r  \n 227 372 204 311   v   l 260   ; 357 217 267 344 264
+0000360 335 356 222   $ 026   o 361 001 004 211   J 233  \0  \0  \0  \0
+0000400  \0 274  \0  \0  \0  \0  \0 205  \0  \0 001  \n  \0  \0  \0  \0
+0000420  \0  \0  \0 002  \0  \0  \0  \0 377 377 377 377   l 274   } 354
+0000440   x   r   6 004   }   0 251   ( 274   N 253   C 315 367   9   :
+0000460  \0  \0  \0  \0  \0  \0  \0  \0  \0  \0  \0  \0   x 234   c   `
+0000500   ` 260   `   `   `   h 006 342   @ 005 005 005 215 262 374 314
+0000520 024 315 202 242 314 274 222   4  \r 245 200 242 374 364 242 304
+0000540   \ 005 325   b 205 324 212 324 344 322 222 324 024 205 362 314
+0000560 222  \f 205 222 214   T 205 264 374 234 234 374 362 314 274   t
+0000600 205 304 242 364 322 334 324 274 222   b 253 230   &lt;   % 035 020
+0000620 267   , 332       V 323 232  \v   h 350   r       &gt; 016 304   j
+0000640  \n   ` 200   j   ~ 264   j   q 254 002   L   G   &amp;   T 307 031
+0000660     276  \v 304 342 030 312 201 246 003 225  \0  \0 261 333   1
+0000700 233
+0000701
+
+
+It looks like the matching should be more thorough.</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

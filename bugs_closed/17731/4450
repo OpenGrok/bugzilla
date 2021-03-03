@@ -1,0 +1,71 @@
+# HG changeset patch
+# User Knut Anders Hatlen <knut.hatlen@oracle.com>
+# Date 1295258084 -3600
+# Node ID 5310c6f819ca1fa4ae44c7817d58dff718e7e330
+# Parent  bdb14468b554a875d2200945f67d4614bbdb80f8
+Bug #17731: Character encoding improper in Annotation
+
+diff -r bdb14468b554 -r 5310c6f819ca src/org/opensolaris/opengrok/history/GitHistoryParser.java
+--- a/src/org/opensolaris/opengrok/history/GitHistoryParser.java	Wed Jan 12 15:33:15 2011 +0100
++++ b/src/org/opensolaris/opengrok/history/GitHistoryParser.java	Mon Jan 17 10:54:44 2011 +0100
+@@ -28,7 +28,6 @@
+ import java.io.FileNotFoundException;
+ import java.io.IOException;
+ import java.io.InputStream;
+-import java.io.InputStreamReader;
+ import java.text.DateFormat;
+ import java.text.ParseException;
+ import java.util.ArrayList;
+@@ -63,7 +62,7 @@
+         DateFormat df = repository.getDateFormat();
+         ArrayList<HistoryEntry> entries = new ArrayList<HistoryEntry>();
+ 
+-        BufferedReader in = new BufferedReader(new InputStreamReader(input));
++        BufferedReader in = new BufferedReader(repository.newLogReader(input));
+ 
+         RuntimeEnvironment env = RuntimeEnvironment.getInstance();
+ 
+diff -r bdb14468b554 -r 5310c6f819ca src/org/opensolaris/opengrok/history/GitRepository.java
+--- a/src/org/opensolaris/opengrok/history/GitRepository.java	Wed Jan 12 15:33:15 2011 +0100
++++ b/src/org/opensolaris/opengrok/history/GitRepository.java	Mon Jan 17 10:54:44 2011 +0100
+@@ -29,6 +29,7 @@
+ import java.io.File;
+ import java.io.IOException;
+ import java.io.InputStream;
++import java.io.InputStreamReader;
+ import java.io.Reader;
+ import java.util.ArrayList;
+ import java.util.List;
+@@ -84,6 +85,22 @@
+     }
+ 
+     /**
++     * Create a {@code Reader} that reads an {@code InputStream} using the
++     * correct character encoding.
++     *
++     * @param input a stream with the output from a log or blame command
++     * @return a reader that reads the input
++     * @throws IOException if the reader cannot be created
++     */
++    Reader newLogReader(InputStream input) throws IOException {
++        // Bug #17731: Git always encodes the log output using UTF-8 (unless
++        // overridden by i18n.logoutputencoding, but let's assume that hasn't
++        // been done for now). Create a reader that uses UTF-8 instead of the
++        // platform's default encoding.
++        return new InputStreamReader(input, "UTF-8");
++    }
++
++    /**
+      * Get the name of the Git command that should be used
+      * @return the name of the hg command in use
+      */
+@@ -161,7 +178,8 @@
+             OpenGrokLogger.getLogger().log(Level.WARNING, "Failed to get annotations for: \"{0}\" Exit code: {1}", new Object[]{file.getAbsolutePath(), String.valueOf(status)});
+         }
+ 
+-        return parseAnnotation(exec.getOutputReader(), file.getName());
++        return parseAnnotation(
++                newLogReader(exec.getOutputStream()), file.getName());
+     }
+ 
+     protected Annotation parseAnnotation(Reader input, String fileName) throws IOException {

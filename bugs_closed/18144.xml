@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>18144</bug_id>
+          
+          <creation_ts>2011-04-12 13:54:00 +0000</creation_ts>
+          <short_desc>indexer will enter infinite cycle if it encounters symlink to dot</short_desc>
+          <delta_ts>2011-05-13 13:47:01 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>indexer</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXED</resolution>
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>major</bug_severity>
+          <target_milestone>0.11</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Vladimir Kotal">vladimir.kotal</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>82253</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2011-04-12 13:54:20 +0000</bug_when>
+            <thetext>This directory was traversed by the indexer:
+
+drwxrwxr-x   8 vk staff         25 Jan 19  1996 .
+drwxrwxr-x   5 vk staff         19 Jan 19  1996 ..
+drwxrwxr-x   2 vk staff          9 Jan 19  1996 cat1m
+drwxrwxr-x   2 vk staff          2 Sep 24  1992 cat2
+drwxrwxr-x   2 vk staff          2 Sep 24  1992 cat3c
+drwxrwxr-x   2 vk staff          2 Sep 24  1992 catman
+-rw-rw-r--   1 vk staff      41501 Oct 12  1992 cpu-control.ps
+lrwxrwxrwx   1 vk staff          1 Apr  6 22:38 man -&gt; .
+lrwxrwxrwx   1 vk staff          1 Apr  6 22:38 man1m -&gt; .
+lrwxrwxrwx   1 vk staff          1 Apr  6 22:38 man2 -&gt; .
+lrwxrwxrwx   1 vk staff          1 Apr  6 22:38 man3c -&gt; .
+-r--r--r--   1 vk staff       1769 Sep 24  1992 p_online.2
+-rw-r--r--   1 vk staff       3181 Sep 25  1992 pbind.1m
+-r--r--r--   1 vk staff       2270 Sep 24  1992 processor_bind.2
+-rw-r--r--   1 vk staff       1800 Sep 25  1992 processor_info.2
+-r--r--r--   1 vk staff       1861 Sep 24  1992 psradm.1m
+-r--r--r--   1 vk staff       1751 Sep 24  1992 psrinfo.1m
+drwxrwxr-x   2 vk staff          8 Jan 19  1996 raw
+-r--r--r--   1 vk staff       9106 Sep 23  1992 README
+-rw-rw-r--   1 vk staff       1106 Nov  3  1992 request-form
+drwxrwxr-x   2 vk staff         12 Jan 19  1996 SCCS
+-rw-r--r--   1 vk staff       3492 Sep 25  1992 sysconf.3c
+-rw-rw-r--   1 vk staff       8083 Sep 23  1992 t
+-rwxr-xr-x   1 vk staff       4848 Sep 24  1992 template
+-r--r--r--   1 vk staff      11569 Sep 24  1992 template.orig 
+
+and it entered infinite loop, adding entries from the directory again and again. Couple of samples:
+
+2011-04-12 15:47:35.722+0200 FINER t20 DefaultIndexChangedListener.fileAdded: Added: /infinite/man/man3c/man3c/man3c/man3c/man3c/man3c/man3c/man3c/raw/processor_bind.2 (PlainAnalyzer)
+2011-04-12 15:47:35.723+0200 INFO t20 DefaultIndexChangedListener.fileAdd: Add: /infinite/man/man3c/man3c/man3c/man3c/man3c/man3c/man3c/man3c/raw/processor_info.2 (PlainAnalyzer)
+2011-04-12 15:47:35.725+0200 FINER t20 DefaultIndexChangedListener.fileAdded: Added: /infinite/man/man3c/man3c/man3c/man3c/man3c/man3c/man3c/man3c/raw/processor_info.2 (PlainAnalyzer)</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>82940</commentid>
+            <who name="Trond Norbye">trond.norbye</who>
+            <bug_when>2011-05-13 13:47:01 +0000</bug_when>
+            <thetext>changeset:   1192:d3e3d31e4661</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

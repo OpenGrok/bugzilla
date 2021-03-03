@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>16677</bug_id>
+          
+          <creation_ts>2010-07-29 12:31:00 +0000</creation_ts>
+          <short_desc>revamp option -v</short_desc>
+          <delta_ts>2011-01-05 08:34:44 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>misc</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXED</resolution>
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>minor</bug_severity>
+          <target_milestone>0.10</target_milestone>
+          <dependson>15468</dependson>
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Lubos Kosco">Lubos.Kosco</reporter>
+          <assigned_to name="Lubos Kosco">Lubos.Kosco</assigned_to>
+          <cc>knut.hatlen</cc>
+    
+    <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>75993</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2010-07-29 12:31:29 +0000</bug_when>
+            <thetext>(10:57:49) Taz: I am planning to get rid of verbose nonverbose option
+(10:57:58) Taz: after all indexer is kind of daemon
+(10:57:59) Knut Anders Hatlen: yes please! :)
+(10:58:07) Taz: logging can take care of all our probs
+(10:58:31) Knut Anders Hatlen: or, verbose/nonverbose could still be there, only it controls the console logging level?
+(10:58:32) Taz: I just need to figure out how to say that all logs go to which file, but I hope logging has some function for it
+(10:59:08) Taz: yes, that is an option too ... but if you look at logging properties, you can just make all stuff go to log and nothing to console
+(10:59:19) Taz: so we can ship changed logging properties
+(10:59:31) Knut Anders Hatlen: take a look at the agent code. I think Jan Ståle wrote some code to redirect the logging
+(10:59:34) Taz: and if you start indexer it will just say: go to this file for logs
+(10:59:44) Taz: yes, that&apos;s where I wanted to look
+11:00
+(11:00:41) Taz: and it partly gets rid of verbose/nonverbose
+(11:00:51) Knut Anders Hatlen: http://src.opensolaris.org/source/xref/opengrok/trunk/src/org/opensolaris/opengrok/OpenGrokLogger.java#setConsoleLogLevel
+(11:00:59) Taz: the goal is that there will be almost no System.out.println
+(11:01:04) Taz: nor .err.println
+(11:01:33) Taz: the only messages will be about where is the log file and eventually help / error message if wrong option specified
+(11:01:38) Knut Anders Hatlen: that sounds great!
+(11:01:52) Taz: that&apos;s roughly the idea ... so future will be all logging
+(11:02:34) Knut Anders Hatlen: I like that idea, as long as we have a way to get some of it redirected to console. but it looks like setConsoleLogLevel does that for us.
+(11:02:45) Knut Anders Hatlen: so +1
+(11:02:56) Taz: well, default java thing is to log all from INFO above
+(11:03:09) Taz: so INFO,WARNING and SEVERE are logged even without logging properties
+(11:03:16) Taz: (since the defaults from jre are taken)
+(11:03:38) Knut Anders Hatlen: -v could give us FINE, -vv FINER, and so on?
+(11:03:46) Taz: that could make sense
+(11:04:06) Taz: we also would ship a logging.properties, which logs all verbose stuff to log file
+(11:04:14) Taz: and nonverbose to console
+(11:04:19) Taz: and point out the log file
+
+also logging development rules will be documented in docs</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>76254</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2010-08-05 16:43:27 +0000</bug_when>
+            <thetext>-v will set the info level
+take one here:
+
+changeset:   1062:172b161b4379</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>80279</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2011-01-05 08:34:44 +0000</bug_when>
+            <thetext>Closing this bug since a fix went into 0.10. Please file a new bug report if there are further improvements needed.</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

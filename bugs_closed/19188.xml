@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>19188</bug_id>
+          
+          <creation_ts>2012-03-06 10:14:00 +0000</creation_ts>
+          <short_desc>if filename has &quot;:&quot; in its name, the link to it from xref will be wrong</short_desc>
+          <delta_ts>2012-03-08 13:26:42 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>webapp</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXED</resolution>
+          
+          
+          
+          
+          
+          <priority>P2</priority>
+          <bug_severity>major</bug_severity>
+          <target_milestone>next</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Lubos Kosco">Lubos.Kosco</reporter>
+          <assigned_to name="Knut Anders Hatlen">knut.hatlen</assigned_to>
+          <cc>knut.hatlen</cc>
+    
+    <cc>opengrok-dev</cc>
+    
+    <cc>skywalker</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>86307</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2012-03-06 10:14:58 +0000</bug_when>
+            <thetext>I reproduced with 0.11
+
+Alan below with 0.9
+
+On 5.3.2012 20:04, ALAN KAPLAN (BLOOMBERG/ 731 LEXIN) wrote:
+&gt; Hi Lubos, Greetings again.. I was wondering if you could answer this question. So we have some files that we index, that have weird names, like:
+&gt; foo::bar::test.js (all with :: in them). When you try to pick them from the &quot;browsable and searchable source tree (xref/) - when you select them you get a error message:
+&gt; Invalid URL, Please use the following link to reach opengrok
+&gt; and it lists our OpenGrok link..
+&gt;
+&gt; Then on the url line, it shows /null at the end of the url line.
+&gt;
+&gt; However, if I specify the file name directly on the url line, instead of clicking through to get to it, then it comes up fine. Is this a bug in OpenGrok or some sort of limitation?
+&gt; I did see this defect ticket, but I don&apos;t know if this applies to this bug..
+&gt; http://defect.opensolaris.org/bz/show_bug.cgi?id=323
+&gt;
+&gt; Also, I am using OpenGrok version 0.9
+&gt;
+&gt; Whenever you get a chance, most appreciated. Thanks. --Alan</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86319</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2012-03-08 13:26:42 +0000</bug_when>
+            <thetext>I&apos;ve pushed a fix for this bug.
+
+changeset:   1340:c72947c31dcb</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

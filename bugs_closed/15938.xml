@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>15938</bug_id>
+          
+          <creation_ts>2010-05-11 22:10:00 +0000</creation_ts>
+          <short_desc>Analyzers should only use JFlex&apos;s public API</short_desc>
+          <delta_ts>2010-08-13 18:12:10 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>analyzer</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXED</resolution>
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>minor</bug_severity>
+          <target_milestone>0.10</target_milestone>
+          
+          <blocked>16783</blocked>
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Knut Anders Hatlen">knut.hatlen</reporter>
+          <assigned_to name="Knut Anders Hatlen">knut.hatlen</assigned_to>
+          <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>72803</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2010-05-11 22:10:33 +0000</bug_when>
+            <thetext>The analyzers should stop using internal JFlex fields (the ones starting with zz) and instead use the public API described here: http://jflex.de/manual.html#ScannerMethods</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>72870</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2010-05-12 23:28:32 +0000</bug_when>
+            <thetext>I&apos;ve checked in a first patch for this issue. That patch makes the Xref classes use yytext() instead of accessing the internal buffer directly. As a sanity check, I&apos;ve generated xref for opengrok and onnv-gate and verified both that the exact same xrefs are created after the change and that it didn&apos;t cause a slowdown.
+
+changeset:   1013:6469dadbc0f2</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>76017</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2010-07-29 22:38:05 +0000</bug_when>
+            <thetext>Cleaned up the tokenizers and their reInit() methods.
+
+changeset:   1056:90fa13db840f</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>76048</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2010-07-30 16:19:11 +0000</bug_when>
+            <thetext>Did the same cleanup in the xrefs&apos; reInit() methods.
+
+changeset:   1058:812322b678d4</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>76292</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2010-08-06 20:53:11 +0000</bug_when>
+            <thetext>Cleaned up HistoryLineTokenizer and moved some of the code over to HistoryContext. Also added a JUnit test for HistoryContext.
+
+changeset:   1065:c15b35700f9d</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>76563</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2010-08-13 18:11:44 +0000</bug_when>
+            <thetext>Cleaned up PlainLineTokenizer. This also fixed bug #16783.
+
+changeset:   1080:2151d08ae300
+
+There are no more references to the internal JFlex API now, so I&apos;m closing the bug.</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

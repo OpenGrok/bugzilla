@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>1057</bug_id>
+          
+          <creation_ts>2008-04-09 07:06:00 +0000</creation_ts>
+          <short_desc>double-colon in search pattern throws an error</short_desc>
+          <delta_ts>2008-04-10 02:28:33 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>webapp</component>
+          <version>unspecified</version>
+          <rep_platform>Other</rep_platform>
+          <op_sys>Windows</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXED</resolution>
+          
+          
+          <bug_file_loc>http://src.opensolaris.org/source/search?q=Net%3A%3AFtp&amp;defs=&amp;refs=&amp;path=&amp;hist=&amp;project=%2Fonnv</bug_file_loc>
+          
+          
+          <priority>P4</priority>
+          <bug_severity>normal</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Hemang Lavana">HemangLavana</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>3452</commentid>
+            <who name="Hemang Lavana">HemangLavana</who>
+            <bug_when>2008-04-09 07:06:46 +0000</bug_when>
+            <thetext>In version 0.6, when I try to search for a pattern consisting of double-colon, it throws an errors. For example, if you search for &quot;Net::Ftp&quot; on 
+
+http://src.opensolaris.org/source/
+
+It returns the following error page:
+
+Error:
+Net::Ftp
+Cannot parse &apos;Net::Ftp&apos;: Encountered &quot;:&quot; at line 1, column 4.
+Was expecting one of:
+&quot;(&quot; ...
+&quot;*&quot; ...
+&lt;QUOTED&gt; ...
+&lt;TERM&gt; ...
+&lt;PREFIXTERM&gt; ...
+&lt;WILDTERM&gt; ...
+&quot;[&quot; ...
+&quot;{&quot; ...
+&lt;NUMBER&gt; ...
+
+Direct URL for this search is:
+
+http://src.opensolaris.org/source/search?q=Net%3A%3AFtp&amp;defs=&amp;refs=&amp;path=&amp;hist=&amp;project=%2Fonnv</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>3511</commentid>
+            <who name="Trond Norbye">trond.norbye</who>
+            <bug_when>2008-04-10 02:28:33 +0000</bug_when>
+            <thetext>Fixed in 276:a7967e8e5c3a</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

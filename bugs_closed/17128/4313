@@ -1,0 +1,664 @@
+diff --git a/.hgignore b/.hgignore
+--- a/.hgignore
++++ b/.hgignore
+@@ -27,3 +27,4 @@
+ lib/jrcs.jar
+ derby.log
+ nbproject/genfiles.properties
++lib/junit-4.8.2.jar
+diff --git a/OpenGrok b/OpenGrok
+--- a/OpenGrok
++++ b/OpenGrok
+@@ -63,9 +63,14 @@
+ #
+ # Runtime Configuration
+ #
+-
++if [ -f "/bin/uname" ]
++then
+ OS_NAME="`/bin/uname -s`"
+ OS_VERSION="`/bin/uname -r`"
++else
++OS_NAME="`/usr/bin/uname -s`"
++OS_VERSION="`/usr/bin/uname -r`"
++fi
+ 
+ # TODO: Handle symlinks correctly (especially in ${0})
+ SCRIPT_DIRECTORY="`dirname ${0}`"
+@@ -193,7 +198,7 @@
+ 
+     # OPTIONAL: Allow Leading Wildcard Searches
+     #           (default: off)
+-    #LEADING_WILDCARD="-a on"
++    LEADING_WILDCARD="-a on"
+ 
+     # OPTIONAL: Web Site Look & Feel
+     #           (Options: default, offwhite and polished.
+diff --git a/src/org/opensolaris/opengrok/analysis/Definitions.java b/src/org/opensolaris/opengrok/analysis/Definitions.java
+--- a/src/org/opensolaris/opengrok/analysis/Definitions.java
++++ b/src/org/opensolaris/opengrok/analysis/Definitions.java
+@@ -35,10 +35,22 @@
+ import java.util.List;
+ import java.util.Map;
+ import java.util.Set;
++import java.util.Iterator;
+ 
+ public class Definitions implements Serializable {
+     private final static long serialVersionUID = 1191703801007779489L;
+ 
++    // Per line sym -> tags mapping
++    public static class LineTagMap implements Serializable {
++        private final Map<String, Set<Tag>> sym_tags;
++
++        protected LineTagMap() {
++            this.sym_tags = new HashMap<String, Set<Tag>>();
++        }
++    };
++    // line -> tag_map
++    private final Map<Integer, LineTagMap> line_maps;
++
+     /** Map from symbol to the line numbers on which the symbol is defined. */
+     private final Map<String, Set<Integer>> symbols;
+     /** List of all the tags. */
+@@ -46,6 +58,7 @@
+ 
+     public Definitions() {
+         symbols = new HashMap<String, Set<Integer>>();
++        line_maps = new HashMap<Integer, LineTagMap>();
+         tags = new ArrayList<Tag>();
+     }
+ 
+@@ -72,9 +85,31 @@
+      * @param lineNumber the line to check
+      * @return {@code true} iff {@code symbol} is defined on the specified line
+      */
+-    public boolean hasDefinitionAt(String symbol, int lineNumber) {
++    public boolean hasDefinitionAt(String symbol, int lineNumber, String[] strs) {
+         Set<Integer> lines = symbols.get(symbol);
+-        return lines != null && lines.contains(lineNumber);
++        if (strs.length > 0) {
++            strs[0] = "none";
++        }
++
++        // Get tag info
++        if (lines != null && lines.contains(lineNumber)) {
++            LineTagMap line_map = line_maps.get(lineNumber);
++            if (line_map != null) {
++                Set<Tag> tags = line_map.sym_tags.get(symbol);
++                Iterator it = tags.iterator();
++                while (it.hasNext()) {
++                    Tag tag = (Tag)it.next();
++                    if (strs.length > 0) {
++                        strs[0] = tag.type;
++                    }
++                    // Assume the first one
++                    break;
++                }
++            }
++            return true;
++        }
++
++        return false;
+     }
+ 
+     /**
+@@ -135,13 +170,29 @@
+         final String internedSymbol = symbol.intern();
+         final String internedType = type.intern();
+         final String internedText = text.intern();
+-        tags.add(new Tag(line, internedSymbol, internedType, internedText));
++        Tag new_tag = new Tag(line, internedSymbol, internedType, internedText);
++        tags.add(new_tag);
+         Set<Integer> lines = symbols.get(internedSymbol);
+         if (lines == null) {
+             lines = new HashSet<Integer>();
+             symbols.put(internedSymbol, lines);
+         }
+         lines.add(line);
++
++        // Get per line map
++        LineTagMap line_map = line_maps.get(line);
++        if (line_map == null) {
++            line_map = new LineTagMap();
++            line_maps.put(line, line_map);
++        }
++
++        // Insert sym->tag map for this line
++        Set<Tag> tags = line_map.sym_tags.get(internedSymbol);
++        if (tags == null) {
++            tags = new HashSet<Tag>();
++            line_map.sym_tags.put(internedSymbol, tags);
++        }
++        tags.add(new_tag);
+     }
+ 
+     /**
+diff --git a/src/org/opensolaris/opengrok/analysis/JFlexXref.java b/src/org/opensolaris/opengrok/analysis/JFlexXref.java
+--- a/src/org/opensolaris/opengrok/analysis/JFlexXref.java
++++ b/src/org/opensolaris/opengrok/analysis/JFlexXref.java
+@@ -144,30 +144,95 @@
+    */
+   protected void writeSymbol(String symbol, Set<String> keywords, int line)
+           throws IOException {
++      String[] strs = new String[1];
++      strs[0] = "";
++
+       if (keywords!=null && keywords.contains(symbol)) {
+           // This is a keyword, so we don't create a link.
+           out.append("<b>").append(symbol).append("</b>");
+ 
+-      } else if (defs != null && defs.hasDefinitionAt(symbol, line)) {
++      } else if (defs != null && defs.hasDefinitionAt(symbol, line, strs)) {
+           // This is the definition of the symbol.
++          String type = strs[0];
++          String style_class = "d";
++
++          if (type.startsWith("macro")) {
++              style_class = "xm";
++          }
++          else if (type.startsWith("argument")) {
++              style_class = "xa";
++          }
++          else if (type.startsWith("local")) {
++              style_class = "xl";
++          }
++          else if (type.startsWith("variable")) {
++              style_class = "xv";
++          }
++          else if (type.startsWith("class")) {
++              style_class = "xc";
++          }
++          else if (type.startsWith("interface")) {
++              style_class = "xi";
++          }
++          else if (type.startsWith("namespace")) {
++              style_class = "xn";
++          }
++          else if (type.startsWith("enum")) {
++              style_class = "xe";
++          }
++          else if (type.startsWith("enumerator")) {
++              style_class = "xer";
++          }
++          else if (type.startsWith("struct")) {
++              style_class = "xs";
++          }
++          else if (type.startsWith("typedef")) {
++              style_class = "xt";
++          }
++          else if (type.startsWith("typedefs")) {
++              style_class = "xts";
++          }
++          else if (type.startsWith("union")) {
++              style_class = "xu";
++          }
++          else if (type.startsWith("field")) {
++              style_class = "xfld";
++          }
++          else if (type.startsWith("member")) {
++              style_class = "xmb";
++          }
++          else if (type.startsWith("function")) {
++              style_class = "xf";
++          }
++          else if (type.startsWith("method")) {
++              style_class = "xmt";
++          }
++          else if (type.startsWith("subroutine")) {
++              style_class = "xsr";
++          }
+ 
+           // 1) Create an anchor for direct links. (Perhaps, we should only
+           //    do this when there's exactly one definition of the symbol in
+           //    this file? Otherwise, we may end up with multiple anchors with
+           //    the same name.)
+-          out.append("<a class=\"d\" name=\"").append(symbol).append("\"/>");
++          out.append("<a class=\"").append(style_class).append("\" name=\"").append(symbol).append("\"/>");
+ 
+           // 2) Create a link that searches for all references to this symbol.
+           out.append("<a href=\"").append(urlPrefix).append("refs=");
+           out.append(symbol);
+           appendProject();
+-          out.append("\" class=\"d\">").append(symbol).append("</a>");
++          out.append("\" class=\"").append(style_class).append("\" ")
++              // May have multiple anchors with the same function name,
++              // store line number for accurate location used in list.jsp.
++              .append("ln=\"").append(Integer.toString(line)).append("\">")
++              .append(symbol).append("</a>");
+ 
+       } else if (defs != null && defs.occurrences(symbol) == 1) {
+           // This is a reference to a symbol defined exactly once in this file.
++          String style_class = "d";
+ 
+           // Generate a direct link to the symbol definition.
+-          out.append("<a class=\"f\" href=\"#").append(symbol).append("\">")
++          out.append("<a class=\"").append(style_class).append("\" href=\"#").append(symbol).append("\">")
+                   .append(symbol).append("</a>");
+ 
+       } else {
+diff --git a/src/org/opensolaris/opengrok/index/IgnoredNames.java b/src/org/opensolaris/opengrok/index/IgnoredNames.java
+--- a/src/org/opensolaris/opengrok/index/IgnoredNames.java
++++ b/src/org/opensolaris/opengrok/index/IgnoredNames.java
+@@ -51,6 +51,7 @@
+         "tags",
+         ".svn",
+         ".git",
++        ".repo",
+         ".hg",
+         ".hgtags",
+         ".bzr",
+diff --git a/src/org/opensolaris/opengrok/index/IndexDatabase.java b/src/org/opensolaris/opengrok/index/IndexDatabase.java
+--- a/src/org/opensolaris/opengrok/index/IndexDatabase.java
++++ b/src/org/opensolaris/opengrok/index/IndexDatabase.java
+@@ -334,7 +334,11 @@
+                 try {
+                     uidIter = reader.terms(new Term("u", startuid)); // init uid iterator
+ 
+-                    indexDown(sourceRoot, dir);
++                    int file_cnt = 0;
++                    file_cnt = indexDown(sourceRoot, dir, true, 0, 0);
++                    System.out.print("[XXXLC] Total files: " + file_cnt + "\n");
++
++                    indexDown(sourceRoot, dir, false, 0, file_cnt);
+ 
+                     while (uidIter.term() != null && uidIter.term().field().equals("u") && uidIter.term().text().startsWith(startuid)) {
+                         removeFile();
+@@ -708,19 +712,20 @@
+      * @param dir the root indexDirectory to generate indexes for
+      * @param path the path
+      */
+-    private void indexDown(File dir, String parent) throws IOException {
++    private int indexDown(File dir, String parent, boolean count_only, int cur_count, int est_total) throws IOException {
++
+         if (isInterrupted()) {
+-            return;
++            return cur_count;
+         }
+ 
+         if (!accept(dir)) {
+-            return;
++            return cur_count;
+         }
+ 
+         File[] files = dir.listFiles();
+         if (files == null) {
+             log.log(Level.SEVERE, "Failed to get file listing for: {0}", dir.getAbsolutePath());
+-            return;
++            return cur_count;
+         }
+         Arrays.sort(files, new Comparator<File>() {
+             @Override
+@@ -732,9 +737,19 @@
+         for (File file : files) {
+             if (accept(file)) {
+                 String path = parent + '/' + file.getName();
++
+                 if (file.isDirectory()) {
+-                    indexDown(file, path);
++                    cur_count = indexDown(file, path, count_only, cur_count, est_total);
+                 } else {
++                    cur_count++;
++                    if (count_only)
++                        continue;
++
++                    if (est_total > 0)
++                    {
++                        System.out.print("[IDX] " + cur_count + " (" + cur_count * 100.0f / est_total + "%) : " + path + "\n");
++                    }
++
+                     if (uidIter != null) {
+                         String uid = Util.uid(path, DateTools.timeToString(file.lastModified(), DateTools.Resolution.MILLISECOND)); // construct uid for doc
+                         while (uidIter.term() != null && uidIter.term().field().equals("u") &&
+@@ -759,6 +774,8 @@
+                 }
+             }
+         }
++
++        return cur_count;
+     }
+ 
+     /**
+diff --git a/web/default/style.css b/web/default/style.css
+--- a/web/default/style.css
++++ b/web/default/style.css
+@@ -145,12 +145,38 @@
+ .c  {color:#666;} /* comments */
+ .b  {color:#000; font-weight:bold;} /* comments */
+ .k  {color:#000; font-family:monospace;} /* comments */
+-a.d {color:#909; font-weight:bold; font-style:italic;text-decoration:none;} /* definitions */
+ a.s {color:#000;}  /* matched lines */
+ a.f {color:#909;} /* file locals */
+ div.a {color:#000}
+ a.h {font-size:small; margin-left:2em;}
+ 
++a.d {color:#936; font-weight:bold; text-decoration:none;} /* definitions */
++
++a.xm {color:#c66; font-weight:bold; text-decoration:none;} /* macro */
++
++a.xa {color:#60c; font-weight:bold; text-decoration:none;} /* argument */
++a.xl {color:#963; font-weight:bold; text-decoration:none;} /* local */
++a.xv {color:#c30; font-weight:bold; text-decoration:none;} /* variable */
++
++a.xc {color:#909; font-weight:bold; font-style:italic; text-decoration:none;} /* class */
++a.xi {color:#909; font-weight:bold; font-style:italic; text-decoration:none;} /* interface */
++a.xn {color:#909; font-weight:bold; font-style:italic; text-decoration:none;} /* namespace */
++
++a.xe {color:#909; font-weight:bold; font-style:italic; text-decoration:none;} /* enum */
++a.xer {color:#909; font-weight:bold; font-style:italic; text-decoration:none;} /* enumerator */
++a.xs {color:#909; font-weight:bold; font-style:italic; text-decoration:none;} /* struct */
++a.xt {color:#909; font-weight:bold; font-style:italic; text-decoration:none;} /* typedef */
++a.xts {color:#909; font-weight:bold; font-style:italic; text-decoration:none;} /* typedefs */
++a.xu {color:#909; font-weight:bold; font-style:italic; text-decoration:none;} /* union */
++
++a.xfld {color:#090; font-weight:bold; text-decoration:none;} /* field */
++a.xmb {color:#090; font-weight:bold; text-decoration:none;} /* member */
++
++a.xf {color:#00f; font-weight:bold; text-decoration:none;} /* function */
++a.xmt {color:#00f; font-weight:bold; text-decoration:none;} /* method */
++a.xsr {color:#00f; font-weight:bold; text-decoration:none;} /* subroutine */
++
++
+ #results {margin-top:.5em;}
+ #results .con{font-size:small;color:#000;}
+ #more .l, #results .l { color:#666; }
+diff --git a/web/foot.jspf b/web/foot.jspf
+--- a/web/foot.jspf
++++ b/web/foot.jspf
+@@ -31,5 +31,11 @@
+ if ( fservlet.startsWith("/xr") || fservlet.startsWith("/hi") || fservlet.startsWith("/di") || fservlet.startsWith("/mo") ) { %>
+ </div><% } // just for content from xref / lister / history / diff / more pages %>
+ </div><% // from page %>
++<script type="text/javascript">/* <![CDATA[ */
++if (typeof lsttoggle == 'function')
++{
++    lsttoggle();
++}
++/* ]]> */</script>
+ </body>
+ </html>
+diff --git a/web/list.jsp b/web/list.jsp
+--- a/web/list.jsp
++++ b/web/list.jsp
+@@ -33,7 +33,33 @@
+ org.opensolaris.opengrok.web.*,
+ org.opensolaris.opengrok.history.*
+ "
+-%><%@include file="mast.jsp"%><script type="text/javascript">/* <![CDATA[ */
++%><%@include file="mast.jsp"%>
++<% if (!isDir) { %>
++<style type="text/css">
++    .sym_list_style {
++        position:absolute;
++        top:100px;
++        left:100px;
++        width:100px;
++        height:100px;
++        overflow:auto;
++        z-index: 10;
++        border:solid 1px #c0c0c0;
++        background-color:#ffffcc;
++        color:#000;
++        font-size:12px;
++        font-family:monospace;
++        padding:5px;
++        opacity:0.9;
++        filter:alpha(opacity=90)
++    }
++
++    .sym_list_style_hide {
++        display: none;
++    }
++}
++</style>
++<script type="text/javascript">/* <![CDATA[ */
+ function lntoggle() {
+    $("a").each(function() {
+       if (this.className == 'l' || this.className == 'hl') {
+@@ -48,7 +74,224 @@
+      }
+     );
+ }
+-/* ]]> */</script><%
++
++function get_sym_list_contents()
++{
++    var contents = "";
++
++    contents += "<input id=\"input_highlight\" name=\"input_highlight\" class=\"q\"/>";
++    contents += "&nbsp;&nbsp;";
++    contents += "<b><a href=\"#\" onclick=\"javascript:add_highlight();return false;\" title=\"Add highlight\">Highlight</a></b><br>";
++
++    var class_names=[
++        "xm",
++        "xe",
++        "xs",
++        "xt",
++        "xv",
++        "xi",
++        "xc",
++        "xf",
++        "xmt"];
++    var type_names=[
++        "Macro",
++        "Enum",
++        "Struct",
++        "Typedef",
++        "Variable",
++        "Interface",
++        "Class",
++        "Function",
++        "Method"];
++    var class_contents=[
++        "",
++        "",
++        "",
++        "",
++        "",
++        "",
++        "",
++        "",
++        ""];
++
++    $("a").each(
++        function()
++        {
++            for (var i = 0; i < class_names.length; i++)
++            {
++                if (this.className == class_names[i])
++                {
++                    var fname = this.innerHTML;
++                    if (fname != "")
++                    {
++                        // Use line number as accurate anchor
++                        var line = this.getAttribute("ln");
++
++                        class_contents[i] += "<a href=\"#" +
++                            line + "\" class=\"" + class_names[i] + "\">" +
++                            this.innerHTML + "</a><br>";
++
++                    }
++
++                    break;
++                }
++            }
++        }
++    );
++
++    var count = 0;
++    for (var i = 0; i < class_names.length; i++)
++    {
++        if (class_contents[i] != "")
++        {
++            if (count > 0)
++            {
++                contents += "<br>"
++            }
++            contents += "<b>" + type_names[i] + "</b><br>"
++            contents += class_contents[i];
++
++            count++;
++        }
++    }
++
++    return contents;
++}
++
++// Initial value
++document.sym_div_width = 240;
++document.sym_div_height_max = 480;
++document.sym_div_top = 100;
++document.sym_div_left_margin = 40;
++document.sym_div_height_margin = 40;
++
++function get_sym_div_left()
++{
++    document.sym_div_left = $(window).width() - (document.sym_div_width + document.sym_div_left_margin);
++    return document.sym_div_left;
++}
++
++function get_sym_div_height()
++{
++    document.sym_div_height = $(window).height() - document.sym_div_top - document.sym_div_height_margin;
++
++    if (document.sym_div_height > document.sym_div_height_max)
++        document.sym_div_height = document.sym_div_height_max;
++
++    return document.sym_div_height;
++}
++
++function get_sym_div_top()
++{
++    return document.sym_div_top;
++}
++
++function get_sym_div_width()
++{
++    return document.sym_div_width;
++}
++
++function lsttoggle()
++{
++    if (document.sym_div == null)
++    {
++        document.sym_div = document.createElement("div");
++        document.sym_div.id = "sym_div";
++
++        document.sym_div.className = "sym_list_style";
++        document.sym_div.style.margin = "0px auto";
++        document.sym_div.style.width = get_sym_div_width() + "px";
++        document.sym_div.style.height = get_sym_div_height() + "px";
++        document.sym_div.style.top = get_sym_div_top() + "px";
++        document.sym_div.style.left = get_sym_div_left() + "px";
++
++        document.sym_div.innerHTML = get_sym_list_contents();
++
++        document.body.appendChild(document.sym_div);
++        document.sym_div_shown = 1;
++    }
++    else
++    {
++        if (document.sym_div_shown == 1)
++        {
++            document.sym_div.className = "sym_list_style_hide";
++            document.sym_div_shown = 0;
++        }
++        else
++        {
++            document.sym_div.style.height = get_sym_div_height() + "px";
++            document.sym_div.style.width = get_sym_div_width() + "px";
++            document.sym_div.style.top = get_sym_div_top() + "px";
++            document.sym_div.style.left = get_sym_div_left() + "px";
++            document.sym_div.className = "sym_list_style";
++            document.sym_div_shown = 1;
++        }
++    }
++}
++
++$(window).resize(
++    function()
++    {
++        if (document.sym_div_shown == 1)
++        {
++            document.sym_div.style.left = get_sym_div_left() + "px";
++            document.sym_div.style.height = get_sym_div_height() + "px";
++        }
++    }
++);
++
++// Highlighting
++/*
++// This will replace link's href contents as well, be careful
++function HighlightKeywordsFullText(keywords)
++{
++    var el = $("body");
++
++    $(keywords).each(
++        function()
++        {
++            var pattern = new RegExp("("+this+")", ["gi"]);
++            var rs = "<span style='background-color:#FFFF00;font-weight: bold;'>$1</span>";
++            el.html(el.html().replace(pattern, rs)); 
++        }
++    );
++}
++//HighlightKeywordsFullText(["nfstcpsock"]);
++*/
++
++document.highlight_count = 0;
++// This only changes matching tag's style
++function HighlightKeyword(keyword)
++{
++    var high_colors=[
++        "#ffff66",
++        "#ffcccc",
++        "#ccccff",
++        "#99ff99",
++        "#cc66ff"];
++
++    var pattern = "a:contains('" + keyword + "')";
++    $(pattern).css({
++        'text-decoration' : 'underline',
++        'background-color' : high_colors[document.highlight_count % high_colors.length],
++        'font-weight' : 'bold'
++    });
++
++    document.highlight_count++;
++}
++
++//HighlightKeyword('timeval');
++
++function add_highlight()
++{
++    var tbox = document.getElementById('input_highlight');
++    HighlightKeyword(tbox.value);
++}
++
++/* ]]> */
++</script>
++<% } %>
++<%
+ String rev = null;
+ if(!isDir && ef != null) {
+     try {
+diff --git a/web/mast.jsp b/web/mast.jsp
+--- a/web/mast.jsp
++++ b/web/mast.jsp
+@@ -209,7 +209,7 @@
+     }    
+             if (!isDir) {
+                 if ( servlet.startsWith("/xr") ) {
+-               %> | <a href="#" onclick="javascript:lntoggle();return false;" title="Show or hide line numbers (might be slower if file has more than 10 000 lines).">Line #</a><%
++               %> | <a href="#" onclick="javascript:lntoggle();return false;" title="Show or hide line numbers (might be slower if file has more than 10 000 lines).">Line #</a> | <a href="#" onclick="javascript:lsttoggle();return false;" title="Show or hide symbol list.">List</a><%
+                 }
+                String rev = request.getParameter("r");
+                if (rev == null || rev.equals("")) {
+@@ -220,7 +220,8 @@
+      }
+ 
+      Project proj = Project.getProject(resourceFile);
+-     if  (proj != null || !environment.hasProjects()) {
++     //if (proj != null || !environment.hasProjects())
++     {
+         %> | <input id="search" name="q" class="q"/>
+         <input type="submit" value="Search" class="submit"/>
+         <%

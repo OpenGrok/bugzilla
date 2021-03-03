@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>1043</bug_id>
+          
+          <creation_ts>2008-04-08 14:00:00 +0000</creation_ts>
+          <short_desc>man2html rendering of sh.1 shows garbage</short_desc>
+          <delta_ts>2010-01-22 13:21:07 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>misc</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>ACCEPTED</bug_status>
+          
+          
+          
+          
+          
+          
+          <priority>P4</priority>
+          <bug_severity>minor</bug_severity>
+          <target_milestone>0.9</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Roland Mainz">roland.mainz</reporter>
+          <assigned_to name="Knut Anders Hatlen">knut.hatlen</assigned_to>
+          <cc>Lubos.Kosco</cc>
+    
+    <cc>marcel.telka</cc>
+    
+    <cc>roland.mainz</cc>
+    
+    <cc>trond.norbye</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>3387</commentid>
+            <who name="Roland Mainz">roland.mainz</who>
+            <bug_when>2008-04-08 14:00:01 +0000</bug_when>
+            <thetext>OpenGrok seems to have a way to convert troff manual pages (unfortunately not DocBook/XML... ;-( ) to HTML, however looking at a more complex example (the ksh93 manual page) like http://src.opensolaris.org/source/xref/onnv/onnv-gate/usr/src/lib/libshell/common/sh.1 shows some &quot;garbage characters&quot; in the HTML view where the converter fails, e.g.
+-- snip --
+ David Korn
+AT&amp;T Bell Laboratories
+
+@(#)sh.1 (dgk (at] research.att.com) 12/28/93
+
+.nr Z 1 \&quot; set to 1 when command name is ksh, 2 for ksh93
+SH 1
+.\}
+KSH 1 &quot;User Environment Utilities&quot; &quot;RDS Standard&quot;
+.\}
+KSH93 1
+.\}
+NAME
+sh, rsh, pfsh - shell, the .\} .\} ksh, rksh, pfksh - KornShell, a ksh93, rksh93, pfksh93 - KornShell, a .\} standard/restricted command and programming language
+SYNOPSIS
+sh .\} ksh .\} ksh93 .\} [ \(+-abcefhikmnoprstuvxBCDP ] [ -R file ] [ \(+-o option ] .\|.\|. [ - ] [ arg .\|.\|. ] rsh .\} rksh .\} rksh93 .\} [ \(+-abcefhikmnoprstuvxBCD ] [ -R file ] [ \(+-o option ] .\|.\|. [ - ] [ arg .\|.\|. ]
+DESCRIPTION
+-- snip --</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>12857</commentid>
+            <who name="Trond Norbye">trond.norbye</who>
+            <bug_when>2008-09-20 23:59:41 +0000</bug_when>
+            <thetext>We (Knut Anders, Lubos and myself) had a long discussion about this bug yesterday, and we concluded that the default formatter for troff files should not try to reformat the file. It should display the actual code for the file, and next to the download link it should be a &quot;view formatted&quot; link.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>63356</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2010-01-22 13:21:07 +0000</bug_when>
+            <thetext>groff -mandoc `man -w dscl` -T html &gt; man.html
+
+can be probably used from system instead of internal xref generator to get a html view of man page</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

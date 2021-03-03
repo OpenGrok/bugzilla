@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>15954</bug_id>
+          
+          <creation_ts>2010-05-12 13:52:00 +0000</creation_ts>
+          <short_desc>teamware repository not detected anymore</short_desc>
+          <delta_ts>2010-05-31 08:06:59 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>scm</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXINSOURCE</resolution>
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>minor</bug_severity>
+          <target_milestone>0.10</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Lubos Kosco">Lubos.Kosco</reporter>
+          <assigned_to name="Lubos Kosco">Lubos.Kosco</assigned_to>
+          <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>72835</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2010-05-12 13:52:57 +0000</bug_when>
+            <thetext>with 329:8cf47ca3986f we lost the ability to detect teamware repositories properly
+
+http://src.opensolaris.org/source/xref/opengrok/trunk/src/org/opensolaris/opengrok/history/SCCSRepository.java
+
+needs to be more relaxed in this regard + testdata/repositories/teamware needs to be improved to be a real repository
+
+Teamware is built on top of SCCS
+SCCS is per file SCM, teamware is on directory level
+
+a sample on teamware gates - 
+e.g. in SWAN ssh grok.czech.sun.com ; ls /ws-local/on10-stc2-clone/
+
+before the setting of scanning for repo limit by bug #9407 this wasn&apos;t that visible, since in a teamware repo you just had X SCCS repos and all worked
+now with the limit suddenly the lower level directories are not considered as having history, even though logically they are part of a Teamware repository</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>73693</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2010-05-31 08:06:59 +0000</bug_when>
+            <thetext>changeset:   1022:c56753be2bc2</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

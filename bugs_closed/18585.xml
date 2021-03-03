@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>18585</bug_id>
+          
+          <creation_ts>2011-06-20 12:04:00 +0000</creation_ts>
+          <short_desc>Exceptions are not logged if severity is higher than CONFIG</short_desc>
+          <delta_ts>2011-06-20 12:07:08 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>misc</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXED</resolution>
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>minor</bug_severity>
+          <target_milestone>0.11</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Knut Anders Hatlen">knut.hatlen</reporter>
+          <assigned_to name="Knut Anders Hatlen">knut.hatlen</assigned_to>
+          <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>83744</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2011-06-20 12:04:07 +0000</bug_when>
+            <thetext>SimpleFileLogFormatter and SimpleConsoleFormatter only include the exception stack trace if the severity level is lower than Level.CONFIG. The intention was probably to log the exception if the severity was *higher* than Level.CONFIG.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>83745</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2011-06-20 12:07:08 +0000</bug_when>
+            <thetext>changeset:   1258:b889068b5d93</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>15936</bug_id>
+          
+          <creation_ts>2010-05-11 14:24:00 +0000</creation_ts>
+          <short_desc>Syntax highlighting doesn&apos;t work for escaped parenthesis in shell scripts</short_desc>
+          <delta_ts>2010-05-12 11:10:28 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>analyzer</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>OpenSolaris</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>DUPLICATE</resolution>
+          <dup_id>14663</dup_id>
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>minor</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="ligi">rehak</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          <cc>knut.hatlen</cc>
+    
+    <cc>Lubos.Kosco</cc>
+    
+    <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>72774</commentid>
+            <who name="ligi">rehak</who>
+            <bug_when>2010-05-11 14:24:10 +0000</bug_when>
+            <thetext>Here is an example: 
+
+http://grok.czech.sun.com:8080/source/xref/admininstall-S10-patch/src/bundled/app/inst/liveupgrade/scripts/lucopy.sh#112</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>72775</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2010-05-11 14:39:33 +0000</bug_when>
+            <thetext>another from the same pot:
+http://src.opensolaris.org/source/xref/onnv/onnv-gate/usr/src/cmd/perl/5.8.4/distrib/config_h.SH#31
+
+seems &apos; inside a comment can be ignored too ;)</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>72829</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2010-05-12 11:10:28 +0000</bug_when>
+            <thetext>
+
+*** This bug has been marked as a duplicate of bug 14663 ***</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

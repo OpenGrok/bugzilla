@@ -1,0 +1,1742 @@
+# HG changeset patch
+# User jel+opengrok@cs.uni-magdeburg.de
+# Date 1333588028 -7200
+# Node ID 77a09a331652b6e2925c16f973cee2539fa84c98
+# Parent  eeaad9558e0aee57e4b6e71c74f8b4fe7ddb72aa
+#19198: better tab alignment for diffs
+
+diff -r eeaad9558e0a -r 77a09a331652 src/org/opensolaris/opengrok/web/DiffData.java
+--- a/src/org/opensolaris/opengrok/web/DiffData.java	Sun Apr 01 06:07:16 2012 +0200
++++ b/src/org/opensolaris/opengrok/web/DiffData.java	Thu Apr 05 03:07:08 2012 +0200
+@@ -33,7 +33,8 @@
+  * @version $Revision$
+  */
+ public class DiffData {
+-
++    /** request URI */
++    public String reqURI;
+     /** the directory which contains the given file wrt. to the source root
+      * directory */
+     public String path;
+@@ -43,13 +44,16 @@
+     public Genre genre;
+     /** the orignal and new revision container */
+     public Revision revision;
+-    /** the URI encoded parameter values of the request. {@code param[0]}
+-     * belongs to {@code r1}, {@code param[1]} to {@code r2}. */
+-    public String param[];
+-    /** the revision names extracted from {@link #param} */
+-    public String rev[];
+-    /** the content of the original and new file line-by-line corresponding
+-     * with {@link #rev} */
++    /** the URI encoded parameter value of the request for key r1 */
++    public String rp1;
++    /** the URI encoded parameter value of the request for key r2 */
++    public String rp2;
++    /** the revision name extracted from {@link #rp1} */
++    public String rev1;
++    /** the revision name extracted from {@link #rp2} */
++    public String rev2;
++    /** the content of the original {@link #rev1} and new {@link #rev2} file
++     * line-by-line */
+     public String[][] file;
+     /** error message to show, if diffs are not available */
+     public String errorMsg;
+diff -r eeaad9558e0a -r 77a09a331652 src/org/opensolaris/opengrok/web/PageConfig.java
+--- a/src/org/opensolaris/opengrok/web/PageConfig.java	Sun Apr 01 06:07:16 2012 +0200
++++ b/src/org/opensolaris/opengrok/web/PageConfig.java	Thu Apr 05 03:07:08 2012 +0200
+@@ -148,14 +148,13 @@
+         DiffData data = new DiffData();
+         data.path = getPath().substring(0, path.lastIndexOf('/'));
+         data.filename = Util.htmlize(getResourceFile().getName());
++        data.file = new String[2][];
+ 
+         String srcRoot = getSourceRootPath();
+         String context = req.getContextPath();
+ 
++        String[] rev = new String[2];
+         String[] filepath = new String[2];
+-        data.rev = new String[2];
+-        data.file = new String[2][];
+-        data.param = new String[2];
+         for (int i = 1; i <= 2; i++) {
+             String[] tmp = null;
+             String p = req.getParameter("r" + i);
+@@ -164,17 +163,19 @@
+             }
+             if (tmp != null && tmp.length == 2) {
+                 filepath[i - 1] = tmp[0];
+-                data.rev[i - 1] = tmp[1];
++                rev[i - 1] = tmp[1];
+             }
+         }
+-        if (data.rev[0] == null || data.rev[1] == null
+-                || data.rev[0].length() == 0 || data.rev[1].length() == 0
+-                || data.rev[0].equals(data.rev[1])) {
++        if (rev[0] == null || rev[1] == null
++            || rev[0].length() == 0 || rev[1].length() == 0 
++            || rev[0].equals(rev[1])) 
++        {
+             data.errorMsg = "Please pick two revisions to compare the changed "
+-                    + "from the <a href=\"" + context + Prefix.HIST_L
+-                    + getUriEncodedPath() + "\">history</a>";
++                + "from the <a href=\"" + context + Prefix.HIST_L
++                + getUriEncodedPath() + "\">history</a>";
+             return data;
+         }
++        data.rev1 = rev[0]; data.rev2 = rev[1];
+         data.genre = AnalyzerGuru.getGenre(getResourceFile().getName());
+ 
+         if (data.genre == null || txtGenres.contains(data.genre)) {
+@@ -183,7 +184,8 @@
+             try {
+                 for (int i = 0; i < 2; i++) {
+                     File f = new File(srcRoot + filepath[i]);
+-                    in[i] = HistoryGuru.getInstance().getRevision(f.getParent(), f.getName(), data.rev[i]);
++                    in[i] = HistoryGuru.getInstance()
++                        .getRevision(f.getParent(), f.getName(), rev[i]);
+                 }
+ 
+                 if (data.genre == null) {
+@@ -231,18 +233,22 @@
+                 data.errorMsg = "Unable to get diffs: "
+                         + Util.htmlize(e.getMessage());
+             }
++            String[] dd = new String[2];
+             for (int i = 0; i < 2; i++) {
+                 try {
+                     URI u = new URI(null, null, null,
+-                            filepath[i] + "@" + data.rev[i], null);
+-                    data.param[i] = u.getRawQuery();
++                            filepath[i] + "@" + rev[i], null);
++                    dd[i] = u.getRawQuery();
+                 } catch (URISyntaxException e) {
+                     log.warning("Failed to create URI: " + e.getMessage());
+                     log.log(Level.FINE, "getDiffData", e);
+                 }
+             }
++            data.rp1 = dd[0];
++            data.rp2 = dd[1];
+             data.full = fullDiff();
+             data.type = getDiffType();
++            data.reqURI = req.getRequestURI();
+         }
+         return data;
+     }
+diff -r eeaad9558e0a -r 77a09a331652 src/org/opensolaris/opengrok/web/Util.java
+--- a/src/org/opensolaris/opengrok/web/Util.java	Sun Apr 01 06:07:16 2012 +0200
++++ b/src/org/opensolaris/opengrok/web/Util.java	Thu Apr 05 03:07:08 2012 +0200
+@@ -568,8 +568,10 @@
+         return sb.toString();
+     }
+ 
+-    private static final String SPAN_D = "<span class=\"d\">";
+-    private static final String SPAN_A = "<span class=\"a\">";
++    /** span open tag incl. css class used to tag removed source code */
++    public static final String SPAN_D = "<span class=\"m\">";
++    /** span open tag incl. css class used to tag added source code */
++    public static final String SPAN_A = "<span class=\"p\">";
+     private static final String SPAN_E = "</span>";
+     private static final int SPAN_LEN = SPAN_D.length() + SPAN_E.length();
+ 
+diff -r eeaad9558e0a -r 77a09a331652 web/diff.jsp
+--- a/web/diff.jsp	Sun Apr 01 06:07:16 2012 +0200
++++ b/web/diff.jsp	Thu Apr 05 03:07:08 2012 +0200
+@@ -40,13 +40,95 @@
+ org.opensolaris.opengrok.web.DiffData,
+ org.opensolaris.opengrok.web.DiffType"
+ %><%!
+-private String getAnnotateRevision(DiffData data) {
+-    if (data.type == DiffType.OLD || data.type == DiffType.NEW) {
+-        return "<script type=\"text/javascript\">/* <![CDATA[ */ "
+-            + "O.rev='r=" + data.rev[data.type == DiffType.NEW ? 1 : 0]
+-            + "'; /* ]]> */</script>";
+-    }
+-    return "";
++private static final String getAnnotateRevision(DiffData dd) {
++	if (dd.type == DiffType.OLD || dd.type == DiffType.NEW) {
++		return "<script type=\"text/javascript\">/* <![CDATA[ */ "
++			+ "O.rev='r=" + (dd.type == DiffType.NEW ? dd.rev2 : dd.rev1)
++			+ "'; /* ]]> */</script>";
++	}
++	return "";
++}
++
++/**
++ * Dump unchanged lines of a file.
++ * @param line		the current line number (start of dump)
++ * @param howMany	number fo lines to dump.
++ * @param trailing	number of trailing lines to print after a "hidden" block
++ *                 (leading is always 8).
++ * @param file	source code lines of the file to partially dump.
++ * @param bn	where to append the line numbers
++ * @param bs	where to append the source code lines
++ * @param dd	diff data needed to emit anchors for hidden blocks 
++ * @param a		if {code true}, line numbers are get an anchor named with
++ *                  the linenumber
++ * @throws IndexOutOfBoundsException if <var>file</var> contains less than
++ *    <var>line</var> + <var>howMany</var> entries.
++ */
++private static final int dumpFile(int line, int howMany, int trailing, 
++	String[] file, StringBuilder bn, StringBuilder bs, DiffData dd, boolean a) 
++{
++	int max = line + howMany;
++	if (dd.full || howMany < 20) {
++		line++;
++		for (;line <= max; line++) {
++			if (a) {
++				bn.append("<a name=\"").append(line).append("\">")
++					.append(line).append("</a>\n");
++			} else {
++				bn.append(line).append('\n');
++			}
++			bs.append(Util.htmlize(file[line-1])).append('\n');
++		}
++	} else {
++		// row n
++		for (int j = line+1; j <= line + 8; j++) {
++			if (a) {
++				bn.append("<a name=\"").append(j).append("\">")
++					.append(j).append("</a>\n");
++			} else {
++				bn.append(j).append('\n');
++			}
++			bs.append(Util.htmlize(file[j-1])).append('\n');
++		}
++		// should be row n+1
++		String eol = trailing > 0 ? "---\n\n" : "---\n"; 
++		bn.append('\n').append(eol);
++		bs.append("\n<b> ").append(howMany - 8 - trailing)
++			.append(" unchanged lines hidden</b> (<a href=\"")
++			.append(dd.reqURI).append("?r1=").append(dd.rp1)
++			.append("&amp;r2=").append(dd.rp2)
++			.append("&amp;format=").append(dd.type.getAbbrev())
++			.append("&amp;full=1#").append(line)
++			.append("\">view full</a>) ").append(eol);
++		line += howMany - trailing + 1;
++		// should be row n+2 
++		for (; line <= max; line++) {
++			if (a) {
++				bn.append("<a name=\"").append(line).append("\">")
++					.append(line).append("</a>\n");
++			} else {
++				bn.append(line).append('\n');
++			}
++			bs.append(Util.htmlize(file[line-1])).append('\n');
++		}
++	}
++	return --line;
++}
++
++private static final int dumpChunk(int cn, int cl, int line, String[] file, 
++	StringBuilder bn, StringBuilder bs, boolean a) 
++{
++	line++;
++	for (int j = cn; j <= cl ; j++, line++) {
++		if (a) {
++			bn.append("<a name=\"").append(line).append("\">")
++				.append(line).append("</a>\n");
++		} else {
++			bn.append(line).append('\n');
++		}
++		bs.append(file[j]).append('\n');
++	}
++	return --line;
+ }
+ %><%@
+ 
+@@ -55,433 +137,299 @@
+ %><%
+ /* ---------------------- diff.jsp start --------------------- */
+ {
+-    cfg = PageConfig.get(request);
+-    DiffData data = cfg.getDiffData();
++	cfg = PageConfig.get(request);
++	DiffData dd = cfg.getDiffData();
+ 
+-    if (data.errorMsg != null)  {
++	if (dd.errorMsg != null)  {
+ 
+ %>
+ <div class="src">
+     <h3 class="error">Error:</h3>
+-    <p><%= data.errorMsg %></p>
++    <p><%= dd.errorMsg %></p>
+ </div><%
+ 
+-    } else if (data.genre == Genre.IMAGE) {
++	} else if (dd.genre == Genre.IMAGE) {
+ 
+-        String link = request.getContextPath() + Prefix.RAW_P
+-            + Util.htmlize(cfg.getPath());
++		String link = request.getContextPath() + Prefix.RAW_P
++			+ Util.htmlize(cfg.getPath());
+ %>
+ <div id="difftable">
+-    <table class="image">
++    <table class="dtimage">
+         <thead>
+-        <tr><th><%= data.filename %> (revision <%= data.rev[0] %>)</th>
+-            <th><%= data.filename %> (revision <%= data.rev[1] %>)</th>
++        <tr><th><%= dd.filename %> (revision <%= dd.rev1 %>)</th>
++            <th><%= dd.filename %> (revision <%= dd.rev2 %>)</th>
+         </tr>
+         </thead>
+         <tbody>
+-        <tr><td><img src="<%= link %>?r=<%= data.rev[0] %>"/></td>
+-            <td><img src="<%= link %>?r=<%= data.rev[1] %>"/></td>
++        <tr><td class="dti"><img src="<%= link %>?r=<%= dd.rev1 %>"/></td>
++            <td class="dti"><img src="<%= link %>?r=<%= dd.rev2 %>"/></td>
+         </tr>
+         </tbody>
+     </table>
+ </div><%
+ 
+-    } else if (data.genre != Genre.PLAIN && data.genre != Genre.HTML) {
+-
+-        String link = request.getContextPath() + Prefix.RAW_P
+-            + Util.htmlize(cfg.getPath());
++	} else if (dd.genre != Genre.PLAIN && dd.genre != Genre.HTML) {
++		String link = request.getContextPath() + Prefix.RAW_P
++			+ Util.htmlize(cfg.getPath());
+ %>
+ <div id="src">Diffs for binary files cannot be displayed! Files are <a
+-    href="<%= link %>?r=<%= data.rev[0] %>"><%=
+-        data.filename %>(revision <%= data.rev[0] %>)</a> and <a
+-    href="<%= link %>?r=<%= data.rev[1] %>"><%=
+-        data.filename %>(revision <%= data.rev[1] %>)</a>.
++	href="<%= link %>?r=<%= dd.rev1 %>"><%=
++		dd.filename %>(revision <%= dd.rev1 %>)</a> and <a
++	href="<%= link %>?r=<%= dd.rev2 %>"><%=
++		dd.filename %>(revision <%= dd.rev2 %>)</a>.
+ </div><%
+-
+-    } else if (data.revision.size() == 0) {
+-        %>
+-        <%= getAnnotateRevision(data) %>
+-        <b>No differences found!</b><%
+-
+-    } else {
+-        //-------- Do THE DIFFS ------------
+-        int ln1 = 0;
+-        int ln2 = 0;
+-        String rp1 = data.param[0];
+-        String rp2 = data.param[1];
+-        String reqURI = request.getRequestURI();
+-        String[] file1 = data.file[0];
+-        String[] file2 = data.file[1];
+-
+-        DiffType type = data.type;
+-        boolean full = data.full;
++	} else if (dd.revision.size() == 0) {
++		%>
++		<%= getAnnotateRevision(dd) %>
++		<b>No differences found!</b><%
++	} else {
++	//-------- Do THE DIFFS ------------
+ %>
+-<%= getAnnotateRevision(data) %>
++<%= getAnnotateRevision(dd) %>
+ <div id="diffbar">
+-    <div class="legend">
+-        <span class="d">Deleted</span>
+-        <span class="a">Added</span>
+-    </div>
+-    <div class="tabs"><%
+-        for (DiffType t : DiffType.values()) {
+-            if (type == t) {
+-        %> <span class="active"><%= t.toString() %><%
+-                if (t == DiffType.OLD) {
+-            %>  ( <%= data.rev[0] %> )<%
+-                } else if (t == DiffType.NEW) {
+-            %>  ( <%= data.rev[1] %> )<%
+-                }
+-            %></span><%
+-            } else {
+-        %> <span><a href="<%= reqURI %>?r1=<%= rp1 %>&amp;r2=<%= rp2
+-            %>&amp;format=<%= t.getAbbrev() %>&amp;full=<%= full ? '1' : '0'
+-            %>"><%= t.toString() %><%
+-                if (t == DiffType.OLD) {
+-            %>  ( <%= data.rev[0] %> )<%
+-                } else if (t == DiffType.NEW) {
+-            %>  ( <%= data.rev[1] %> )<%
+-                }
+-            %></a></span><%
+-            }
+-        }
+-    %></div>
+-    <div class="ctype"><%
+-        if (!full) {
+-        %>
+-        <span><a href="<%= reqURI %>?r1=<%= rp1 %>&amp;r2=<%= rp2
+-            %>&amp;format=<%= type.getAbbrev() %>&amp;full=1">full</a></span>
+-        <span class="active">compact</span><%
+-        } else {
+-        %>
+-        <span class="active">full</span>
+-        <span> <a href="<%= reqURI %>?r1=<%= rp1 %>&amp;r2=<%= rp2
+-            %>&amp;format=<%= type.getAbbrev() %>&amp;full=0">compact</a></span><%
+-        }
+-    %></div>
++	<div class="dblegend">
++		<span class="m">Deleted</span>
++		<span class="p">Added</span>
++	</div>
++	<div class="dbtabs"><%
++		for (DiffType t : DiffType.values()) {
++			if (dd.type == t) {
++		%> <span class="active dbtab"><%= t.toString() %><%
++				if (t == DiffType.OLD) {
++		%>  ( <%= dd.rev1 %> )<%
++				} else if (t == DiffType.NEW) {
++		%>  ( <%= dd.rev2 %> )<%
++			}
++		%></span><%
++			} else {
++		%> <span class="dbtab"><a href="<%= dd.reqURI %>?r1=<%= dd.rp1 
++			%>&amp;r2=<%= dd.rp2 %>&amp;format=<%= t.getAbbrev() 
++			%>&amp;full=<%= dd.full ? '1' : '0' %>"><%= t.toString() %><%
++				if (t == DiffType.OLD) {
++			%>  ( <%= dd.rev1 %> )<%
++				} else if (t == DiffType.NEW) {
++			%>  ( <%= dd.rev2 %> )<%
++				}
++		%></a></span><%
++			}
++		}
++	%></div>
++	<div class="dbformats"><%
++		if (!dd.full) {
++		%>
++		<span class="dbformat"><a href="<%= dd.reqURI %>?r1=<%= dd.rp1 
++			%>&amp;r2=<%= dd.rp2 %>&amp;format=<%= dd.type.getAbbrev() 
++			%>&amp;full=1">full</a></span>
++		<span class="active dbformat">compact</span><%
++		} else {
++		%>
++		<span class="active dbformat">full</span>
++		<span class="dbformat"> <a href="<%= dd.reqURI %>?r1=<%= dd.rp1 
++			%>&amp;r2=<%= dd.rp2 %>&amp;format=<%= dd.type.getAbbrev() 
++			%>&amp;full=0">compact</a></span><%
++		}
++	%></div>
+ </div>
+ 
+-<div id="difftable">
+-    <div class="pre"><%
+-        if (type == DiffType.SIDEBYSIDE || type == DiffType.UNIFIED) {
+-        %><table class="plain"><%
+-            if (type == DiffType.SIDEBYSIDE) {
+-            %>
+-            <thead><tr>
+-                <th><%= data.filename %> (<%= data.rev[0] %>)</th>
+-                <th><%= data.filename %> (<%= data.rev[1] %>)</th>
+-            </tr></thead><%
+-            }
+-            %>
+-            <tbody><%
+-        }
++<div id="difftable"><%
++		if (dd.type != DiffType.TEXT) {
++	%><table id="<%= "dt" + dd.type %>"><%
++			if (dd.type == DiffType.SIDEBYSIDE) {
++%>
++<thead><tr>
++	<th colspan="2"><%= dd.filename %> (<%= dd.rev1 %>)</th>
++	<th colspan="2"><%= dd.filename %> (<%= dd.rev2 %>)</th>
++</tr></thead><%
++			}
++%>
++		<tbody><%
++		}
+ 
+-        for (int i=0; i < data.revision.size(); i++) {
+-            Delta d = data.revision.getDelta(i);
+-            if (type == DiffType.TEXT) {
+-        %><%= Util.htmlize(d.toString()) %><%
+-            } else {
+-                Chunk c1 = d.getOriginal();
+-                Chunk c2 = d.getRevised();
+-                int cn1 = c1.first();
+-                int cl1 = c1.last();
+-                int cn2 = c2.first();
+-                int cl2 = c2.last();
++		StringBuilder bs1 = new StringBuilder(256);
++		StringBuilder bs2 = new StringBuilder(256);
++		StringBuilder bn1 = new StringBuilder(32);
++		StringBuilder bn2 = new StringBuilder(32);
++		int ln1 = 0;
++		int ln2 = 0;
++		String[] file1 = dd.file[0];
++		String[] file2 = dd.file[1];
+ 
+-                int i1 = cn1, i2 = cn2;
+-                StringBuilder bl1 = new StringBuilder(80);
+-                StringBuilder bl2 = new StringBuilder(80);
+-                for (; i1 <= cl1 && i2 <= cl2; i1++, i2++) {
+-                    Util.htmlize(file1[i1], bl1);
+-                    Util.htmlize(file2[i2], bl2);
+-                    String[] ss = Util.diffline(bl1, bl2);
+-                    file1[i1] = ss[0];
+-                    file2[i2] = ss[1];
+-                    bl1.setLength(0);
+-                    bl2.setLength(0);
+-                }
+-                // deleted
+-                for (; i1 <= cl1; i1++) {
+-                    bl1.setLength(0);
+-                    bl1.append("<span class=\"d\">");
+-                    Util.htmlize(file1[i1], bl1);
+-                    file1[i1] = bl1.append("</span>").toString();
+-                }
+-                // added
+-                for (; i2 <= cl2; i2++) {
+-                    bl2.setLength(0);
+-                    bl2.append("<span class=\"a\">");
+-                    Util.htmlize(file2[i2], bl2);
+-                    file2[i2] = bl2.append("</span>").toString();
+-                }
++		for (int i=0; i < dd.revision.size(); i++) {
++			Delta d = dd.revision.getDelta(i);
++			if (dd.type == DiffType.TEXT) {
++%><%= Util.htmlize(d.toString()) %><%
++				continue;
++			}
++			Chunk c1 = d.getOriginal();
++			Chunk c2 = d.getRevised();
++			int cn1 = c1.first();
++			int cl1 = c1.last();
++			int cn2 = c2.first();
++			int cl2 = c2.last();
+ 
+-                if (type == DiffType.UNIFIED) {
+-// UDIFF
+-                    if (cn1 > ln1 || cn2 > ln2) {
+-            %>
+-            <tr class="k"><td><%
+-                        if (full || (cn2 - ln2 < 20)) {
+-                            for (int j = ln2; j < cn2; j++) {
+-                %><i><%= ++ln2 %></i><%=
+-                    Util.htmlize(file2[j]) %><br/><%
+-                            }
+-                        } else {
+-                            for (int j = ln2; j < ln2 + 8; j++) {
+-                %><i><%= j+1 %></i><%=
+-                    Util.htmlize(file2[j]) %><br/><%
+-                            }
+-                %><br/>--- <b><%= cn2 - ln2 - 16
+-                    %> unchanged lines hidden</b> (<a href="<%= reqURI
+-                    %>?r1=<%= rp1 %>&amp;r2=<%= rp2
+-                    %>&amp;format=<%= type.getAbbrev()
+-                    %>&amp;full=1#<%= ln2 %>">view full</a>) --- <br/><br/><%
+-                            ln2 = cn2 - 8;
+-                            for (int j = ln2; j < cn2; j++) {
+-                %><i><%= ++ln2 %></i><%= Util.htmlize(file2[j]) %><br/><%
+-                            }
+-                        }
+-                %></td>
+-            </tr><%
+-                        ln1 = cn1;
+-                    }
+-                    if (cn1 <= cl1) {
+-            %>
+-            <tr><td><%
+-                        for (int j = cn1; j  <= cl1 ; j++) {
+-                %><del class="d"><%= ++ln1 %></del><%= file1[j]
+-                %><br/><%
+-                        }
+-                %></td>
+-            </tr><%
+-                    }
+-                    if (cn2 <= cl2) {
+-            %>
+-            <tr class="k"><td><%
+-                        for (int j = cn2; j  < cl2; j++) {
+-                %><i class="a"><%= ++ln2 %></i><%= file2[j]
+-                %><br/><%
+-                        }
+-                %><i class="a"><%= ++ln2 %></i><%= file2[cl2] %><%
+-                        if(full) {
+-                %><a name="<%= ln2 %>" /><%
+-                        }
+-                %></td>
+-            </tr><%
+-                    }
+-                } else if (type == DiffType.SIDEBYSIDE) {
+-// SDIFF
+-                    if (cn1 > ln1 || cn2 > ln2) {
+-            %>
+-            <tr class="k"><td><%
+-                        if (full || cn2 - ln2 < 20) {
+-                            for (int j = ln1; j < cn1; j++) {
+-                %><i><%= ++ln1 %></i><%=
+-                    Util.htmlize(file1[j]) %><br/><%
+-                            }
+-                %></td><td><%
+-                            for (int j = ln2; j  < cn2 ; j++) {
+-                %><i><%= ++ln2 %></i><%=
+-                    Util.htmlize(file2[j]) %><br/><%
+-                            }
+-                        } else {
+-                            for (int j = ln1; j < ln1 + 8; j++) {
+-                %><i><%= j+1 %></i><%=
+-                    Util.htmlize(file1[j]) %><br/><%
+-                            }
+-                %><br/>--- <b><%= cn1 - ln1 - 16
+-                    %> unchanged lines hidden</b> (<a href="<%= reqURI
+-                    %>?r1=<%= rp1 %>&amp;r2=<%= rp2
+-                    %>&amp;format=<%= type.getAbbrev()
+-                    %>&amp;full=1#<%= ln2 %>">view full</a>) --- <br/><br/><%
+-                            ln1 = cn1 - 8;
+-                            for (int j = ln1; j < cn1; j++) {
+-                %><i><%= ++ln1 %></i><%=
+-                    Util.htmlize(file1[j]) %><br/><%
+-                            }
+-                %></td><td><%
+-                            for (int j = ln2; j < ln2 + 8; j++) {
+-                %><i><%= j+1 %></i><%=
+-                    Util.htmlize(file2[j]) %><br/><%
+-                            }
+-                %><br/>--- <b><%= cn2 - ln2 - 16
+-                    %> unchanged lines hidden</b> (<a href="<%= reqURI
+-                    %>?r1=<%= rp1 %>&amp;r2=<%= rp2
+-                    %>&amp;format=<%= type.getAbbrev()
+-                    %>&amp;full=1#<%= ln2 %>">view full</a>) --- <br/><br/><%
+-                            ln2 = cn2 - 8;
+-                            for (int j = ln2; j < cn2; j++) {
+-                %><i><%= ++ln2 %></i><%=
+-                    Util.htmlize(file2[j]) %><br/><%
+-                            }
+-                        }
+-                %></td>
+-            </tr><%
+-                    }
+-            %>
+-            <tr class="k"><td><%
+-                    for (int j = cn1; j  <= cl1; j++) {
+-                %><i><%= ++ln1 %></i><%= file1[j] %><br/><%
+-                    }
+-                %></td><td><%
+-                    for (int j = cn2; j  <= cl2; j++) {
+-                %><i><%= ++ln2 %></i><a name="<%= ln2 %>"></a><%=
+-                    file2[j] %><br/><%
+-                    }
+-                %></td>
+-            </tr><%
+-// OLD
+-                } else if (type == DiffType.OLD) {
+-                    // OLD
+-                    if (cn1 > ln1) {
+-                        if (full || cn1 - ln1 < 20) {
+-                            for (int j = ln1; j < cn1; j++) {
+-        %><i><%= ++ln1 %></i><%=
+-            Util.htmlize(file1[j]) %><br/><%
+-                            }
+-                        } else {
+-                            for (int j = ln1; j < ln1 + 8; j++) {
+-        %><i><%= j+1 %></i><%=
+-            Util.htmlize(file1[j]) %><br/><%
+-                            }
+-        %><br/>--- <b><%= cn1 - ln1 - 16
+-            %> unchanged lines hidden</b> (<a href="<%= reqURI
+-            %>?r1=<%= rp1 %>&amp;r2=<%= rp2
+-            %>&amp;format=<%= type.getAbbrev()
+-            %>&amp;full=1#<%=ln1%>">view full</a>) --- <br/><br/><%
+-                            ln1 = cn1 - 8;
+-                            for (int j = ln1; j < cn1; j++) {
+-        %><i><%= ++ln1 %></i><%=
+-            Util.htmlize(file1[j]) %><br/><%
+-                            }
+-                        }
+-                    }
+-                    for (int j = cn1; j  <= cl1 ; j++) {
+-        %><i><%= ++ln1 %></i><%= file1[j] %><br/><%
+-                    }
+-                    if (full) {
+-        %><a name="<%=ln1%>" ></a><%
+-                    }
+-// NEW
+-                } else if (type == DiffType.NEW) {
+-                    if (cn2 > ln2) {
+-                        if (full || cn2 - ln2 < 20) {
+-                            for (int j = ln2; j  < cn2 ; j++) {
+-        %><i><%= ++ln2 %></i><%=
+-            Util.htmlize(file2[j]) %><br/><%
+-                            }
+-                        } else {
+-                            for (int j = ln2; j < ln2 + 8; j++) {
+-        %><i><%= j+1 %></i><%=
+-            Util.htmlize(file2[j]) %><br/><%
+-                            }
+-        %><br/>--- <b><%= cn2 - ln2 - 16
+-            %> unchanged lines hidden</b> (<a href="<%= reqURI
+-            %>?r1=<%= rp1 %>&amp;r2=<%= rp2
+-            %>&amp;format=<%= type.getAbbrev()
+-            %>&amp;full=1#<%= ln2 %>">view full</a>) --- <br/><br/><%
+-                            ln2 = cn2 - 8;
+-                            for (int j = ln2; j < cn2; j++) {
+-            %><i><%= ++ln2 %></i><%=
+-                Util.htmlize(file2[j]) %><br/><%
+-                            }
+-                        }
+-                    }
+-                    for (int j = cn2; j  <= cl2 ; j++) {
+-        %><i><%= ++ln2 %></i><%= file2[j] %><br/><%
+-                    }
+-                    if (full) {
+-        %><a name="<%= ln2 %>"></a><%
+-                    }
+-                }
+-            } // else
+-        } // for
+-// deltas done, dump the remaining
+-        if (file1.length >= ln1) {
+-            if (type == DiffType.SIDEBYSIDE) {
+-                if (full || file1.length - ln1 < 20) {
+-            %>
+-            <tr><td><%
+-                    for (int j = ln1; j < file1.length ; j++) {
+-                %><i><%= j+1 %></i><%= Util.htmlize(file1[j]) %><br/><%
+-                    }
+-                %></td><td><%
+-                    for (int j = ln2; j < file2.length ; j++) {
+-                %><i><%= j+1 %></i><%= Util.htmlize(file2[j]) %><br/><%
+-                    }
+-                %></td>
+-            </tr>
+-            </tbody>
+-        </table><%
+-                } else {
+-            %>
+-            <tr><td><%
+-                    for (int j = ln1; j < ln1 + 8 ; j++) {
+-                %><i><%= j+1 %></i><%= Util.htmlize(file1[j]) %><br/><%
+-                    }
+-                %><br/> --- <b><%= file1.length - ln1 - 8
+-                %> unchanged lines hidden</b> --- </td><td><%
+-                    for (int j = ln2; j < ln2 + 8 ; j++) {
+-                %><i><%= j+1 %></i><%= Util.htmlize(file2[j]) %><br/><%
+-                    }
+-                %><br/>--- <b><%= file1.length - ln1 - 8
+-                %> unchanged lines hidden</b> ---</td>
+-            </tr>
+-            </tbody>
+-        </table><%
+-                }
+-            } else if (type == DiffType.UNIFIED) {
+-                if (full || file2.length - ln2 < 20) {
+-            %>
+-            <tr><td><%
+-                    for (int j = ln2; j < file2.length ; j++) {
+-                %><i><%= j+1 %></i><%= Util.htmlize(file2[j]) %><br/><%
+-                    }
+-                %></td>
+-            </tr>
+-            </tbody>
+-        </table><%
+-                } else {
+-            %>
+-            <tr><td><%
+-                    for (int j = ln2; j < ln2 + 8 ; j++) {
+-                %><i><%= j+1 %></i><%= Util.htmlize(file2[j]) %><br/><%
+-                    }
+-                %><br/>--- <b><%= file2.length - ln2 - 8
+-                %> unchanged lines hidden</b> ---</td>
+-            </tr>
+-            </tbody>
+-        </table><%
+-                }
+-            } else if (type == DiffType.OLD) {
+-                if (full || file1.length - ln1 < 20) {
+-                    for (int j = ln1; j < file1.length ; j++) {
+-        %><i><%= j+1 %></i><%= Util.htmlize(file1[j]) %><br/><%
+-                    }
+-                } else {
+-                    for (int j = ln1; j < ln1 + 8 ; j++) {
+-        %><i><%= j+1 %></i><%= Util.htmlize(file1[j]) %><br/><%
+-                    }
+-        %><br/> --- <b><%= file1.length - ln1 - 8
+-        %> unchanged lines hidden</b> ---<br/><%
+-                }
+-            } else if (type == DiffType.NEW) {
+-                if (full || file2.length - ln2 < 20) {
+-                    for (int j = ln2; j < file2.length ; j++) {
+-        %><i><%= j+1 %></i><%=Util.htmlize(file2[j])%><br/><%
+-                    }
+-                } else {
+-                    for (int j = ln2; j < ln2 + 8 ; j++) {
+-        %><i><%= j+1 %></i><%= Util.htmlize(file2[j]) %><br/><%
+-                    }
+-        %><br/> --- <b><%= file2.length - ln2 - 8
+-        %> unchanged lines hidden</b> ---<br/><%
+-                }
+-            }
+-        }
++			int i1 = cn1, i2 = cn2;
++            // changed
++			for (; i1 <= cl1 && i2 <= cl2; i1++, i2++) {
++				bs1.setLength(0);
++				bs2.setLength(0);
++				Util.htmlize(file1[i1], bs1);
++				Util.htmlize(file2[i2], bs2);
++				String[] ss = Util.diffline(bs1, bs2);
++				file1[i1] = ss[0];
++				file2[i2] = ss[1];
++			}
++			// deleted
++			for (; i1 <= cl1; i1++) {
++				bs1.setLength(0);
++				bs1.append(Util.SPAN_D);
++				Util.htmlize(file1[i1], bs1);
++				file1[i1] = bs1.append("</span>").toString();
++			}
++			// added
++			for (; i2 <= cl2; i2++) {
++				bs2.setLength(0);
++				bs2.append(Util.SPAN_A);
++				Util.htmlize(file2[i2], bs2);
++				file2[i2] = bs2.append("</span>").toString();
++			}
++			bn2.setLength(0);
++			bs2.setLength(0);
++			int td = 1;
++			String tClass = " class='dtk'";
++			if (dd.type == DiffType.OLD && cn1 > ln1) {
++				tClass = "";
++				ln1 = dumpFile(ln1, cn1 - ln1, 8, file1, bn2, bs2, dd, true);
++			} else if (dd.type == DiffType.NEW && cn2 > ln2) {
++				tClass = "";
++				ln2 = dumpFile(ln2, cn2 - ln2, 8, file2, bn2, bs2, dd, true);
++			} else if (dd.type == DiffType.UNIFIED && (cn1 > ln1 || cn2 > ln2)) {
++				ln2 = dumpFile(ln2, cn2 - ln2, 8, file2, bn2, bs2, dd, true);
++				ln1 = cn1;
++			} else if (dd.type == DiffType.SIDEBYSIDE && (cn1 > ln1 || cn2 > ln2)) {
++				bn1.setLength(0);
++				bs1.setLength(0);
++				boolean old = dd.full;	// force same dump strategy for both  
++				dd.full |= cn2 - ln2 < 20;
++				ln1 = dumpFile(ln1, cn1 - ln1, 8, file1, bn1, bs1, dd, false);
++				dd.full = old;			// restore
++				ln2 = dumpFile(ln2, cn2 - ln2, 8, file2, bn2, bs2, dd, true);
++				td++;
++			} else {
++				td = 0;
++			}
++			if (td > 0) {
++%>
++<tr <%= tClass %>><%
++				if (td > 1) {
++	%>
++	<td class="dtn"><%= bn1 %></td>
++	<td class="dts"><%= bs1 %></td><%
++				}
++	%>
++	<td class="dtn"><%= bn2 %></td>
++	<td class="dts"><%= bs2 %></td>
++</tr><%
++			}
++			bn2.setLength(0);
++			bs2.setLength(0);
++			td = 1;
++			tClass = " class='dtk'";
++			String tdClass = "dtp";
++			if (dd.type == DiffType.OLD && cn1 <= cl1) {
++				tdClass = "dtm"; tClass = "";
++				ln1 = dumpChunk(cn1, cl1, ln1, file1, bn2, bs2, true);
++			} else if (dd.type == DiffType.NEW && cn2 <= cl2) {
++				tClass = "";
++				ln2 = dumpChunk(cn2, cl2, ln2, file2, bn2, bs2, true);
++			} else if (dd.type == DiffType.UNIFIED) {
++				td = 0;
++				if (cn1 <= cl1) {
++					ln1 = dumpChunk(cn1, cl1, ln1, file1, bn2, bs2, false);
++%>
++<tr>
++	<td class="dtm"><%= bn2 %></td>
++	<td class="dts"><%= bs2 %></td>
++</tr><%
++				}
++				if (cn2 <= cl2) {
++					bn2.setLength(0);
++					bs2.setLength(0);
++					ln2 = dumpChunk(cn2, cl2, ln2, file2, bn2, bs2, true);
++					td = 1;
++				}
++			} else if (dd.type == DiffType.SIDEBYSIDE 
++				&& (cn1 <= cl1 || cn2 <= cl2)) 
++			{
++				bn1.setLength(0);
++				bs1.setLength(0);
++				ln1 = dumpChunk(cn1, cl1, ln1, file1, bn1, bs1, false);
++				ln2 = dumpChunk(cn2, cl2, ln2, file2, bn2, bs2, true);
++				td++;
++			} else {
++				td = 0;
++			}
++			if (td > 0) {
++%>
++<tr <%= tClass %>><%
++				if (td > 1) {
++	%>
++	<td class="dtm"><%= bn1 %></td>
++	<td class="dts"><%= bs1 %></td><%
++				}
++	%>
++	<td class="<%= tdClass %>"><%= bn2 %></td>
++	<td class="dts"><%= bs2 %></td>
++</tr><%
++			}
++		} // for
++		// deltas done, dump the remaining
++		if (file1.length >= ln1) {
++			bn2.setLength(0);
++			bs2.setLength(0);
++			int td = 1;
++			if (dd.type == DiffType.OLD && file1.length > ln1) {
++				ln1 = dumpFile(ln1, file1.length - ln1, 0, file1, bn2, bs2, dd, true);
++			} else if (dd.type == DiffType.NEW && file2.length > ln2) {
++				ln2 = dumpFile(ln2, file2.length - ln2, 0, file2, bn2, bs2, dd, true);
++			} else if (dd.type == DiffType.UNIFIED && file2.length > ln2) {
++				ln2 = dumpFile(ln2, file2.length - ln2, 0, file2, bn2, bs2, dd, true);
++			} else if (dd.type == DiffType.SIDEBYSIDE 
++				&& (file1.length > ln1 || file2.length > ln2)) 
++			{
++				bn1.setLength(0);
++				bs1.setLength(0);
++				boolean old = dd.full;	// force same dump strategy for both  
++				dd.full |= file1.length - ln1 < 20;
++				ln1 = dumpFile(ln1, file1.length - ln1, 0, file1, bn1, bs1, dd, false);
++				dd.full = old;			// restore
++				ln2 = dumpFile(ln2, file2.length - ln2, 0, file2, bn2, bs2, dd, true);
++				td++;
++			} else {
++				td = 0;
++			}
++			if (td > 0) {
++%>
++<tr><%
++				if (td > 1) {
++	%>
++	<td class="dtn"><%= bn1 %></td>
++	<td class="dts"><%= bs1 %></td><%
++				}
++	%>
++	<td class="dtn"><%= bn2 %></td>
++	<td class="dts"><%= bs2 %></td>
++</tr><%
++			}
++		} // EOFs
++		if (dd.type != DiffType.TEXT ) {
++		%>
++		</tbody>
++	</table><%
++		}
+ 
+ //----DIFFS Done--------
+-    %></div>
+-</div><%
+-    }
++%></div><%
++	}
+ }
+ /* ---------------------- diff.jsp end --------------------- */
+ %><%@
+diff -r eeaad9558e0a -r 77a09a331652 web/static/default/print.css
+--- a/web/static/default/print.css	Sun Apr 01 06:07:16 2012 +0200
++++ b/web/static/default/print.css	Thu Apr 05 03:07:08 2012 +0200
+@@ -54,12 +54,6 @@
+ 	font-weight: bold;
+ }
+ 
+-.pre { /* the diff content */
+-	white-space: pre-wrap;
+-	font-family: monospace;
+-	margin: 0;
+-}
+-
+ #page { }
+ 
+ .error { /* error messages */
+@@ -221,44 +215,53 @@
+ #diffbar { /* diff navbar: contains the tabs to select diff format */
+ 	display: none;
+ }
+-
+-#difftable .d {
++.m, .dtm {
+ 	/* "Deleted" heading + highlight of deleted text in diff lines */
+ 	background-color: #ffcc40;
+ }
+-
+-#difftable .a {
++.p, .dtp {
+ 	/* "Added" heading + highlight of added text in diff lines */
+ 	background-color: #8bd98b;
+ }
+-
+ #difftable {
++	font-family: monospace;
+ 	font-size: small;
++	margin: 1ex 0 0 0;
++	white-space: pre;
+ }
+-
+-#difftable table { /* left side == prev. rev; right side "current" rev */
++#dtsdiff, #dtudiff, #dtnew, #dtold {
+ 	table-layout: fixed;
+ 	border-collapse: collapse;
++	border-right: 1px solid black;
++	border-left: 1px solid black;
+ }
+-
+-#difftable table th { /* usually both rev. have changes: eq. space for both */
++#dtsdiff td:nth-child(2), #dtsdiff th:first-child {
++	border-right: 1px solid black; /* same as above */
++}
++#dtsdiff th { /* usually both rev. have changes: eq. space for both */
+ 	padding-top: 1ex;
+ 	width: 50%;
+ }
+-
+-#difftable th:last-child, #difftable td:last-child {
+-	border-left: 1px solid black;
++.dtn, .dtm, .dtp {  /* linenum cells: normal, deleted, added indicator */
++	font-style: italic;
++	color: #666;					/* should be the same as for #nums */
++	border-right: 1px solid #ddd;
++	padding: 0 1ex;
++	text-align: right;
+ }
+-
+-#difftable .plain td {
+-	padding: 2px;
++.dtn {
++	background-color: #dddddd;		/* should be the same as for #nums */
+ }
+-
+-#difftable .image td {
++.dtm {
++	text-decoration: line-through;
++}
++.dts { /* difftable cell with source code */
++	padding-left: 0.5ex;
++}
++.dti {	/* difftable cell with an image */
+ 	padding: 5px;
+ }
+-
+-#difftable .k { /* border between the context and real diff lines */
++.dtk { /* border between the context and real diff lines */
+ 	border-bottom: 1px dashed #ccc;
+ }
+ 
+@@ -321,8 +324,7 @@
+ 	color: #000;
+ }
+ #src .l, #src .hl, .blame .r, .blame .a,
+-#results .l, #more .l,
+-#difftable i, del.d { /* line number/annotation block */
++#results .l, #more .l { /* line number/annotation block */
+ 	display: inline-block;
+ 	width: 6ex;
+ 	text-align: right;
+diff -r eeaad9558e0a -r 77a09a331652 web/static/default/style.css
+--- a/web/static/default/style.css	Sun Apr 01 06:07:16 2012 +0200
++++ b/web/static/default/style.css	Thu Apr 05 03:07:08 2012 +0200
+@@ -354,19 +354,13 @@
+ label {
+ }
+ 
+-.pre { /* the diff content */
+-	white-space: pre-wrap;
+-	font-family: monospace;
+-	margin: 0;
+-}
+-
+ #page { }
+ 
+ .error { /* error messages */
+ 	color: #a52a2a;
+ }
+ 
+-.active {
++.active { /* search: sort order, diffs: full|compact display */
+ 	font-weight: bold;
+ 	/* color: #c20097; */
+ }
+@@ -599,36 +593,32 @@
+ 
+ 
+ /* *** diff page *** */
++
++/* diff sub navigation bar: css prefix: db */
+ #diffbar { /* diff navbar: contains the tabs to select diff format */
+ 	margin-top: 1.5ex;
+ 	border-bottom: 1px solid #999;
+ 	white-space: nowrap;
+ }
+-
+-#diffbar .d, #difftable .d {
+-	/* "Deleted" heading + highlight of deleted text in diff lines */
++.m, .dtm {
++	/* -: "Deleted" heading + highlight of deleted text in diff lines */
+ 	background-color: #ffcc40;
+ }
+-
+-#diffbar .a, #difftable .a {
+-	/* "Added" heading + highlight of added text in diff lines */
++.p, .dtp {
++	/* +: "Added" heading + highlight of added text in diff lines */
+ 	background-color: #8bd98b;
+ }
+-
+-#diffbar .legend, #diffbar .tabs, #diffbar .ctype {
++.dblegend, .dbtabs, .dbformats {
+ 	display: inline-block;
+ }
+-
+-#diffbar .legend {
++.dblegend {
+ 	/* bottom must be the same as .tabs span(padding-bottom) */
+ 	margin: 0 3ex 0.75ex 1ex;
+ }
+-
+-#diffbar .legend span, #diffbar .ctype span {
+-	padding: 0.2ex 1ex; /* bottom must be less than margin-bottom(.legend) */
++.dblegend .m, .dblegend .p, .dbformat {
++	padding: 0.2ex 1ex; /* bottom must be less than margin-bottom(.dblegend) */
+ }
+-
+-#diffbar .tabs span {
++.dbtab {
+ 	padding: 0.75ex 1ex;
+ 	margin-left: 1ex;
+ 	border: 1px solid #999; /* should be the same as for #diffbar above */
+@@ -636,54 +626,63 @@
+ 	-moz-border-radius: 0.75ex 0.75ex 0 00;
+ 	background-color: #fafae0; /* navbar like */
+ }
+-
+-#diffbar .tabs span.active, #diffbar .ctype span.active {
++.dbtabs .active, .dbformats .active {
+ 	background-color: #c5d5a9; /* same as for table thead */
+ }
+-
+-#diffbar .tabs span.active {
++.dbtabs .active {
+ 	border-bottom-style: dashed;
+ }
+-
+-#diffbar .ctype {
+-	margin-left: 3ex; /* see margin-left .legend */
++.dbformats {
++	margin-left: 3ex; /* see margin-left .dblegend */
+ }
+-
+-#diffbar .ctype span {
++.dbformat {
+ 	border: 1px solid #755; /* same as for input */
+ 	border-radius: 0.75ex;
+ 	-moz-border-radius: 0.75ex;
+-	background-color: #fafae0; /* navbar like */
++	background-color: #fafae0; /* #bar like */
+ 	margin-left: 1ex;
+ }
+ 
++/* the diff content sections (sdiff, new, old, udiff, tdiff): css prefix: dt */
+ #difftable {
++	font-family: monospace;
+ 	font-size: small;
++	margin: 1ex 0 0 0; /* margin-top should be the same as for the footer */
++	white-space: pre;
+ }
+-
+-#difftable table { /* left side == prev. rev; right side "current" rev */
++#dtsdiff, #dtudiff, #dtnew, #dtold { /* tables */
+ 	table-layout: fixed;
+ 	border-collapse: collapse;
+-}
+-
+-#difftable table th { /* usually both rev. have changes: eq. space for both */
+-	padding-top: 1ex;
+-	width: 50%;
+-}
+-
+-#difftable th:last-child, #difftable td:last-child {
++	border-right: 1px solid black;
+ 	border-left: 1px solid black;
+ }
+-
+-#difftable .plain td {
+-	padding: 2px;
++#dtsdiff td:nth-child(2), #dtsdiff th:first-child {
++	border-right: 1px solid black; /* same as above */
+ }
+-
+-#difftable .image td {
++#dtsdiff th { /* the table head cells for sdiffs */
++	padding-top: 1ex;
++	width: 50%; /* usually both rev. have changes: eq. space for both */
++}
++.dtn, .dtm, .dtp {  /* linenum cells: normal, deleted, added indicator */
++	font-style: italic;
++	color: #666;					/* should be the same as for #nums */
++	border-right: 1px solid #ddd;
++	padding: 0 1ex;
++	text-align: right;
++}
++.dtn {
++	background-color: #dddddd;		/* should be the same as for #nums */
++}
++.dtm {
++	text-decoration: line-through;
++}
++.dts { /* difftable cell with source code */
++	padding-left: 0.5ex;
++}
++.dti {	/* difftable cell with an image */
+ 	padding: 5px;
+ }
+-
+-#difftable .k { /* border between the context and real diff lines */
++.dtk { /* border between the context and real diff lines */
+ 	border-bottom: 1px dashed #ccc;
+ }
+ 
+@@ -752,8 +751,7 @@
+ 	color: #000;
+ }
+ #src .l, #src .hl, .blame .r, .blame .a,
+-#results .l, #more .l,
+-#difftable i, del.d { /* line number/annotation block */
++#results .l, #more .l { /* line number/annotation block */
+ 	display: inline-block;
+ 	width: 5ex;
+ 	text-align: right;
+diff -r eeaad9558e0a -r 77a09a331652 web/static/offwhite/print.css
+--- a/web/static/offwhite/print.css	Sun Apr 01 06:07:16 2012 +0200
++++ b/web/static/offwhite/print.css	Thu Apr 05 03:07:08 2012 +0200
+@@ -54,12 +54,6 @@
+ 	font-weight: bold;
+ }
+ 
+-.pre { /* the diff content */
+-	white-space: pre-wrap;
+-	font-family: monospace;
+-	margin: 0;
+-}
+-
+ #page { }
+ 
+ .error { /* error messages */
+@@ -223,42 +217,52 @@
+ }
+ 
+ #difftable {
++	font-family: monospace;
+ 	font-size: small;
++	margin: 1ex 0 0 0;
++	white-space: pre;
+ }
+-
+-#difftable .d {
++.m, .dtm {
+ 	/* "Deleted" heading + highlight of deleted text in diff lines */
+ 	background-color: #ffcc40;
+ }
+-
+-#difftable .a {
++.p, .dtp {
+ 	/* "Added" heading + highlight of added text in diff lines */
+ 	background-color: #8bd98b;
+ }
+-
+-#difftable table { /* left side == prev. rev; right side "current" rev */
++#dtsdiff, #dtudiff, #dtnew, #dtold {
+ 	table-layout: fixed;
+ 	border-collapse: collapse;
++	border-right: 1px solid black;
++	border-left: 1px solid black;
+ }
+-
+-#difftable table th { /* usually both rev. have changes: eq. space for both */
++#dtsdiff td:nth-child(2), #dtsdiff th:first-child {
++	border-right: 1px solid black; /* same as above */
++}
++#dtsdiff th { /* usually both rev. have changes: eq. space for both */
+ 	padding-top: 1ex;
+ 	width: 50%;
+ }
+-
+-#difftable th:last-child, #difftable td:last-child {
+-	border-left: 1px solid black;
++.dtn, .dtm, .dtp {  /* linenum cells: normal, deleted, added indicator */
++	font-style: italic;
++	color: #888;					/* should be the same as for #nums */
++	border-right: 1px solid #ddd;
++	padding: 0 1ex;
++	text-align: right;
+ }
+-
+-#difftable .plain td {
+-	padding: 2px;
++.dtn {
++	background-color: #e4e4c8;		/* should be the same as for #nums */
+ }
+-
+-#difftable .image td {
++.dtm {
++	text-decoration: line-through;
++}
++.dts { /* difftable cell with source code */
++	padding-left: 0.5ex;
++}
++.dti {	/* difftable cell with an image */
+ 	padding: 5px;
+ }
+-
+-#difftable .k { /* border between the context and real diff lines */
++.dtk { /* border between the context and real diff lines */
+ 	border-bottom: 1px dashed #ccc;
+ }
+ 
+@@ -334,8 +338,7 @@
+ 	color: #000;
+ }
+ #src .l, #src .hl, .blame .r, .blame .a, 
+-#results .l, #more .l,
+-#difftable i, del.d { /* line number/annotation block */
++#results .l, #more .l { /* line number/annotation block */
+ 	display: inline-block;
+ 	width: 6ex;
+ 	text-align: right;
+diff -r eeaad9558e0a -r 77a09a331652 web/static/offwhite/style.css
+--- a/web/static/offwhite/style.css	Sun Apr 01 06:07:16 2012 +0200
++++ b/web/static/offwhite/style.css	Thu Apr 05 03:07:08 2012 +0200
+@@ -352,19 +352,13 @@
+ 	font-weight: bold;
+ }
+ 
+-.pre { /* the diff content */
+-	white-space: pre-wrap;
+-	font-family: monospace;
+-	margin: 0;
+-}
+-
+ #page { }
+ 
+ .error { /* error messages */
+ 	color: #a52a2a;
+ }
+ 
+-.active {
++.active { /* search: sort order, diffs: full|compact display */
+ 	font-weight: bold;
+ 	color: #c20097;
+ }
+@@ -630,36 +624,32 @@
+ 
+ 
+ /* *** diff page *** */
++
++/* diff sub navigation bar: css prefix: db */
+ #diffbar { /* diff navbar: contains the tabs to select diff format */
+ 	margin-top: 1.5ex;
+ 	border-bottom: 1px solid #999;
+ 	white-space: nowrap;
+ }
+-
+-#diffbar .d, #difftable .d {
+-	/* "Deleted" heading + highlight of deleted text in diff lines */
++.m, .dtm {
++	/* -: "Deleted" heading + highlight of deleted text in diff lines */
+ 	background-color: #ffcc40;
+ }
+-
+-#diffbar .a, #difftable .a {
+-	/* "Added" heading + highlight of added text in diff lines */
++.p, .dtp {
++	/* +: "Added" heading + highlight of added text in diff lines */
+ 	background-color: #8bd98b;
+ }
+-
+-#diffbar .legend, #diffbar .tabs, #diffbar .ctype {
++.dblegend, .dbtabs, .dbformats {
+ 	display: inline-block;
+ }
+-
+-#diffbar .legend {
++.dblegend {
+ 	/* bottom must be the same as .tabs span(padding-bottom) */
+ 	margin: 0 3ex 0.75ex 1ex;
+ }
+-
+-#diffbar .legend span, #diffbar .ctype span {
+-	padding: 0.2ex 1ex; /* bottom must be less than margin-bottom(.legend) */
++.dblegend .m, .dblegend .p, .dbformat {
++	padding: 0.2ex 1ex; /* bottom must be less than margin-bottom(.dblegend) */
+ }
+-
+-#diffbar .tabs span {
++.dbtab {
+ 	padding: 0.75ex 1ex;
+ 	margin-left: 1ex;
+ 	border: 1px solid #999; /* should be the same as for #diffbar above */
+@@ -667,54 +657,63 @@
+ 	-moz-border-radius: 0.75ex 0.75ex 0 00;
+ 	background-color: #f5f5dc; /* navbar like */
+ }
+-
+-#diffbar .tabs span.active, #diffbar .ctype span.active {
+-	background-color: #d6d6c0; /* same as for table th */
++.dbtabs .active, .dbformats .active {
++	background-color: #d6d6c0; /* same as for table thead */
+ }
+-
+-#diffbar .tabs span.active {
++.dbtabs .active {
+ 	border-bottom-style: dashed;
+ }
+-
+-#diffbar .ctype {
+-	margin-left: 3ex; /* see margin-left .legend */
++.dbformats {
++	margin-left: 3ex; /* see margin-left .dblegend */
+ }
+-
+-#diffbar .ctype span {
++.dbformat {
+ 	border: 1px solid #755; /* same as for input */
+ 	border-radius: 0.75ex;
+ 	-moz-border-radius: 0.75ex;
+-	background-color: #f5f5dc; /* navbar like */
++	background-color: #f5f5dc; /* #bar like */
+ 	margin-left: 1ex;
+ }
+ 
++/* the diff content sections (sdiff, new, old, udiff, tdiff): css prefix: dt */
+ #difftable {
++	font-family: monospace;
+ 	font-size: small;
++	margin: 1ex 0 0 0; /* margin-top should be the same as for the footer */
++	white-space: pre;
+ }
+-
+-#difftable table { /* left side == prev. rev; right side "current" rev */
++#dtsdiff, #dtudiff, #dtnew, #dtold { /* tables */
+ 	table-layout: fixed;
+ 	border-collapse: collapse;
+-}
+-
+-#difftable table th { /* usually both rev. have changes: eq. space for both */
+-	padding-top: 1ex;
+-	width: 50%;
+-}
+-
+-#difftable th:last-child, #difftable td:last-child {
++	border-right: 1px solid black;
+ 	border-left: 1px solid black;
+ }
+-
+-#difftable .plain td {
+-	padding: 2px;
++#dtsdiff td:nth-child(2), #dtsdiff th:first-child {
++	border-right: 1px solid black; /* same as above */
+ }
+-
+-#difftable .image td {
++#dtsdiff th { /* the table head cells for sdiffs */
++	padding-top: 1ex;
++	width: 50%; /* usually both rev. have changes: eq. space for both */
++}
++.dtn, .dtm, .dtp {  /* linenum cells: normal, deleted, added indicator */
++	font-style: italic;
++	color: #888;					/* should be the same as for #nums */
++	border-right: 1px solid #ddd;
++	padding: 0 1ex;
++	text-align: right;
++}
++.dtn {
++	background-color: #e4e4c8;		/* should be the same as for #nums */
++}
++.dtm {
++	text-decoration: line-through;
++}
++.dts { /* difftable cell with source code */
++	padding-left: 0.5ex;
++}
++.dti {	/* difftable cell with an image */
+ 	padding: 5px;
+ }
+-
+-#difftable .k { /* border between the context and real diff lines */
++.dtk { /* border between the context and real diff lines */
+ 	border-bottom: 1px dashed #ccc;
+ }
+ 
+@@ -796,8 +795,7 @@
+ 	color: #000;
+ }
+ #src .l, #src .hl, .blame .r, .blame .a, 
+-#results .l, #more .l,
+-#difftable i, del.d { /* line number/annotation block */
++#results .l, #more .l { /* line number/annotation block */
+ 	display: inline-block;
+ 	width: 6ex;
+ 	text-align: right;
+diff -r eeaad9558e0a -r 77a09a331652 web/static/polished/print.css
+--- a/web/static/polished/print.css	Sun Apr 01 06:07:16 2012 +0200
++++ b/web/static/polished/print.css	Thu Apr 05 03:07:08 2012 +0200
+@@ -54,12 +54,6 @@
+ 	font-weight: bold;
+ }
+ 
+-.pre { /* the diff content */
+-	white-space: pre-wrap;
+-	font-family: monospace;
+-	margin: 0;
+-}
+-
+ #page { }
+ 
+ .error { /* error messages */
+@@ -225,40 +219,54 @@
+ #difftable {
+ 	font-size: small;
+ }
+-
+-#difftable .d {
++.m, .dtm {
+ 	/* "Deleted" heading + highlight of deleted text in diff lines */
+ 	background-color: #ffcc40;
+ }
+-
+-#difftable .a {
++.p, .dtp {
+ 	/* "Added" heading + highlight of added text in diff lines */
+ 	background-color: #8bd98b;
+ }
+-
+-#difftable table { /* left side == prev. rev; right side "current" rev */
++/* the diff content sections (sdiff, new, old, udiff, tdiff): css prefix: dt */
++#difftable {
++	font-family: monospace;
++	font-size: small;
++	margin: 1ex 0 0 0; /* margin-top should be the same as for the footer */
++	white-space: pre;
++}
++#dtsdiff, #dtudiff, #dtnew, #dtold { /* tables */
+ 	table-layout: fixed;
+ 	border-collapse: collapse;
+-}
+-
+-#difftable table th { /* usually both rev. have changes: eq. space for both */
+-	padding-top: 1ex;
+-	width: 50%;
+-}
+-
+-#difftable th:last-child, #difftable td:last-child {
++	border-right: 1px solid black;
+ 	border-left: 1px solid black;
+ }
+-
+-#difftable .plain td {
+-	padding: 2px;
++#dtsdiff td:nth-child(2), #dtsdiff th:first-child {
++	border-right: 1px solid black; /* same as above */
+ }
+-
+-#difftable .image td {
++#dtsdiff th { /* the table head cells for sdiffs */
++	padding-top: 1ex;
++	width: 50%; /* usually both rev. have changes: eq. space for both */
++}
++.dtn, .dtm, .dtp {  /* linenum cells: normal, deleted, added indicator */
++	font-style: italic;
++	color: #888;					/* should be the same as for #nums */
++	border-right: 1px solid #ddd;
++	padding: 0 1ex;
++	text-align: right;
++}
++.dtn {
++	background-color: #ffffcc;		/* should be the same as for #nums */
++}
++.dtm {
++	text-decoration: line-through;
++}
++.dts { /* difftable cell with source code */
++	padding-left: 0.5ex;
++}
++.dti {	/* difftable cell with an image */
+ 	padding: 5px;
+ }
+-
+-#difftable .k { /* border between the context and real diff lines */
++.dtk { /* border between the context and real diff lines */
+ 	border-bottom: 1px dashed #ccc;
+ }
+ 
+diff -r eeaad9558e0a -r 77a09a331652 web/static/polished/style.css
+--- a/web/static/polished/style.css	Sun Apr 01 06:07:16 2012 +0200
++++ b/web/static/polished/style.css	Thu Apr 05 03:07:08 2012 +0200
+@@ -371,19 +371,13 @@
+ label {
+ }
+ 
+-.pre { /* the diff content */
+-	white-space: pre-wrap;
+-	font-family: monospace;
+-	margin: 0;
+-}
+-
+ #page { }
+ 
+ .error { /* error messages */
+ 	color: #a52a2a;
+ }
+ 
+-.active {
++.active { /* search: sort order, diffs: full|compact display */
+ 	font-weight: bold;
+ 	color: #e08c00;
+ }
+@@ -682,57 +676,57 @@
+ 
+ 
+ /* *** diff page *** */
++
++/* diff sub navigation bar: css prefix: db */
+ #diffbar { /* diff navbar: contains the tabs to select diff format */
+ 	margin-top: 1.5ex;
+ 	border-bottom: 1px solid #999;
+ 	white-space: nowrap;
+ }
+-
+-#diffbar .d, #difftable .d {
+-	/* "Deleted" heading + highlight of deleted text in diff lines */
++.m, .dtm {
++	/* -: "Deleted" heading + highlight of deleted text in diff lines */
+ 	background-color: #ffcc40;
+ }
+-
+-#diffbar .a, #difftable .a {
+-	/* "Added" heading + highlight of added text in diff lines */
++.p, .dtp {
++	/* +: "Added" heading + highlight of added text in diff lines */
+ 	background-color: #8bd98b;
+ }
+ 
+-#diffbar .legend, #diffbar .tabs, #diffbar .ctype {
++.dblegend, .dbtabs, .dbformats {
+ 	display: inline-block;
+ }
+ 
+-#diffbar .legend {
++.dblegend {
+ 	/* bottom must be the same as .tabs span(padding-bottom) */
+ 	margin: 0 3ex 0.75ex 1ex;
+ }
+ 
+-#diffbar .legend span, #diffbar .ctype span {
+-	padding: 0.2ex 1ex; /* bottom must be less than margin-bottom(.legend) */
++.dblegend .m, .dblegend .p, .dbformat {
++	padding: 0.2ex 1ex; /* bottom must be less than margin-bottom(.dblegend) */
+ }
+ 
+-#diffbar .tabs span {
++.dbtab {
+ 	padding: 0.75ex 1ex;
+ 	margin-left: 1ex;
+ 	border: 1px solid #999; /* should be the same as for #diffbar above */
+ 	border-radius: 0.75ex 0.75ex 0 00;
+ 	-moz-border-radius: 0.75ex 0.75ex 0 00;
+-	background-color: #f5f5dc; /* navbar like */
++	background-color: #f5f5dc; /* #bar like */
+ }
+ 
+-#diffbar .tabs span.active, #diffbar .ctype span.active {
+-	background-color: #426477; /* same as for table th */
++.dbtabs .active, .dbformats .active {
++	background-color: #426477; /* same as for table thead */
+ }
+ 
+-#diffbar .tabs span.active {
++.dbtabs .active {
+ 	border-bottom-style: dashed;
+ }
+ 
+-#diffbar .ctype {
+-	margin-left: 3ex; /* see margin-left .legend */
++.dbformats {
++	margin-left: 3ex; /* see margin-left .dblegend */
+ }
+ 
+-#diffbar .ctype span {
++.dbformat {
+ 	border: 1px solid #755; /* same as for input */
+ 	border-radius: 0.75ex;
+ 	-moz-border-radius: 0.75ex;
+@@ -740,33 +734,46 @@
+ 	margin-left: 1ex;
+ }
+ 
++/* the diff content sections (sdiff, new, old, udiff, tdiff): css prefix: dt */
+ #difftable {
++	font-family: monospace;
+ 	font-size: small;
++	margin: 1ex 0 0 0; /* margin-top should be the same as for the footer */
++	white-space: pre;
+ }
+-
+-#difftable table { /* left side == prev. rev; right side "current" rev */
++#dtsdiff, #dtudiff, #dtnew, #dtold { /* tables */
+ 	table-layout: fixed;
+ 	border-collapse: collapse;
+-}
+-
+-#difftable table th { /* usually both rev. have changes: eq. space for both */
+-	padding-top: 1ex;
+-	width: 50%;
+-}
+-
+-#difftable th:last-child, #difftable td:last-child {
++	border-right: 1px solid black;
+ 	border-left: 1px solid black;
+ }
+-
+-#difftable .plain td {
+-	padding: 2px;
++#dtsdiff td:nth-child(2), #dtsdiff th:first-child {
++	border-right: 1px solid black; /* same as above */
+ }
+-
+-#difftable .image td {
++#dtsdiff th { /* the table head cells for sdiffs */
++	padding-top: 1ex;
++	width: 50%; /* usually both rev. have changes: eq. space for both */
++}
++.dtn, .dtm, .dtp {  /* linenum cells: normal, deleted, added indicator */
++	font-style: italic;
++	color: #888;					/* should be the same as for #nums */
++	border-right: 1px solid #ddd;
++	padding: 0 1ex;
++	text-align: right;
++}
++.dtn {
++	background-color: #e9ede8;		/* should be the same as for #nums */
++}
++.dtm {
++	text-decoration: line-through;
++}
++.dts { /* difftable cell with source code */
++	padding-left: 0.5ex;
++}
++.dti {	/* difftable cell with an image */
+ 	padding: 5px;
+ }
+-
+-#difftable .k { /* border between the context and real diff lines */
++.dtk { /* border between the context and real diff lines */
+ 	border-bottom: 1px dashed #ccc;
+ }
+ 

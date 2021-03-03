@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>2367</bug_id>
+          
+          <creation_ts>2008-07-01 07:19:00 +0000</creation_ts>
+          <short_desc>Colon in path property causes search.jsp to function incorrectly</short_desc>
+          <delta_ts>2008-08-01 09:05:00 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>webapp</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>Solaris</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXED</resolution>
+          
+          
+          
+          
+          
+          <priority>P4</priority>
+          <bug_severity>minor</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="tim luksha">timothy.luksha</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          <cc>timothy.luksha</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>8647</commentid>
+            <who name="tim luksha">timothy.luksha</who>
+            <bug_when>2008-07-01 07:19:40 +0000</bug_when>
+            <thetext>When search results produce multiple pages, the project does not stay selected when clicking the link to move to different pages of results.  I can view the first page of results, but if i attempt to move to page 2 or 3 I get the error message &quot;You must select a project.&quot;  The problem is the way &lt;option value=&quot;blah:blah&quot;&gt;blah&lt;/option&gt; interprets the colon.  I&apos;m working around this by reindexing my projects after moving them to a directory with no colons.  
+ 
+configuration.xml:
+&lt;void property=&quot;projects&quot;&gt;
+   &lt;void method=&quot;add&quot;&gt;
+    &lt;object class=&quot;org.opensolaris.opengrok.configuration.Project&quot;&gt;
+     &lt;void property=&quot;description&quot;&gt;
+      &lt;string&gt;CP.0082.61&lt;/string&gt;
+     &lt;/void&gt;
+     &lt;void property=&quot;path&quot;&gt;
+      &lt;string&gt;/CP.0082.61ThuJun2615:16:122008&lt;/string&gt;
+     &lt;/void&gt;
+    &lt;/object&gt;
+   &lt;/void&gt;
+ &lt;void method=&quot;add&quot;&gt;
+    &lt;object class=&quot;org.opensolaris.opengrok.configuration.Project&quot;&gt;
+     &lt;void property=&quot;description&quot;&gt;
+      &lt;string&gt;CP.6282.61&lt;/string&gt;
+     &lt;/void&gt;
+     &lt;void property=&quot;path&quot;&gt;
+      &lt;string&gt;/CP.6282.61ThuJun2614:34:582008&lt;/string&gt;
+     &lt;/void&gt;
+    &lt;/object&gt;
+   &lt;/void&gt;
+  &lt;/void&gt;
+
+
+search.jsp:
+ &lt;option value=&quot;/CP.0082.61ThuJun2615:16:122008&quot; selected&gt;CP.0082.61&lt;/option&gt;
+ &lt;option value=&quot;/CP.6282.61ThuJun2614:34:582008&quot;&gt;CP.6282.61&lt;/option&gt;
+
+Version info: 
+I used opengrok-0.6.1 to make the index but the webapp in apache-tomcat may be from opengrok-0.6.0 still.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>8651</commentid>
+            <who name="tim luksha">timothy.luksha</who>
+            <bug_when>2008-07-01 07:57:36 +0000</bug_when>
+            <thetext>I added a logging message in projects.jspf which shows:
+
+project:   /CP.0082.61ThuJun2615:16:122008
+project:   /CP.0082.61ThuJun2615
+
+The full path was the initial search/viewing of page 1.  The project path gets truncated when I selected to view page 2.  
+ if (project != null) {
+        System.out.println(&quot;project:   &quot; + project );
+        if (Project.getProject(project) == null) {
+            project = &quot;&quot;;
+        }
+    } else {
+        project = &quot;&quot;;
+    }</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>8658</commentid>
+            <who name="tim luksha">timothy.luksha</who>
+            <bug_when>2008-07-01 12:03:14 +0000</bug_when>
+            <thetext>Just realized that I should have noted I am using apache-tomcat-5.5.26.   
+
+Also, I added: 
+
+Cookie cookie = new Cookie(&quot;OpenGrok/project&quot;, project);
+cookie.setVersion(1);
+response.addCookie(cookie);
+
+to projects.jspf and it seemed to fix my issue.  I&apos;m not sure setting the version to one is actually desirable though so it may not be a good fix.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>9703</commentid>
+            <who name="Trond Norbye">trond.norbye</who>
+            <bug_when>2008-08-01 07:55:07 +0000</bug_when>
+            <thetext>Hmm.. this might be a problem with your configuration. I just downloaded and installed OpenGrok 0.6.1 on my machine. I then created a project named: c:foo and tried to browse the source there. I was able to search for functions within the project, and use the links in the generated xref-files....
+
+Could you please verify your setup ? Btw. You need to regenerate all of the xref files if they where generated by a previous version of OpenGrok.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>9704</commentid>
+            <who name="tim luksha">timothy.luksha</who>
+            <bug_when>2008-08-01 08:04:23 +0000</bug_when>
+            <thetext>(In reply to comment #3)
+&gt; Hmm.. this might be a problem with your configuration. I just downloaded and
+&gt; installed OpenGrok 0.6.1 on my machine. I then created a project named: c:foo
+&gt; and tried to browse the source there. I was able to search for functions within
+&gt; the project, and use the links in the generated xref-files....
+&gt; Could you please verify your setup ? Btw. You need to regenerate all of the
+&gt; xref files if they where generated by a previous version of OpenGrok.
+
+This problem was happening when full search results had multiple pages.  The first page displayed correctly but the link to the second page didn&apos;t work.  I am working on constructing a simple test to reproduce it now.  I&apos;ll let you know...</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>9709</commentid>
+            <who name="Trond Norbye">trond.norbye</who>
+            <bug_when>2008-08-01 08:58:21 +0000</bug_when>
+            <thetext>Ahh.. I found the bug. The project needs to be added to the URL at line ~298 in search.jsp</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>9710</commentid>
+            <who name="Trond Norbye">trond.norbye</who>
+            <bug_when>2008-08-01 09:05:00 +0000</bug_when>
+            <thetext>Fixed in changeset:   331:57997b7b1906</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>2633</bug_id>
+          
+          <creation_ts>2008-07-23 08:12:00 +0000</creation_ts>
+          <short_desc># of results per page</short_desc>
+          <delta_ts>2010-04-06 14:40:39 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>webapp</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>ACCEPTED</bug_status>
+          
+          
+          
+          
+          
+          
+          <priority>P4</priority>
+          <bug_severity>enhancement</bug_severity>
+          <target_milestone>0.9</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Jason Leonard">jason</reporter>
+          <assigned_to name="Lubos Kosco">Lubos.Kosco</assigned_to>
+          <cc>garen</cc>
+    
+    <cc>Lubos.Kosco</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>9297</commentid>
+            <who name="Jason Leonard">jason</who>
+            <bug_when>2008-07-23 08:12:39 +0000</bug_when>
+            <thetext>A very useful feature of the web interface would be to add some buttons, or a dropdown, or something to select how many results you would like to see per page when searching. Maybe 10/25/50/100/500? 
+I inderstand that there will odviousally be a performance hit the more results gets returned.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>9719</commentid>
+            <who name="Trond Norbye">trond.norbye</who>
+            <bug_when>2008-08-01 11:19:31 +0000</bug_when>
+            <thetext>This could easily be implemented in search.jsp the same way as we do the sorting.. It is the max setting at line ~105 (and line ~123)</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>50010</commentid>
+            <who name="Garen">garen</who>
+            <bug_when>2009-09-16 17:55:45 +0000</bug_when>
+            <thetext>Would love a link to &quot;All&quot; too...</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>50023</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2009-09-16 19:39:51 +0000</bug_when>
+            <thetext>hmm ... I agree with Trond on this ... the only thing needed is to add UI buttons for this, the rest is already in the code.
+
+The only Q is whether to have this per project or per whole webapp ... I guess later makes more sense ...
+
+button all is quite relative ... but could be added too ...
+
+just a side note ... latest change with lucene brought something I call &quot;page caching&quot; which means, that with a lot of results we currently cache 5 x HitsPerPage
+naturally 5 can be changed in configuration xml, hits per page (currently 25 is default) too in current trunk. That means, that we don&apos;t fetch more than 5 pages worth of results currently, only when you click on page 6 the query takes longer and ALL results are fetched.</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

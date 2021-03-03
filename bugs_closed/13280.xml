@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>13280</bug_id>
+          
+          <creation_ts>2009-12-11 20:11:00 +0000</creation_ts>
+          <short_desc>RFE: Configurable tab size for xref</short_desc>
+          <delta_ts>2009-12-20 18:15:42 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>analyzer</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXINSOURCE</resolution>
+          
+          
+          
+          
+          
+          <priority>P4</priority>
+          <bug_severity>enhancement</bug_severity>
+          <target_milestone>0.9</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Knut Anders Hatlen">knut.hatlen</reporter>
+          <assigned_to name="Knut Anders Hatlen">knut.hatlen</assigned_to>
+          <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>59367</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2009-12-11 20:11:58 +0000</bug_when>
+            <thetext>Some projects use non-standard tab sizes, and code from those projects may look odd when viewed with the default tab size (8). I&apos;d like to add tab size as a project property to make xrefs from such projects look better.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>60475</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2009-12-20 18:15:42 +0000</bug_when>
+            <thetext>Fixed in changeset 922:e8e1a74e2322.
+
+From the commit message:
+
+To use a non-default tab size for a project, add this to the
+Project section of configure.xml (replace XXX with the desired
+tab size):
+
+&lt;void property=&quot;tabSize&quot;&gt;
+  &lt;int&gt;XXX&lt;/int&gt;
+&lt;/void&gt;</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

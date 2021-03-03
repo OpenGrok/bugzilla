@@ -1,0 +1,5 @@
+--regex-asm=/(ENTRY_NP|ENTRY|RTENTRY)+\(([^ ]*)\)/\2/f/
+--regex-asm=/ENTRY2\(([^ ]*),([^ ]*)\)/\1/f/
+--regex-asm=/ENTRY2\(([^ ]*),([^ ]*)\)/\2/f/
+--regex-asm=/ENTRY_NP2\(([^ ]*),[ ]*([^ ]*)\)/\1/f/
+--regex-asm=/ENTRY_NP2\(([^ ]*),[ ]*([^ ]*)\)/\2/f/

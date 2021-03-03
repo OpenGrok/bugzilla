@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>69</bug_id>
+          
+          <creation_ts>2007-11-01 03:25:00 +0000</creation_ts>
+          <short_desc>SubversionHistoryParser should be able to read history for directories</short_desc>
+          <delta_ts>2007-12-25 15:55:05 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>scm</component>
+          <version>unspecified</version>
+          <rep_platform>Other</rep_platform>
+          <op_sys>Solaris</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>WORKSFORME</resolution>
+          
+          
+          
+          
+          
+          <priority>P4</priority>
+          <bug_severity>enhancement</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Trond Norbye">trond.norbye</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>155</commentid>
+            <who name="Trond Norbye">trond.norbye</who>
+            <bug_when>2007-11-01 03:25:09 +0000</bug_when>
+            <thetext>The Subversion command line interface may dump history information for a directory. The SubversionHistoryParser should be extended to do this as well so we can use that instead of the DirectoryHistoryReader.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>363</commentid>
+            <who name="Trond Norbye">trond.norbye</who>
+            <bug_when>2007-11-05 13:45:07 +0000</bug_when>
+            <thetext>I committed a fix that will list history entries for a directory by using Subversion to get the history information on the directory in changeset: 149:f029c3167923.
+
+Unfortunately the fix does not include the filenames for the files included in the commit (it seems to me that the subversion library we&apos;re using don&apos;t return this), but I am working on this issue.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>921</commentid>
+            <who name="Trond Norbye">trond.norbye</who>
+            <bug_when>2007-12-25 15:55:05 +0000</bug_when>
+            <thetext>I tested this with revision 198 from trunk today, and it works as expected</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>3549</bug_id>
+          
+          <creation_ts>2008-09-23 05:23:00 +0000</creation_ts>
+          <short_desc>display date of last modification in search results</short_desc>
+          <delta_ts>2008-09-23 09:00:29 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>webapp</component>
+          <version>unspecified</version>
+          <rep_platform>Other</rep_platform>
+          <op_sys>Solaris</op_sys>
+          <bug_status>NEW</bug_status>
+          
+          
+          
+          
+          
+          
+          <priority>P4</priority>
+          <bug_severity>enhancement</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Vladimir Kotal">vladimir.kotal</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          <cc>Lubos.Kosco</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>12975</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2008-09-23 05:23:52 +0000</bug_when>
+            <thetext>It would be handy if date of last modification was displayed for every file listed in search results.
+
+For example, it can be sitting on the same line as directory path and indented to the right.
+
+This display mode should be configurable.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>12987</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2008-09-23 09:00:29 +0000</bug_when>
+            <thetext>By using and formating the lucene field &quot;date&quot; we can do this without big performance impact (reading the files from disk)
+
+the code needs to be added after : 
+http://src.opensolaris.org/source/xref/opengrok/trunk/src/org/opensolaris/opengrok/search/Results.java#83
+and the date from doc.get(&quot;date&quot;) just needs to be printed in useful manner (maybe lucene has such function already, or we need a new util function into http://src.opensolaris.org/source/xref/opengrok/trunk/src/org/opensolaris/opengrok/web/Util.java )
+- lucene we use is 2.2.0 , I couldn&apos;t find its javadoc, but 2.3.2 is here:  http://lucene.apache.org/java/2_3_2/api/core/index.html - so it might contain a function to convert the date already
+
+This way we naturally will print only data from index which might be not synced with disc ... (but better than no datetime &amp; without any noticeable performance impact, since we have the lucene document already in memory ;) )
+
+Oh, when evaluating this bug I noticed
+http://src.opensolaris.org/source/xref/opengrok/trunk/web/search.jsp#69
+should say sort = RELEVANCY;
+
+otherwise you get in search results the &quot;sorted by null&quot; by default 
+(a small goodie, which could be fixed with this bug)
+
+any takers for creation of a patch ? ;)</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

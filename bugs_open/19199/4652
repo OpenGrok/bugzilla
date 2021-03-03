@@ -1,0 +1,72 @@
+# HG changeset patch
+# User jel+opengrok@cs.uni-magdeburg.de
+# Date 1334463623 -7200
+# Node ID b0e433341e801d757ed05ba5efd987855ce5e437
+# Parent  cf20244419bdb7d024610b3603368f8208336918
+use default loggers
+
+diff -r cf20244419bd -r b0e433341e80 src/org/opensolaris/opengrok/analysis/executables/ELFAnalyzer.java
+--- a/src/org/opensolaris/opengrok/analysis/executables/ELFAnalyzer.java	Sun Apr 15 06:01:26 2012 +0200
++++ b/src/org/opensolaris/opengrok/analysis/executables/ELFAnalyzer.java	Sun Apr 15 06:20:23 2012 +0200
+@@ -34,11 +34,11 @@
+ import java.util.HashMap;
+ import java.util.List;
+ import java.util.logging.Level;
++import java.util.logging.Logger;
+ 
+ import org.apache.lucene.analysis.TokenStream;
+ import org.apache.lucene.document.Document;
+ import org.apache.lucene.document.Field;
+-import org.opensolaris.opengrok.OpenGrokLogger;
+ import org.opensolaris.opengrok.analysis.FileAnalyzer;
+ import org.opensolaris.opengrok.analysis.FileAnalyzerFactory;
+ import org.opensolaris.opengrok.analysis.XrefWriter;
+@@ -54,7 +54,7 @@
+  * @author Trond Norbye
+  */
+ public class ELFAnalyzer extends FileAnalyzer {
+-
++    private static final Logger logger = Logger.getLogger(ELFAnalyzer.class.getName());
+     private StringBuilder content;
+     private PlainFullTokenizer plainfull;
+ 
+@@ -106,7 +106,7 @@
+         ELFHeader eh = new ELFHeader(fmap);
+ 
+         if (eh.e_shnum <= 0) {
+-            OpenGrokLogger.getLogger().log(Level.FINE, "Skipping file, no section headers");
++            logger.log(Level.FINE, "Skipping file, no section headers");
+             return;
+         }
+ 
+@@ -114,7 +114,7 @@
+         ELFSection stringSection = new ELFSection(fmap);
+ 
+         if (stringSection.sh_size == 0) {
+-            OpenGrokLogger.getLogger().log(Level.FINE, "Skipping file, no section name string table");
++            logger.log(Level.FINE, "Skipping file, no section name string table");
+             return ;
+         }
+ 
+diff -r cf20244419bd -r b0e433341e80 web/more.jsp
+--- a/web/more.jsp	Sun Apr 15 06:01:26 2012 +0200
++++ b/web/more.jsp	Sun Apr 15 06:20:23 2012 +0200
+@@ -26,8 +26,8 @@
+ --%><%@page import="
+ java.io.FileReader,
+ java.util.logging.Level,
++java.util.logging.Logger,
+ 
+-org.opensolaris.opengrok.OpenGrokLogger,
+ org.apache.lucene.search.Query,
+ org.opensolaris.opengrok.search.QueryBuilder,
+ org.opensolaris.opengrok.search.context.Context"
+@@ -55,7 +55,7 @@
+ </div><%
+         }
+     } catch (Exception e) {
+-        OpenGrokLogger.getLogger().log(Level.WARNING, e.getMessage());
++        Logger.getLogger("more.jsp").log(Level.WARNING, e.getMessage());
+     }
+ }
+ /* ---------------------- more.jsp end --------------------- */

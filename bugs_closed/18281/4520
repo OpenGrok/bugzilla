@@ -1,0 +1,1175 @@
+diff -r 09f0768a7ec1 src/org/opensolaris/opengrok/analysis/AnalyzerGuru.java
+--- a/src/org/opensolaris/opengrok/analysis/AnalyzerGuru.java	Fri May 06 21:41:59 2011 +0200
++++ b/src/org/opensolaris/opengrok/analysis/AnalyzerGuru.java	Sat May 07 06:30:28 2011 +0200
+@@ -222,9 +222,12 @@
+     public Document getDocument(File file, InputStream in, String path,
+                                 FileAnalyzer fa) throws IOException {
+         Document doc = new Document();
+-        String date = DateTools.timeToString(file.lastModified(), DateTools.Resolution.MILLISECOND);
+-        doc.add(new Field("u", Util.uid(path, date), Field.Store.YES, Field.Index.NOT_ANALYZED));
+-        doc.add(new Field("fullpath", file.getAbsolutePath(), Field.Store.NO, Field.Index.NOT_ANALYZED));
++        String date = DateTools.timeToString(file.lastModified(), 
++        	DateTools.Resolution.MILLISECOND);
++        doc.add(new Field("u", Util.path2uid(path, date), 
++        	Field.Store.YES, Field.Index.NOT_ANALYZED));
++        doc.add(new Field("fullpath", file.getAbsolutePath(), 
++        	Field.Store.NO, Field.Index.NOT_ANALYZED));
+ 
+         try {
+             HistoryReader hr = HistoryGuru.getInstance().getHistoryReader(file);
+@@ -246,12 +249,9 @@
+ 
+         if (fa != null) {
+             Genre g = fa.getGenre();
+-            if (g == Genre.PLAIN) {
+-                doc.add(new Field("t", "p", Field.Store.YES, Field.Index.NOT_ANALYZED));
+-            } else if (g == Genre.XREFABLE) {
+-                doc.add(new Field("t", "x", Field.Store.YES, Field.Index.NOT_ANALYZED));
+-            } else if (g == Genre.HTML) {
+-                doc.add(new Field("t", "h", Field.Store.YES, Field.Index.NOT_ANALYZED));
++            if (g == Genre.PLAIN || g == Genre.XREFABLE || g == Genre.HTML) {
++                doc.add(new Field("t", g.typeName(), Field.Store.YES, 
++                	Field.Index.NOT_ANALYZED));
+             }
+             fa.analyze(doc, in);
+         }
+@@ -370,7 +370,7 @@
+      * @throws IllegalAccessException if the constructor cannot be accessed
+      * @throws InstantiationException if the class cannot be instantiated
+      */
+-    private static FileAnalyzerFactory findFactory(Class factoryClass)
++    private static FileAnalyzerFactory findFactory(Class<?> factoryClass)
+         throws InstantiationException, IllegalAccessException
+     {
+         for (FileAnalyzerFactory f : factories) {
+@@ -513,7 +513,7 @@
+         BOMS.put("UTF-8", new byte[] {(byte) 0xEF, (byte) 0xBB, (byte) 0xBF});
+         BOMS.put("UTF-16BE", new byte[] {(byte) 0xFE, (byte) 0xFF});
+         BOMS.put("UTF-16LE", new byte[] {(byte) 0xFF, (byte) 0xFE});
+-    };
++    }
+ 
+     /**
+      * Strip away the byte-order marker from the string, if it has one.
+diff -r 09f0768a7ec1 src/org/opensolaris/opengrok/analysis/Ctags.java
+--- a/src/org/opensolaris/opengrok/analysis/Ctags.java	Fri May 06 21:41:59 2011 +0200
++++ b/src/org/opensolaris/opengrok/analysis/Ctags.java	Sat May 07 06:30:28 2011 +0200
+@@ -79,6 +79,7 @@
+             command.add("--filter-terminator=" + CTAGS_FILTER_TERMINATOR + "\n");
+             command.add("--fields=-anf+iKnS");
+             command.add("--excmd=pattern");
++            command.add("--langmap=sh:+.kshlib"); // RFE #17849
+             command.add("--regex-Asm=/^[ \\t]*(ENTRY|ENTRY2|ALTENTRY)[ \\t]*\\(([a-zA-Z0-9_]+)/\\2/f,function/");  // for assmebly definitions
+             processBuilder = new ProcessBuilder(command);
+         }
+@@ -229,7 +230,7 @@
+                             for (String name : names) {
+                              if (name.length()>0) {
+                               //log.fine("Param Def = "+ string);
+-                              defs.addTag(Integer.valueOf(lnum), name.trim(),
++                              defs.addTag(Integer.parseInt(lnum), name.trim(),
+                                     "argument", def.trim() + signature.trim());
+                               break;
+                              }
+diff -r 09f0768a7ec1 src/org/opensolaris/opengrok/analysis/Definitions.java
+--- a/src/org/opensolaris/opengrok/analysis/Definitions.java	Fri May 06 21:41:59 2011 +0200
++++ b/src/org/opensolaris/opengrok/analysis/Definitions.java	Sat May 07 06:30:28 2011 +0200
+@@ -48,7 +48,7 @@
+         protected LineTagMap() {
+             this.sym_tags = new HashMap<String, Set<Tag>>();
+         }
+-    };
++    }
+     // line -> tag_map
+     private final Map<Integer, LineTagMap> line_maps;
+ 
+@@ -97,10 +97,7 @@
+         if (lines != null && lines.contains(lineNumber)) {
+             LineTagMap line_map = line_maps.get(lineNumber);
+             if (line_map != null) {
+-                Set<Tag> ltags = line_map.sym_tags.get(symbol);
+-                Iterator it = ltags.iterator();
+-                while (it.hasNext()) {
+-                    Tag tag = (Tag)it.next();
++            	for (Tag tag : line_map.sym_tags.get(symbol)) {
+                     if (strs.length > 0) { //NOPMD
+                         strs[0] = tag.type;
+                     }
+@@ -110,7 +107,6 @@
+             }
+             return true;
+         }
+-
+         return false;
+     }
+ 
+@@ -179,13 +175,14 @@
+             lines = new HashSet<Integer>();
+             symbols.put(internedSymbol, lines);
+         }
+-        lines.add(line);
++        Integer aLine = new Integer(line);
++        lines.add(aLine);
+ 
+         // Get per line map
+-        LineTagMap line_map = line_maps.get(line);
++        LineTagMap line_map = line_maps.get(aLine);
+         if (line_map == null) {
+             line_map = new LineTagMap();
+-            line_maps.put(line, line_map);
++            line_maps.put(aLine, line_map);
+         }
+ 
+         // Insert sym->tag map for this line
+diff -r 09f0768a7ec1 src/org/opensolaris/opengrok/analysis/ExpandTabsReader.java
+--- a/src/org/opensolaris/opengrok/analysis/ExpandTabsReader.java	Fri May 06 21:41:59 2011 +0200
++++ b/src/org/opensolaris/opengrok/analysis/ExpandTabsReader.java	Sat May 07 06:30:28 2011 +0200
+@@ -70,11 +70,9 @@
+      * tabs as defined by the project's settings
+      */
+     public static Reader wrap(Reader in, Project p) {
+-        if (p != null && p.hasTabSizeSetting()) {
+-            return new ExpandTabsReader(in, p.getTabSize());
+-        } else {
+-            return in;
+-        }
++        return (p != null && p.hasTabSizeSetting())
++        	? new ExpandTabsReader(in, p.getTabSize())
++        	: in;
+     }
+ 
+     @Override
+diff -r 09f0768a7ec1 src/org/opensolaris/opengrok/analysis/FileAnalyzer.java
+--- a/src/org/opensolaris/opengrok/analysis/FileAnalyzer.java	Fri May 06 21:41:59 2011 +0200
++++ b/src/org/opensolaris/opengrok/analysis/FileAnalyzer.java	Sat May 07 06:30:28 2011 +0200
+@@ -66,12 +66,47 @@
+      * What kind of file is this?
+      */
+     public static enum Genre {
+-
+-        PLAIN, // xrefed - line numbered context
+-        XREFABLE, // xrefed - summarizer context
+-        IMAGE, // not xrefed - no context - used by diff/list
+-        DATA, // not xrefed - no context
+-        HTML    // not xrefed - summarizer context from original file
++    	/** xrefed - line numbered context */
++        PLAIN("p"),
++        /** xrefed - summarizer context */
++        XREFABLE("x"),
++        /** not xrefed - no context - used by diff/list */
++        IMAGE("i"),
++        /** not xrefed - no context */
++        DATA("d"),
++        /** not xrefed - summarizer context from original file */
++        HTML("h")
++        ;
++        private String typeName;
++        private Genre(String typename) {
++        	this.typeName = typename;
++        }
++        
++        /**
++         * Get the type name value used to tag lucence documents.
++         * @return a none-null string.
++         */
++        public String typeName() {
++        	return typeName;
++        }
++        
++        /**
++         * Get the Genre for the given type name.
++         * @param typeName name to check
++         * @return {@code null} if it doesn't match any genre, the genre otherwise.
++         * @see #typeName()
++         */
++        public static Genre get(String typeName) {
++        	if (typeName == null) {
++        		return null;
++        	}
++        	for (Genre g : values()) {
++        		if (g.typeName.equals(typeName)) {
++        			return g;
++        		}
++        	}
++        	return null;
++        }
+     }
+     protected Ctags ctags;
+ 
+diff -r 09f0768a7ec1 src/org/opensolaris/opengrok/analysis/Hash2TokenStream.java
+--- a/src/org/opensolaris/opengrok/analysis/Hash2TokenStream.java	Fri May 06 21:41:59 2011 +0200
++++ b/src/org/opensolaris/opengrok/analysis/Hash2TokenStream.java	Sat May 07 06:30:28 2011 +0200
+@@ -33,7 +33,7 @@
+     String term;
+     String terms[];
+     Iterator<String> keys;
+-    private final TermAttribute termAtt= (TermAttribute) addAttribute(TermAttribute.class);
++    private final TermAttribute termAtt= addAttribute(TermAttribute.class);
+ 
+     public Hash2TokenStream(Set<String> symbols){
+         keys = symbols.iterator();
+@@ -50,18 +50,15 @@
+                     if (i > 0) {
+                         termAtt.setTermBuffer(terms[--i]);
+                         return true;
+-                    } else {
+-                        // no tokens found in this key, try next
+-                        continue;
+                     }
+-                } else {
+-                    return false;
++                    // no tokens found in this key, try next
++                    continue;
+                 }
+-            } else {
+-                //System.out.println("Returning " + term + h.get(term));
+-                termAtt.setTermBuffer(terms[--i]);
+-                return true;
++                return false;
+             }
++            //System.out.println("Returning " + term + h.get(term));
++            termAtt.setTermBuffer(terms[--i]);
++            return true;
+         }
+     }
+ 
+diff -r 09f0768a7ec1 src/org/opensolaris/opengrok/analysis/HistoryAnalyzer.java
+--- a/src/org/opensolaris/opengrok/analysis/HistoryAnalyzer.java	Fri May 06 21:41:59 2011 +0200
++++ b/src/org/opensolaris/opengrok/analysis/HistoryAnalyzer.java	Sat May 07 06:30:28 2011 +0200
+@@ -31,7 +31,7 @@
+ import org.opensolaris.opengrok.analysis.plain.PlainFullTokenizer;
+ 
+ public final class HistoryAnalyzer extends Analyzer {
+-    private final Set stopWords;
++    private final Set<Object> stopWords;
+     
+     /** An array containing some common English words that are not usually useful
+     for searching. */
+diff -r 09f0768a7ec1 src/org/opensolaris/opengrok/analysis/JFlexTokenizer.java
+--- a/src/org/opensolaris/opengrok/analysis/JFlexTokenizer.java	Fri May 06 21:41:59 2011 +0200
++++ b/src/org/opensolaris/opengrok/analysis/JFlexTokenizer.java	Sat May 07 06:30:28 2011 +0200
+@@ -64,9 +64,9 @@
+         yyclose();
+     }
+ 
+-    protected TermAttribute termAtt= (TermAttribute) addAttribute(TermAttribute.class);
+-    protected OffsetAttribute offsetAtt=(OffsetAttribute) addAttribute(OffsetAttribute.class);    
+-    protected PositionIncrementAttribute posIncrAtt= (PositionIncrementAttribute) addAttribute(PositionIncrementAttribute.class);
++    protected TermAttribute termAtt= addAttribute(TermAttribute.class);
++    protected OffsetAttribute offsetAtt= addAttribute(OffsetAttribute.class);    
++    protected PositionIncrementAttribute posIncrAtt= addAttribute(PositionIncrementAttribute.class);
+ 
+     /**
+      * This will reinitalize internal AttributeImpls, or it returns false if end of input Reader ...
+diff -r 09f0768a7ec1 src/org/opensolaris/opengrok/analysis/List2TokenStream.java
+--- a/src/org/opensolaris/opengrok/analysis/List2TokenStream.java	Fri May 06 21:41:59 2011 +0200
++++ b/src/org/opensolaris/opengrok/analysis/List2TokenStream.java	Sat May 07 06:30:28 2011 +0200
+@@ -32,7 +32,7 @@
+     private List<String> l;
+     private String[] subTokens;
+     private int si;
+-    private final TermAttribute termAtt= (TermAttribute) addAttribute(TermAttribute.class);
++    private final TermAttribute termAtt= addAttribute(TermAttribute.class);
+ 
+     public List2TokenStream(List<String> l) {
+         if (l == null) {
+@@ -43,7 +43,7 @@
+     }
+ 
+     @Override
+-    public boolean incrementToken() throws java.io.IOException {
++    public boolean incrementToken() {
+         if (l.isEmpty()) {
+             // reached end of stream
+             return false;
+@@ -53,23 +53,21 @@
+             String tok = l.remove(0);
+             if (tok == null) {
+                 return false;
++            }
++            if (tok.indexOf('.') > 0) {
++                subTokens = tok.split("[^a-z0-9A-Z_]+");
+             } else {
+-                if (tok.indexOf('.') > 0) {
+-                    subTokens = tok.split("[^a-z0-9A-Z_]+");
+-                } else {
+-                    subTokens = null;
+-                    termAtt.setTermBuffer(tok);                    
+-                    return true;
+-                }
+-                si = 0;
++                subTokens = null;
++                termAtt.setTermBuffer(tok);                    
++                return true;
+             }
++            si = 0;
+         }
+         if (si < subTokens.length) {
+             termAtt.setTermBuffer(subTokens[si++]);            
+             return true;
+-        } else {
+-            return false;
+         }
++        return false;
+     }
+ 
+     @Override
+diff -r 09f0768a7ec1 src/org/opensolaris/opengrok/analysis/PathTokenizer.java
+--- a/src/org/opensolaris/opengrok/analysis/PathTokenizer.java	Fri May 06 21:41:59 2011 +0200
++++ b/src/org/opensolaris/opengrok/analysis/PathTokenizer.java	Sat May 07 06:30:28 2011 +0200
+@@ -33,7 +33,7 @@
+     private static final char dirSep = '/';
+     private boolean dot = false;
+     private final static char ADOT[]={'.'};
+-    private final TermAttribute termAtt= (TermAttribute) addAttribute(TermAttribute.class);    
++    private final TermAttribute termAtt= addAttribute(TermAttribute.class);    
+ 
+     public PathTokenizer(Reader input) {
+         super(input);
+diff -r 09f0768a7ec1 src/org/opensolaris/opengrok/analysis/TagFilter.java
+--- a/src/org/opensolaris/opengrok/analysis/TagFilter.java	Fri May 06 21:41:59 2011 +0200
++++ b/src/org/opensolaris/opengrok/analysis/TagFilter.java	Sat May 07 06:30:28 2011 +0200
+@@ -86,10 +86,9 @@
+                     if(ec == null) {
+                         p = true;
+                         return ' ';
+-                    } else {
+-                        p = false;
+-                        return ec.charValue();
+                     }
++                    p = false;
++                    return ec.charValue();
+                 } else if (sp) {
+                     esc = -1;
+                 } else {
+diff -r 09f0768a7ec1 src/org/opensolaris/opengrok/analysis/archive/BZip2Analyzer.java
+--- a/src/org/opensolaris/opengrok/analysis/archive/BZip2Analyzer.java	Fri May 06 21:41:59 2011 +0200
++++ b/src/org/opensolaris/opengrok/analysis/archive/BZip2Analyzer.java	Sat May 07 06:30:28 2011 +0200
+@@ -34,7 +34,6 @@
+ import org.apache.tools.bzip2.CBZip2InputStream;
+ import org.opensolaris.opengrok.analysis.AnalyzerGuru;
+ import org.opensolaris.opengrok.analysis.FileAnalyzer;
+-import org.opensolaris.opengrok.analysis.FileAnalyzer.Genre;
+ import org.opensolaris.opengrok.analysis.FileAnalyzerFactory;
+ 
+ /**
+@@ -85,7 +84,8 @@
+                 if(doc.get("t") != null) {
+                     doc.removeField("t");
+                     if (g == Genre.XREFABLE) {
+-                        doc.add(new Field("t", "x", Field.Store.YES, Field.Index.NOT_ANALYZED));
++                        doc.add(new Field("t", g.typeName(), Field.Store.YES, 
++                        	Field.Index.NOT_ANALYZED));
+                     }
+                 }
+             } else {
+diff -r 09f0768a7ec1 src/org/opensolaris/opengrok/analysis/archive/GZIPAnalyzer.java
+--- a/src/org/opensolaris/opengrok/analysis/archive/GZIPAnalyzer.java	Fri May 06 21:41:59 2011 +0200
++++ b/src/org/opensolaris/opengrok/analysis/archive/GZIPAnalyzer.java	Sat May 07 06:30:28 2011 +0200
+@@ -82,7 +82,8 @@
+                 if (doc.get("t") != null) {
+                     doc.removeField("t");
+                     if (g == Genre.XREFABLE) {
+-                        doc.add(new Field("t", "x", Field.Store.YES, Field.Index.NOT_ANALYZED));
++                        doc.add(new Field("t", g.typeName(), Field.Store.YES, 
++                        	Field.Index.NOT_ANALYZED));
+                     }
+                 }
+                 return;
+diff -r 09f0768a7ec1 src/org/opensolaris/opengrok/configuration/Project.java
+--- a/src/org/opensolaris/opengrok/configuration/Project.java	Fri May 06 21:41:59 2011 +0200
++++ b/src/org/opensolaris/opengrok/configuration/Project.java	Sat May 07 06:30:28 2011 +0200
+@@ -32,7 +32,9 @@
+  */ 
+ public class Project {
+     private String path;
+-    // this variable is very important, since it's used as the project identifier all over xrefs and webapp
++    // this variable is very important, since it's used as the project identifier 
++    // all over xrefs and webapp
++    // jel: and yes - awefully misleading. It should be called 'name'!
+     private String description;
+ 
+     /**
+@@ -122,7 +124,7 @@
+     public static Project getProject(String path) {
+         Project ret = null;
+         String lpath=path;
+-        if (System.getProperty("file.separator").compareTo("/")!=0) {lpath=path.replace(File.separatorChar, '/');}
++        if (File.separatorChar != '/') {lpath=path.replace(File.separatorChar, '/');}
+         RuntimeEnvironment env = RuntimeEnvironment.getInstance();
+         if (env.hasProjects()) {
+             for (Project proj : env.getProjects()) {                
+diff -r 09f0768a7ec1 src/org/opensolaris/opengrok/history/CVSHistoryParser.java
+--- a/src/org/opensolaris/opengrok/history/CVSHistoryParser.java	Fri May 06 21:41:59 2011 +0200
++++ b/src/org/opensolaris/opengrok/history/CVSHistoryParser.java	Sat May 07 06:30:28 2011 +0200
+@@ -43,7 +43,7 @@
+ 
+     private enum ParseState {
+         REVISION, METADATA, COMMENT
+-    };      
++    }    
+ 
+     private History history;
+     private CVSRepository repository=new CVSRepository();
+diff -r 09f0768a7ec1 src/org/opensolaris/opengrok/history/GitHistoryParser.java
+--- a/src/org/opensolaris/opengrok/history/GitHistoryParser.java	Fri May 06 21:41:59 2011 +0200
++++ b/src/org/opensolaris/opengrok/history/GitHistoryParser.java	Sat May 07 06:30:28 2011 +0200
+@@ -45,7 +45,7 @@
+     private enum ParseState {
+ 
+         HEADER, MESSAGE, FILES
+-    };
++    }
+     private String myDir;
+     private History history;
+     private GitRepository repository = new GitRepository();
+@@ -114,15 +114,14 @@
+                 if (StringUtils.isOnlyWhitespace(s) || s.startsWith("commit")) {
+                     state = ParseState.HEADER;
+                     continue; // Parse this line again - do not read a new line
+-                } else {
+-                    if (entry != null) {
+-                        try {
+-                            File f = new File(myDir, s);
+-                            entry.addFile(env.getPathRelativeToSourceRoot(f, 0));
+-                        } catch (FileNotFoundException e) { //NOPMD
+-                            // If the file is not located under the source root,
+-                            // ignore it (bug #11664).
+-                        }
++                }
++                if (entry != null) {
++                    try {
++                        File f = new File(myDir, s);
++                        entry.addFile(env.getPathRelativeToSourceRoot(f, 0));
++                    } catch (FileNotFoundException e) { //NOPMD
++                        // If the file is not located under the source root,
++                        // ignore it (bug #11664).
+                     }
+                 }
+             }
+diff -r 09f0768a7ec1 src/org/opensolaris/opengrok/history/JDBCHistoryCache.java
+--- a/src/org/opensolaris/opengrok/history/JDBCHistoryCache.java	Fri May 06 21:41:59 2011 +0200
++++ b/src/org/opensolaris/opengrok/history/JDBCHistoryCache.java	Sat May 07 06:30:28 2011 +0200
+@@ -97,7 +97,7 @@
+     /** SQL queries used by this class. */
+     private final static Properties QUERIES = new Properties();
+     static {
+-        Class klazz = JDBCHistoryCache.class;
++        Class<?> klazz = JDBCHistoryCache.class;
+         InputStream in = null;
+         try {
+             in = klazz.getResourceAsStream(klazz.getSimpleName() + "_queries.properties");
+@@ -1075,11 +1075,7 @@
+     private Integer getGeneratedIntKey(Statement stmt) throws SQLException {
+         ResultSet keys = stmt.getGeneratedKeys();
+         try {
+-            if (keys.next()) {
+-                return keys.getInt(1);
+-            } else {
+-                return null;
+-            }
++            return keys.next() ? keys.getInt(1) : null;
+         } finally {
+             keys.close();
+         }
+@@ -1166,7 +1162,7 @@
+     }
+ 
+     @Override
+-    public String getInfo() throws HistoryException {
++    public String getInfo() {
+         return info;
+     }
+ }
+diff -r 09f0768a7ec1 src/org/opensolaris/opengrok/history/PerforceHistoryParser.java
+--- a/src/org/opensolaris/opengrok/history/PerforceHistoryParser.java	Fri May 06 21:41:59 2011 +0200
++++ b/src/org/opensolaris/opengrok/history/PerforceHistoryParser.java	Sat May 07 06:30:28 2011 +0200
+@@ -113,8 +113,9 @@
+         List<HistoryEntry> entries = new ArrayList<HistoryEntry>();
+         BufferedReader reader = new BufferedReader(fileHistory);
+         String line;
++        Matcher matcher = CHANGE_PATTERN.matcher("");
+         while ((line = reader.readLine()) != null) {
+-            Matcher matcher = CHANGE_PATTERN.matcher(line);
++            matcher.reset(line);
+             if (matcher.find()) {
+                 HistoryEntry entry = new HistoryEntry();
+                 entry.setRevision(matcher.group(1));
+diff -r 09f0768a7ec1 src/org/opensolaris/opengrok/history/RCSHistoryParser.java
+--- a/src/org/opensolaris/opengrok/history/RCSHistoryParser.java	Fri May 06 21:41:59 2011 +0200
++++ b/src/org/opensolaris/opengrok/history/RCSHistoryParser.java	Sat May 07 06:30:28 2011 +0200
+@@ -100,9 +100,9 @@
+             return;
+         }
+         traverse(n.getChild(), history);
+-        TreeMap brt = n.getBranches();
++        TreeMap<?,?> brt = n.getBranches();
+         if (brt != null) {
+-            for (Iterator i = brt.values().iterator(); i.hasNext();) {
++            for (Iterator<?> i = brt.values().iterator(); i.hasNext();) {
+                 Node b = (Node) i.next();
+                 traverse(b, history);
+             }
+diff -r 09f0768a7ec1 src/org/opensolaris/opengrok/history/RCSget.java
+--- a/src/org/opensolaris/opengrok/history/RCSget.java	Fri May 06 21:41:59 2011 +0200
++++ b/src/org/opensolaris/opengrok/history/RCSget.java	Sat May 07 06:30:28 2011 +0200
+@@ -23,11 +23,11 @@
+  */
+ package org.opensolaris.opengrok.history;
+ 
+-import java.io.BufferedInputStream;
+ import java.io.ByteArrayInputStream;
+ import java.io.FileNotFoundException;
+ import java.io.IOException;
+ import java.io.InputStream;
++
+ import org.apache.commons.jrcs.diff.PatchFailedException;
+ import org.apache.commons.jrcs.rcs.Archive;
+ import org.apache.commons.jrcs.rcs.InvalidFileFormatException;
+@@ -38,7 +38,7 @@
+  * Virtualise RCS log as an input stream
+  */
+ public class RCSget extends InputStream {
+-    private BufferedInputStream stream;
++    private InputStream stream;
+         
+     /**
+      * Pass null in version to get current revision
+@@ -59,7 +59,7 @@
+                 sb.append((String)lines[ii]);
+                 sb.append("\n");
+             }
+-            stream = new BufferedInputStream(new ByteArrayInputStream(sb.toString().getBytes()));
++            stream = new ByteArrayInputStream(sb.toString().getBytes());
+         } catch (ParseException e) {
+             throw RCSRepository.wrapInIOException("Parse error", e);
+         } catch (InvalidFileFormatException e) {
+diff -r 09f0768a7ec1 src/org/opensolaris/opengrok/history/RazorHistoryParser.java
+--- a/src/org/opensolaris/opengrok/history/RazorHistoryParser.java	Fri May 06 21:41:59 2011 +0200
++++ b/src/org/opensolaris/opengrok/history/RazorHistoryParser.java	Sat May 07 06:30:28 2011 +0200
+@@ -94,6 +94,8 @@
+         boolean seenActionType = false;
+         boolean lastWasTitle = true;
+ 
++        Matcher actionMatcher = ACTION_TYPE_PATTERN.matcher("");
++        Matcher infoMatcher = ADDITIONAL_INFO_PATTERN.matcher("");
+         while ((line = contents.readLine()) != null) {
+ 
+             parseDebug("Processing '" + line + "'");
+@@ -111,9 +113,9 @@
+             } else if (!ignoreEntry) {
+ 
+                 if (!seenActionType) {
+-                    Matcher matcher = ACTION_TYPE_PATTERN.matcher(line);
++                    actionMatcher.reset(line);
+ 
+-                    if (matcher.find()) {
++                    if (actionMatcher.find()) {
+ 
+                         seenActionType = true;
+                         if (entry != null && entry.getDate() != null) {
+@@ -122,11 +124,11 @@
+                         }
+                         entry = new HistoryEntry();
+ 
+-                        String actionType = matcher.group(1);
+-                        String userName = matcher.group(2);
+-                        String revision = matcher.group(3);
+-                        String state = matcher.group(4);
+-                        String dateTime = matcher.group(5);
++                        String actionType = actionMatcher.group(1);
++                        String userName = actionMatcher.group(2);
++                        String revision = actionMatcher.group(3);
++                        String state = actionMatcher.group(4);
++                        String dateTime = actionMatcher.group(5);
+                         parseDebug("New History Event Seen : actionType = " + actionType + ", userName = " + userName + ", revision = " + revision + ", state = " + state + ", dateTime = " + dateTime);
+                         if (actionType.startsWith("INTRODUCE") ||
+                                 actionType.contains("CHECK-IN") ||
+@@ -150,11 +152,11 @@
+                         parseProblem("Expecting actionType and got '" + line + "'");
+                     }
+                 } else {
+-                    Matcher matcher = ADDITIONAL_INFO_PATTERN.matcher(line);
++                    infoMatcher.reset(line);
+ 
+-                    if (matcher.find()) {
+-                        String infoType = matcher.group(1);
+-                        String details = matcher.group(2);
++                    if (infoMatcher.find()) {
++                        String infoType = infoMatcher.group(1);
++                        String details = infoMatcher.group(2);
+ 
+                         if ("TITLE".equals(infoType)) {
+                             parseDebug("Setting Message : '" + details + "'");
+diff -r 09f0768a7ec1 src/org/opensolaris/opengrok/history/SCCSHistoryParser.java
+--- a/src/org/opensolaris/opengrok/history/SCCSHistoryParser.java	Fri May 06 21:41:59 2011 +0200
++++ b/src/org/opensolaris/opengrok/history/SCCSHistoryParser.java	Sat May 07 06:30:28 2011 +0200
+@@ -212,9 +212,8 @@
+                             pass = false;
+                             if (sep && passRecord) {
+                                 return 01;
+-                            } else {
+-                                passRecord = true;
+                             }
++                            passRecord = true;
+                             break;
+                         default:
+                             pass = false;
+diff -r 09f0768a7ec1 src/org/opensolaris/opengrok/history/SubversionHistoryParser.java
+--- a/src/org/opensolaris/opengrok/history/SubversionHistoryParser.java	Fri May 06 21:41:59 2011 +0200
++++ b/src/org/opensolaris/opengrok/history/SubversionHistoryParser.java	Sat May 07 06:30:28 2011 +0200
+@@ -41,7 +41,6 @@
+ import org.opensolaris.opengrok.util.Executor;
+ import org.opensolaris.opengrok.util.Interner;
+ import org.xml.sax.Attributes;
+-import org.xml.sax.SAXException;
+ import org.xml.sax.ext.DefaultHandler2;
+ 
+ /**
+@@ -74,7 +73,7 @@
+         }
+ 
+         @Override
+-        public void startElement(String uri, String localName, String qname, Attributes attr) throws SAXException {
++        public void startElement(String uri, String localName, String qname, Attributes attr) {
+             if ("logentry".equals(qname)) {
+                 entry = new HistoryEntry();
+                 entry.setActive(true);
+@@ -84,7 +83,7 @@
+         }
+ 
+         @Override
+-        public void endElement(String uri, String localName, String qname) throws SAXException {
++        public void endElement(String uri, String localName, String qname) {
+             String s = sb.toString();
+             if ("author".equals(qname)) {
+                 entry.setAuthor(s);
+@@ -106,7 +105,7 @@
+                     path = stringInterner.intern(path);
+                     entry.addFile(path);
+                 } else {
+-                    OpenGrokLogger.getLogger().log(Level.FINE, "Skipping file outside repository: " + s);
++                    OpenGrokLogger.getLogger().log(Level.INFO, "Skipping file outside repository: " + s);
+                 }
+             } else if ("msg".equals(qname)) {
+                 entry.setMessage(s);
+@@ -117,7 +116,7 @@
+         }
+ 
+         @Override
+-        public void characters(char[] arg0, int arg1, int arg2) throws SAXException {
++        public void characters(char[] arg0, int arg1, int arg2) {
+             sb.append(arg0, arg1, arg2);
+         }
+     }
+@@ -175,10 +174,9 @@
+      * into the history field.
+      *
+      * @param input The output from the process
+-     * @throws java.io.IOException If an error occurs while reading the stream
+      */
+     @Override
+-    public void processStream(InputStream input) throws IOException {
++    public void processStream(InputStream input) {
+         try {
+             initSaxParser();
+             saxParser.parse(new BufferedInputStream(input), handler);
+diff -r 09f0768a7ec1 src/org/opensolaris/opengrok/jdbc/ConnectionManager.java
+--- a/src/org/opensolaris/opengrok/jdbc/ConnectionManager.java	Fri May 06 21:41:59 2011 +0200
++++ b/src/org/opensolaris/opengrok/jdbc/ConnectionManager.java	Sat May 07 06:30:28 2011 +0200
+@@ -43,10 +43,10 @@
+ 
+     /**
+      * Create a new {@code ConnectionManager} instance.
+-     * @throws ClassNotFoundException if the JDBC driver class cannot be found
+      *
+      * @param driverClass the name of the JDBC driver class
+      * @param url the JDBC connection URL to the database
++     * @throws ClassNotFoundException if the JDBC driver class cannot be found
+      */
+     public ConnectionManager(String driverClass, String url)
+             throws ClassNotFoundException {
+diff -r 09f0768a7ec1 src/org/opensolaris/opengrok/management/AgentIndexRunner.java
+--- a/src/org/opensolaris/opengrok/management/AgentIndexRunner.java	Fri May 06 21:41:59 2011 +0200
++++ b/src/org/opensolaris/opengrok/management/AgentIndexRunner.java	Sat May 07 06:30:28 2011 +0200
+@@ -214,9 +214,8 @@
+                 if (indexThread.isAlive()) {
+                     log.warning("Previous indexer is still alive, will not start another.");
+                     return;
+-                } else {
+-                    log.fine("Previous indexer is no longer alive, starting a new one.");
+                 }
++                log.fine("Previous indexer is no longer alive, starting a new one.");
+             }
+             indexThread = new Thread(this);
+             try {
+@@ -316,9 +315,9 @@
+         log.info("removes a notiflistener, no obj");
+         boolean removed = false;
+         synchronized (notifListeners) {
+-            Iterator it = notifListeners.iterator();
++            Iterator<NotificationHolder> it = notifListeners.iterator();
+             while (it.hasNext()) {
+-                NotificationHolder mnf = (NotificationHolder) it.next();
++                NotificationHolder mnf = it.next();
+                 if (mnf.getNL().equals(notiflistener)) {
+                     it.remove();
+                     removed = true;
+@@ -335,9 +334,9 @@
+         log.log(Level.CONFIG, "removes a notiflistener obj {0}", obj);
+         boolean removed = false;
+         synchronized (notifListeners) {
+-            Iterator it = notifListeners.iterator();
++            Iterator<NotificationHolder> it = notifListeners.iterator();
+             while (it.hasNext()) {
+-                NotificationHolder mnf = (NotificationHolder) it.next();
++                NotificationHolder mnf = it.next();
+                 if (mnf.getNL().equals(notiflistener) 
+                        && ((mnf.getFilter() == null) || mnf.getFilter().equals(filt)) 
+                        && ((mnf.getFilter() == null) || mnf.getObj().equals(obj))) {
+diff -r 09f0768a7ec1 src/org/opensolaris/opengrok/management/Management.java
+--- a/src/org/opensolaris/opengrok/management/Management.java	Fri May 06 21:41:59 2011 +0200
++++ b/src/org/opensolaris/opengrok/management/Management.java	Sat May 07 06:30:28 2011 +0200
+@@ -57,8 +57,8 @@
+     }
+ 
+     private void updateProperties() {
+-        update = Boolean.parseBoolean(ogaProperties.getProperty("org.opensolaris.opengrok.indexer.updatedatabase"));
+-        noThreads = Integer.parseInt(ogaProperties.getProperty("org.opensolaris.opengrok.indexer.numberofthreads"));
++        update = Boolean.valueOf(ogaProperties.getProperty("org.opensolaris.opengrok.indexer.updatedatabase"));
++        noThreads = Integer.valueOf(ogaProperties.getProperty("org.opensolaris.opengrok.indexer.numberofthreads"));
+         configurationFile = ogaProperties.getProperty("org.opensolaris.opengrok.configuration.file");
+         String subfiles = ogaProperties.getProperty("org.opensolaris.opengrok.indexer.subfiles");
+         if (subfiles != null) {
+diff -r 09f0768a7ec1 src/org/opensolaris/opengrok/management/OGAgent.java
+--- a/src/org/opensolaris/opengrok/management/OGAgent.java	Fri May 06 21:41:59 2011 +0200
++++ b/src/org/opensolaris/opengrok/management/OGAgent.java	Sat May 07 06:30:28 2011 +0200
+@@ -194,12 +194,12 @@
+                 " JMX Agent, with java version " + javaver);
+         //create mbeanserver
+ 
+-        ArrayList mbservs = MBeanServerFactory.findMBeanServer(null);
++        ArrayList<MBeanServer> mbservs = MBeanServerFactory.findMBeanServer(null);
+         log.fine("Finding MBeanservers, size " + mbservs.size());
+         if (mbservs.isEmpty()) {
+             server = MBeanServerFactory.createMBeanServer();
+         } else {
+-            server = (MBeanServer) mbservs.get(0);
++            server = mbservs.get(0);
+         }
+ 
+         //instantiate and register OGAManagement
+@@ -223,8 +223,8 @@
+         // If the protocol is RMI we need to have an RMI registry running.
+         // Start an embedded registry if so requested.
+         if (url.getProtocol().equals(RMI_PROTOCOL) &&
+-                Boolean.valueOf(props.getProperty(RMI_START))) {
+-            int rmiport = Integer.valueOf(props.getProperty(RMI_PORT));
++                Boolean.parseBoolean(props.getProperty(RMI_START))) {
++            int rmiport = Integer.parseInt(props.getProperty(RMI_PORT));
+             log.log(Level.FINE, "Starting RMI registry on port {0}", rmiport);
+             LocateRegistry.createRegistry(rmiport);
+         }
+@@ -238,7 +238,7 @@
+         log.info("OGA is ready and running...");
+     }
+ 
+-    private void createIndexTimer(Properties properties) throws IOException, JMException {
++    private void createIndexTimer(Properties properties) throws JMException {
+ 
+         //instantiate, register and start the Timer service
+         ObjectName timer = new ObjectName("service:name=timer");
+diff -r 09f0768a7ec1 src/org/opensolaris/opengrok/management/client/SettingsPersistence.java
+--- a/src/org/opensolaris/opengrok/management/client/SettingsPersistence.java	Fri May 06 21:41:59 2011 +0200
++++ b/src/org/opensolaris/opengrok/management/client/SettingsPersistence.java	Sat May 07 06:30:28 2011 +0200
+@@ -105,9 +105,9 @@
+         String url = ogcProperties.getProperty(JMXURL);
+         if (url == null) {
+             String host = ogcProperties.getProperty(HOST, "localhost");
+-            int jmxport = Integer.valueOf(
++            int jmxport = Integer.parseInt(
+                     ogcProperties.getProperty(JMXPORT, "9292"));
+-            int rmiport = Integer.valueOf(ogcProperties.getProperty(
++            int rmiport = Integer.parseInt(ogcProperties.getProperty(
+                     RMIPORT, String.valueOf(jmxport + 1)));
+             url = "service:jmx:rmi://" + host + ":" + jmxport +
+                     "/jndi/rmi://" + host + ":" + rmiport + "/opengrok";
+diff -r 09f0768a7ec1 src/org/opensolaris/opengrok/search/SearchEngine.java
+--- a/src/org/opensolaris/opengrok/search/SearchEngine.java	Fri May 06 21:41:59 2011 +0200
++++ b/src/org/opensolaris/opengrok/search/SearchEngine.java	Sat May 07 06:30:28 2011 +0200
+@@ -51,6 +51,7 @@
+ import org.opensolaris.opengrok.OpenGrokLogger;
+ import org.opensolaris.opengrok.analysis.CompatibleAnalyser;
+ import org.opensolaris.opengrok.analysis.Definitions;
++import org.opensolaris.opengrok.analysis.FileAnalyzer.Genre;
+ import org.opensolaris.opengrok.analysis.TagFilter;
+ import org.opensolaris.opengrok.configuration.Project;
+ import org.opensolaris.opengrok.configuration.RuntimeEnvironment;
+@@ -114,16 +115,16 @@
+     private final char[] content = new char[1024*8];
+     private String source;
+     private String data;
+-    private final static boolean docsScoredInOrder=false;
++    private final static boolean docsScoredInOrder = false;
+ 
+     int hitsPerPage = RuntimeEnvironment.getInstance().getHitsPerPage();
+     int cachePages= RuntimeEnvironment.getInstance().getCachePages();
+     int totalHits=0;
+     
+-    private ScoreDoc[] hits=null;
+-    private TopScoreDocCollector collector=null;
+-    private Searcher searcher=null;
+-    boolean allCollected=false;
++    private ScoreDoc[] hits;
++    private TopScoreDocCollector collector;
++    private Searcher searcher;
++    boolean allCollected;
+ 
+     /**
+      * Creates a new instance of SearchEngine
+@@ -243,7 +244,7 @@
+                     // search all projects
+                     //TODO support paging per project (in search.java)
+                     //TODO optimize if only one project by falling back to SingleDatabase ?
+-                        searchMultiDatabase(env.getProjects(),false);
++                    searchMultiDatabase(env.getProjects(),false);
+                 } else {
+                     // search the index database
+                     searchSingleDatabase(root,true);
+@@ -292,12 +293,15 @@
+     public void results(int start, int end, List<Hit> ret) {
+ 
+         //return if no start search() was done
+-        if (hits==null || (end<start) ) {ret.clear();return;}
++        if (hits == null || (end<start) ) {
++        	ret.clear();
++        	return;
++        }
+ 
+         ret.clear();
+ 
+         //TODO check if below fits for if end=old hits.length, or it should include it
+-        if (end>hits.length & !allCollected) {
++        if (end > hits.length & !allCollected) {
+          //do the requery, we want more than 5 pages
+          collector = TopScoreDocCollector.create(totalHits,docsScoredInOrder);
+          try {
+@@ -311,7 +315,7 @@
+          for (int i = start; i < hits.length; i++) {
+              int docId = hits[i].doc;
+              try {
+-             d = searcher.doc(docId);
++            	 d = searcher.doc(docId);
+              }  catch (Exception e) {
+                  OpenGrokLogger.getLogger().log(
+                          Level.SEVERE, SEARCH_EXCEPTION_MSG, e);
+@@ -330,7 +334,7 @@
+                 Document doc = docs.get(ii);
+                 String filename = doc.get("path");
+ 
+-                String genre = doc.get("t");
++                Genre genre = Genre.get(doc.get("t"));
+                 Definitions tags = null;
+                 Fieldable tagsField = doc.getFieldable("tags");                
+                 if (tagsField != null) {
+@@ -340,11 +344,11 @@
+                 
+                 if(sourceContext != null) {
+                     try {
+-                        if ("p".equals(genre) && (source != null)) {
++                        if (Genre.PLAIN == genre && (source != null)) {
+                             hasContext = sourceContext.getContext(new InputStreamReader(new FileInputStream(source +
+                                     filename)), null, null, null, filename,
+                                     tags, nhits > 100, ret);
+-                        } else if("x".equals(genre) && data != null && summarizer != null){
++                        } else if (Genre.XREFABLE == genre && data != null && summarizer != null){
+                             int l = 0;
+                             Reader r=null;                          
+                             if ( RuntimeEnvironment.getInstance().isCompressXref() ) {
+diff -r 09f0768a7ec1 src/org/opensolaris/opengrok/search/Summarizer.java
+--- a/src/org/opensolaris/opengrok/search/Summarizer.java	Fri May 06 21:41:59 2011 +0200
++++ b/src/org/opensolaris/opengrok/search/Summarizer.java	Sat May 07 06:30:28 2011 +0200
+@@ -290,8 +290,8 @@
+         //also creating Tokens is suboptimal with 3.0.0 , this whole class could be replaced by highlighter
+         ArrayList<Token> result = new ArrayList<Token>();
+         TokenStream ts = analyzer.tokenStream("full", new StringReader(text));
+-        TermAttribute term = (TermAttribute) ts.addAttribute(TermAttribute.class);
+-        OffsetAttribute offset=(OffsetAttribute) ts.addAttribute(OffsetAttribute.class);
++        TermAttribute term = ts.addAttribute(TermAttribute.class);
++        OffsetAttribute offset = ts.addAttribute(OffsetAttribute.class);
+         while(ts.incrementToken()) {
+             Token t=new Token(term.termBuffer(),0,term.termLength(),offset.startOffset(),offset.endOffset());
+             result.add(t);
+diff -r 09f0768a7ec1 src/org/opensolaris/opengrok/search/Summary.java
+--- a/src/org/opensolaris/opengrok/search/Summary.java	Fri May 06 21:41:59 2011 +0200
++++ b/src/org/opensolaris/opengrok/search/Summary.java	Sat May 07 06:30:28 2011 +0200
+@@ -97,7 +97,7 @@
+     
+     /** Returns an HTML representation of this fragment. */
+     public String toString() {
+-        StringBuffer buffer = new StringBuffer();
++        StringBuilder buffer = new StringBuilder();
+         for (int i = 0; i < fragments.size(); i++) {
+             buffer.append(fragments.get(i));
+         }
+diff -r 09f0768a7ec1 src/org/opensolaris/opengrok/search/context/HistoryContext.java
+--- a/src/org/opensolaris/opengrok/search/context/HistoryContext.java	Fri May 06 21:41:59 2011 +0200
++++ b/src/org/opensolaris/opengrok/search/context/HistoryContext.java	Sat May 07 06:30:28 2011 +0200
+@@ -55,7 +55,7 @@
+      * insensitivity, false for sensitivity).
+      */
+     private static final Map<String, Boolean> tokenFields =
+-            Collections.singletonMap("hist", true);
++            Collections.singletonMap("hist", Boolean.TRUE);
+ 
+     public HistoryContext(Query query) {
+         QueryMatchers qm = new QueryMatchers();
+@@ -84,14 +84,32 @@
+             String parent, String basename, String path, Writer out, String context)
+             throws HistoryException
+     {
+-        if (m == null) {
+-            return false;
+-        }
+-        History hist = HistoryGuru.getInstance().getHistory(
+-                             new File(parent, basename));
+-        return getHistoryContext(hist, path, out, null,context);
++    	return getContext(new File(parent, basename), path, out, context);
+     }
+-    
++
++    /**
++     * Obtain the history for the source file <var>src</var> and write out
++     * matching History log entries.
++     * 
++     * @param src		the source file represented by <var>path</var>
++     * 					(SOURCE_ROOT + path)
++     * @param path		the path of the file (rooted at SOURCE_ROOT)
++     * @param out		write destination
++     * @param context	the servlet context path of the application (the path 
++     * 	prefix for URLs)
++     * @return {@code true} if at least one line has been written out.
++     * @throws HistoryException
++     */
++    public boolean getContext(File src, String path, Writer out, String context)
++        throws HistoryException
++	{
++	    if (m == null) {
++	        return false;
++	    }
++	    History hist = HistoryGuru.getInstance().getHistory(src);
++	    return getHistoryContext(hist, path, out, null,context);
++	}
++
+     /**
+      * Writes matching History log entries from 'in' to 'out' or to 'hits'
+      * @param in the history to fetch entries from
+diff -r 09f0768a7ec1 src/org/opensolaris/opengrok/search/context/PhraseMatcher.java
+--- a/src/org/opensolaris/opengrok/search/context/PhraseMatcher.java	Fri May 06 21:41:59 2011 +0200
++++ b/src/org/opensolaris/opengrok/search/context/PhraseMatcher.java	Sat May 07 06:30:28 2011 +0200
+@@ -33,7 +33,7 @@
+     
+     PhraseMatcher(String[] phraseTerms, boolean caseInsensitive) {
+         super(caseInsensitive);
+-        this.phraseTerms  = (String[]) phraseTerms.clone();
++        this.phraseTerms  = phraseTerms.clone();
+         cur = 0;
+     }
+     
+@@ -43,11 +43,10 @@
+             if ( cur < phraseTerms.length-1) {
+                 cur ++;
+                 return WAIT; //matching.
+-            } else {
+-                //System.out.println(" PhraseMatcher match complete with " + token);
+-                cur = 0;
+-                return MATCHED; //matched!
+             }
++            //System.out.println(" PhraseMatcher match complete with " + token);
++            cur = 0;
++            return MATCHED; //matched!
+         } else if (cur > 0) {
+             cur = 0;
+             if (equal(token, phraseTerms[cur])) {
+diff -r 09f0768a7ec1 src/org/opensolaris/opengrok/search/context/PlainLineTokenizer.lex
+--- a/src/org/opensolaris/opengrok/search/context/PlainLineTokenizer.lex	Fri May 06 21:41:59 2011 +0200
++++ b/src/org/opensolaris/opengrok/search/context/PlainLineTokenizer.lex	Sat May 07 06:30:28 2011 +0200
+@@ -164,7 +164,7 @@
+                         }
+ 
+                         out.write("</a>");
+-                        if(prevHi){
++                        if (prevHi) {
+                                 out.write(" <i> ");
+                                 String[] desc = tags.remove(prevLn);
+                                 out.write(desc[2]);
+@@ -174,7 +174,7 @@
+ 
+                         prevHi = hi;
+                         prevLn = ln;
+-                        if(hi) out.write("<span class=\"h\">");
++                        if (hi) out.write("<span class=\"h\">"); //TODO: closing tag - where?
+                         out.write("<a class=\"s\" href=\"");
+                         out.write(url);
+                         String num = String.valueOf(lineNo);
+@@ -215,7 +215,7 @@
+                         ++lineNo;
+                         Integer ln = Integer.valueOf(lineNo);
+                         boolean hi = tags.containsKey(ln);
+-                        if(prevHi){
++                        if (prevHi) {
+                            String[] desc = tags.remove(prevLn);
+                            hit.setTag(desc[2]);
+                         }
+@@ -254,7 +254,7 @@
+                 matchStart = markedContents.length() - yylength();
+         }
+ 
+-        if(curLinePos == markedPos) {
++        if (curLinePos == markedPos) {
+                         Integer ln = Integer.valueOf(markedLine);
+                         prevHi = tags.containsKey(ln);
+                         prevLn = ln;
+@@ -299,7 +299,7 @@
+         rest = markedPos;
+   }
+   public void dumpRest() throws IOException {
+-        if(dumpRest) {
++        if (dumpRest) {
+         final int maxLooks = 100;
+         for (int i=0; ; i++) {
+             final boolean endOfBuffer = (i >= markedContents.length() - rest);
+diff -r 09f0768a7ec1 src/org/opensolaris/opengrok/search/context/PrefixMatcher.java
+--- a/src/org/opensolaris/opengrok/search/context/PrefixMatcher.java	Fri May 06 21:41:59 2011 +0200
++++ b/src/org/opensolaris/opengrok/search/context/PrefixMatcher.java	Sat May 07 06:30:28 2011 +0200
+@@ -36,9 +36,6 @@
+ 
+     public int match(String token) {
+         String tokenToMatch = normalizeString(token);
+-        if (tokenToMatch.startsWith(prefix)) {
+-            return MATCHED;
+-        }
+-        return NOT_MATCHED;
++        return tokenToMatch.startsWith(prefix) ? MATCHED : NOT_MATCHED;
+     }
+ }
+diff -r 09f0768a7ec1 src/org/opensolaris/opengrok/search/context/TokenSetMatcher.java
+--- a/src/org/opensolaris/opengrok/search/context/TokenSetMatcher.java	Fri May 06 21:41:59 2011 +0200
++++ b/src/org/opensolaris/opengrok/search/context/TokenSetMatcher.java	Sat May 07 06:30:28 2011 +0200
+@@ -47,9 +47,6 @@
+     }
+ 
+     public int match(String token) {
+-        if (tokenSet.contains(token)) {
+-            return MATCHED;
+-        }
+-        return NOT_MATCHED;
++        return tokenSet.contains(token) ? MATCHED : NOT_MATCHED;
+     }
+ }
+diff -r 09f0768a7ec1 src/org/opensolaris/opengrok/search/context/WildCardMatcher.java
+--- a/src/org/opensolaris/opengrok/search/context/WildCardMatcher.java	Fri May 06 21:41:59 2011 +0200
++++ b/src/org/opensolaris/opengrok/search/context/WildCardMatcher.java	Sat May 07 06:30:28 2011 +0200
+@@ -36,9 +36,8 @@
+     @Override
+     public int match(String token) {
+         String tokenToMatch = normalizeString(token);
+-        if (WildcardTermEnum.wildcardEquals(pattern, 0, tokenToMatch, 0)) {
+-            return MATCHED;
+-        }
+-        return NOT_MATCHED;
++        return WildcardTermEnum.wildcardEquals(pattern, 0, tokenToMatch, 0)
++        	? MATCHED
++        	: NOT_MATCHED;
+     }
+ }
+diff -r 09f0768a7ec1 src/org/opensolaris/opengrok/util/Getopt.java
+--- a/src/org/opensolaris/opengrok/util/Getopt.java	Fri May 06 21:41:59 2011 +0200
++++ b/src/org/opensolaris/opengrok/util/Getopt.java	Sat May 07 06:30:28 2011 +0200
+@@ -38,7 +38,7 @@
+     static class Option {
+         char option;
+         String argument;
+-    };
++    }
+     
+     private final List<Option> options;
+     private int current;
+@@ -94,14 +94,13 @@
+                                 // Rest of this is the argument
+                                 option.argument = argv[ii].substring(jj + 1);
+                                 break;
++                            }
++                            // next argument vector contains the argument
++                            ++ii;
++                            if (ii < argv.length) {
++                                option.argument = argv[ii];
+                             } else {
+-                                // next argument vector contains the argument
+-                                ++ii;
+-                                if (ii < argv.length) {
+-                                    option.argument = argv[ii];
+-                                } else {
+-                                    throw new ParseException("Option " + chars[jj] + " requires an argument", ii);
+-                                }
++                                throw new ParseException("Option " + chars[jj] + " requires an argument", ii);
+                             }
+                         }
+                     }
+diff -r 09f0768a7ec1 src/org/opensolaris/opengrok/util/StringUtils.java
+--- a/src/org/opensolaris/opengrok/util/StringUtils.java	Fri May 06 21:41:59 2011 +0200
++++ b/src/org/opensolaris/opengrok/util/StringUtils.java	Sat May 07 06:30:28 2011 +0200
+@@ -19,8 +19,10 @@
+ 
+ package org.opensolaris.opengrok.util;
+ 
++import java.util.regex.Pattern;
++
+ /**
+- * Various String utility methoids.
++ * Various String utility methods.
+  * 
+  * @author austvik
+  */
+@@ -45,6 +47,8 @@
+         return true;
+     }
+ 
++    static final Pattern javaClassPattern = 
++    	Pattern.compile("([a-z][A-Za-z]*\\.)+[A-Z][A-Za-z0-9]*");
+     /**
+      * Returns true if the string is possibly a full java class name
+      *
+@@ -57,7 +61,7 @@
+     //    - class must be qualified with a package name
+     //    - only letters in package name, starting with lower case
+     //    - class name must be in CamelCase, starting with upper case
+-    return s.matches("([a-z][A-Za-z]*\\.)+[A-Z][A-Za-z0-9]*");
++    return javaClassPattern.matcher(s).matches();
+   }
+     
+ }
+diff -r 09f0768a7ec1 src/org/opensolaris/opengrok/web/WebappListener.java
+--- a/src/org/opensolaris/opengrok/web/WebappListener.java	Fri May 06 21:41:59 2011 +0200
++++ b/src/org/opensolaris/opengrok/web/WebappListener.java	Sat May 07 06:30:28 2011 +0200
+@@ -29,9 +29,11 @@
+ import java.net.SocketAddress;
+ import java.net.UnknownHostException;
+ import java.util.logging.Level;
++
+ import javax.servlet.ServletContext;
+ import javax.servlet.ServletContextEvent;
+ import javax.servlet.ServletContextListener;
++
+ import org.opensolaris.opengrok.OpenGrokLogger;
+ import org.opensolaris.opengrok.configuration.RuntimeEnvironment;
+ 
+@@ -41,7 +43,7 @@
+  */
+ public final class WebappListener implements ServletContextListener {
+ 
+-    @Override
++	@Override
+     public void contextInitialized(final ServletContextEvent servletContextEvent) {
+         ServletContext context = servletContextEvent.getServletContext();
+         RuntimeEnvironment env = RuntimeEnvironment.getInstance();

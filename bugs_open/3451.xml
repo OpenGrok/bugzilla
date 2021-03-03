@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>3451</bug_id>
+          
+          <creation_ts>2008-09-16 08:36:00 +0000</creation_ts>
+          <short_desc>indexer should check for xref and regenerate if it is not present</short_desc>
+          <delta_ts>2009-09-18 15:53:43 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>indexer</component>
+          <version>unspecified</version>
+          <rep_platform>Other</rep_platform>
+          <op_sys>Solaris</op_sys>
+          <bug_status>ACCEPTED</bug_status>
+          
+          
+          
+          
+          
+          
+          <priority>P2</priority>
+          <bug_severity>minor</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Vladimir Kotal">vladimir.kotal</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          <cc>Lubos.Kosco</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>12565</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2008-09-16 08:36:04 +0000</bug_when>
+            <thetext>On our local OpenGrok server I tried to remove xref directory for a workspace &apos;foo&apos; and run the indexer. However, it did not create the xref data. Okay, so I went and removed the directory for workspace &apos;foo&apos; in index directory. Again, indexer did nothing and only created empty directory in index/ directory for the workspace.
+
+The only thing which made the indexer to reindex the files from the workspace was removing all data relevant to workspace &apos;foo&apos; from configuration.xml and running the indexer again.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>12566</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2008-09-16 08:36:45 +0000</bug_when>
+            <thetext>Oh, and this happens with 0.6.1.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>12837</commentid>
+            <who name="Trond Norbye">trond.norbye</who>
+            <bug_when>2008-09-20 04:26:57 +0000</bug_when>
+            <thetext>The xref for a file will only be created when OpenGrok adds the file to the index database. A file will be added to the index database when the file modification date on the source file is newer than the timestamp we have in the index database.
+
+removing the index database and recreating the indexing should be enough to recreate the xrefs. From the comment it seems that you tried this, so I need to reproduce this.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>15338</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2008-10-20 04:22:43 +0000</bug_when>
+            <thetext>*** Bug 4086 has been marked as a duplicate of this bug. ***</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>50254</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2009-09-18 15:53:43 +0000</bug_when>
+            <thetext>ah ... it&apos;s just that gz or bz analyzers don&apos;t support tarred content ...
+wondering if we can somehow cascade the analyzers ?!?</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

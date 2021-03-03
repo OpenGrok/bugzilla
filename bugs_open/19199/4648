@@ -1,0 +1,3071 @@
+# HG changeset patch
+# User jel+opengrok@cs.uni-magdeburg.de
+# Date 1333762091 -7200
+# Node ID 04e4831c7e728427d98bc91470eb2be86df86cb1
+# Parent  856f914e23f89d730c517465822b3b648936610e
+CSS cleanup + minify support
+
+diff -r 856f914e23f8 -r 04e4831c7e72 build.xml
+--- a/build.xml	Fri Apr 06 09:24:44 2012 +0200
++++ b/build.xml	Sat Apr 07 03:28:11 2012 +0200
+@@ -505,11 +505,30 @@
+ 			<arg file="${build.dir}/src/web/static/opengrok-debug.js"/>
+ 		</java>
+ 	</target>
++	<target name="css.compress" depends="get.yuicompressor"
++		description="Compress CSS files">
++		<!-- the lazy way to create the required dirs -->
++		<copy todir="${build.dir}/src/web/static/">
++			<fileset dir="web/static" includes="**/*.css"/>
++		</copy>
++		<apply executable="java" parallel="false" outputproperty="cssmin.log"
++			logerror="yes"
++			dest="${build.dir}/src/web/static/">
++			<fileset dir="web/static" includes="**/*.css"/>
++			<arg line="-jar"/>
++			<arg path="${YUI.compressor.jar}"/>
++			<arg line="--type css"/>
++			<srcfile/>
++			<arg line="-o"/>
++			<mapper type="glob" from="*.css" to="*-min.css"/>
++			<targetfile/>
++		</apply>
++	</target>
+ 
+-    <target name="-post-jar" depends="-copy-lib-without-netbeans,get.yui,-check.web.xml,js.compress">
++    <target name="-post-jar" depends="-copy-lib-without-netbeans,get.yui,-check.web.xml,js.compress,css.compress">
+         <war destfile="${dist.war}" webxml="${web.xml}">
+             <fileset dir="web" excludes="META-INF/context.xml,**/opengrok*.js"/>
+-        	<fileset dir="${build.dir}/src/web" includes="**/opengrok*.js" />
++        	<fileset dir="${build.dir}/src/web" includes="**/opengrok*.js,**/*-min.css" />
+             <lib dir="${dist.dir}" includes="opengrok.jar"/>
+             <lib dir="${dist.dir}/lib" includes="*.jar" excludes="servlet-api.jar"/>
+         </war>
+diff -r 856f914e23f8 -r 04e4831c7e72 src/org/opensolaris/opengrok/analysis/document/TroffXref.lex
+--- a/src/org/opensolaris/opengrok/analysis/document/TroffXref.lex	Fri Apr 06 09:24:44 2012 +0200
++++ b/src/org/opensolaris/opengrok/analysis/document/TroffXref.lex	Sat Apr 07 03:28:11 2012 +0200
+@@ -129,7 +129,7 @@
+ 
+ %%
+ <YYINITIAL> {
+-^\.(SH|TH|SS|IP|NH|TL|UH)       { yybegin(HEADER); cleanup(); openDiv("b");}
++^\.(SH|TH|SS|IP|NH|TL|UH)       { yybegin(HEADER); cleanup(); openDiv("mnhd");}
+ ^(".\\\"")|(\'\\\")|("...\\\"") { yybegin(COMMENT);openSpan('c');}
+ }
+ 
+@@ -162,7 +162,7 @@
+     openPara();
+ }
+ 
+-^\.(RS)[^\n]* { cleanup(); openDiv("rs"); openPara(); }
++^\.(RS)[^\n]* { cleanup(); openDiv("mnrs"); openPara(); }
+ ^\.(RE)[^\n]* { cleanup(); closeDiv(); }
+ 
+ ^\.so {out.write(".so ");}
+diff -r 856f914e23f8 -r 04e4831c7e72 src/org/opensolaris/opengrok/search/Results.java
+--- a/src/org/opensolaris/opengrok/search/Results.java	Fri Apr 06 09:24:44 2012 +0200
++++ b/src/org/opensolaris/opengrok/search/Results.java	Sat Apr 07 03:28:11 2012 +0200
+@@ -153,22 +153,22 @@
+                 createMap(sh.searcher, sh.hits, start, end).entrySet())
+         {
+             String parent = entry.getKey();
+-            out.write("<tr class=\"dir\"><td colspan=\"3\"><a href=\"");
++            out.write("<tr class=\"rsd\"><td colspan=\"3\" class=\"rsdl\"><a href=\"");
+             out.write(xrefPrefixE);
+             out.write(Util.URIEncodePath(parent));
+             out.write("/\">");
+             out.write(parent); // htmlize ???
+             out.write("/</a>");
+             if (sh.desc != null) {
+-                out.write(" - <i>");
++                out.write(" - <span class=\"rsdd\">");
+                 out.write(sh.desc.get(parent)); // htmlize ???
+-                out.write("</i>");
++                out.write("</span>");
+             }
+             out.write("</td></tr>");
+             for (Document doc : entry.getValue()) {
+                 String rpath = doc.get("path");
+                 String rpathE = Util.URIEncodePath(rpath);
+-                out.write("<tr><td class=\"q\"><a href=\"");
++                out.write("<tr><td class=\"rsq\"><a href=\"");
+                 out.write(histPrefixE);
+                 out.write(rpathE);
+                 out.write("\" title=\"History\">H</a> <a href=\"");
+@@ -179,12 +179,12 @@
+                 out.write(rpathE);
+                 out.write("\" title=\"Download\">D</a>");
+                 out.write("</td>");
+-                out.write("<td class=\"f\"><a href=\"");
++                out.write("<td class=\"rsf\"><a href=\"");
+                 out.write(xrefPrefixE);
+                 out.write(rpathE);
+                 out.write("\">");
+                 out.write(rpath.substring(rpath.lastIndexOf('/') + 1)); // htmlize ???
+-                out.write("</a></td><td><tt class=\"con\">");
++                out.write("</a></td><td><tt class=\"rscon\">");
+                 if (sh.sourceContext != null) {
+                     Genre genre = Genre.get(doc.get("t"));
+                     Definitions tags = null;
+diff -r 856f914e23f8 -r 04e4831c7e72 src/org/opensolaris/opengrok/search/context/Context.java
+--- a/src/org/opensolaris/opengrok/search/context/Context.java	Fri Apr 06 09:24:44 2012 +0200
++++ b/src/org/opensolaris/opengrok/search/context/Context.java	Sat Apr 07 03:28:11 2012 +0200
+@@ -165,7 +165,7 @@
+                                     hits.add(hit);
+                                     anything = true;
+                                 } else {
+-                                    out.write("<a class=\"s\" href=\"");
++                                    out.write("<a class=\"rsh\" href=\"");
+                                     out.write(urlPrefixE);
+                                     out.write(pathE);
+                                     out.write("#");
+@@ -175,9 +175,9 @@
+                                     out.write("</span> ");
+                                     out.write(Util.htmlize(desc[3]).replace(
+                                             desc[0], "<b>" + desc[0] + "</b>"));
+-                                    out.write("</a> <i>");
++                                    out.write("</a> <span class=\"rshd\">");
+                                     out.write(desc[2]);
+-                                    out.write("</i><br/>");
++                                    out.write("</span><br/>");
+                                     anything = true;
+                                 }
+                             } else {
+diff -r 856f914e23f8 -r 04e4831c7e72 src/org/opensolaris/opengrok/search/context/PlainLineTokenizer.lex
+--- a/src/org/opensolaris/opengrok/search/context/PlainLineTokenizer.lex	Fri Apr 06 09:24:44 2012 +0200
++++ b/src/org/opensolaris/opengrok/search/context/PlainLineTokenizer.lex	Sat Apr 07 03:28:11 2012 +0200
+@@ -147,6 +147,7 @@
+   
+   private int printWithNum(int start, int end, int lineNo,
+                            boolean bold) throws IOException {
++        // should be similar to Context::getContext()
+         if (bold) {
+             out.write("<b>");
+         }
+@@ -165,17 +166,17 @@
+ 
+                         out.write("</a>");
+                         if (prevHi) {
+-                                out.write(" <i> ");
++                                out.write(" <span class=\"rshd\"> ");
+                                 String[] desc = tags.remove(prevLn);
+                                 out.write(desc[2]);
+-                                out.write(" </i>");
++                                out.write(" </span>");
+                         }
+                         out.write("<br/>");
+ 
+                         prevHi = hi;
+                         prevLn = ln;
+-                        if (hi) out.write("<span class=\"h\">"); //TODO: closing tag - where?
+-                        out.write("<a class=\"s\" href=\"");
++                        if (hi) out.write("<span class=\"rshh\">"); //TODO: closing tag - where?
++                        out.write("<a class=\"rsh\" href=\"");
+                         out.write(url);
+                         String num = String.valueOf(lineNo);
+                         out.write(num);
+@@ -263,7 +264,7 @@
+                         }
+ 
+                         if (out != null) {
+-                           out.write("<a class=\"s\" href=\"");
++                           out.write("<a class=\"rsh\" href=\"");
+                            out.write(url);
+                            String num = String.valueOf(markedLine);
+                            out.write(num);
+@@ -322,10 +323,10 @@
+ 
+                                 out.write("</a>");
+                                 if (prevHi) {
+-                                        out.write(" <i> ");
++                                        out.write(" <span class=\"rshd\"> ");
+                                         String[] desc = tags.remove(prevLn);
+                                         out.write(desc[2]);
+-                                        out.write(" </i>");
++                                        out.write(" </span>");
+                                 }
+                                 out.write("<br/>");
+                            } else {
+@@ -345,16 +346,16 @@
+         if (out != null) {
+            for(Integer rem : tags.keySet()) {
+                 String[] desc = tags.get(rem);
+-                out.write("<a class=\"s\" href=\"");
++                out.write("<a class=\"rsh\" href=\"");
+                 out.write(url);
+                 out.write(desc[1]);
+                 out.write("\"><span class=\"l\">");
+                 out.write(desc[1]);
+                 out.write("</span> ");
+                 out.write(Util.htmlize(desc[3]).replace(desc[0], "<b>" + desc[0] + "</b>"));
+-                out.write("</a> <i> ");
++                out.write("</a> <span class=\"rshd\"> ");
+                 out.write(desc[2]);
+-                out.write(" </i><br/>");
++                out.write(" </span><br/>");
+            }
+         } else {
+            for(Integer rem : tags.keySet()) {
+@@ -397,10 +398,10 @@
+                            printWithNum(rest, endPos, markedLine, false);
+                            out.write("</a>");
+                            if(prevHi){
+-                                out.write(" <i> ");
++                                out.write(" <span class=\"rshd\"> ");
+                                 String[] desc = tags.remove(prevLn);
+                                 out.write(desc[2]);
+-                                out.write("</i> ");
++                                out.write("</span> ");
+                            }
+                            out.write("<br/>");
+                         } else {
+diff -r 856f914e23f8 -r 04e4831c7e72 web/help.jsp
+--- a/web/help.jsp	Fri Apr 06 09:24:44 2012 +0200
++++ b/web/help.jsp	Sat Apr 07 03:28:11 2012 +0200
+@@ -124,7 +124,7 @@
+ </p>
+ 
+ <p>valid <dfn>FIELDs</dfn> are</p>
+-    <dl class="fields">
++    <dl class="hlpfields">
+ <dt>full</dt>
+ <dd>Search through all text tokens(words,strings,identifiers,numbers) in index.</dd>
+ 
+@@ -147,7 +147,7 @@
+ </p>
+ 
+ <dfn><b>Examples:</b></dfn>
+-<pre class="example">
++<pre class="hlpexample">
+ 
+ To find where setResourceMonitors is defined: <a
+ href="search?q=&amp;defs=setResourceMonitors">defs:setResourceMonitors</a>
+diff -r 856f914e23f8 -r 04e4831c7e72 web/history.jsp
+--- a/web/history.jsp	Fri Apr 06 09:24:44 2012 +0200
++++ b/web/history.jsp	Sat Apr 07 03:28:11 2012 +0200
+@@ -89,7 +89,7 @@
+             <th>Revision</th><%
+             if (!cfg.isDir()) {
+             %>
+-            <th><input type="submit" value=" Compare "/></th><%
++            <th><button type="submit">Compare</button></th><%
+             }
+             %>
+             <th>Date</th>
+@@ -186,7 +186,7 @@
+                             jfile = ifile.substring(subdir.length());
+                         }
+ 						%>
+-<a class="h" href="<%= context + Prefix.XREF_P + ifile + encodedRev 
++<a class="revh" href="<%= context + Prefix.XREF_P + ifile + encodedRev 
+ 						%>"><%= jfile %></a><br/><%
+                     }
+                 %></span><%
+diff -r 856f914e23f8 -r 04e4831c7e72 web/httpheader.jspf
+--- a/web/httpheader.jspf	Fri Apr 06 09:24:44 2012 +0200
++++ b/web/httpheader.jspf	Sat Apr 07 03:28:11 2012 +0200
+@@ -47,8 +47,6 @@
+     cfg = PageConfig.get(request);
+     String styleDir = cfg.getCssDir();
+     String ctxPath = request.getContextPath();
+-    String dstyle = styleDir + '/' + "style.css";
+-    String pstyle = styleDir + '/' + "print.css";
+     boolean debug = false;
+     String debugParam = request.getParameter("debug");
+     if (debugParam != null) {
+@@ -57,6 +55,8 @@
+     	debug = getServletContext()
+     		.getAttribute(WebappListener.JS_DEBUG_PARAM) == Boolean.TRUE;
+     }
++    String dstyle = styleDir + '/' + "style" + ( debug ? ".css" : "-min.css");
++    String pstyle = styleDir + '/' + "print" + ( debug ? ".css" : "-min.css");
+ %><?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+@@ -71,7 +71,7 @@
+     title="Default" href="<%= dstyle %>" />
+ <link rel="alternate stylesheet" type="text/css" media="all"
+     title="Paper White" href="<%= pstyle %>" />
+-<link rel="stylesheet" type="text/css" href="<%=styleDir%>/print.css" media="print" />
++<link rel="stylesheet" type="text/css" href="<%= pstyle %>" media="print" />
+ <link rel="search" href="<%=ctxPath%>/opensearch"
+     type="application/opensearchdescription+xml"
+     title="OpenGrok Search for current project(s)" />
+diff -r 856f914e23f8 -r 04e4831c7e72 web/list.jsp
+--- a/web/list.jsp	Fri Apr 06 09:24:44 2012 +0200
++++ b/web/list.jsp	Sat Apr 07 03:28:11 2012 +0200
+@@ -59,8 +59,8 @@
+         float r = annotation.getWidestRevision() * 1.15f;
+         float a = annotation.getWidestAuthor() * 1.15f;
+         cfg.addHeaderData("<style type=\"text/css\">"
+-            + ".blame .r { width: " + (r == 0 ? 6 : r) + "ex; } "
+-            + ".blame .a { width: " + (a == 0 ? 6 : a) + "ex; } "
++            + ".r { width: " + (r == 0 ? 6 : r) + "ex; } "
++            + ".a { width: " + (a == 0 ? 6 : a) + "ex; } "
+             + "</style>");
+     }
+ }
+diff -r 856f914e23f8 -r 04e4831c7e72 web/mast.jsp
+--- a/web/mast.jsp	Fri Apr 06 09:24:44 2012 +0200
++++ b/web/mast.jsp	Sat Apr 07 03:28:11 2012 +0200
+@@ -125,9 +125,9 @@
+     %></div>
+ </div>
+ <div id="Masthead">
+-    <tt><a href="<%= context + Prefix.XREF_P %>/">xref</a>: <%= Util
++    <a href="<%= context + Prefix.XREF_P %>/">xref</a>: <%= Util
+         .breadcrumbPath(context + Prefix.XREF_P, path,'/', "", true, cfg.isDir())
+-    %></tt>
++%>
+ </div>
+ <div id="bar">
+     <ul>
+@@ -140,8 +140,8 @@
+         <li><a href="#" title="Show or hide symbol list"
+             ><span id="defbox"></span>Navigate</a></li>
+         <li><a href="#"><span id="download"></span>Download</a></li>
+-        <li><input type="text" id="search" name="q" class="q" />
+-            <input type="submit" value="Search" class="submit" /></li><%
++        <li><input type="text" id="search" name="q" />
++            <button type="submit" class="submit">Search</button></li><%
+     Project proj = cfg.getProject();
+     String[] vals = cfg.getSearchOnlyIn();
+         %><li><input type="checkbox" name="path" value="<%= vals[0]
+diff -r 856f914e23f8 -r 04e4831c7e72 web/menu.jspf
+--- a/web/menu.jspf	Fri Apr 06 09:24:44 2012 +0200
++++ b/web/menu.jspf	Sat Apr 07 03:28:11 2012 +0200
+@@ -123,10 +123,9 @@
+     }
+     %>
+ 
+-<p><input
+-    tabindex="9" class="submit" type="submit" value="Search"/> <input
+-    tabindex="10" id="clearSearchBox" class="submit" type="button" 
+-    	value=" Clear "/> <button 
++<p><button
++    tabindex="9" class="submit" type="submit">Search</button><button
++    tabindex="10" id="clearSearchBox" class="submit" type="button">Clear</button><button 
+     tabindex="11" id="helpButton" class="help">Help</button>
+ </p>
+ </form>
+diff -r 856f914e23f8 -r 04e4831c7e72 web/search.jsp
+--- a/web/search.jsp	Fri Apr 06 09:24:44 2012 +0200
++++ b/web/search.jsp	Sat Apr 07 03:28:11 2012 +0200
+@@ -176,9 +176,9 @@
+             int labelEnd = label + 11;
+             for (int i = sstart; i < totalHits && label <= labelEnd; i+= max) {
+                 if (i <= start && start < i + max) {
+-                    buf.append("<span class=\"sel\">").append(label).append("</span>");
++                    buf.append("<span class=\"rsps\">").append(label).append("</span>");
+                 } else {
+-                    buf.append("<a class=\"more\" href=\"s?n=").append(max)
++                    buf.append("<a class=\"rspn\" href=\"s?n=").append(max)
+                         .append("&amp;start=").append(i).append(urlp).append("\">");
+                     if (label == labelStart && label != 1) {
+                         buf.append("&lt;&lt");
+diff -r 856f914e23f8 -r 04e4831c7e72 web/static/default/print.css
+--- a/web/static/default/print.css	Fri Apr 06 09:24:44 2012 +0200
++++ b/web/static/default/print.css	Sat Apr 07 03:28:11 2012 +0200
+@@ -6,16 +6,8 @@
+ 
+ a {
+ 	text-decoration: none;
+-}
+-
+-a:link {
+ 	color: #2030A2;
+ }
+-
+-a:visited, a:active, a:hover {
+-	color: #202062;
+-}
+-
+ a:active, a:hover {
+ 	text-decoration: underline;
+ }
+@@ -47,8 +39,16 @@
+ 	border: 1px solid #bbbbff;
+ 	border-radius: 0.75ex;
+ 	-moz-border-radius: 0.75ex;
++}
++input { /* text input fields */
++	background-color: #ffffff;
++}
++button {
+ 	background-color: #a3b8cb;
+ }
++button.submit { /* start search button */
++	font-weight: bold;
++}
+ 
+ label {
+ 	font-weight: bold;
+@@ -64,10 +64,8 @@
+ #whole_header {
+ 	display: none;
+ }
+-
+ #pagetitle { /* short verbal summary/description of the shown content */
+ }
+-
+ /* required for help page, only */
+ #sbar { /* full search navbar */
+ 	border-top: 1px solid #ffc726;
+@@ -77,72 +75,51 @@
+ }
+ 
+ /* *** full search navbar *** */
++#sbox > p:last-of-type {
++	white-space: nowrap;
++	/* 11ex = width(#qtbl td:first-child) + margin-left(body) */
++	margin: 1ex 0 0.5ex 11ex;
++}
++#sbox > p:last-of-type > :nth-child(n+2) {
++	margin-left: 1ex;
++}
+ #qtbl, #ptbl {
+ 	display: inline-block;
+ 	vertical-align: top;
+ } 
+-
+ #qtbl tr {
+ 	background: none; /* remove alternating colors */
+ }
+-
++#qtbl td:first-child {
++	width: 10ex;
++	text-align: right;
++}
++#qtbl td:nth-child(2) {
++	width: 45ex;
++}
++#qtbl input {
++	width: 100%;
++}
++#ptbl {
++	margin-left: 2em;
++}
+ #ptbl > p {
+ 	text-align: center;
+ 	white-space: nowrap;
+ 	margin: 0.5ex 1ex;
+ }
+-
+-#qtbl td:first-child {
+-	width: 10ex;
+-	text-align: right;
+-}
+-
+-#qtbl td:nth-child(2) {
+-	width: 45ex;
+-}
+-
+-#qtbl input.q {
+-	width: 100%;
+-}
+-
+-#ptbl {
+-	margin-left: 2em;
+-}
+-
+ #ptbl button {
+ 	font-size: small;
+-}	
+-
++}
+ #ptbl button:first-of-type {
+ 	margin-left: 1em;
+ }
+-
+ #ptbl select {
+ 	width: 100%;
+ }
+-
+ #ptbl option {
+ 	padding: 0 1ex;
+ }
+-
+-#sbox > p:last-of-type {
+-	white-space: nowrap;
+-	/* 11ex = width(#qtbl td:first-child) + margin-left(body) */
+-	margin: 1ex 0 0.5ex 11ex;
+-}
+-
+-#sbox > p:last-of-type > :nth-child(n+2) {
+-	margin-left: 1ex;
+-}
+-
+-input.q { /* text input fields */
+-	background-color: #ffffff;
+-	border: 1px solid #bbbbff;
+-}
+-
+-input.submit { /* start search button */
+-	font-weight: bold;
+-}
+ /* ############### end of header ############## */
+ 
+ 
+@@ -158,48 +135,32 @@
+ #help dfn { /* definitions */
+ 	text-decoration: underline;
+ }
+-
+-#help .fields, #help .example {
++#help dt {
++	font-weight: bold;
++}
++.hlpfields, .hlpexample {
+ 	margin-left: 3em;
+ }
+ 
+-#help dt {
+-	font-weight: bold;
+-}
+-
+-
+-/* *** more page ***/
+-#more {
+-	line-height: 1.25em;
+-}
+-
+-#more b { /* highlight matches */ 
+-	background-color: #e5e5e5;
+-}
+-
+ 
+ /* *** history page *** */
+-table#revisions {
++#revisions {
+ 	/* width: 100%; */ /* table with the history info for a file */
+ 	/* border-collapse: collapse; */ /* looks better with a small divider */
+ }
+-
+-#revisions a.h	{ /* modified file list content */
++.revh	{ /* modified file list content */
+ 	font-size: small;
+ 	margin-left: 2em;
+ }
+-
+ #revisions tbody td:first-child {
+ 	/* rev number - git/mercurial revs numbers look bad with prop. fonts */
+ 	font-family: monospace;
+ 	text-align: right;
+ }
+-
+ #revisions tbody td:nth-child(2), #revisions tbody td:nth-child(3) {
+ 	/* Compare and Date column */
+ 	text-align: center;
+ }
+-
+ #revisions tbody td:nth-child(4) { /* author column */
+ 	padding: 0 1ex;
+ 	text-align: center;
+@@ -320,8 +281,7 @@
+ #nums > div:nth-child(10n) { /* highlighted line number */
+ 	color: #000;
+ }
+-#src .l, #src .hl, .blame .r, .blame .a,
+-#results .l, #more .l { /* line number/annotation block */
++.l, .hl, .r, .a { /* line number/annotation block */
+ 	display: inline-block;
+ 	width: 6ex;
+ 	text-align: right;
+@@ -331,59 +291,55 @@
+ 	border-right: 1px solid #ddd;
+ 	color: #666;
+ }
+-#src .hl { /* highlighted line number */
++.hl { /* highlighted line number */
+ 	color: #000;
+ }
+-.blame .r { /* revision number "column" (annotation) */
+-	text-align: right;
+-}
+-.blame .a { /* author name "column" (annotation) */
++.a { /* author name "column" (annotation) */
+ 	text-align: center;
+ }
+ /* source code highlighting - see org/opengrok/analysis/$lang/*Xref.lex */
+-#lines .n		{ /* numbers/label */	color: #a52a2a; } 
+-#lines .s		{ /* strings */			color: green; } 
+-#lines .c		{ /* comment */			color: #666; }
+-#lines .b		{ /* heading/title/bold */	color: #000; font-weight: bold; }
+-#lines .k		{ /* block display */ 	color: #000; font-family: monospace; }
+-#lines .d		{ /* symbol definition */	color: #909; font-weight: bold; }
++.n	{ /* numbers/label */		color: #a52a2a; } 
++.s	{ /* strings */				color: green; } 
++.c	{ /* comment */				color: #666; }
++.b	{ /* heading/title/bold */	color: #000; font-weight: bold; }
++.k	{ /* block display */	 	color: #000; font-family: monospace; }
++.d	{ /* symbol definition */	color: #909; font-weight: bold; }
+ 
+-a.xm	{ /* macro */			color: #c66; font-weight: bold; }
+-a.xa	{ /* argument */		color: #60c; font-weight: bold; }
+-a.xl	{ /* local */			color: #963; font-weight: bold; }
+-a.xv	{ /* variable */		color: #c30; font-weight: bold; }
+-a.xc	{ /* class */			color: #909; font-weight: bold; font-style: italic; }
+-a.xp	{ /* package */			color: #909; font-weight: bold; font-style: italic; }
+-a.xi	{ /* interface */		color: #909; font-weight: bold; font-style: italic; }
+-a.xn	{ /* namespace */		color: #909; font-weight: bold; font-style: italic; }
+-a.xe	{ /* enum */			color: #909; font-weight: bold; font-style: italic; }
+-a.xer	{ /* enumerator */		color: #909; font-weight: bold; font-style: italic; }
+-a.xs	{ /* struct */			color: #909; font-weight: bold; font-style: italic; }
+-a.xt	{ /* typedef */			color: #909; font-weight: bold; font-style: italic; }
+-a.xts	{ /* typedefs */		color: #909; font-weight: bold; font-style: italic; }
+-a.xu	{ /* union */			color: #909; font-weight: bold; font-style: italic; }
+-a.xfld	{ /* field */			color: #090; font-weight: bold; }
+-a.xmb	{ /* member */			color: #090; font-weight: bold; }
+-a.xf	{ /* function */		color: #00f; font-weight: bold; }
+-a.xmt	{ /* method */			color: #00f; font-weight: bold; }
+-a.xsr	{ /* subroutine */		color: #00f; font-weight: bold; }
++.xm	{ /* macro */			color: #c66; font-weight: bold; }
++.xa	{ /* argument */		color: #60c; font-weight: bold; }
++.xl	{ /* local */			color: #963; font-weight: bold; }
++.xv	{ /* variable */		color: #c30; font-weight: bold; }
++.xc	{ /* class */			color: #909; font-weight: bold; font-style: italic; }
++.xp	{ /* package */			color: #909; font-weight: bold; font-style: italic; }
++.xi	{ /* interface */		color: #909; font-weight: bold; font-style: italic; }
++.xn	{ /* namespace */		color: #909; font-weight: bold; font-style: italic; }
++.xe	{ /* enum */			color: #909; font-weight: bold; font-style: italic; }
++.xer{ /* enumerator */		color: #909; font-weight: bold; font-style: italic; }
++.xs	{ /* struct */			color: #909; font-weight: bold; font-style: italic; }
++.xt	{ /* typedef */			color: #909; font-weight: bold; font-style: italic; }
++.xts{ /* typedefs */		color: #909; font-weight: bold; font-style: italic; }
++.xu	{ /* union */			color: #909; font-weight: bold; font-style: italic; }
++.xfld{ /* field */			color: #090; font-weight: bold; }
++.xmb{ /* member */			color: #090; font-weight: bold; }
++.xf	{ /* function */		color: #00f; font-weight: bold; }
++.xmt{ /* method */			color: #00f; font-weight: bold; }
++.xsr{ /* subroutine */		color: #00f; font-weight: bold; }
+ 
+ #man table, #man td  { /* #man == troff src */
+ 	background-color: #e5e5e5;
+ 	border: 1px;
+ 	padding: 2px;
+ }
+-
+ #man p { /* a troff paragraph */
+ 	margin-top: 0.5em;
+ 	margin-bottom: 0;
+ }
+-
+-#man div.b { /* man section headings etc. */
++.mnhd { /* man section headings etc. */
++	color: #000;
++	font-weight: bold;
+ 	margin-top: 2em;
+ }
+-
+-#man div.rs { /* a right-shifted block */
++.mnrs { /* a right-shifted block */
+ 	margin-left: 3em;
+ 	margin-bottom: 1em;
+ }
+@@ -394,64 +350,66 @@
+ }
+ 
+ /* search result page */
+-#results {
+-}
+-
+ #results p { /* pagetitle and slider */
+ 	padding: 0.1em;
+ }
+-
+-#results .dir { /* directory row above matched files */
+-	background-color: #cccccc;
++.rsd { /* directory row above matched files */
++	background-color: #cccccc !important;
+ }
+-
+-#results .dir td { /* directory link */
++.rsdl { /* directory link */
+ 	padding-left: 1em;
+ }
+-
+-#results td.q { /* 1st column: H A D */
++.rsdd { /* match type description (method, interface etc.) */ 
++	color: green;
++	font-weight: bold;
++	padding-left: 1ex;
++}
++.rsq { /* 1st column: H A D */
+ 	white-space: nowrap;
+ 	font-size: xx-small;
+ 	padding: 3px;
+ 	width: 3em;
+ }
+-
+-#results td.f { /* 2nd column: filename */
++.rsf { /* 2nd column: filename */
+ 	width: 3em;
+ 	padding: 3px 0.5em 3px 2em;
+ }
+-
+-#results .con { /* 3rd column: line number + matched line contents */
++.rscon { /* 3rd column: line number + matched line contents */
+ 	font-size: small;
+ }
+-
+-#results .con .all {
++.rscon .all {
+     margin-left: 6ex; /* width(#src .l) + 1ex */ 
+ }
+-
+-#results .s, #more .s { /* matched line contents */
++.rsh { /* matched line contents */
+ 	color: #000;
+ }
+-
+-#results i { /* match type description (method, interface etc.) */ 
++.rshd { /* match type description (method, interface etc.) */ 
+ 	color: green;
+ 	font-weight: bold;
+ 	padding-left: 1ex;
+ }
+-
+-#results .sel { /* slider item for the shown search result page */
++.rsps { /* slider item for the shown search result page */
+ 	background-color: #e5e5e5;
+ 	border: 1px #998 solid;
+ 	padding: .5em;
+ 	margin: 1px;
+ }
+-
+-#results .more { /* slider item for the n-th search result page */
++.rspn { /* slider item for the n-th search result page */
+ 	border: 1px #bba solid;
+ 	padding: .3em;
+ 	margin: 1px;
+ }
+ 
++
++/* *** more page ***/
++#more {
++	line-height: 1.25em;
++}
++#more b { /* highlight matches */ 
++	background-color: #e5e5e5;
++}
++
++
+ /* ############### start of footer ############## */
+ #footer {
+ 	color: #777777;
+@@ -459,13 +417,11 @@
+ 	margin: 1ex 0;
+ 	border-top: 1px solid #bba;
+ }
+-
+ #footer p { /* footer text */
+ 	padding: 0;
+ 	margin: 0.2em;
+ 	text-align: center;
+ }
+-
+ #fti { /* servedby.png */
+ 	display: inline-block;
+ 	width: 208px;
+diff -r 856f914e23f8 -r 04e4831c7e72 web/static/default/style.css
+--- a/web/static/default/style.css	Fri Apr 06 09:24:44 2012 +0200
++++ b/web/static/default/style.css	Sat Apr 07 03:28:11 2012 +0200
+@@ -307,16 +307,8 @@
+ 
+ a {
+ 	text-decoration: none;
+-}
+-
+-a:link {
+ 	color: #2030A2;
+ }
+-
+-a:visited, a:active, a:hover {
+-	color: #202062;
+-}
+-
+ a:active, a:hover {
+ 	text-decoration: underline;
+ }
+@@ -344,15 +336,19 @@
+ }
+ 
+ input, button {
+-	border: 1px #bbbbff #755;
++	border: 1px solid #bbbbff;
+ 	border-radius: 0.75ex;
+ 	-moz-border-radius: 0.75ex;
++}
++input { /* text input fields */
++	background-color: #ffffff;
++}
++button {
+ 	background-color: #a3b8cb;
+ }
+-
+-/* below seems to be a problem for input boxes, where the color will overwrite the text inside, let's leave it for buttons though
+-for search and clear buttons will make it part of submit class ONLY */
+-input.submit:hover, input.submit:active,
++button.submit { /* start search button , clear button */
++	font-weight: bold;
++}
+ button:hover, button:active {
+ 	color: #ffffff;        
+ }
+@@ -374,9 +370,7 @@
+ /* ############### start of header ############## */
+ #whole_header { }
+ 
+-/* *** banner/deco above navbar *** */
+-#header { }
+-
++/* *** banner/deco above navbar (#header) *** */
+ #MastheadLogo {
+ 	width: 171px;
+ 	height: 40px;
+@@ -386,24 +380,18 @@
+ 	background-position: 0 0;
+ 	margin: 0 0 0.5ex 0;
+ }
+-
+ #pagetitle { /* short verbal summary/description of the shown content */
+ }
+-
+ #filename { /* "Cross Reference: ..." */
+ 	font-size: x-large;
+ 	font-weight: bold;
+ 	margin-right: 1em;
+ 	float: right;
+ }
+-
+ #Masthead {
++	font-family: monospace;
+ 	clear: left;
+ }
+-
+-#Masthead tt { /* slashes in the xref: line */
+-}
+-
+ #sbar, #bar { /* full search and default navbar */
+ 	border-top: 4px solid #ffc726;
+ 	margin: 0;
+@@ -412,69 +400,60 @@
+ }
+ 
+ /* *** full search navbar *** */
++/* search form (#sbox) */
++#sbox > p:last-of-type {
++	white-space: nowrap;
++	/* 11ex = width(#qtbl td:first-child) + margin-left(body) */
++	margin: 1ex 0 0.5ex 11ex;
++}
++#sbox > p:last-of-type > :nth-child(n+2) {
++	margin-left: 1ex;
++}
+ #qtbl, #ptbl {
+ 	display: inline-block;
+ 	vertical-align: top;
+ } 
+-
++/* query box */
+ #qtbl tr {
+ 	background: none; /* remove alternating colors */
+ }
+-
++#qtbl td:first-child {
++	width: 10ex;
++	text-align: right;
++}
++#qtbl td:nth-child(2) {
++	width: 45ex;
++}
++#qtbl input {
++	width: 100%;
++}
++/* project selection box */
++#ptbl {
++	margin-left: 2em;
++}
+ #ptbl > p {
+ 	text-align: center;
+ 	white-space: nowrap;
+ 	margin: 0.5ex 1ex;
+ }
+-
+-#qtbl td:first-child {
+-	width: 10ex;
+-	text-align: right;
+-}
+-
+-#qtbl td:nth-child(2) {
+-	width: 45ex;
+-}
+-
+-#qtbl input.q {
+-	width: 100%;
+-}
+-
+-#ptbl {
+-	margin-left: 2em;
+-}
+-
+ #ptbl button {
+ 	font-size: small;
+ }	
+-
+ #ptbl button:first-of-type {
+ 	margin-left: 1em;
+ }
+-
+ #ptbl select {
+ 	width: 100%;
+ }
+-
+ #ptbl option {
+ 	padding: 0 1ex;
+ }
+ 
+-#sbox > p:last-of-type {
+-	white-space: nowrap;
+-	/* 11ex = width(#qtbl td:first-child) + margin-left(body) */
+-	margin: 1ex 0 0.5ex 11ex;
+-}
+-
+-#sbox > p:last-of-type > :nth-child(n+2) {
+-	margin-left: 1ex;
+-}
+ 
+ /* *** default navbar *** */
+ #bar {
+ 	padding: 0.2em 0.5em;
+ }
+-
+ #bar ul { /* every list item is displayed as a "menu" item */
+ 	display: inline-block;
+ 	list-style: none outside none;
+@@ -482,11 +461,9 @@
+ 	padding: 0;
+ 	/* white-space: nowrap; */ /* hmm, sometimes good, sometimes not ;-) */
+ }
+-
+ #bar li { /* menu items */
+ 	display: inline-block;
+ }
+-
+ #history::before, #annotate::before, #line::before, #defbox::before, #download::before {
+ 	content: "|";
+ 	padding: 0.5ex;
+@@ -495,40 +472,27 @@
+ 	font-weight: normal;
+ 	display: inline-block;
+ }
+-
+ #search {
+ 	margin-left: 0.5ex;
+ }
+ 
+-input.q { /* text input fields */
+-	background-color: #ffffff;
+-	border: 1px solid #bbbbff;
+-}
+-
+-input.submit { /* start search button , clear button */
+-	font-weight: bold;
+-}
+-
+ #sortfield {
+ 	display: inline-block;
+ 	margin-left: 6ex;
+ }
+-
+ #sortfield label {
+ 	margin-right: 1ex;
+ }
+-
+ #sortfield label:after {
+ 	content: ": ";
+ }
+-
+ #sortby li:nth-child(n+2) :first-child::before {
+     content: "|";
+     padding: 0 1ex;
+ 	font-size: large;
+ 	font-weight: normal;
++	display: inline-block;
+ }
+-
+ /* ############### end of header ############## */
+ 
+ 
+@@ -542,52 +506,36 @@
+ }
+ 
+ 
+-/* *** help page *** */
++/* *** help page - css prefix: hlp *** */
+ #help dfn { /* definitions */
+ 	text-decoration: underline;
+ }
+-
+-#help .fields, #help .example {
++#help dt {
++	font-weight: bold;
++}
++.hlpfields, .hlpexample {
+ 	margin-left: 3em;
+ }
+ 
+-#help dt {
+-	font-weight: bold;
+-}
+ 
+-
+-/* *** more page ***/
+-#more {
+-	line-height: 1.25em;
+-}
+-
+-#more b { /* highlight matches */ 
+-	background-color: #ffff99;
+-}
+-
+-
+-/* *** history page *** */
+-table#revisions {
++/* *** history page - css prefix: rev *** */
++#revisions {
+ 	/* width: 100%; */ /* table with the history info for a file */
+ 	/* border-collapse: collapse; */ /* looks better with a small divider */
+ }
+-
+-#revisions a.h	{ /* modified file list content */
++.revh	{ /* modified file list content */
+ 	font-size: small;
+ 	margin-left: 2em;
+ }
+-
+ #revisions tbody td:first-child {
+ 	/* rev number - git/mercurial revs numbers look bad with prop. fonts */
+ 	font-family: monospace;
+ 	text-align: right;
+ }
+-
+ #revisions tbody td:nth-child(2), #revisions tbody td:nth-child(3) {
+ 	/* Compare and Date column */
+ 	text-align: center;
+ }
+-
+ #revisions tbody td:nth-child(4) { /* author column */
+ 	padding: 0 1ex;
+ 	text-align: center;
+@@ -754,8 +702,8 @@
+ #nums > div:nth-child(10n) { /* highlighted line number */
+ 	color: #000;
+ }
+-#src .l, #src .hl, .blame .r, .blame .a,
+-#results .l, #more .l { /* line number/annotation block */
++.l, .hl, /* old [highlighted] linenumber "column" in #src, #results, #more */
++.r, .a { /* old annotation block: revision, author */
+ 	display: inline-block;
+ 	width: 5ex;
+ 	text-align: right;
+@@ -764,59 +712,56 @@
+ 	background-color: #dddddd;
+ 	color: #666;
+ }
+-#src .hl { /* highlighted line number */
++.hl { /* old highlighted line number */
+ 	color: #000;
+ }
+-.blame .r { /* revision number "column" (annotation) */
+-	text-align: right;
+-}
+-.blame .a { /* author name "column" (annotation) */
++.a { /* old author name "column" (annotation) */
+ 	text-align: center;
+ }
+ /* source code highlighting - see org/opengrok/analysis/$lang/*Xref.lex */
+-#lines .n		{ /* numbers/label */	color: #a52a2a; } 
+-#lines .s		{ /* strings */			color: green; } 
+-#lines .c		{ /* comment */			color: #666; }
+-#lines .b		{ /* heading/title/bold */	color: #000; font-weight: bold; }
+-#lines .k		{ /* block display */ 	color: #000; font-family: monospace; }
+-#lines .d		{ /* symbol definition */	color: #909; font-weight: bold; }
++.n	{ /* numbers/label */		color: #a52a2a; } 
++.s	{ /* strings */				color: green; } 
++.c	{ /* comment */				color: #666; }
++.b	{ /* heading/title/bold */	color: #000; font-weight: bold; }
++.k	{ /* block display */ 		color: #000; font-family: monospace; }
++.d	{ /* symbol definition */	color: #909; font-weight: bold; }
+ /* source code entities, which can be used in references */
+-a.xm	{ /* macro */			color: #c66; font-weight: bold; }
+-a.xa	{ /* argument */		color: #60c; font-weight: bold; }
+-a.xl	{ /* local */			color: #963; font-weight: bold; }
+-a.xv	{ /* variable */		color: #c30; font-weight: bold; }
+-a.xc	{ /* class */			color: #909; font-weight: bold; font-style: italic; }
+-a.xp	{ /* package */			color: #909; font-weight: bold; font-style: italic; }
+-a.xi	{ /* interface */		color: #909; font-weight: bold; font-style: italic; }
+-a.xn	{ /* namespace */		color: #909; font-weight: bold; font-style: italic; }
+-a.xe	{ /* enum */			color: #909; font-weight: bold; font-style: italic; }
+-a.xer	{ /* enumerator */		color: #909; font-weight: bold; font-style: italic; }
+-a.xs	{ /* struct */			color: #909; font-weight: bold; font-style: italic; }
+-a.xt	{ /* typedef */			color: #909; font-weight: bold; font-style: italic; }
+-a.xts	{ /* typedefs */		color: #909; font-weight: bold; font-style: italic; }
+-a.xu	{ /* union */			color: #909; font-weight: bold; font-style: italic; }
+-a.xfld	{ /* field */			color: #090; font-weight: bold; }
+-a.xmb	{ /* member */			color: #090; font-weight: bold; }
+-a.xf	{ /* function */		color: #00f; font-weight: bold; }
+-a.xmt	{ /* method */			color: #00f; font-weight: bold; }
+-a.xsr	{ /* subroutine */		color: #00f; font-weight: bold; }
++.xm	{ /* macro */			color: #c66; font-weight: bold; }
++.xa	{ /* argument */		color: #60c; font-weight: bold; }
++.xl	{ /* local */			color: #963; font-weight: bold; }
++.xv	{ /* variable */		color: #c30; font-weight: bold; }
++.xc	{ /* class */			color: #909; font-weight: bold; font-style: italic; }
++.xp	{ /* package */			color: #909; font-weight: bold; font-style: italic; }
++.xi	{ /* interface */		color: #909; font-weight: bold; font-style: italic; }
++.xn	{ /* namespace */		color: #909; font-weight: bold; font-style: italic; }
++.xe	{ /* enum */			color: #909; font-weight: bold; font-style: italic; }
++.xer{ /* enumerator */		color: #909; font-weight: bold; font-style: italic; }
++.xs	{ /* struct */			color: #909; font-weight: bold; font-style: italic; }
++.xt	{ /* typedef */			color: #909; font-weight: bold; font-style: italic; }
++.xts{ /* typedefs */		color: #909; font-weight: bold; font-style: italic; }
++.xu	{ /* union */			color: #909; font-weight: bold; font-style: italic; }
++.xfld{ /* field */			color: #090; font-weight: bold; }
++.xmb{ /* member */			color: #090; font-weight: bold; }
++.xf	{ /* function */		color: #00f; font-weight: bold; }
++.xmt{ /* method */			color: #00f; font-weight: bold; }
++.xsr{ /* subroutine */		color: #00f; font-weight: bold; }
+ 
+-#man table, #man td  { /* #man == troff src */
++/* troff source pages - css prefix: mn */
++#man table, #man td  {
+ 	background-color: #ddddcc;
+ 	border: 1px;
+ 	padding: 2px;
+ }
+-
+ #man p { /* a troff paragraph */
+ 	margin-top: 0.5em;
+ 	margin-bottom: 0;
+ }
+-
+-#man div.b { /* man section headings etc. */
++.mnhd { /* man section headings etc. */
++	color: #000;
++	font-weight: bold;
+ 	margin-top: 2em;
+ }
+-
+-#man div.rs { /* a right-shifted block */
++.mnrs { /* a right-shifted block */
+ 	margin-left: 3em;
+ 	margin-bottom: 1em;
+ }
+@@ -885,86 +830,81 @@
+ */
+ 
+ 
+-/* search result page */
+-#results {
+-}
+-
++/* search result page (#results) - css prefix: rs */
+ #results p { /* pagetitle and slider */
+ 	padding: 0.1em;
+ }
+-
+ #results table {
+ 	border-collapse: collapse;
+ 	width: 100%;
+ } 
+-
+-#results .dir { /* directory row above matched files */
+-	background-color: #c5d5a9;
++.rsd { /* directory row above matched files */
++	background-color: #c5d5a9 !important;
+ }
+-
+-#results .dir td { /* directory link */
++.rsdl { /* directory link */
+ 	padding-left: 1em;
+ }
+-
+-#results .l {
++.rsdd { /* directory description */ 
++	color: green;
++	font-weight: bold;
++	padding-left: 1ex;
+ }
+-
+-#results td.q { /* 1st column: H A D */
++.rsq { /* 1st column: H A D */
+ 	white-space: nowrap;
+ 	font-size: xx-small;
+ 	padding: 3px;
+ 	width: 3em;
+ }
+-
+-#results td.f { /* 2nd column: filename */
++.rsf { /* 2nd column: filename */
+ 	width: 3em;
+ 	padding: 3px 0.5em 3px 2em;
+ }
+-
+-#results .con { /* 3rd column: line number + matched line contents */
++.rscon { /* 3rd column: line number + matched line contents */
+ 	font-size: small;
+ }
+-
+-#results .con .all {
++.rscon .all {
+ 	margin-left: 6ex; /* width(#src .l) + 1ex */ 
+ }
+-
+-#results .s, #more .s { /* matched line contents */
++.rsh { /* matched line contents */
+ 	color: #000;
+ }
+-
+-#results i { /* match type description (method, interface etc.) */ 
++.rshd { /* match type description (method, interface etc.) */ 
+ 	color: green;
+ 	font-weight: bold;
+ 	padding-left: 1ex;
+ }
+-
+-#results .sel { /* slider item for the shown search result page */
++.rsps { /* slider item for the shown search result page */
+ 	background-color: #a3b8cb;
+ 	border: 1px #333366 solid;
+ 	padding: .5em;
+ 	margin: 1px;
+ }
+-
+-#results .more { /* slider item for the n-th search result page */
++.rspn { /* slider item for the n-th search result page */
+ 	border: 1px #bba solid;
+ 	padding: .3em;
+ 	margin: 1px;
+ }
+ 
++
++/* *** more page ***/
++#more {
++	line-height: 1.25em;
++}
++#more b { /* highlight matches */ 
++	background-color: #ffff99;
++}
++
+ /* ############### start of footer ############## */
+ #footer {
+ 	color: #777777;
+ 	font-size: small;
+ 	margin: 1ex 0;
+ }
+-
+ #footer p { /* footer text */
+ 	padding: 0;
+ 	margin: 0.2em;
+ 	text-align: center;
+ }
+-
+ #fti { /* servedby.png */
+ 	display: inline-block;
+ 	width: 208px;
+@@ -1003,4 +943,4 @@
+ 	border-width: 1px;
+ 	border-style: solid;
+ 	background-color: rgba(255,255,204,0.75);
+-}
++}
+\ No newline at end of file
+diff -r 856f914e23f8 -r 04e4831c7e72 web/static/offwhite/print.css
+--- a/web/static/offwhite/print.css	Fri Apr 06 09:24:44 2012 +0200
++++ b/web/static/offwhite/print.css	Sat Apr 07 03:28:11 2012 +0200
+@@ -6,16 +6,8 @@
+ 
+ a {
+ 	text-decoration: none;
+-}
+-
+-a:link {
+ 	color: #2030A2;
+ }
+-
+-a:visited, a:active, a:hover {
+-	color: #202062;
+-}
+-
+ a:active, a:hover {
+ 	text-decoration: underline;
+ }
+@@ -47,8 +39,16 @@
+ 	border: 1px solid #755;
+ 	border-radius: 0.75ex;
+ 	-moz-border-radius: 0.75ex;
++}
++input { /* text input fields */
++	background-color: #ffffff;
++}
++button {
+ 	background-color: #e5e5e5;
+ }
++button.submit { /* start search button */
++	font-weight: bold;
++}
+ 
+ label {
+ 	font-weight: bold;
+@@ -78,71 +78,51 @@
+ }
+ 
+ /* *** full search navbar *** */
++#sbox > p:last-of-type {
++	white-space: nowrap;
++	/* 11ex = width(#qtbl td:first-child) + margin-left(body) */
++	margin: 1ex 0 0.5ex 11ex;
++}
++#sbox > p:last-of-type > :nth-child(n+2) {
++	margin-left: 1ex;
++}
+ #qtbl, #ptbl {
+ 	display: inline-block;
+ 	vertical-align: top;
+ } 
+-
+ #qtbl tr {
+ 	background: none; /* remove alternating colors */
+ }
+-
++#qtbl td:first-child {
++	width: 10ex;
++	text-align: right;
++}
++#qtbl td:nth-child(2) {
++	width: 45ex;
++}
++#qtbl input {
++	width: 100%;
++}
++#ptbl {
++	margin-left: 2em;
++}
+ #ptbl > p {
+ 	text-align: center;
+ 	white-space: nowrap;
+ 	margin: 0.5ex 1ex;
+ }
+-
+-#qtbl td:first-child {
+-	width: 10ex;
+-	text-align: right;
+-}
+-
+-#qtbl td:nth-child(2) {
+-	width: 45ex;
+-}
+-
+-#qtbl input.q {
+-	width: 100%;
+-}
+-
+-#ptbl {
+-	margin-left: 2em;
+-}
+-
+ #ptbl button {
+ 	font-size: small;
+ }	
+-
+ #ptbl button:first-of-type {
+ 	margin-left: 1em;
+ }
+-
+ #ptbl select {
+ 	width: 100%;
+ }
+-
+ #ptbl option {
+ 	padding: 0 1ex;
+ }
+-
+-#sbox > p:last-of-type {
+-	white-space: nowrap;
+-	/* 11ex = width(#qtbl td:first-child) + margin-left(body) */
+-	margin: 1ex 0 0.5ex 11ex;
+-}
+-
+-#sbox > p:last-of-type > :nth-child(n+2) {
+-	margin-left: 1ex;
+-}
+-
+-input.q { /* text input fields */
+-	background-color: #ffffff;
+-}
+-
+-input.submit { /* start search button */
+-	font-weight: bold;
+-}
+ /* ############### end of header ############## */
+ 
+ 
+@@ -158,48 +138,32 @@
+ #help dfn { /* definitions */
+ 	text-decoration: underline;
+ }
+-
+-#help .fields, #help .example {
++#help dt {
++	font-weight: bold;
++}
++.hlpfields, .hlpexample {
+ 	margin-left: 3em;
+ }
+ 
+-#help dt {
+-	font-weight: bold;
+-}
+-
+-
+-/* *** more page ***/
+-#more {
+-	line-height: 1.25em;
+-}
+-
+-#more b { /* highlight matches */ 
+-	background-color: #e5e5e5;
+-}
+-
+ 
+ /* *** history page *** */
+-table#revisions {
++#revisions {
+ 	/* width: 100%; */ /* table with the history info for a file */
+ 	/* border-collapse: collapse; */ /* looks better with a small divider */
+ }
+-
+-#revisions a.h	{ /* modified file list content */
++.revh	{ /* modified file list content */
+ 	font-size: small;
+ 	margin-left: 2em;
+ }
+-
+ #revisions tbody td:first-child {
+ 	/* rev number - git/mercurial revs numbers look bad with prop. fonts */
+ 	font-family: monospace;
+ 	text-align: right;
+ }
+-
+ #revisions tbody td:nth-child(2), #revisions tbody td:nth-child(3) {
+ 	/* Compare and Date column */
+ 	text-align: center;
+ }
+-
+ #revisions tbody td:nth-child(4) { /* author column */
+ 	padding: 0 1ex;
+ 	text-align: center;
+@@ -335,8 +299,7 @@
+ #nums > div:nth-child(10n) { /* highlighted line number */
+ 	color: #000;
+ }
+-#src .l, #src .hl, .blame .r, .blame .a, 
+-#results .l, #more .l { /* line number/annotation block */
++.l, .hl, .r, .a { /* line number/annotation block */
+ 	display: inline-block;
+ 	width: 6ex;
+ 	text-align: right;
+@@ -346,59 +309,55 @@
+ 	border-right: 1px solid #ddd;
+ 	color: #888;
+ }
+-#src .hl { /* highlighted line number */
++.hl { /* highlighted line number */
+ 	color: #000;
+ }
+-.blame .r { /* revision number "column" (annotation) */
+-	text-align: right;
+-}
+-.blame .a { /* author name "column" (annotation) */
++.a { /* author name "column" (annotation) */
+ 	text-align: center;
+ }
+ /* source code highlighting - see org/opengrok/analysis/$lang/*Xref.lex */
+-#lines .n		{ /* numbers/label */	color: #a52a2a; } 
+-#lines .s		{ /* strings */			color: green; } 
+-#lines .c		{ /* comment */			color: #666; }
+-#lines .b		{ /* heading/title/bold */	color: #000; font-weight: bold; }
+-#lines .k		{ /* block display */ 	color: #000; font-family: monospace; }
+-#lines .d		{ /* symbol definition */	color: #909; font-weight: bold; }
++.n	{ /* numbers/label */		color: #a52a2a; } 
++.s	{ /* strings */				color: green; } 
++.c	{ /* comment */				color: #666; }
++.b	{ /* heading/title/bold */	color: #000; font-weight: bold; }
++.k	{ /* block display */ 		color: #000; font-family: monospace; }
++.d	{ /* symbol definition */	color: #909; font-weight: bold; }
+ 
+-a.xm	{ /* macro */			color: #c66; font-weight: bold; }
+-a.xa	{ /* argument */		color: #60c; font-weight: bold; }
+-a.xl	{ /* local */			color: #963; font-weight: bold; }
+-a.xv	{ /* variable */		color: #c30; font-weight: bold; }
+-a.xc	{ /* class */			color: #909; font-weight: bold; font-style: italic; }
+-a.xp	{ /* package */			color: #909; font-weight: bold; font-style: italic; }
+-a.xi	{ /* interface */		color: #909; font-weight: bold; font-style: italic; }
+-a.xn	{ /* namespace */		color: #909; font-weight: bold; font-style: italic; }
+-a.xe	{ /* enum */			color: #909; font-weight: bold; font-style: italic; }
+-a.xer	{ /* enumerator */		color: #909; font-weight: bold; font-style: italic; }
+-a.xs	{ /* struct */			color: #909; font-weight: bold; font-style: italic; }
+-a.xt	{ /* typedef */			color: #909; font-weight: bold; font-style: italic; }
+-a.xts	{ /* typedefs */		color: #909; font-weight: bold; font-style: italic; }
+-a.xu	{ /* union */			color: #909; font-weight: bold; font-style: italic; }
+-a.xfld	{ /* field */			color: #090; font-weight: bold; }
+-a.xmb	{ /* member */			color: #090; font-weight: bold; }
+-a.xf	{ /* function */		color: #00f; font-weight: bold; }
+-a.xmt	{ /* method */			color: #00f; font-weight: bold; }
+-a.xsr	{ /* subroutine */		color: #00f; font-weight: bold; }
++.xm	{ /* macro */			color: #c66; font-weight: bold; }
++.xa	{ /* argument */		color: #60c; font-weight: bold; }
++.xl	{ /* local */			color: #963; font-weight: bold; }
++.xv	{ /* variable */		color: #c30; font-weight: bold; }
++.xc	{ /* class */			color: #909; font-weight: bold; font-style: italic; }
++.xp	{ /* package */			color: #909; font-weight: bold; font-style: italic; }
++.xi	{ /* interface */		color: #909; font-weight: bold; font-style: italic; }
++.xn	{ /* namespace */		color: #909; font-weight: bold; font-style: italic; }
++.xe	{ /* enum */			color: #909; font-weight: bold; font-style: italic; }
++.xer{ /* enumerator */		color: #909; font-weight: bold; font-style: italic; }
++.xs	{ /* struct */			color: #909; font-weight: bold; font-style: italic; }
++.xt	{ /* typedef */			color: #909; font-weight: bold; font-style: italic; }
++.xts{ /* typedefs */		color: #909; font-weight: bold; font-style: italic; }
++.xu	{ /* union */			color: #909; font-weight: bold; font-style: italic; }
++.xfld{ /* field */			color: #090; font-weight: bold; }
++.xmb{ /* member */			color: #090; font-weight: bold; }
++.xf	{ /* function */		color: #00f; font-weight: bold; }
++.xmt{ /* method */			color: #00f; font-weight: bold; }
++.xsr{ /* subroutine */		color: #00f; font-weight: bold; }
+ 
+ #man table, #man td  { /* #man == troff src */
+ 	background-color: #e5e5e5;
+ 	border: 1px;
+ 	padding: 2px;
+ }
+-
+ #man p { /* a troff paragraph */
+ 	margin-top: 0.5em;
+ 	margin-bottom: 0;
+ }
+-
+-#man div.b { /* man section headings etc. */
++.mnhd { /* man section headings etc. */
++	color: #000;
++	font-weight: bold;
+ 	margin-top: 2em;
+ }
+-
+-#man div.rs { /* a right-shifted block */
++.mnrs { /* a right-shifted block */
+ 	margin-left: 3em;
+ 	margin-bottom: 1em;
+ }
+@@ -408,60 +367,63 @@
+ 	display: none;
+ }
+ 
+-/* search result page */
+-#results {
+-}
+-
++/* search result page (#results) */
+ #results p { /* pagetitle and slider */
+ 	padding: 0.5em;
+ }
+-
+-#results .dir { /* directory row above matched files */
+-	background-color: #cccccc;
++.rsd { /* directory row above matched files */
++	background-color: #cccccc !important;
+ }
+-
+-#results .dir td { /* directory link */
++.rsdl { /* directory link */
+ 	padding-left: 1em;
+ }
+-
+-#results td.q { /* 1st column: H A D */
++.rsdd { /* directory description */
++	font-style: italic;
++	color: green;
++	font-weight: bold;
++}
++.rsq { /* 1st column: H A D */
+ 	white-space: nowrap;
+ 	font-size: xx-small;
+ 	padding: 0 1ex;
+ }
+-
+-#results td.f { /* 2nd column: filename */
++.rsf { /* 2nd column: filename */
+ 	min-width: 5em;
+ 	margin-left: 1em;
+ 	padding: 0 1ex;
+ }
+-
+-#results .con { /* 3rd column: line number + matched line contents */
++.rscon { /* 3rd column: line number + matched line contents */
+ 	font-size: small;
+ }
+-
+-#results .s, #more .s { /* matched line contents */
++.rsh {
+ 	color: #000;
+ }
+-
+-#results i { /* match type description (method, interface etc.) */ 
++.rshd { /* directory description */
++	font-style: italic;
+ 	color: green;
+ 	font-weight: bold;
+ }
+-
+-#results .sel { /* slider item for the shown search result page */
++.rsps { /* slider item for the shown search result page */
+ 	background-color: #e5e5e5;
+ 	border: 1px #998 solid;
+ 	padding: .5em;
+ 	margin: 1px;
+ }
+-
+-#results .more { /* slider item for the n-th search result page */
++.rspn { /* slider item for the n-th search result page */
+ 	border: 1px #bba solid;
+ 	padding: .3em;
+ 	margin: 1px;
+ }
+ 
++/* *** more page ***/
++#more {
++	line-height: 1.25em;
++}
++#more b { /* highlight matches */ 
++	background-color: #e5e5e5;
++}
++
++
+ /* ############### start of footer ############## */
+ #footer {
+ 	color: #755;
+@@ -469,13 +431,11 @@
+ 	margin: 1ex 0;
+ 	border-top: 1px solid #bba;
+ }
+-
+ #footer p { /* footer text */
+ 	padding: 0;
+ 	margin: 0.2em;
+ 	text-align: center;
+ }
+-
+ #fti { /* servedby.png */
+ 	display: inline-block;
+ 	width: 177px;
+diff -r 856f914e23f8 -r 04e4831c7e72 web/static/offwhite/style.css
+--- a/web/static/offwhite/style.css	Fri Apr 06 09:24:44 2012 +0200
++++ b/web/static/offwhite/style.css	Sat Apr 07 03:28:11 2012 +0200
+@@ -307,16 +307,8 @@
+ 
+ a {
+ 	text-decoration: none;
+-}
+-
+-a:link {
+ 	color: #2030A2;
+ }
+-
+-a:visited, a:active, a:hover {
+-	color: #202062;
+-}
+-
+ a:active, a:hover {
+ 	text-decoration: underline;
+ }
+@@ -347,10 +339,17 @@
+ 	border: 1px solid #755;
+ 	border-radius: 0.75ex;
+ 	-moz-border-radius: 0.75ex;
++}
++input {
++	background-color: #ffffff;
++}
++button {
+ 	background-color: #d6d6c0;
+ }
+-
+-input.submit:hover, input.submit:active, button:hover, button:active {
++button.submit { /* start search button */
++	font-weight: bold;
++}
++button:hover, button:active {
+ 	background-color: #e0e0d0;
+ }
+ 
+@@ -374,7 +373,6 @@
+ 
+ /* *** banner/deco above navbar *** */
+ #header { }
+-
+ #MastheadLogo { /* Logo.png */
+ 	width: 167px; /*171px; */
+ 	height: 43px; /* 40px; */
+@@ -384,24 +382,18 @@
+ 	background-position: -153px 0;
+ 	margin: 0 0 1ex 0;
+ }
+-
+ #pagetitle { /* short verbal summary/description of the shown content */
+ }
+-
+ #filename { /* "Cross Reference: ..." */
+ 	font-size: xx-large;
+ 	font-weight: bold;
+ 	margin-right: 1em;
+ }
+-
+ #Masthead {
+ 	clear: left;
++	font-family: monospace;
++	color: #888; /* slashes in the xref: line */
+ }
+-
+-#Masthead tt { /* slashes in the xref: line */
+-	color: #888;
+-}
+-
+ #sbar, #bar { /* full search and default navbar */
+ 	border-bottom: 1px solid #bba;
+ 	border-top: 1px solid #bba;
+@@ -411,69 +403,59 @@
+ }
+ 
+ /* *** full search navbar *** */
++/* search form (#sbox) */
++#sbox > p:last-of-type {
++	white-space: nowrap;
++	/* 11ex = width(#qtbl td:first-child) + margin-left(body) */
++	margin: 1ex 0 0.5ex 11ex;
++}
++#sbox > p:last-of-type > :nth-child(n+2) {
++	margin-left: 1ex;
++}
+ #qtbl, #ptbl {
+ 	display: inline-block;
+ 	vertical-align: top;
+-} 
+-
++}
++/* query box */
+ #qtbl tr {
+ 	background: none; /* remove alternating colors */
+ }
+-
++#qtbl td:first-child {
++	width: 10ex;
++	text-align: right;
++}
++#qtbl td:nth-child(2) {
++	width: 45ex;
++}
++#qtbl input {
++	width: 100%;
++}
++/* project selection box */
++#ptbl {
++	margin-left: 2em;
++}
+ #ptbl > p {
+ 	text-align: center;
+ 	white-space: nowrap;
+ 	margin: 0.5ex 1ex;
+ }
+-
+-#qtbl td:first-child {
+-	width: 10ex;
+-	text-align: right;
+-}
+-
+-#qtbl td:nth-child(2) {
+-	width: 45ex;
+-}
+-
+-#qtbl input.q {
+-	width: 100%;
+-}
+-
+-#ptbl {
+-	margin-left: 2em;
+-}
+-
+ #ptbl button {
+ 	font-size: small;
+ }	
+-
+ #ptbl button:first-of-type {
+ 	margin-left: 1em;
+ }
+-
+ #ptbl select {
+ 	width: 100%;
+ }
+-
+ #ptbl option {
+ 	padding: 0 1ex;
+ }
+ 
+-#sbox > p:last-of-type {
+-	white-space: nowrap;
+-	/* 11ex = width(#qtbl td:first-child) + margin-left(body) */
+-	margin: 1ex 0 0.5ex 11ex;
+-}
+-
+-#sbox > p:last-of-type > :nth-child(n+2) {
+-	margin-left: 1ex;
+-}
+-
+ /* *** default navbar *** */
+ #bar {
+ 	padding: 0.2em 0.5em;
+ }
+-
+ #bar ul { /* every list item is displayed as a "menu" item */
+ 	display: inline-block;
+ 	list-style: none outside none;
+@@ -481,16 +463,13 @@
+ 	padding: 0;
+ 	/* white-space: nowrap; */ /* hmm, sometimes good, sometimes not ;-) */
+ }
+-
+ #bar li { /* menu item */
+ 	display: inline-block;
+ 	margin-right: 1ex;
+ }
+-
+ #bar li:last-child { /* avoid early line wrap */
+ 	margin-right: 0;
+ }
+-
+ #home, #history, #download, #annotate, #line, #defbox { /* menu item icons */
+ 	display: inline-block;
+ 	width: 18px;
+@@ -526,19 +505,10 @@
+ 	min-height: 20px; /* 18px img + 2px padding */
+ }
+ 
+-input.q { /* text input fields */
+-	background-color: #ffffff;
+-}
+-
+-input.submit { /* start search button */
+-	font-weight: bold;
+-}
+-
+ #sortfield {
+ 	display: inline-block;
+ 	margin-left: 6ex;
+ }
+-
+ #sortfield label {
+ 	margin-right: 1ex;
+ }
+@@ -551,6 +521,7 @@
+ 	color: black;
+ 	font-size: large;
+ 	font-weight: normal;
++	display: inline-block;
+ }
+ /* ############### end of header ############## */
+ 
+@@ -565,37 +536,25 @@
+ }
+ 
+ 
+-/* *** help page *** */
++/* *** help page - css prefix: hlp *** */
+ #help dfn { /* definitions */
+ 	text-decoration: underline;
+ }
+-
+-#help .fields, #help .example {
++#help dt {
++	font-weight: bold;
++}
++.hlpfields, .hlpexample {
+ 	margin-left: 3em;
+ }
+ 
+-#help dt {
+-	font-weight: bold;
+-}
+ 
+-
+-/* *** more page ***/
+-#more {
+-	line-height: 1.25em;
+-}
+-
+-#more b { /* highlight matches */ 
+-	background-color: #d6d6c0;
+-}
+-
+-
+-/* *** history page *** */
+-table#revisions {
++/* *** history page - css prefix: rev *** */
++#revisions {
+ 	/* width: 100%; */ /* table with the history info for a file */
+ 	/* border-collapse: collapse; */ /* looks better with a small divider */
+ }
+ 
+-#revisions a.h	{ /* modified file list content */
++.revh { /* modified file list content */
+ 	font-size: small;
+ 	margin-left: 2em;
+ }
+@@ -791,8 +750,8 @@
+ #nums > div:nth-child(10n) { /* highlighted line number */
+ 	color: #000;
+ }
+-#src .l, #src .hl, .blame .r, .blame .a, 
+-#results .l, #more .l { /* line number/annotation block */
++.l, .hl, /* old [highlighted] linenumber "column" in #src, #results, #more */
++.r, .a { /* old annotation block: revision, author */
+ 	display: inline-block;
+ 	width: 6ex;
+ 	text-align: right;
+@@ -802,59 +761,56 @@
+ 	border-right: 1px solid #ddd;
+ 	color: #888;
+ }
+-#src .hl { /* highlighted line number */
++.hl { /* old highlighted line number */
+ 	color: #000;
+ }
+-.blame .r { /* revision number "column" (annotation) */
+-	text-align: right;
+-}
+-.blame .a { /* author name "column" (annotation) */
++.a { /* old author name "column" (annotation) */
+ 	text-align: center;
+ }
+ /* source code highlighting - see org/opengrok/analysis/$lang/*Xref.lex */
+-#lines .n		{ /* numbers/label */	color: #a52a2a; } 
+-#lines .s		{ /* strings */			color: green; } 
+-#lines .c		{ /* comment */			color: #666; }
+-#lines .b		{ /* heading/title/bold */	color: #000; font-weight: bold; }
+-#lines .k		{ /* block display */ 	color: #000; font-family: monospace; }
+-#lines .d		{ /* symbol definition */	color: #909; font-weight: bold; }
++.n	{ /* numbers/label */		color: #a52a2a; } 
++.s	{ /* strings */				color: green; } 
++.c	{ /* comment */				color: #666; }
++.b	{ /* bold */				color: #000; font-weight: bold; }
++.k	{ /* block display */ 		color: #000; font-family: monospace; }
++.d	{ /* symbol definition */	color: #909; font-weight: bold; }
+ /* source code entities, which can be used in references */
+-a.xm	{ /* macro */			color: #c66; font-weight: bold; }
+-a.xa	{ /* argument */		color: #60c; font-weight: bold; }
+-a.xl	{ /* local */			color: #963; font-weight: bold; }
+-a.xv	{ /* variable */		color: #c30; font-weight: bold; }
+-a.xc	{ /* class */			color: #909; font-weight: bold; font-style: italic; }
+-a.xp	{ /* package */			color: #909; font-weight: bold; font-style: italic; }
+-a.xi	{ /* interface */		color: #909; font-weight: bold; font-style: italic; }
+-a.xn	{ /* namespace */		color: #909; font-weight: bold; font-style: italic; }
+-a.xe	{ /* enum */			color: #909; font-weight: bold; font-style: italic; }
+-a.xer	{ /* enumerator */		color: #909; font-weight: bold; font-style: italic; }
+-a.xs	{ /* struct */			color: #909; font-weight: bold; font-style: italic; }
+-a.xt	{ /* typedef */			color: #909; font-weight: bold; font-style: italic; }
+-a.xts	{ /* typedefs */		color: #909; font-weight: bold; font-style: italic; }
+-a.xu	{ /* union */			color: #909; font-weight: bold; font-style: italic; }
+-a.xfld	{ /* field */			color: #090; font-weight: bold; }
+-a.xmb	{ /* member */			color: #090; font-weight: bold; }
+-a.xf	{ /* function */		color: #00f; font-weight: bold; }
+-a.xmt	{ /* method */			color: #00f; font-weight: bold; }
+-a.xsr	{ /* subroutine */		color: #00f; font-weight: bold; }
++.xm	{ /* macro */			color: #c66; font-weight: bold; }
++.xa	{ /* argument */		color: #60c; font-weight: bold; }
++.xl	{ /* local */			color: #963; font-weight: bold; }
++.xv	{ /* variable */		color: #c30; font-weight: bold; }
++.xc	{ /* class */			color: #909; font-weight: bold; font-style: italic; }
++.xp	{ /* package */			color: #909; font-weight: bold; font-style: italic; }
++.xi	{ /* interface */		color: #909; font-weight: bold; font-style: italic; }
++.xn	{ /* namespace */		color: #909; font-weight: bold; font-style: italic; }
++.xe	{ /* enum */			color: #909; font-weight: bold; font-style: italic; }
++.xer{ /* enumerator */		color: #909; font-weight: bold; font-style: italic; }
++.xs	{ /* struct */			color: #909; font-weight: bold; font-style: italic; }
++.xt	{ /* typedef */			color: #909; font-weight: bold; font-style: italic; }
++.xts{ /* typedefs */		color: #909; font-weight: bold; font-style: italic; }
++.xu	{ /* union */			color: #909; font-weight: bold; font-style: italic; }
++.xfld{ /* field */			color: #090; font-weight: bold; }
++.xmb{ /* member */			color: #090; font-weight: bold; }
++.xf	{ /* function */		color: #00f; font-weight: bold; }
++.xmt{ /* method */			color: #00f; font-weight: bold; }
++.xsr{ /* subroutine */		color: #00f; font-weight: bold; }
+ 
+-#man table, #man td  { /* #man == troff src */
++/* troff source pages - css prefix: mn */ 
++#man table, #man td  {
+ 	background-color: #ddddcc;
+ 	border: 1px;
+ 	padding: 2px;
+ }
+-
+ #man p { /* a troff paragraph */
+ 	margin-top: 0.5em;
+ 	margin-bottom: 0;
+ }
+-
+-#man div.b { /* man section headings etc. */
++.mnhd { /* man section heading/title etc., supplements .b */
++	color: #000;
++	font-weight: bold;
+ 	margin-top: 2em;
+ }
+-
+-#man div.rs { /* a right-shifted block */
++.mnrs { /* a right-shifted block */
+ 	margin-left: 3em;
+ 	margin-bottom: 1em;
+ }
+@@ -923,59 +879,66 @@
+ */
+ 
+ 
+-/* search result page */
+-#results {
+-}
+-
++/* *** search result page (#results) - css prefix: rs ***/
+ #results p { /* pagetitle and slider */
+ 	padding: 0.5em;
+ }
+-
+-#results .dir { /* directory row above matched files */
+-	background-color: #d6d6c0;
++.rsd { /* directory row above matched files */
++	background-color: #d6d6c0 !important;
+ }
+-
+-#results .dir td { /* directory link */
++.rsdl { /* directory link within .rsdir */
+ 	padding-left: 1em;
+ }
+-
+-#results td.q { /* 1st column: H A D */
++.rsdd { /* directory description */
++	font-style: italic;
++	color: green;
++	font-weight: bold;
++}
++.rsq { /* 1st column: H A D */
+ 	white-space: nowrap;
+ 	font-size: xx-small;
+ 	padding: 0 1ex;
+ }
+-
+-#results td.f { /* 2nd column: filename */
++.rsf { /* 2nd column: filename */
+ 	min-width: 5em;
+ 	padding: 0 1ex;
+ }
+-
+-#results .con { /* 3rd column: line number + matched line contents */
++.rscon { /* 3rd column: line number + matched line contents */
+ 	font-size: small;
+ }
+-
+-#results .s, #more .s { /* matched line contents */
++.rsh { /* hit aka matched line contents via search.jsp/more.jsp 
++	(PlainLineTokenizer.lex, Context.java) */
+ 	color: #000;
+ }
+-
+-#results i { /* match type description (method, interface etc.) */ 
++/* .rshh - hit highlite - unused? */
++.rshd { /* hit aka match type description (method, interface etc.) */
++	font-style: italic;
+ 	color: green;
+ 	font-weight: bold;
+ }
+-
+-#results .sel { /* slider item for the shown search result page */
++/* page slider (.slider) components */
++.rsps { /* page number of the shown search results page */
+ 	background-color: #d6d6c0;
+ 	border: 1px #998 solid;
+ 	padding: .5em;
+ 	margin: 1px;
+ }
+-
+-#results .more { /* slider item for the n-th search result page */
++.rspn { /* page numbers of not shown serach result pages */
+ 	border: 1px #bba solid;
+ 	padding: .3em;
+ 	margin: 1px;
+ }
+ 
++
++/* *** more results page ***/
++#more {
++	line-height: 1.25em;
++}
++#more b { /* highlight matches */ 
++	background-color: #d6d6c0;
++}
++
++
+ /* ############### start of footer ############## */
+ #footer {
+ 	color: #755;
+@@ -983,13 +946,11 @@
+ 	margin: 1ex 0;
+ 	border-top: 1px solid #bba;
+ }
+-
+ #footer p { /* footer text */
+ 	padding: 0;
+ 	margin: 0.2em;
+ 	text-align: center;
+ }
+-
+ #fti { /* servedby.png */
+ 	display: inline-block;
+ 	width: 177px;
+diff -r 856f914e23f8 -r 04e4831c7e72 web/static/opengrok.js
+--- a/web/static/opengrok.js	Fri Apr 06 09:24:44 2012 +0200
++++ b/web/static/opengrok.js	Sat Apr 07 03:28:11 2012 +0200
+@@ -150,7 +150,7 @@
+ 	for (var i=0; i < tmp.length; i++) {
+ 		var parts = tmp[i].href.split('/');
+ 		var last = parts.pop();
+-		if (last === 'style.css') {
++		if (last === 'style.css' || last === 'style-min.css') {
+ 			this.cssScheme = parts.pop();
+ 			this.cssBase = parts.join('/');
+ 			break;
+@@ -373,7 +373,7 @@
+ 			before: button.getStyle('content')
+ 		});
+ 		button.setStyles({ /* unfortunately we can't put it into combined.png */
+-			backgroundImage: O.normalizeCssURI('url("./img/loading-18x18.gif")'),
++			backgroundImage: O.normalizeCssURI('url("img/loading-18x18.gif")'),
+ 			backgroundPosition: '0 0',
+ 			verticalAlign: 'middle',
+ 			width: '18px',
+diff -r 856f914e23f8 -r 04e4831c7e72 web/static/polished/print.css
+--- a/web/static/polished/print.css	Fri Apr 06 09:24:44 2012 +0200
++++ b/web/static/polished/print.css	Sat Apr 07 03:28:11 2012 +0200
+@@ -6,16 +6,8 @@
+ 
+ a {
+ 	text-decoration: none;
+-}
+-
+-a:link {
+ 	color: #2030A2;
+ }
+-
+-a:visited, a:active, a:hover {
+-	color: #202062;
+-}
+-
+ a:active, a:hover {
+ 	text-decoration: underline;
+ }
+@@ -47,8 +39,16 @@
+ 	border: 1px solid #755;
+ 	border-radius: 0.75ex;
+ 	-moz-border-radius: 0.75ex;
++}
++input { /* text input fields */
++	background-color: #ffffff;
++}
++button {
+ 	background-color: #e5e5e5;
+ }
++button.submit { /* start search button */
++	font-weight: bold;
++}
+ 
+ label {
+ 	font-weight: bold;
+@@ -78,71 +78,51 @@
+ }
+ 
+ /* *** full search navbar *** */
++#sbox > p:last-of-type {
++	white-space: nowrap;
++	/* 11ex = width(#qtbl td:first-child) + margin-left(body) */
++	margin: 1ex 0 0.5ex 11ex;
++}
++#sbox > p:last-of-type > :nth-child(n+2) {
++	margin-left: 1ex;
++}
+ #qtbl, #ptbl {
+ 	display: inline-block;
+ 	vertical-align: top;
+ } 
+-
+ #qtbl tr {
+ 	background: none; /* remove alternating colors */
+ }
+-
++#qtbl td:first-child {
++	width: 10ex;
++	text-align: right;
++}
++#qtbl td:nth-child(2) {
++	width: 45ex;
++}
++#qtbl input {
++	width: 100%;
++}
++#ptbl {
++	margin-left: 2em;
++}
+ #ptbl > p {
+ 	text-align: center;
+ 	white-space: nowrap;
+ 	margin: 0.5ex 1ex;
+ }
+-
+-#qtbl td:first-child {
+-	width: 10ex;
+-	text-align: right;
+-}
+-
+-#qtbl td:nth-child(2) {
+-	width: 45ex;
+-}
+-
+-#qtbl input.q {
+-	width: 100%;
+-}
+-
+-#ptbl {
+-	margin-left: 2em;
+-}
+-
+ #ptbl button {
+ 	font-size: small;
+ }	
+-
+ #ptbl button:first-of-type {
+ 	margin-left: 1em;
+ }
+-
+ #ptbl select {
+ 	width: 100%;
+ }
+-
+ #ptbl option {
+ 	padding: 0 1ex;
+ }
+-
+-#sbox > p:last-of-type {
+-	white-space: nowrap;
+-	/* 11ex = width(#qtbl td:first-child) + margin-left(body) */
+-	margin: 1ex 0 0.5ex 11ex;
+-}
+-
+-#sbox > p:last-of-type > :nth-child(n+2) {
+-	margin-left: 1ex;
+-}
+-
+-input.q { /* text input fields */
+-	background-color: #ffffff;
+-}
+-
+-input.submit { /* start search button */
+-	font-weight: bold;
+-}
+ /* ############### end of header ############## */
+ 
+ 
+@@ -158,48 +138,32 @@
+ #help dfn { /* definitions */
+ 	text-decoration: underline;
+ }
+-
+-#help .fields, #help .example {
++#help dt {
++	font-weight: bold;
++}
++.hlpfields, .hlpexample {
+ 	margin-left: 3em;
+ }
+ 
+-#help dt {
+-	font-weight: bold;
+-}
+-
+-
+-/* *** more page ***/
+-#more {
+-	line-height: 1.25em;
+-}
+-
+-#more b { /* highlight matches */ 
+-	background-color: #e5e5e5;
+-}
+-
+ 
+ /* *** history page *** */
+-table#revisions {
++#revisions {
+ 	/* width: 100%; */ /* table with the history info for a file */
+ 	/* border-collapse: collapse; */ /* looks better with a small divider */
+ }
+-
+-#revisions a.h	{ /* modified file list content */
++.revh	{ /* modified file list content */
+ 	font-size: small;
+ 	margin-left: 2em;
+ }
+-
+ #revisions tbody td:first-child {
+ 	/* rev number - git/mercurial revs numbers look bad with prop. fonts */
+ 	font-family: monospace;
+ 	text-align: right;
+ }
+-
+ #revisions tbody td:nth-child(2), #revisions tbody td:nth-child(3) {
+ 	/* Compare and Date column */
+ 	text-align: center;
+ }
+-
+ #revisions tbody td:nth-child(4) { /* author column */
+ 	padding: 0 1ex;
+ 	text-align: center;
+@@ -340,8 +304,7 @@
+ #nums > div:nth-child(10n) { /* highlighted line number */
+ 	color: #000;
+ }
+-#src .l, #src .hl, .blame .r, .blame .a,
+-#results .l, #more .l { /* line number/annotation block */
++.l, .hl, .r, .a { /* line number/annotation block */
+ 	display: inline-block;
+ 	width: 6ex;
+ 	text-align: right;
+@@ -351,59 +314,55 @@
+ 	border-right: 1px solid #ddd;
+ 	color: #888;
+ }
+-#src .hl { /* highlighted line number */
++.hl { /* highlighted line number */
+ 	color: #000;
+ }
+-.blame .r { /* revision number "column" (annotation) */
+-	text-align: right;
+-}
+-.blame .a { /* author name "column" (annotation) */
++.a { /* author name "column" (annotation) */
+ 	text-align: center;
+ }
+ /* source code highlighting - see org/opengrok/analysis/$lang/*Xref.lex */
+-#lines .n		{ /* numbers/label */	color: #a52a2a; } 
+-#lines .s		{ /* strings */			color: green; } 
+-#lines .c		{ /* comment */			color: #666; }
+-#lines .b		{ /* heading/title/bold */	color: #000; font-weight: bold; }
+-#lines .k		{ /* block display */ 	color: #000; font-family: monospace; }
+-#lines .d		{ /* symbol definition */	color: #909; font-weight: bold; }
++.n	{ /* numbers/label */		color: #a52a2a; } 
++.s	{ /* strings */				color: green; } 
++.c	{ /* comment */				color: #666; }
++.b	{ /* heading/title/bold */	color: #000; font-weight: bold; }
++.k	{ /* block display */ 		color: #000; font-family: monospace; }
++.d	{ /* symbol definition */	color: #909; font-weight: bold; }
+ 
+-a.xm	{ /* macro */			color: #c66; font-weight: bold; }
+-a.xa	{ /* argument */		color: #60c; font-weight: bold; }
+-a.xl	{ /* local */			color: #963; font-weight: bold; }
+-a.xv	{ /* variable */		color: #c30; font-weight: bold; }
+-a.xc	{ /* class */			color: #909; font-weight: bold; font-style: italic; }
+-a.xp	{ /* package */			color: #909; font-weight: bold; font-style: italic; }
+-a.xi	{ /* interface */		color: #909; font-weight: bold; font-style: italic; }
+-a.xn	{ /* namespace */		color: #909; font-weight: bold; font-style: italic; }
+-a.xe	{ /* enum */			color: #909; font-weight: bold; font-style: italic; }
+-a.xer	{ /* enumerator */		color: #909; font-weight: bold; font-style: italic; }
+-a.xs	{ /* struct */			color: #909; font-weight: bold; font-style: italic; }
+-a.xt	{ /* typedef */			color: #909; font-weight: bold; font-style: italic; }
+-a.xts	{ /* typedefs */		color: #909; font-weight: bold; font-style: italic; }
+-a.xu	{ /* union */			color: #909; font-weight: bold; font-style: italic; }
+-a.xfld	{ /* field */			color: #090; font-weight: bold; }
+-a.xmb	{ /* member */			color: #090; font-weight: bold; }
+-a.xf	{ /* function */		color: #00f; font-weight: bold; }
+-a.xmt	{ /* method */			color: #00f; font-weight: bold; }
+-a.xsr	{ /* subroutine */		color: #00f; font-weight: bold; }
++.xm	{ /* macro */			color: #c66; font-weight: bold; }
++.xa	{ /* argument */		color: #60c; font-weight: bold; }
++.xl	{ /* local */			color: #963; font-weight: bold; }
++.xv	{ /* variable */		color: #c30; font-weight: bold; }
++.xc	{ /* class */			color: #909; font-weight: bold; font-style: italic; }
++.xp	{ /* package */			color: #909; font-weight: bold; font-style: italic; }
++.xi	{ /* interface */		color: #909; font-weight: bold; font-style: italic; }
++.xn	{ /* namespace */		color: #909; font-weight: bold; font-style: italic; }
++.xe	{ /* enum */			color: #909; font-weight: bold; font-style: italic; }
++.xer{ /* enumerator */		color: #909; font-weight: bold; font-style: italic; }
++.xs	{ /* struct */			color: #909; font-weight: bold; font-style: italic; }
++.xt	{ /* typedef */			color: #909; font-weight: bold; font-style: italic; }
++.xts{ /* typedefs */		color: #909; font-weight: bold; font-style: italic; }
++.xu	{ /* union */			color: #909; font-weight: bold; font-style: italic; }
++.xfld{ /* field */			color: #090; font-weight: bold; }
++.xmb{ /* member */			color: #090; font-weight: bold; }
++.xf	{ /* function */		color: #00f; font-weight: bold; }
++.xmt{ /* method */			color: #00f; font-weight: bold; }
++.xsr{ /* subroutine */		color: #00f; font-weight: bold; }
+ 
+ #man table, #man td  { /* #man == troff src */
+ 	background-color: #e5e5e5;
+ 	border: 1px;
+ 	padding: 2px;
+ }
+-
+ #man p { /* a troff paragraph */
+ 	margin-top: 0.5em;
+ 	margin-bottom: 0;
+ }
+-
+-#man div.b { /* man section headings etc. */
++.mnhd { /* man section headings etc. */
++	color: #000;
++	font-weight: bold;
+ 	margin-top: 2em;
+ }
+-
+-#man div.rs { /* a right-shifted block */
++.mnrs { /* a right-shifted block */
+ 	margin-left: 3em;
+ 	margin-bottom: 1em;
+ }
+@@ -414,59 +373,61 @@
+ }
+ 
+ /* search result page */
+-#results {
+-}
+-
+ #results p { /* pagetitle and slider */
+ 	padding: 0.5em;
+ }
+-
+-#results .dir { /* directory row above matched files */
+-	background-color: #cccccc;
++.rsd { /* directory row above matched files */
++	background-color: #cccccc !important;
+ }
+-
+-#results .dir td { /* directory link */
++.rsdl { /* directory link */
+ 	padding-left: 1em;
+ }
+-
+-#results td.q { /* 1st column: H A D */
++.rsdd { /* directory description */ 
++	color: green;
++	font-weight: bold;
++}
++.rsq { /* 1st column: H A D */
+ 	white-space: nowrap;
+ 	font-size: xx-small;
+ 	padding: 0 1ex;
+ }
+-
+-#results td.f { /* 2nd column: filename */
++.rsf { /* 2nd column: filename */
+ 	min-width: 5em;
+ 	margin-left: 1em;
+ 	padding: 0 1ex;
+ }
+-
+-#results .con { /* 3rd column: line number + matched line contents */
++.rscon { /* 3rd column: line number + matched line contents */
+ 	font-size: small;
+ }
+-
+-#results .s, #more .s { /* matched line contents */
++.rsh { /* matched line contents */
+ 	color: #000;
+ }
+-
+-#results i { /* match type description (method, interface etc.) */ 
++.rshd { /* match type description (method, interface etc.) */ 
+ 	color: green;
+ 	font-weight: bold;
+ }
+-
+-#results .sel { /* slider item for the shown search result page */
++.rsps { /* slider item for the shown search result page */
+ 	background-color: #e5e5e5;
+ 	border: 1px #998 solid;
+ 	padding: .5em;
+ 	margin: 1px;
+ }
+-
+-#results .more { /* slider item for the n-th search result page */
++.rspn { /* slider item for the n-th search result page */
+ 	border: 1px #bba solid;
+ 	padding: .3em;
+ 	margin: 1px;
+ }
+ 
++
++/* *** more page ***/
++#more {
++	line-height: 1.25em;
++}
++#more b { /* highlight matches */ 
++	background-color: #e5e5e5;
++}
++
++
+ /* ############### start of footer ############## */
+ #footer {
+ 	color: #755;
+@@ -474,13 +435,11 @@
+ 	margin: 1ex 0;
+ 	border-top: 1px solid #bba;
+ }
+-
+ #footer p { /* footer text */
+ 	padding: 0;
+ 	margin: 0.2em;
+ 	text-align: center;
+ }
+-
+ #fti { /* servedby.png */
+ 	display: inline-block;
+ 	width: 177px;
+diff -r 856f914e23f8 -r 04e4831c7e72 web/static/polished/style.css
+--- a/web/static/polished/style.css	Fri Apr 06 09:24:44 2012 +0200
++++ b/web/static/polished/style.css	Sat Apr 07 03:28:11 2012 +0200
+@@ -307,16 +307,8 @@
+ 
+ a {
+ 	text-decoration: none;
+-}
+-
+-a:link {
+ 	color: #2030A2;
+ }
+-
+-a:visited, a:active, a:hover {
+-	color: #202062;
+-}
+-
+ a:active, a:hover {
+ 	text-decoration: underline;
+ }
+@@ -348,6 +340,12 @@
+ 	border: 1px solid #bbb #755;
+ 	border-radius: 0.75ex;
+ 	-moz-border-radius: 0.75ex;
++}
++input { /* text input fields */
++	background-color: #fdfdfd;
++}
++button {
++	padding: 0.25ex;
+ 	background-image: -webkit-gradient(
+ 		linear, left top, left bottom,
+ 	    color-stop(0.70, #ffffff),
+@@ -359,8 +357,10 @@
+ 		#e0e0e0 100%
+ 	);
+ }
+-
+-input.submit:hover, input.submit:active, button:hover, button:active {
++button.submit { /* start search button */
++	font-weight: bold;
++}
++button:hover, button:active {
+ 	color: #444444;
+ 	background-image: -webkit-gradient(
+ 		linear, left bottom, left top,
+@@ -408,7 +408,6 @@
+ 		#e0e0e0 100%
+ 	);
+ }
+-
+ #MastheadLogo { /* Logo.png */
+ 	width: 167px;
+ 	height: 43px;
+@@ -418,30 +417,23 @@
+ 	background-position: -150px 0;
+ 	margin: 0;
+ }
+-
+ #pagetitle { /* short verbal summary/description of the shown content */
+ }
+-
+ #filename { /* "Cross Reference: ..." */
+ 	font-size: x-large;
+ 	font-weight: bold;
+ 	margin-right: 1em;
+ }
+-
+ #Masthead { /* breadcrumb */
+ 	clear: left;
+ 	background-color: #426477;
+ 	border: 1px solid #bbb;
++	font-family: monospace;
++	color: #eee; /* slashes in the xref: line */
+ }
+-
+-#Masthead tt { /* slashes in the xref: line */
+-	color: #eee;
+-}
+-
+ #Masthead a {
+ 	color: white;
+ }
+-
+ #sbar, #bar { /* full search and default navbar */
+ 	border-bottom: 1px solid #bba;
+ 	border-top: 1px solid #bba;
+@@ -452,74 +444,64 @@
+ }
+ 
+ /* *** full search navbar *** */
++/* search form (#sbox) */
++#sbox {
++	padding: 1ex 0;
++	background-color: #D8DBD7;
++}
++#sbox > p:last-of-type {
++	white-space: nowrap;
++	/* 11ex = width(#qtbl td:first-child) + margin-left(body) */
++	margin: 1ex 0 0.5ex 11ex;
++}
++#sbox > p:last-of-type > :nth-child(n+2) {
++	margin-left: 1ex;
++}
+ #qtbl, #ptbl {
+ 	display: inline-block;
+ 	vertical-align: top;
+ } 
+-
++/* query box */
+ #qtbl tr {
+ 	background: none; /* remove alternating colors */
+ }
+-
++#qtbl td:first-child {
++	width: 10ex;
++	text-align: right;
++}
++#qtbl td:nth-child(2) {
++	width: 45ex;
++}
++#qtbl input {
++	width: 100%;
++}
++/* project selection box */
++#ptbl {
++	margin-left: 2em;
++}
+ #ptbl > p {
+ 	text-align: center;
+ 	white-space: nowrap;
+ 	margin: 0.5ex 1ex;
+ }
+-
+-#qtbl td:first-child {
+-	width: 10ex;
+-	text-align: right;
+-}
+-
+-#qtbl td:nth-child(2) {
+-	width: 45ex;
+-}
+-
+-#qtbl input.q {
+-	width: 100%;
+-}
+-
+-#ptbl {
+-	margin-left: 2em;
+-}
+-
+ #ptbl button {
+ 	font-size: small;
+-}	
+-
++}
+ #ptbl button:first-of-type {
+ 	margin-left: 1em;
+ }
+-
+ #ptbl select {
+ 	width: 100%;
+ }
+-
+ #ptbl option {
+ 	padding: 0 1ex;
+ }
+ 
+-#sbox {
+-	padding: 1ex 0;
+-	background-color: #D8DBD7;
+-}
+-
+-#sbox > p:last-of-type {
+-	white-space: nowrap;
+-	/* 11ex = width(#qtbl td:first-child) + margin-left(body) */
+-	margin: 1ex 0 0.5ex 11ex;
+-}
+-
+-#sbox > p:last-of-type > :nth-child(n+2) {
+-	margin-left: 1ex;
+-}
+ 
+ /* *** default navbar *** */
+ #bar {
+ 	padding: 0.2em 0.5em;
+ }
+-
+ #bar ul { /* every list item is displayed as a "menu" item */
+ 	display: inline-block;
+ 	list-style: none outside none;
+@@ -527,13 +509,11 @@
+ 	padding: 0;
+ 	/* white-space: nowrap; */ /* hmm, sometimes good, sometimes not ;-) */
+ }
+-
+ #bar li { /* menu item */
+ 	display: inline-block;
+ 	/* distance between label end and the icon of the next item */
+ 	margin-right: 1ex;
+ }
+-
+ #home, #history, #download, #line, #defbox, #annotate { /* menu item icons */
+ 	display: inline-block;
+ 	width: 18px;
+@@ -561,7 +541,6 @@
+ #defbox { /* slst.gif */
+ 	background-position: -90px 0;
+ }
+-
+ #search { /* q.gif */
+ 	background-image: url(img/combined.png);
+ 	background-repeat: no-repeat;
+@@ -570,38 +549,23 @@
+ 	min-height: 20px; /* 18px img + 2px padding */
+ }
+ 
+-input.q { /* text input fields */
+-	background-color: #fdfdfd;
+-	background-image: none;
+-}
+-
+-input.submit { /* start search button */
+-	font-weight: bold;
+-	padding: 0.25ex;
+-}
+-
+-button.help {
+-	padding: 0.25ex;
+-}
+-
+ #sortfield {
+ 	display: inline-block;
+ 	margin-left: 6ex;
+ }
+-
+ #sortfield label {
+ 	margin-right: 1ex;
+ }
+ #sortfield label:after {
+ 	content: ": ";
+ }
+-
+ #sortby li:nth-child(n+2) :first-child::before {
+ 	content: "|";
+ 	padding: 0 1ex 0 0;
+ 	color: black;
+ 	font-size: large;
+ 	font-weight: normal;
++	display: inline-block;
+ }
+ /* ############### end of header ############## */
+ 
+@@ -616,53 +580,36 @@
+ }
+ 
+ 
+-/* *** help page *** */
++/* *** help page - css prefix: hlp *** */
+ #help dfn { /* definitions */
+ 	text-decoration: underline;
+ }
+-
+-#help .fields, #help .example {
++#help dt {
++	font-weight: bold;
++}
++.hlpfields, .hlpexample {
+ 	margin-left: 3em;
+ }
+ 
+-#help dt {
+-	font-weight: bold;
+-}
+ 
+-
+-/* *** more page ***/
+-#more {
+-	line-height: 1.25em;
+-	background-color: white;
+-}
+-
+-#more b { /* highlight matches */ 
+-	background-color: #ffff99;
+-}
+-
+-
+-/* *** history page *** */
+-table#revisions {
++/* *** history page - css prefix: rev *** */
++#revisions {
+ 	/* width: 100%; */ /* table with the history info for a file */
+ 	/* border-collapse: collapse; */ /* looks better with a small divider */
+ }
+-
+-#revisions a.h	{ /* modified file list content */
++.revh	{ /* modified file list content */
+ 	font-size: small;
+ 	margin-left: 2em;
+ }
+-
+ #revisions tbody td:first-child {
+ 	/* rev number - git/mercurial revs numbers look bad with prop. fonts */
+ 	font-family: monospace;
+ 	text-align: right;
+ }
+-
+ #revisions tbody td:nth-child(2), #revisions tbody td:nth-child(3) {
+ 	/* Compare and Date column */
+ 	text-align: center;
+ }
+-
+ #revisions tbody td:nth-child(4) { /* author column */
+ 	padding: 0 1ex;
+ 	text-align: center;
+@@ -844,8 +791,8 @@
+ #nums > div:nth-child(10n) { /* highlighted line number */
+ 	color: #000;
+ }
+-#src .l, #src .hl, .blame .r, .blame .a,
+-#results .l, #more .l { /* line number/annotation block */
++.l, .hl, /* old [highlighted] linenumber "column" in #src, #results, #more */
++.r, .a { /* old annotation block: revision, author */
+ 	display: inline-block;
+ 	width: 6ex;
+ 	text-align: right;
+@@ -855,59 +802,56 @@
+ 	border-right: 1px solid #ddd;
+ 	color: #888;
+ }
+-#src .hl { /* highlighted line number */
++.hl { /* old highlighted line number */
+ 	color: #000;
+ }
+-.blame .r { /* revision number "column" (annotation) */
+-	text-align: right;
+-}
+-.blame .a { /* author name "column" (annotation) */
++.a { /* old author name "column" (annotation) */
+ 	text-align: center;
+ }
+ /* source code highlighting - see org/opengrok/analysis/$lang/*Xref.lex */
+-#lines .n		{ /* numbers/label */	color: #a52a2a; } 
+-#lines .s		{ /* strings */			color: green; } 
+-#lines .c		{ /* comment */			color: #666; }
+-#lines .b		{ /* heading/title/bold */	color: #000; font-weight: bold; }
+-#lines .k		{ /* block display */ 	color: #000; font-family: monospace; }
+-#lines .d		{ /* symbol definition */	color: #909; font-weight: bold; }
++.n	{ /* numbers/label */		color: #a52a2a; } 
++.s	{ /* strings */				color: green; } 
++.c	{ /* comment */				color: #666; }
++.b	{ /* heading/title/bold */	color: #000; font-weight: bold; }
++.k	{ /* block display */ 		color: #000; font-family: monospace; }
++.d	{ /* symbol definition */	color: #909; font-weight: bold; }
+ 
+-a.xm	{ /* macro */			color: #c66; font-weight: bold; }
+-a.xa	{ /* argument */		color: #60c; font-weight: bold; }
+-a.xl	{ /* local */			color: #963; font-weight: bold; }
+-a.xv	{ /* variable */		color: #c30; font-weight: bold; }
+-a.xc	{ /* class */			color: #909; font-weight: bold; font-style: italic; }
+-a.xp	{ /* package */			color: #909; font-weight: bold; font-style: italic; }
+-a.xi	{ /* interface */		color: #909; font-weight: bold; font-style: italic; }
+-a.xn	{ /* namespace */		color: #909; font-weight: bold; font-style: italic; }
++.xm	{ /* macro */			color: #c66; font-weight: bold; }
++.xa	{ /* argument */		color: #60c; font-weight: bold; }
++.xl	{ /* local */			color: #963; font-weight: bold; }
++.xv	{ /* variable */		color: #c30; font-weight: bold; }
++.xc	{ /* class */			color: #909; font-weight: bold; font-style: italic; }
++.xp	{ /* package */			color: #909; font-weight: bold; font-style: italic; }
++.xi	{ /* interface */		color: #909; font-weight: bold; font-style: italic; }
++.xn	{ /* namespace */		color: #909; font-weight: bold; font-style: italic; }
+ .xe	{ /* enum */			color: #909; font-weight: bold; font-style: italic; }
+-a.xer	{ /* enumerator */		color: #909; font-weight: bold; font-style: italic; }
+-a.xs	{ /* struct */			color: #909; font-weight: bold; font-style: italic; }
+-a.xt	{ /* typedef */			color: #909; font-weight: bold; font-style: italic; }
+-a.xts	{ /* typedefs */		color: #909; font-weight: bold; font-style: italic; }
+-a.xu	{ /* union */			color: #909; font-weight: bold; font-style: italic; }
+-a.xfld	{ /* field */			color: #090; font-weight: bold; }
+-a.xmb	{ /* member */			color: #090; font-weight: bold; }
+-a.xf	{ /* function */		color: #00f; font-weight: bold; }
+-a.xmt	{ /* method */			color: #00f; font-weight: bold; }
+-a.xsr	{ /* subroutine */		color: #00f; font-weight: bold; }
++.xer{ /* enumerator */		color: #909; font-weight: bold; font-style: italic; }
++.xs	{ /* struct */			color: #909; font-weight: bold; font-style: italic; }
++.xt	{ /* typedef */			color: #909; font-weight: bold; font-style: italic; }
++.xts{ /* typedefs */		color: #909; font-weight: bold; font-style: italic; }
++.xu	{ /* union */			color: #909; font-weight: bold; font-style: italic; }
++.xfld{ /* field */			color: #090; font-weight: bold; }
++.xmb{ /* member */			color: #090; font-weight: bold; }
++.xf	{ /* function */		color: #00f; font-weight: bold; }
++.xmt{ /* method */			color: #00f; font-weight: bold; }
++.xsr{ /* subroutine */		color: #00f; font-weight: bold; }
+ 
+-#man table, #man td  { /* #man == troff src */
++/* troff source pages - css prefix: mn */
++#man table, #man td  {
+ 	background-color: #ddddcc;
+ 	border: 1px;
+ 	padding: 2px;
+ }
+-
+ #man p { /* a troff paragraph */
+ 	margin-top: 0.5em;
+ 	margin-bottom: 0;
+ }
+-
+-#man div.b { /* man section headings etc. */
++.mnhd { /* man section headings etc. */
++	color: #000;
++	font-weight: bold;
+ 	margin-top: 2em;
+ }
+-
+-#man div.rs { /* a right-shifted block */
++.mnrs { /* a right-shifted block */
+ 	margin-left: 3em;
+ 	margin-bottom: 1em;
+ }
+@@ -981,66 +925,70 @@
+ 	background: white;
+ 	padding: 1ex 0;
+ }
+-
+ #results p { /* pagetitle and slider */
+ 	padding: 0.5em;
+ }
+-
+ #results table {
+ 	border-collapse: collapse;
+ 	width: 100%;
+ }
+-
+-#results .dir { /* directory row above matched files */
+-	background-color: #cdcecd;
++.rsd { /* directory row above matched files */
++	background-color: #cdcecd !important;
+ }
+-
+-#results .dir td { /* directory link */
++.rsdl { /* directory link */
+ 	padding-left: 1em;
+ }
+-
+-#results td.q { /* 1st column: H A D */
++.rsdd { /* directory description */ 
++	color: green;
++	font-weight: bold;
++}
++.rsq { /* 1st column: H A D */
+ 	white-space: nowrap;
+ 	font-size: xx-small;
+ 	padding: 3px;
+ 	width: 3em;
+ }
+-
+-#results td.f { /* 2nd column: filename */
++.rsf { /* 2nd column: filename */
+ 	width: 3em;
+ 	padding: 3px 0.5em 3px 2em;
+ }
+-
+-#results .con { /* 3rd column: line number + matched line contents */
++.rscon { /* 3rd column: line number + matched line contents */
+ 	font-size: small;
+ }
+-
+-#results .con .all {
+-	margin-left: 6ex; /* width(#src .l) + 1ex */ 
++.rscon .all {
++	margin-left: 6ex; /* width(.l) + 1ex */ 
+ }
+-
+-#results .s, #more .s { /* matched line contents */
++.rsh { /* matched line contents */
+ 	color: #000;
+ }
+-
+-#results i { /* match type description (method, interface etc.) */ 
++.rshd { /* match type description (method, interface etc.) */ 
+ 	color: green;
+ 	font-weight: bold;
+ }
+-
+-#results .sel { /* slider item for the shown search result page */
++/* page slider (.slider) components */
++.rsps { /* slider item for the shown search result page */
+ 	background-color: #a3b8cb;
+ 	border: 1px solid #333366;
+ 	padding: .5em;
+ 	margin: 1px;
+ }
+-
+-#results .more { /* slider item for the n-th search result page */
++.rspn { /* slider item for the n-th search result page */
+ 	border: 1px #ccc solid;
+ 	padding: .3em;
+ 	margin: 1px;
+ }
+ 
++
++/* *** more page ***/
++#more {
++	line-height: 1.25em;
++	background-color: white;
++}
++#more b { /* highlight matches */ 
++	background-color: #ffff99;
++}
++
++
+ /* ############### start of footer ############## */
+ #footer {
+ 	color: #777777;
+@@ -1058,13 +1006,11 @@
+ 		#e6e6e6 100%
+ 	);
+ }
+-
+ #footer p { /* footer text */
+ 	padding: 0;
+ 	margin: 0.2em;
+ 	text-align: center;
+ }
+-
+ #fti { /* servedby.png */
+ 	display: inline-block;
+ 	width: 177px;

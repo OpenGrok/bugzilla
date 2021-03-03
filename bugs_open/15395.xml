@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>15395</bug_id>
+          
+          <creation_ts>2010-03-29 13:21:00 +0000</creation_ts>
+          <short_desc>don&apos;t break adding to index when the inputstream fails to close</short_desc>
+          <delta_ts>2010-03-29 13:21:01 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>indexer</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>OpenSolaris</op_sys>
+          <bug_status>NEW</bug_status>
+          
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>minor</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Lubos Kosco">Lubos.Kosco</reporter>
+          <assigned_to name="Lubos Kosco">Lubos.Kosco</assigned_to>
+          <cc>opengrok-dev</cc>
+    
+    <cc>vitezslav.batrla</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>70341</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2010-03-29 13:21:01 +0000</bug_when>
+            <thetext>when indexing source tree from nfs directory we saw several exceptions as below:
+
+Mar 29, 2010 12:36:46 PM org.opensolaris.opengrok.index.IndexDatabase indexDown
+WARNING: Failed to add file /net/XXXX/XXX/usr/src/lib/libxcurses/src/libc/xcurses/get_wch.c
+java.io.IOException: I/O error
+        at java.io.FileInputStream.close0(Native Method)
+        at java.io.FileInputStream.close(FileInputStream.java:259)
+        at java.io.BufferedInputStream.close(BufferedInputStream.java:451)
+        at org.opensolaris.opengrok.index.IndexDatabase.addFile(IndexDatabase.java:595)
+        at org.opensolaris.opengrok.index.IndexDatabase.indexDown(IndexDatabase.java:697)
+        at org.opensolaris.opengrok.index.IndexDatabase.indexDown(IndexDatabase.java:680)
+        at org.opensolaris.opengrok.index.IndexDatabase.indexDown(IndexDatabase.java:680)
+        at org.opensolaris.opengrok.index.IndexDatabase.indexDown(IndexDatabase.java:680)
+        at org.opensolaris.opengrok.index.IndexDatabase.indexDown(IndexDatabase.java:680)
+        at org.opensolaris.opengrok.index.IndexDatabase.indexDown(IndexDatabase.java:680)
+        at org.opensolaris.opengrok.index.IndexDatabase.indexDown(IndexDatabase.java:680)
+        at org.opensolaris.opengrok.index.IndexDatabase.indexDown(IndexDatabase.java:680)
+        at org.opensolaris.opengrok.index.IndexDatabase.update(IndexDatabase.java:333)
+        at org.opensolaris.opengrok.index.IndexDatabase$1.run(IndexDatabase.java:148)
+        at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:441)
+        at java.util.concurrent.FutureTask$Sync.innerRun(FutureTask.java:303)
+        at java.util.concurrent.FutureTask.run(FutureTask.java:138)
+        at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
+        at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
+        at java.lang.Thread.run(Thread.java:619)
+
+
+which resulted in index missing files, etc.
+if this is just a problem of in.close, then we should ignore I/O errors from it, otherwise we should investigate further</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

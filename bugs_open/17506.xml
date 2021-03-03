@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>17506</bug_id>
+          
+          <creation_ts>2010-12-02 12:03:00 +0000</creation_ts>
+          <short_desc>logging to file message should be more clear</short_desc>
+          <delta_ts>2011-01-05 08:43:05 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>indexer</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>CAUSEKNOWN</bug_status>
+          
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>minor</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Vladimir Kotal">vladimir.kotal</reporter>
+          <assigned_to name="Lubos Kosco">Lubos.Kosco</assigned_to>
+          <cc>knut.hatlen</cc>
+    
+    <cc>Lubos.Kosco</cc>
+    
+    <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>79658</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2010-12-02 12:03:16 +0000</bug_when>
+            <thetext>Indexer says the following:
+
+Refreshing OpenGrok indexes
+Loading the default instance configuration ...
+Logging to file: /opengrok/log/opengrok%g.%u.log
+
+The last line is incorrect. It should either say to which file it is currently logging or the message should say something like &apos;Using log file format: ...&apos;.
+
+The former would be more useful, I think.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>79661</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2010-12-02 12:22:02 +0000</bug_when>
+            <thetext>http://download.oracle.com/javase/6/docs/api/java/util/logging/FileHandler.html
+
+the best I can do is to print out it&apos;s the logging filehandler pattern
+
+it seems I cannot interpret it using official methods ... :(
+
+default %g and %u mean:
+- &quot;%g&quot; the generation number to distinguish rotated logs
+- &quot;%u&quot; a unique number to resolve conflicts 
+
+so it will say:
+
+Loading the default instance configuration ...
+Logging filehandler pattern: : /opengrok/log/opengrok%g.%u.log</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>79663</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2010-12-02 12:25:49 +0000</bug_when>
+            <thetext>well
+I can actually remove %g from default pattern
+and maybe I can do something evil like:
+.replaceAll(&quot;%u&quot;, &quot;0&quot;)
+
+which will obviously work for default pattern, will break for user pattern and will print bullshit if there will be a conflict and %u will change from 0 to X
+
+I love java :)</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>79664</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2010-12-02 12:28:16 +0000</bug_when>
+            <thetext>(In reply to comment #2)
+&gt; well
+&gt; I can actually remove %g from default pattern
+
+yes please.
+
+&gt; and maybe I can do something evil like:
+&gt; .replaceAll(&quot;%u&quot;, &quot;0&quot;)
+&gt; 
+&gt; which will obviously work for default pattern, will break for user pattern and
+&gt; will print bullshit if there will be a conflict and %u will change from 0 to X
+&gt; 
+&gt; I love java :)
+
+So there is no way how to get user ID in Java ?
+
+
+v.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>79665</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2010-12-02 12:55:17 +0000</bug_when>
+            <thetext>(In reply to comment #3)
+&gt; (In reply to comment #2)
+&gt; &gt; well
+&gt; &gt; I can actually remove %g from default pattern
+&gt; 
+&gt; yes please.
+&gt; 
+&gt; &gt; and maybe I can do something evil like:
+&gt; &gt; .replaceAll(&quot;%u&quot;, &quot;0&quot;)
+&gt; &gt; 
+&gt; &gt; which will obviously work for default pattern, will break for user pattern and
+&gt; &gt; will print bullshit if there will be a conflict and %u will change from 0 to X
+&gt; &gt; 
+&gt; 
+&gt; So there is no way how to get user ID in Java ?
+
+sorry for confusion, %u is not user, but unique id to avoid writer conflicts
+(e.g. 2 indexers accidentally started at the same time will this way not overwrite each other logs)
+
+so above depends on whether the file is writeable(and unlocked for write) and depends on instance, but instance is not able to report the file name opened ... seems I will have to file a bug against JDK/JRE
+
+--
+L</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>80287</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2011-01-05 08:43:05 +0000</bug_when>
+            <thetext>Resetting target milestone since this won&apos;t make it into 0.10.</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

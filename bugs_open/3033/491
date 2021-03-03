@@ -1,0 +1,5 @@
+// Èlovek 
+//
+main () {
+	char []="èlovek nao sú ti";
+}

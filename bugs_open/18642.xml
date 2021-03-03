@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>18642</bug_id>
+          
+          <creation_ts>2011-07-01 11:42:00 +0000</creation_ts>
+          <short_desc>recognize regexps in search results</short_desc>
+          <delta_ts>2011-10-10 19:34:30 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>webapp</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>NEW</bug_status>
+          
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>enhancement</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Vladimir Kotal">vladimir.kotal</reporter>
+          <assigned_to name="Lubos Kosco">Lubos.Kosco</assigned_to>
+          <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>84005</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2011-07-01 11:42:18 +0000</bug_when>
+            <thetext>It&apos;d be great if the search results can contain links to bugs/ARC cases etc.
+
+E.g. http://src.opensolaris.org/source/search?q=&amp;project=onnv&amp;defs=&amp;refs=&amp;path=&amp;hist=PSARC%2F2005%2F471 displays stuff like this e.g. for libproc/Makefile:
+
+2712:f74a135872bc 2006-09-12 05:51:00.0 nn35248 PSARC/2005/471 BrandZ: Support for non-native zones
+6374606 ::nm -D without an object may not work on processes in zones
+6409350 BrandZ project integration into Solaris
+6455289 pthread_setschedparam() should return EPERM rather than panic libc
+6455591 setpriority(3C) gets errno wrong for deficient privileges failure
+6458178 fifofs doesn&apos;t support lofs mounts of fifos
+6460380 Attempted open() of a symlink with the O_NOFOLLOW flag set returns EINVAL, not ELOOP
+6463857 renice(1) errors erroneously
+
+but the &quot;PSARC/2005/471&quot; is not a link (as opposed to the history view):
+
+http://src.opensolaris.org/source/history/onnv/onnv-gate/usr/src/cmd/mdb/intel/amd64/libproc/Makefile</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>18617</bug_id>
+          
+          <creation_ts>2011-06-26 03:33:00 +0000</creation_ts>
+          <short_desc>RFE: all jars an wars should go to $dist/lib</short_desc>
+          <delta_ts>2011-06-26 03:34:22 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>build</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>NEW</bug_status>
+          
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>enhancement</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Jens Elkner">jel+osolbugs</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>83887</commentid>
+              <attachid>4550</attachid>
+            <who name="Jens Elkner">jel+osolbugs</who>
+            <bug_when>2011-06-26 03:33:39 +0000</bug_when>
+            <thetext>Created attachment 4550
+$distdir/lib patch
+
+opengrok.jar and source.war should be always in $distdir/lib/.
+This is the case for certain pkg formats, but not yet for the *.tar.gz + Linux package.
+
+The attached patch fixes it incl. adjustment of the jar&apos;s MF classpath.</thetext>
+          </long_desc>
+      
+          <attachment
+              isobsolete="0"
+              ispatch="1"
+              isprivate="0"
+              isurl="0"
+          >
+            <attachid>4550</attachid>
+            <date>2011-06-26 03:33:00 +0000</date>
+            <delta_ts>2011-06-26 03:34:22 +0000</delta_ts>
+            <desc>$distdir/lib patch</desc>
+            <filename>lib.patch</filename>
+            <type>text/plain</type>
+            <size>6260</size>
+            <attacher>jel+osolbugs</attacher>
+            
+              <data encoding="base64">IyBIRyBjaGFuZ2VzZXQgcGF0Y2gKIyBVc2VyIGplbCtvcGVuZ3Jva0Bjcy51bmktbWFnZGVidXJn
+LmRlCiMgRGF0ZSAxMzA5MDU4MjI4IC03MjAwCiMgTm9kZSBJRCA2ZDY4OTk3ZGE5MDdjMTNkMGU4
+ZjA5OTk1MmFjMDgzMzFiZWFjY2VkCiMgUGFyZW50ICA1YjkzM2FkOTdlOWJmOThjMTU3NmVlM2Y5
+YzYxZGNkMzhiOGViODhlCnB1dCBvcGVuZ3Jvay5qYXIgYXMgd2VsbCBhcyBzb3VyY2Uud2FyIGlu
+dG8gJGRpc3RkaXIvbGliIG9mIHRoZSB0YXIuZ3ogcGFja2FnZSBhbmQgYWRqdXN0IE1GIGNsYXNz
+cGF0aAoKZGlmZiAtciA1YjkzM2FkOTdlOWIgLXIgNmQ2ODk5N2RhOTA3IE9wZW5Hcm9rCi0tLSBh
+L09wZW5Hcm9rCVRodSBKdW4gMjMgMTM6MDM6NDcgMjAxMSArMDIwMAorKysgYi9PcGVuR3JvawlT
+dW4gSnVuIDI2IDA1OjE3OjA4IDIwMTEgKzAyMDAKQEAgLTExNCwxMCArMTE0LDEyIEBACiAgICAg
+ICAgICAgICAjIEhhbmRsZSBEZXZlbG9wZXIgQnVpbGQgRW52aXJvbm1lbnRzCiAgICAgICAgICAg
+ICBPUEVOR1JPS19ESVNUUklCVVRJT05fQkFTRT0iJHtTQ1JJUFRfRElSRUNUT1JZfS9kaXN0Igog
+ICAgICAgICAgICAgTE9HR0VSX0NPTkZfU09VUkNFPSIke1NDUklQVF9ESVJFQ1RPUll9LyR7TE9H
+R0VSX0NPTkZJR19GSUxFfSIKKyAgICAgICAgICAgIExESVI9IiIKICAgICAgICAgZWxzZQogICAg
+ICAgICAgICAgIyBIYW5kbGUgQmluYXJ5IERpc3RyaWJ1dGlvbnMKLSAgICAgICAgICAgIE9QRU5H
+Uk9LX0RJU1RSSUJVVElPTl9CQVNFPSIke1NDUklQVF9ESVJFQ1RPUll9Ly4uL2xpYiIKLSAgICAg
+ICAgICAgIExPR0dFUl9DT05GX1NPVVJDRT0iJHtPUEVOR1JPS19ESVNUUklCVVRJT05fQkFTRX0v
+Li4vZG9jLyR7TE9HR0VSX0NPTkZJR19GSUxFfSIKKyAgICAgICAgICAgIE9QRU5HUk9LX0RJU1RS
+SUJVVElPTl9CQVNFPSIke1NDUklQVF9ESVJFQ1RPUll9Ly4uIgorICAgICAgICAgICAgTE9HR0VS
+X0NPTkZfU09VUkNFPSIke09QRU5HUk9LX0RJU1RSSUJVVElPTl9CQVNFfS9kb2MvJHtMT0dHRVJf
+Q09ORklHX0ZJTEV9IgorICAgICAgICAgICAgTERJUj0ibGliIgogICAgICAgICBmaQogICAgIGZp
+CiAKQEAgLTE1MCwxMiArMTUyLDEyIEBACiAgICAgTE9HR0VSX1BST1BFUlRJRVM9Ii1EamF2YS51
+dGlsLmxvZ2dpbmcuY29uZmlnLmZpbGU9JHtMT0dHRVJfQ09ORklHX1BBVEh9IgogCiAgICAgIyBS
+RVFVSVJFRDogSmF2YSBBcmNoaXZlIG9mIE9wZW5Hcm9rIChJbnN0YWxsYXRpb24gTG9jYXRpb24p
+Ci0gICAgT1BFTkdST0tfSkFSPSIke09QRU5HUk9LX0RJU1RSSUJVVElPTl9CQVNFfS9vcGVuZ3Jv
+ay5qYXIiCisgICAgT1BFTkdST0tfSkFSPSIke09QRU5HUk9LX0RJU1RSSUJVVElPTl9CQVNFfS8k
+TERJUi9vcGVuZ3Jvay5qYXIiCiAKICAgICAjIFJFUVVJUkVEKGRlcGxveSk6IFdlYiBBcmNoaXZl
+IG9mIE9wZW5Hcm9rIChEaXN0cmlidXRpb24gTG9jYXRpb24pCiAgICAgIyAgICAgICAgICAgKHVz
+ZXIgYnVpbGRpbmcgZnJvbSBzb3VyY2UgY29kZSB3aWxsIGZpbmQgdGhpcyBhbmQgb3RoZXIga2V5
+CiAgICAgIyAgICAgICAgICAgIGZpbGVzIGluIHRoZSAiZGlzdCIgZGlyZWN0b3J5IGFmdGVyIHRo
+ZSBidWlsZCBpcyBjb21wbGV0ZWQpCi0gICAgT1BFTkdST0tfRElTVF9XQVI9IiR7T1BFTkdST0tf
+RElTVFJJQlVUSU9OX0JBU0V9L3NvdXJjZS53YXIiCisgICAgT1BFTkdST0tfRElTVF9XQVI9IiR7
+T1BFTkdST0tfRElTVFJJQlVUSU9OX0JBU0V9LyRMRElSL3NvdXJjZS53YXIiCiAKICAgICAjIFJF
+UVVJUkVEOiBFeHViZXJhbnQgQ1RhZ3MgKGh0dHA6Ly9jdGFncy5zZi5uZXQpCiAgICAgRVhVQkVS
+QU5UX0NUQUdTPSIke0VYVUJFUkFOVF9DVEFHUzotYEZpbmRFeHViZXJhbnRDVGFnc2B9IgpkaWZm
+IC1yIDViOTMzYWQ5N2U5YiAtciA2ZDY4OTk3ZGE5MDcgYnVpbGQueG1sCi0tLSBhL2J1aWxkLnht
+bAlUaHUgSnVuIDIzIDEzOjAzOjQ3IDIwMTEgKzAyMDAKKysrIGIvYnVpbGQueG1sCVN1biBKdW4g
+MjYgMDU6MTc6MDggMjAxMSArMDIwMApAQCAtMjYxLDcgKzI2MSw2IEBACiAgICAgICAgICAgICAg
+ICAgPHBhdGhlbGVtZW50IHBhdGg9IiR7amF2YWMuY2xhc3NwYXRofSIvPgogICAgICAgICAgICAg
+PC9wYXRoPgogICAgICAgICAgICAgPGZsYXR0ZW5tYXBwZXIvPgotICAgICAgICAgICAgPG1hcCBm
+cm9tPSIiIHRvPSJsaWIvIi8+CiAgICAgICAgIDwvcGF0aGNvbnZlcnQ+CiAgICAgPC90YXJnZXQ+
+CiAKQEAgLTI2OSw3ICsyNjgsNyBAQAogICAgIDx0YXJnZXQgbmFtZT0iLXVwZGF0ZS1tYW5pZmVz
+dC1jbGFzc3BhdGgiPgogICAgICAgICA8bWFuaWZlc3QgZmlsZT0iJHttYW5pZmVzdC5maWxlfSIg
+bW9kZT0idXBkYXRlIj4KICAgICAgICAgICAgIDxhdHRyaWJ1dGUgbmFtZT0iQ2xhc3MtUGF0aCIK
+LSAgICAgICAgICAgICAgICAgICB2YWx1ZT0iJHtvcGVuZ3Jvay5saWIuZmlsZXN9IGxpYi9kZXJi
+eWNsaWVudC5qYXIgbGliL2RlcmJ5LmphciIvPgorICAgICAgICAgICAgICAgICAgIHZhbHVlPSIk
+e29wZW5ncm9rLmxpYi5maWxlc30gZGVyYnljbGllbnQuamFyIGRlcmJ5LmphciIvPgogICAgICAg
+ICA8L21hbmlmZXN0PgogICAgIDwvdGFyZ2V0PgogCkBAIC0yODQsOCArMjgzLDggQEAKICAgICAg
+ICAgPGNvcHkgdG9kaXI9IiR7ZGlzdC5kaXJ9L2xpYiI+CiAgICAgICAgICAgICA8ZmlsZXNldCBm
+aWxlPSIke2ZpbGUucmVmZXJlbmNlLmFudC5qYXJ9Ii8+CiAgICAgICAgIDwvY29weT4KLSAgICAg
+ICAgPGNvcHkgdG9kaXI9IiR7ZGlzdC5kaXJ9Ij4KLSAgICAgICAgICAgIDxmaWxlc2V0IGRpcj0i
+LiIgaW5jbHVkZXM9IiR7b3Blbmdyb2subGliLmZpbGVzfSIvPgorICAgICAgICA8Y29weSB0b2Rp
+cj0iJHtkaXN0LmRpcn0vbGliIj4KKyAgICAgICAgICAgIDxmaWxlc2V0IGRpcj0ibGliIiBpbmNs
+dWRlcz0iJHtvcGVuZ3Jvay5saWIuZmlsZXN9Ii8+CiAgICAgICAgIDwvY29weT4KICAgICA8L3Rh
+cmdldD4KIApAQCAtMzM0LDkgKzMzMywxMSBAQAogICAgICAgICAgICAgPHRhcmZpbGVzZXQgZGly
+PSIke2Rpc3QuZGlyfSIgcHJlZml4PSIke2Rpc3RuYW1lfS0ke3ZlcnNpb259L2xpYiI+CiAgICAg
+ICAgICAgICAgICAgPGluY2x1ZGUgbmFtZT0ib3Blbmdyb2suamFyIi8+CiAgICAgICAgICAgICAg
+ICAgPGluY2x1ZGUgbmFtZT0ic291cmNlLndhciIvPgotICAgICAgICAgICAgICAgIDxpbmNsdWRl
+IG5hbWU9ImxpYi8qIi8+Ci0gICAgICAgICAgICAgICAgPGV4Y2x1ZGUgbmFtZT0ibGliL3NlcnZs
+ZXQtYXBpLmphciIvPgogICAgICAgICAgICAgPC90YXJmaWxlc2V0PgorICAgICAgICAJPHRhcmZp
+bGVzZXQgZGlyPSIke2Rpc3QuZGlyfS9saWIiIHByZWZpeD0iJHtkaXN0bmFtZX0tJHt2ZXJzaW9u
+fS9saWIiPgorICAgICAgICAgICAgICAgIDxpbmNsdWRlIG5hbWU9IiouamFyIi8+CisgICAgICAg
+ICAgICAgICAgPGV4Y2x1ZGUgbmFtZT0ic2VydmxldC1hcGkuamFyIi8+CisJCQk8L3RhcmZpbGVz
+ZXQ+ICAgICAgICAJCQogICAgICAgICAgICAgPHRhcmZpbGVzZXQgZGlyPSIke2Rpc3QuZGlyfSIg
+cHJlZml4PSIke2Rpc3RuYW1lfS0ke3ZlcnNpb259L21hbi9tYW4xIj4KICAgICAgICAgICAgICAg
+ICA8aW5jbHVkZSBuYW1lPSJvcGVuZ3Jvay4xIi8+CiAgICAgICAgICAgICA8L3RhcmZpbGVzZXQ+
+CmRpZmYgLXIgNWI5MzNhZDk3ZTliIC1yIDZkNjg5OTdkYTkwNyBkZWJpYW4vb3Blbmdyb2suaW5z
+dGFsbAotLS0gYS9kZWJpYW4vb3Blbmdyb2suaW5zdGFsbAlUaHUgSnVuIDIzIDEzOjAzOjQ3IDIw
+MTEgKzAyMDAKKysrIGIvZGViaWFuL29wZW5ncm9rLmluc3RhbGwJU3VuIEp1biAyNiAwNToxNzow
+OCAyMDExICswMjAwCkBAIC0xLDQgKzEsNCBAQAotZGlzdC9vcGVuZ3Jvay5qYXIJdXNyL3NoYXJl
+L29wZW5ncm9rLyAKLWRpc3Qvc291cmNlLndhcgl1c3Ivc2hhcmUvb3Blbmdyb2svCitkaXN0L29w
+ZW5ncm9rLmphcgl1c3Ivc2hhcmUvb3Blbmdyb2svbGliLworZGlzdC9zb3VyY2Uud2FyCXVzci9z
+aGFyZS9vcGVuZ3Jvay9saWIvCiBkaXN0L2xpYi9qcmNzLmphcgl1c3Ivc2hhcmUvb3Blbmdyb2sv
+bGliLwogZGlzdC9saWIvanJjcy5qYXIJdXNyL3NoYXJlL29wZW5ncm9rL2xpYi8KZGlmZiAtciA1
+YjkzM2FkOTdlOWIgLXIgNmQ2ODk5N2RhOTA3IG9wZW5ncm9rLWluZGV4ZXIvcG9tLnhtbAotLS0g
+YS9vcGVuZ3Jvay1pbmRleGVyL3BvbS54bWwJVGh1IEp1biAyMyAxMzowMzo0NyAyMDExICswMjAw
+CisrKyBiL29wZW5ncm9rLWluZGV4ZXIvcG9tLnhtbAlTdW4gSnVuIDI2IDA1OjE3OjA4IDIwMTEg
+KzAyMDAKQEAgLTg5LDcgKzg5LDYgQEAKICAgICAgICAgICAgICAgICAgICAgICAgIDxtYW5pZmVz
+dD4KICAgICAgICAgICAgICAgICAgICAgICAgICAgICA8bWFpbkNsYXNzPm9yZy5vcGVuc29sYXJp
+cy5vcGVuZ3Jvay5pbmRleC5JbmRleGVyPC9tYWluQ2xhc3M+CiAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgPGFkZENsYXNzcGF0aD50cnVlPC9hZGRDbGFzc3BhdGg+Ci0gICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgPGNsYXNzcGF0aFByZWZpeD5saWIvPC9jbGFzc3BhdGhQcmVmaXg+CiAg
+ICAgICAgICAgICAgICAgICAgICAgICA8L21hbmlmZXN0PgogICAgICAgICAgICAgICAgICAgICAg
+ICAgPG1hbmlmZXN0RW50cmllcz4KICAgICAgICAgICAgICAgICAgICAgICAgICAgICA8IS0tCkBA
+IC05Nyw3ICs5Niw3IEBACiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHVwIHRoZSBj
+bGFzc3BhdGggc28gdGhhdCBpdCdzIGZvdW5kCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgIGF0IHJ1bnRpbWUgaWYgaXQncyBpbnN0YWxsZWQuCiAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgLS0+Ci0gICAgICAgICAgICAgICAgICAgICAgICAgICAgPENsYXNzLVBhdGg+bGliL2Rl
+cmJ5Y2xpZW50LmphciBsaWIvZGVyYnkuamFyPC9DbGFzcy1QYXRoPgorICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgIDxDbGFzcy1QYXRoPmRlcmJ5Y2xpZW50LmphciBkZXJieS5qYXI8L0NsYXNz
+LVBhdGg+CiAgICAgICAgICAgICAgICAgICAgICAgICA8L21hbmlmZXN0RW50cmllcz4KICAgICAg
+ICAgICAgICAgICAgICAgPC9hcmNoaXZlPgogICAgICAgICAgICAgICAgIDwvY29uZmlndXJhdGlv
+bj4KZGlmZiAtciA1YjkzM2FkOTdlOWIgLXIgNmQ2ODk5N2RhOTA3IHRvb2xzL3NtZi9pbmRleGVy
+LnNoCi0tLSBhL3Rvb2xzL3NtZi9pbmRleGVyLnNoCVRodSBKdW4gMjMgMTM6MDM6NDcgMjAxMSAr
+MDIwMAorKysgYi90b29scy9zbWYvaW5kZXhlci5zaAlTdW4gSnVuIDI2IDA1OjE3OjA4IDIwMTEg
+KzAyMDAKQEAgLTYwLDcgKzYwLDcgQEAKICAgICAgICMgdGhhdCBzaG91bGQgYmUgc2VsZWN0ZWQg
+YnkgZGVmYXVsdCAobm90ZSB0aGF0IHRoZSBwYXJhbWV0ZXIgaGVyZQogICAgICAgIyBpcyB0aGUg
+cGF0aCB0byB0aGUgcHJvamVjdCkKICAgICAgICMgQUREX1BST0pFQ1RTPSItUyAtUCAtcCAvb25u
+di1nYXRlIC1XICR7REFUQV9ST09UfS8uLi9jb25maWd1cmF0aW9uLnhtbCIKLSAgICAgICR7SkFW
+QV9IT01FfS9iaW4vamF2YSAtWG14MTUyNG0gLWphciAke1BST0dESVJ9L29wZW5ncm9rLmphciBc
+CisgICAgICAke0pBVkFfSE9NRX0vYmluL2phdmEgLVhteDE1MjRtIC1qYXIgJHtQUk9HRElSfS9s
+aWIvb3Blbmdyb2suamFyIFwKICAgICAgICAgICAgICAgICAgICAgLUggLVIgJHtEQVRBX1JPT1R9
+Ly4uL2NvbmZpZ3VyYXRpb24ueG1sIFwKICAgICAgICAgICAgICAgICAgICAgJHtBRERfUFJPSkVD
+VFN9ID4+ICR7b3V0cHV0fSAyPiYxCiAKQEAgLTg0LDcgKzg0LDcgQEAKIAogICAgICAgICAgICAg
+ICAgICAgIyBUZWxsIHRoZSB3ZWIgc2VydmVyIHRvIHVzZSB0aGUgbmV3IGNvbmZpZ3VyYXRpb24K
+ICAgICAgICAgICAgICAgICAgJHtKQVZBX0hPTUV9L2Jpbi9qYXZhIC1YbXgxNTI0bSBcCi0gICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAtamFyICR7UFJPR0RJUn0vb3Blbmdy
+b2suamFyIFwKKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIC1qYXIgJHtQ
+Uk9HRElSfS9saWIvb3Blbmdyb2suamFyIFwKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgIC1VICR7Zn0gXAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgLVIgJHtEQVRBX1JPT1R9Ly4uL2NvbmZpZ3VyYXRpb24ueG1sIFwKICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgIC1uICA+PiAke291dHB1dH0gMj4mMQo=
+</data>
+
+          </attachment>
+      
+
+    </bug>
+
+</bugzilla>

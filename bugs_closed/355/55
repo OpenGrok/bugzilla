@@ -1,0 +1,33 @@
+# HG changeset patch
+# User Leo Davis <ldavis@fonix.com>
+# Date 1200092131 25200
+# Node ID a7931ffbfe71241d76f20dc040ad8cde94e35d30
+# Parent  604d16e382c0a95aa3136b02b22d4e314ec859bf
+fix NPE in AnalyzerGuru.getContentType, as find may return null
+
+src/org/opensolaris/opengrok/analysis/AnalyzerGuru.java
+(getContentType) : changed as described.
+
+diff -r 604d16e382c0 -r a7931ffbfe71 src/org/opensolaris/opengrok/analysis/AnalyzerGuru.java
+--- a/src/org/opensolaris/opengrok/analysis/AnalyzerGuru.java	Thu Jan 10 18:33:47 2008 -0800
++++ b/src/org/opensolaris/opengrok/analysis/AnalyzerGuru.java	Fri Jan 11 15:55:31 2008 -0700
+@@ -254,12 +254,17 @@ public class AnalyzerGuru {
+      * @param in The input stream we want to get the content type for (if
+      *           we cannot determine the content type by the filename)
+      * @param file The name of the file
+-     * @return The contentType suitable for printing to response.setContentType()
++     * @return The contentType suitable for printing to response.setContentType() or null
++     *         if the factory was not found
+      * @throws java.io.IOException If an error occurs while accessing the input
+      *                             stream.
+      */
+     public static String getContentType(InputStream in, String file) throws IOException {
+-        return find(in, file).getContentType();
++        FileAnalyzerFactory factory = find(in, file);
++        String type = null;
++        if (factory != null)
++            type = factory.getContentType();
++        return type;
+     }
+ 
+     /**

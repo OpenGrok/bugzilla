@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>1564</bug_id>
+          
+          <creation_ts>2008-04-25 03:34:00 +0000</creation_ts>
+          <short_desc>Make IndexChangedListener public</short_desc>
+          <delta_ts>2008-06-21 02:58:49 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>indexer</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXED</resolution>
+          
+          
+          
+          
+          
+          <priority>P5</priority>
+          <bug_severity>trivial</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Jason Leonard">jason</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>5326</commentid>
+            <who name="Jason Leonard">jason</who>
+            <bug_when>2008-04-25 03:34:02 +0000</bug_when>
+            <thetext>Our code indexing system builds on opengrok and includes opengrok.jar as a component. We strip off the Indexer class and work directly with the IndexDatabase class. 
+
+The problem as of OpenGrok 0.6 is that the IndexChangedListener interface is private as is IndexDatabase.addIndexChangedListener() and IndexDatabase.removeIndexChangedListener(). Please could you make these public so that changes to opengrok.jar are not needed for our use. 
+Thanks</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>8329</commentid>
+            <who name="Trond Norbye">trond.norbye</who>
+            <bug_when>2008-06-21 02:58:49 +0000</bug_when>
+            <thetext>changeset:   316:33a8151c49e3
+tag:         tip
+user:        Trond Norbye &lt;trond.norbye@sun.com&gt;
+date:        Sat Jun 21 11:57:49 2008 +0200
+summary:     Bug #1564: Make IndexChangedListener public</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

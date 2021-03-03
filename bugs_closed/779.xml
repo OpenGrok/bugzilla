@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>779</bug_id>
+          
+          <creation_ts>2008-03-17 08:34:00 +0000</creation_ts>
+          <short_desc>[RFE] Add option to disable index optimization upon indexing</short_desc>
+          <delta_ts>2008-03-17 13:27:11 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>misc</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXED</resolution>
+          
+          
+          
+          
+          
+          <priority>P4</priority>
+          <bug_severity>enhancement</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Lubomir Rintel">lkundrak</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          <cc>trond.norbye</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>2594</commentid>
+            <who name="Lubomir Rintel">lkundrak</who>
+            <bug_when>2008-03-17 08:34:05 +0000</bug_when>
+            <thetext>It would be nice to have an option to disable index optimization upon completion of indexing.
+
+Reasoning behind this is that the index of a project can be big and its optimization can take a long time. As indexation can be restricted to a subdirectory of the project, it enables us to change only small parts of it. Optimizing the index after each small change can make time these changes take many times longer.
+
+An use case could be updating the index several times a day, and optimize it overnight (with already existing -O option).</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>2615</commentid>
+            <who name="Trond Norbye">trond.norbye</who>
+            <bug_when>2008-03-17 13:27:11 +0000</bug_when>
+            <thetext>The -O option was dropped prior to the 0.6 release (I just forgot to update the documentation).
+
+I suggest that we reuse the option, but add an argument (on/off) to toggle on/off (enabled by default).
+
+Fixed in changeset: 253:d4e0921d25e2</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

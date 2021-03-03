@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>429</bug_id>
+          
+          <creation_ts>2008-01-29 16:35:00 +0000</creation_ts>
+          <short_desc>RFE: OpenGrok should add the program version in a HTML HEAD &quot;GENERATOR&quot; tag</short_desc>
+          <delta_ts>2008-01-30 02:22:04 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>webapp</component>
+          <version>unspecified</version>
+          <rep_platform>Other</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXED</resolution>
+          
+          
+          
+          
+          
+          <priority>P4</priority>
+          <bug_severity>minor</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Roland Mainz">roland.mainz</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          <cc>roland.mainz</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>1253</commentid>
+            <who name="Roland Mainz">roland.mainz</who>
+            <bug_when>2008-01-29 16:35:45 +0000</bug_when>
+            <thetext>[Unrelated follow-up to bug #200]
+RFE: OpenGrok should add the program version in a HTML HEAD &quot;GENERATOR&quot; tag to allow bug reporters to report the OpenGrok version.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>1268</commentid>
+            <who name="Trond Norbye">trond.norbye</who>
+            <bug_when>2008-01-30 02:22:04 +0000</bug_when>
+            <thetext>The version and changeset is inserted into the http headers</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

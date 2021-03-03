@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>17551</bug_id>
+          
+          <creation_ts>2010-12-06 08:08:00 +0000</creation_ts>
+          <short_desc>Double-click on some project in project list doesn&apos;t work in Internet Explorer</short_desc>
+          <delta_ts>2010-12-10 14:45:09 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>webapp</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXINSOURCE</resolution>
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>minor</bug_severity>
+          <target_milestone>0.10</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Miroslav Osladil">mira</reporter>
+          <assigned_to name="Lubos Kosco">Lubos.Kosco</assigned_to>
+          <cc>Lubos.Kosco</cc>
+    
+    <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>79762</commentid>
+            <who name="Miroslav Osladil">mira</who>
+            <bug_when>2010-12-06 08:08:29 +0000</bug_when>
+            <thetext>Steps to reproduce:
+1. Double click on some project in project list
+
+Expected result:
+The xref of that project is opened.
+
+Actual result:
+Nothing happens. Internet Explorer affected only.
+
+Second issue I sometimes experience:
+1. Have some previous query in form, e.g. an unsuccessful
+2. Double click on some project in project list
+
+Then, project is filled in &quot;File Path&quot;
+
+3. Double click on another project
+
+Then, project is also filled in &quot;File Path&quot;, so I there is non-sence &quot;/source/project-a/source/project-b&quot;
+
+Internet Explorer affected only.
+
+I&apos;m sorry I&apos;m posting both issues into same bug but I guess it is caused by same reason. If not so, feel free to divide it to separate bug.
+
+Used software:
+OpenGrok 0.10-rc, Apache Tomcat 6.0.29, Sun Java 6 1.6.0_20-b02, Debian GNU/Linux 5.0, Windows 7, IE8</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>79930</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2010-12-10 14:45:09 +0000</bug_when>
+            <thetext>changeset:   1136:1b722e4bc9e1
+
+- note that this adds a bug for MacOSX with Safari, that the scroll list on project list can be double clicked too (and will most probably not work as expected ;) )</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

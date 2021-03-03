@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>16370</bug_id>
+          
+          <creation_ts>2010-06-24 14:44:00 +0000</creation_ts>
+          <short_desc>build.xml: Check for JFlex.jar and taskdef for jflex-task use different classpath</short_desc>
+          <delta_ts>2010-06-24 15:41:44 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>build</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXINSOURCE</resolution>
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>minor</bug_severity>
+          <target_milestone>0.10</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Christian Lohmaier">cloph</reporter>
+          <assigned_to name="Lubos Kosco">Lubos.Kosco</assigned_to>
+          <cc>Lubos.Kosco</cc>
+    
+    <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>74741</commentid>
+            <who name="Christian Lohmaier">cloph</who>
+            <bug_when>2010-06-24 14:44:30 +0000</bug_when>
+            <thetext>build.xml contains:
+
+&lt;available file=&quot;JFlex.jar&quot; type=&quot;file&quot; property=&quot;JFlex.present&quot;&gt;
+    &lt;filepath refid=&quot;lib.search.path&quot;/&gt;
+&lt;/available&gt;
+&lt;fail unless=&quot;JFlex.present&quot; message=&quot;Please download JFlex (http://jflex.de/) and put JFlex.jar it into ./lib directory (or in ant classpath).&quot;/&gt;
+
+&lt;taskdef classname=&quot;JFlex.anttask.JFlexTask&quot; name=&quot;jflex&quot; classpath=&quot;lib/JFlex.jar;../lib/JFlex.jar&quot;/&gt;  
+
+I.e. it checks for JFlex.jar in the extended classpath (including paths added with ant -lib /path), but the actual task-definition restricts the classpath to opengrok&apos;s lib directory in the sources and one level above.
+
+This is kind of pointless (and contradicts the message &quot;or (put it into) ant classpath&quot;)
+
+Instead it should use the same classpath for both, especially it should not force the user to copy the JFLex.jar into opengrok&apos;s tree.
+so use classpathref=&quot;lib.search.path&quot; (that already includes ./lib and ../lib) or similar.
+
+Thanks a lot.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>74742</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2010-06-24 15:08:35 +0000</bug_when>
+            <thetext>thanks for reporting
+
+fwiw, we plan to move to maven sooner rather than later and pull most of the libs(dependencies) automagically ;)
+
+I still don&apos;t quite get your use case still, but pushing your request
+(so adding classpathref to the taskdef)
+
+changeset:   1031:7411e129cfd1
+
+
+please reopen if I got you wrong ;)
+
+cheers
+Lubos</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>74743</commentid>
+            <who name="Christian Lohmaier">cloph</who>
+            <bug_when>2010-06-24 15:24:51 +0000</bug_when>
+            <thetext>The usecase is just being able to run &quot;ant -lib /usr/lib/wherever&quot;/having the JFlex.jar in one of the sytem paths and get opengrok built. Opposed to being forced to copy JFlex.jar into opengrok&apos;s sourcetree. 
+
+The commit solves the problem - thanks for the quick action</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>74744</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2010-06-24 15:41:44 +0000</bug_when>
+            <thetext>(In reply to comment #2)
+&gt; The usecase is just being able to run &quot;ant -lib /usr/lib/wherever&quot;/having the
+&gt; JFlex.jar in one of the sytem paths and get opengrok built. Opposed to being
+&gt; forced to copy JFlex.jar into opengrok&apos;s sourcetree. 
+&gt; 
+&gt; The commit solves the problem - thanks for the quick action
+
+interesting ... I&apos;ve been using ant -lib with old build.xml and it worked for me ... even my hudson is configured like that for past 2 years ...
+anyway, it works now for you too, so we&apos;re all happy :)
+
+thanks for feedback &amp; keep them coming ;)
+L</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

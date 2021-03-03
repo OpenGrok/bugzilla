@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>12985</bug_id>
+          
+          <creation_ts>2009-12-02 09:19:00 +0000</creation_ts>
+          <short_desc>OSOLopengrok is missing logging.properties file</short_desc>
+          <delta_ts>2009-12-03 10:05:41 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>misc</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>Solaris</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXED</resolution>
+          
+          
+          
+          
+          
+          <priority>P4</priority>
+          <bug_severity>normal</bug_severity>
+          <target_milestone>0.8.1</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Vladimir Kotal">vladimir.kotal</reporter>
+          <assigned_to name="Lubos Kosco">Lubos.Kosco</assigned_to>
+          <cc>Lubos.Kosco</cc>
+    
+    <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>57949</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2009-12-02 09:19:51 +0000</bug_when>
+            <thetext>The OSOLopengrok package for version 0.8 is missing the logging.properties file.
+
+Also, it expects it to be in the bin/doc/ directory which is not the ideal place for storing templates of config files. It should be moved somewhere else.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>57967</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2009-12-02 10:58:15 +0000</bug_when>
+            <thetext>will fix, along with the changes to OpenGrok script</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>58001</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2009-12-02 15:22:29 +0000</bug_when>
+            <thetext>fixed in:
+
+911:  	e0efb3d59f9f</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>58227</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2009-12-03 10:05:41 +0000</bug_when>
+            <thetext>small fixes for this in
+913:cbff8cb2ab24
+too ;)</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

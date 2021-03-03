@@ -1,0 +1,1190 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>12963</bug_id>
+          
+          <creation_ts>2009-12-01 16:57:00 +0000</creation_ts>
+          <short_desc>use tags in History view</short_desc>
+          <delta_ts>2013-01-04 10:52:21 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>webapp</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>RESOLVED</bug_status>
+          <resolution>FIXINSOURCE</resolution>
+          
+          
+          
+          
+          
+          <priority>P4</priority>
+          <bug_severity>enhancement</bug_severity>
+          <target_milestone>next</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Vladimir Kotal">vladimir.kotal</reporter>
+          <assigned_to name="Vladimir Kotal">vladimir.kotal</assigned_to>
+          <cc>jel+osbugs</cc>
+    
+    <cc>knut.hatlen</cc>
+    
+    <cc>Lubos.Kosco</cc>
+    
+    <cc>milan.jurik</cc>
+    
+    <cc>opengrok-dev</cc>
+    
+    <cc>skozina</cc>
+    
+    <cc>stanislav.kozina</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>57842</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2009-12-01 16:57:39 +0000</bug_when>
+            <thetext>It would be cool if History view could somehow display tags (if any) applied to the repository. That would be useful for repositories which use tags for release engineering purposes (e.g. Solaris Nevada onnv-clone repo is tagged with build number once the build closes) to quickly see which changes belong to which tag.
+
+Colored output with small tag name between the sections would be best :-)
+
+This is somewhat related to bug 3256.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>67004</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2010-02-21 10:42:23 +0000</bug_when>
+            <thetext>*** Bug 14257 has been marked as a duplicate of this bug. ***</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86397</commentid>
+            <who name="Stanislav Kozina">skozina</who>
+            <bug_when>2012-04-10 11:51:28 +0000</bug_when>
+            <thetext>This feature would be greatly appreciated. Is there any plan on its implementation?
+
+I can help with it, however my experience with web-programming is quite limited:-/
+
+Please note there are a bit more similar bugs already:
+http://defect.opensolaris.org/bz/show_bug.cgi?id=17322
+http://defect.opensolaris.org/bz/show_bug.cgi?id=3256
+http://defect.opensolaris.org/bz/show_bug.cgi?id=14257 (dup)
+
+Thanks a lot,
+-Stanislav</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86398</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2012-04-10 11:54:54 +0000</bug_when>
+            <thetext>(In reply to comment #2)
+&gt; This feature would be greatly appreciated. Is there any plan on its
+&gt; implementation?
+
+I am not aware of anyone working on it at this moment.
+ 
+&gt; I can help with it, however my experience with web-programming is quite
+&gt; limited:-/
+
+Please do, it&apos;s not that hard to do middle scale change in OpenGrok even for someone who has limited experience with web/Java programming (myself being a proof of that).</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86478</commentid>
+            <who name="Stanislav Kozina">skozina</who>
+            <bug_when>2012-06-20 12:18:13 +0000</bug_when>
+            <thetext>(In reply to comment #3)
+&gt; Please do, it&apos;s not that hard to do middle scale change in OpenGrok even for
+&gt; someone who has limited experience with web/Java programming (myself being a
+&gt; proof of that).
+
+Sorry for long delay (low priority:-), but rather later than never, here we go:
+
+http://people.redhat.com/~skozina/opengrok-tag-webrev/
+
+Please can you do review? The tags are displayed for Git, Mercurial, Bazaar and CVS. SVN (AFAIK) does not have tags, other repository support might be missing. Sorry for SCCS guys:-/ As they say, &quot;Successfully tested by me&quot;.
+
+The result looks like this:
+
+http://people.redhat.com/~skozina/opengrok_with_tags.png
+
+Yes, the colour used for tag box is the same as is the colour of the line below header.
+
+I have already OCA approved in my profile, do you think I can get access to the OpenGrok repository somehow?
+
+Thanks a lot.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86479</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2012-06-20 15:11:16 +0000</bug_when>
+            <thetext>
+what is your OCA #?
+
+I just need the # and I will push your patch once accepted (under your name and email used in OCA as submitter)
+
+from the picture it looks ok, I will try to review this week
+
+thank you!
+L
+
+(In reply to comment #4)
+&gt; (In reply to comment #3)
+&gt; &gt; Please do, it&apos;s not that hard to do middle scale change in OpenGrok even for
+&gt; &gt; someone who has limited experience with web/Java programming (myself being a
+&gt; &gt; proof of that).
+&gt; 
+&gt; Sorry for long delay (low priority:-), but rather later than never, here we go:
+&gt; 
+&gt; http://people.redhat.com/~skozina/opengrok-tag-webrev/
+&gt; 
+&gt; Please can you do review? The tags are displayed for Git, Mercurial, Bazaar and
+&gt; CVS. SVN (AFAIK) does not have tags, other repository support might be missing.
+&gt; Sorry for SCCS guys:-/ As they say, &quot;Successfully tested by me&quot;.
+&gt; 
+&gt; The result looks like this:
+&gt; 
+&gt; http://people.redhat.com/~skozina/opengrok_with_tags.png
+&gt; 
+&gt; Yes, the colour used for tag box is the same as is the colour of the line below
+&gt; header.
+&gt; 
+&gt; I have already OCA approved in my profile, do you think I can get access to the
+&gt; OpenGrok repository somehow?
+&gt; 
+&gt; Thanks a lot.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86480</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2012-06-20 15:27:15 +0000</bug_when>
+            <thetext>I did a quick review and it looks good
+I will add the css style to the other css (pro)files too
+(besides default there are 2 more)
+
+I will do a junit test(or if you did, let me know pls), if I don&apos;t find any probs and you will send me the OCA# in between I will accept this patch
+
+thnx
+L</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86482</commentid>
+            <who name="Stanislav Kozina">skozina</who>
+            <bug_when>2012-06-20 16:24:52 +0000</bug_when>
+            <thetext>&gt; what is your OCA #?
+
+OS0490
+
+&gt; 
+&gt; I just need the # and I will push your patch once accepted (under your name and
+&gt; email used in OCA as submitter)
+
+Oh, I see &apos;stanislav.kozina@gmail.com&apos; as the email in OCA.
+But I have something different in .hgrc - skozina@redhat.com, is this a problem?</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86483</commentid>
+            <who name="Stanislav Kozina">skozina</who>
+            <bug_when>2012-06-20 16:27:12 +0000</bug_when>
+            <thetext>(In reply to comment #6)
+&gt; I did a quick review and it looks good
+&gt; I will add the css style to the other css (pro)files too
+&gt; (besides default there are 2 more)
+
+Oh, my fault, thanks for that!
+
+&gt; 
+&gt; I will do a junit test(or if you did, let me know pls), if I don&apos;t find any
+&gt; probs and you will send me the OCA# in between I will accept this patch
+
+I haven&apos;t done any junit test, sorry;-/
+Thanks for that!
+
+-S</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86484</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2012-06-20 16:27:55 +0000</bug_when>
+            <thetext>(In reply to comment #7)
+&gt; &gt; what is your OCA #?
+&gt; 
+&gt; OS0490
+
+thank you
+
+&gt; 
+&gt; &gt; 
+&gt; &gt; I just need the # and I will push your patch once accepted (under your name and
+&gt; &gt; email used in OCA as submitter)
+&gt; 
+&gt; Oh, I see &apos;stanislav.kozina@gmail.com&apos; as the email in OCA.
+&gt; But I have something different in .hgrc - skozina@redhat.com, is this a
+&gt; problem?
+
+no, because I will just take the patch and use your gmail mail if you don&apos;t
+object ;)
+
+I&apos;ll try to push today evening/tomorrow morning
+
+thnx
+L</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86485</commentid>
+            <who name="Jens Elkner">jel+osbugs</who>
+            <bug_when>2012-06-20 19:28:48 +0000</bug_when>
+            <thetext>(In reply to comment #6)
+...
+&gt; I will add the css style to the other css (pro)files too
+&gt; (besides default there are 2 more)
+...
+
+1) Suggesting to use &apos;revtags&apos; or &apos;revt&apos; instead of tags. Motivation is to have a pseudo &quot;namespace&quot;, which makes styling much easier and helps to avoid unwanted side effects when changing a style.
+
+E.g.:
+http://src.iws.cs.ovgu.de/source/search?q=prefix&amp;path=%2Fopengrok-jel%2Fweb%2Fstatic%2Fdefault%2F&amp;project=opengrok-jel
+
+2) Is there an RE property, which allows one to [un]hide tags?
+
+Have fun,
+jel.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86488</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2012-06-21 08:28:04 +0000</bug_when>
+            <thetext>(In reply to comment #10)
+&gt; (In reply to comment #6)
+&gt; ...
+&gt; &gt; I will add the css style to the other css (pro)files too
+&gt; &gt; (besides default there are 2 more)
+&gt; ...
+&gt; 
+&gt; 1) Suggesting to use &apos;revtags&apos; or &apos;revt&apos; instead of tags. Motivation is to have
+&gt; a pseudo &quot;namespace&quot;, which makes styling much easier and helps to avoid
+&gt; unwanted side effects when changing a style.
+
+yes, that makes sense
+will do it like this
+
+&gt; 
+&gt; E.g.:
+&gt; http://src.iws.cs.ovgu.de/source/search?q=prefix&amp;path=%2Fopengrok-jel%2Fweb%2Fstatic%2Fdefault%2F&amp;project=opengrok-jel
+&gt; 
+&gt; 2) Is there an RE property, which allows one to [un]hide tags?
+
+this is an interesting Q
+I think for most of repos there will be minimal performance hit, but then there will be a hit when doing a history on a single file
+
+Stando, could you please have a quick look into how runtime environment(RE) work and eventually add one for enabling/disabling tags?
+I guess no rush for now, I will eventually accept the patch without it, but we eventually should have a comparison of how fast is the indexing/showing a file with and without tags at least for git, svn, cvs, hg repos
+
+fwiw junit test parseALaW3C in CVShistory parser is failing with this patch and with eventual RE property switch it might fail too, so just bear this in mind
+(I won&apos;t push until I resolve this too)
+
+--
+L
+
+&gt; 
+&gt; Have fun,
+&gt; jel.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86489</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2012-06-21 11:52:05 +0000</bug_when>
+            <thetext>
+Stando
+- so the failing junit is because of http://people.redhat.com/~skozina/opengrok-tag-webrev/src/org/opensolaris/opengrok/history/CVSHistoryParser.java.wdiff.html
+
+where your state machine doesn&apos;t work
+
+can you please fix it so it will work properly (and will fulfill the test?)
+
+I thought the problem is the test itself, but it&apos;s in your code and since I lack cvs knowledge to properly fix the state machine, I will have to ask you to provide a corrected patch that properly works for cvs parsing 
+
+thanks
+L
+
+(In reply to comment #11)
+&gt; (In reply to comment #10)
+&gt; &gt; (In reply to comment #6)
+&gt; &gt; ...
+&gt; &gt; &gt; I will add the css style to the other css (pro)files too
+&gt; &gt; &gt; (besides default there are 2 more)
+&gt; &gt; ...
+&gt; &gt; 
+&gt; &gt; 1) Suggesting to use &apos;revtags&apos; or &apos;revt&apos; instead of tags. Motivation is to have
+&gt; &gt; a pseudo &quot;namespace&quot;, which makes styling much easier and helps to avoid
+&gt; &gt; unwanted side effects when changing a style.
+&gt; 
+&gt; yes, that makes sense
+&gt; will do it like this
+&gt; 
+&gt; &gt; 
+&gt; &gt; E.g.:
+&gt; &gt; http://src.iws.cs.ovgu.de/source/search?q=prefix&amp;path=%2Fopengrok-jel%2Fweb%2Fstatic%2Fdefault%2F&amp;project=opengrok-jel
+&gt; &gt; 
+&gt; &gt; 2) Is there an RE property, which allows one to [un]hide tags?
+&gt; 
+&gt; this is an interesting Q
+&gt; I think for most of repos there will be minimal performance hit, but then there
+&gt; will be a hit when doing a history on a single file
+&gt; 
+&gt; Stando, could you please have a quick look into how runtime environment(RE)
+&gt; work and eventually add one for enabling/disabling tags?
+&gt; I guess no rush for now, I will eventually accept the patch without it, but we
+&gt; eventually should have a comparison of how fast is the indexing/showing a file
+&gt; with and without tags at least for git, svn, cvs, hg repos
+&gt; 
+&gt; fwiw junit test parseALaW3C in CVShistory parser is failing with this patch and
+&gt; with eventual RE property switch it might fail too, so just bear this in mind
+&gt; (I won&apos;t push until I resolve this too)
+&gt; 
+&gt; --
+&gt; L
+&gt; 
+&gt; &gt; 
+&gt; &gt; Have fun,
+&gt; &gt; jel.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86490</commentid>
+            <who name="Stanislav Kozina">skozina</who>
+            <bug_when>2012-06-21 18:41:09 +0000</bug_when>
+            <thetext>
+&gt; &gt; 1) Suggesting to use &apos;revtags&apos; or &apos;revt&apos; instead of tags. Motivation is to have
+&gt; &gt; a pseudo &quot;namespace&quot;, which makes styling much easier and helps to avoid
+&gt; &gt; unwanted side effects when changing a style.
+&gt; 
+&gt; yes, that makes sense
+&gt; will do it like this
+
+Just in the CSS? Lubos, are you working on it, or should I do it and send a new patch?
+
+&gt; &gt; 2) Is there an RE property, which allows one to [un]hide tags?
+&gt; 
+&gt; this is an interesting Q
+&gt; I think for most of repos there will be minimal performance hit, but then there
+&gt; will be a hit when doing a history on a single file
+&gt; 
+&gt; Stando, could you please have a quick look into how runtime environment(RE)
+&gt; work and eventually add one for enabling/disabling tags?
+&gt; I guess no rush for now, I will eventually accept the patch without it, but we
+&gt; eventually should have a comparison of how fast is the indexing/showing a file
+&gt; with and without tags at least for git, svn, cvs, hg repos
+
+I&apos;m sorry, I don&apos;t understand this completely.
+
+In the indexer, we already compare all lines in RCS output and we put it into various fields of HistoryEntry object. I just add parsing one more line (which in most cases was checked even before the patch). No change in complexity. Do you think this would be performance hit for files?
+
+In runtime, we just create one more div if tags != null. Do you think this would be a performance hit?
+
+I probably have no idea what is &quot;Runtime Environment&quot;. Please can you point me to some piece of such code?</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86491</commentid>
+            <who name="Stanislav Kozina">skozina</who>
+            <bug_when>2012-06-21 18:43:51 +0000</bug_when>
+            <thetext>&gt; - so the failing junit is because of
+&gt; http://people.redhat.com/~skozina/opengrok-tag-webrev/src/org/opensolaris/opengrok/history/CVSHistoryParser.java.wdiff.html
+&gt; 
+&gt; where your state machine doesn&apos;t work
+&gt; 
+&gt; can you please fix it so it will work properly (and will fulfill the test?)
+&gt; 
+&gt; I thought the problem is the test itself, but it&apos;s in your code and since I
+&gt; lack cvs knowledge to properly fix the state machine, I will have to ask you to
+&gt; provide a corrected patch that properly works for cvs parsing 
+
+Sure, I will fix this. Thank you very much for catching this! But as I am away for the weekend, I will probably send a fixed patch next week. Is this ok?
+
+Anyway - were you fixing the other css profiles? Do you have that patch somewhere?
+Or should I fix them as well for the next round?
+
+Thanks a lot!</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86492</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2012-06-22 07:43:38 +0000</bug_when>
+            <thetext>(In reply to comment #14)
+&gt; &gt; - so the failing junit is because of
+&gt; &gt; http://people.redhat.com/~skozina/opengrok-tag-webrev/src/org/opensolaris/opengrok/history/CVSHistoryParser.java.wdiff.html
+&gt; &gt; 
+&gt; &gt; where your state machine doesn&apos;t work
+&gt; &gt; 
+&gt; &gt; can you please fix it so it will work properly (and will fulfill the test?)
+&gt; &gt; 
+&gt; &gt; I thought the problem is the test itself, but it&apos;s in your code and since I
+&gt; &gt; lack cvs knowledge to properly fix the state machine, I will have to ask you to
+&gt; &gt; provide a corrected patch that properly works for cvs parsing 
+&gt; 
+&gt; Sure, I will fix this. Thank you very much for catching this! But as I am away
+&gt; for the weekend, I will probably send a fixed patch next week. Is this ok?
+&gt; 
+&gt; Anyway - were you fixing the other css profiles? Do you have that patch
+&gt; somewhere?
+&gt; Or should I fix them as well for the next round?
+
+add them to your patch please, too
+also add the prefix as Jens suggested, it makes sense(and will save me some merging time one I get to Jenses UI patches ;) )
+I was only able to run junit, play with it a bit to see that the problem is not the test, but the parser and since my time run out, I need you to fix your regression before I can accept ;)
+
+thnx
+L
+
+&gt; 
+&gt; Thanks a lot!</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86493</commentid>
+            <who name="Stanislav Kozina">skozina</who>
+            <bug_when>2012-06-22 14:13:54 +0000</bug_when>
+            <thetext>&gt; add them to your patch please, too
+&gt; also add the prefix as Jens suggested, it makes sense(and will save me some
+&gt; merging time one I get to Jenses UI patches ;) )
+&gt; I was only able to run junit, play with it a bit to see that the problem is not
+&gt; the test, but the parser and since my time run out, I need you to fix your
+&gt; regression before I can accept ;)
+
+Sure, I will do so.
+Only as I wrote - next week probably. Sorry about that:-/</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86494</commentid>
+            <who name="Stanislav Kozina">skozina</who>
+            <bug_when>2012-06-25 20:12:43 +0000</bug_when>
+            <thetext>&gt; - so the failing junit is because of
+&gt; http://people.redhat.com/~skozina/opengrok-tag-webrev/src/org/opensolaris/opengrok/history/CVSHistoryParser.java.wdiff.html
+&gt; 
+&gt; where your state machine doesn&apos;t work
+&gt; 
+&gt; can you please fix it so it will work properly (and will fulfill the test?)
+
+So, the test is failing, because I changed the cvs command from &quot;cvs log -N&quot; to &quot;cvs log&quot;, i.e. skipped the &apos;-N&apos; option. I had to do so, because as cvs man page says:
+
+       -N
+
+         Do not print the list of tags for this file.  This option can be very
+         useful  when  your site uses a lot of tags, so rather than &quot;more&quot;&apos;ing
+         over 3 pages of tag information, the  log  information  is  presented
+         without tags at all.
+
+But this has also changed the output format in such way that now it contains &quot;symbolic names:&quot; line as well, even for revs without any tags.
+
+I can fix the code so it will work even for such input. But I believe that better option is to fix the test case to provide valid output from &quot;cvs log&quot; command. Do you agree?</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86496</commentid>
+            <who name="Stanislav Kozina">skozina</who>
+            <bug_when>2012-06-25 20:40:12 +0000</bug_when>
+            <thetext>When I tried to test GitHistoryParser class, the test cases failed to compile because derby.jar was missing.
+
+See
+http://defect.opensolaris.org/bz/show_bug.cgi?id=19219</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86497</commentid>
+            <who name="Stanislav Kozina">skozina</who>
+            <bug_when>2012-06-25 21:50:37 +0000</bug_when>
+            <thetext>Updated patch available here:
+
+http://people.redhat.com/~skozina/opengrok-tag-webrev-2/
+
+List of changes since the last patch:
+ - fixed parseALaW3C unit test by fixing the test case in order to provide valid output from &quot;cvs log&quot;
+ - added tests for tag parsing for Git, CVS and Bazaar *HistoryParser classes
+ - renamed CSS class from .tags to .revtags
+ - fixed offwhite and polished CSS styles to contain .revtags class
+
+What was not changed:
+ - The RE property still does not exists because I don&apos;t understand it
+
+My raw development repository can be found:
+https://bitbucket.org/xersin/opengrok-tag/overview</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86498</commentid>
+            <who name="Jens Elkner">jel+osbugs</who>
+            <bug_when>2012-06-26 02:00:32 +0000</bug_when>
+            <thetext>(In reply to comment #19)
+...
+&gt; What was not changed:
+&gt;  - The RE property still does not exists because I don&apos;t understand it
+
+Basically a RuntimeEnvironment/Configuration property, which allows one to disable tag processing and probably another property, which allows one to show/hide tags in web pages if available.
+
+Wrt. the current usage, ideally there should be a corresponding CLI switch, unfortunately we get the same problem as perl - not much letters left ;-) - (bFfGgJMx)
+
+see 
+http://src.opensolaris.org/source/xref/opengrok/trunk/src/org/opensolaris/opengrok/index/
+ - CommandLineOptions.java
+ - Indexer.java
+http://src.opensolaris.org/source/xref/opengrok/trunk/src/org/opensolaris/opengrok/configuration/
+ - RuntimeEnvironment.java	
+ - Configuration.java</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86500</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2012-07-03 08:55:55 +0000</bug_when>
+            <thetext>(In reply to comment #4)
+&gt; (In reply to comment #3)
+&gt; &gt; Please do, it&apos;s not that hard to do middle scale change in OpenGrok even for
+&gt; &gt; someone who has limited experience with web/Java programming (myself being a
+&gt; &gt; proof of that).
+&gt; 
+&gt; Sorry for long delay (low priority:-), but rather later than never, here we go:
+&gt; 
+&gt; http://people.redhat.com/~skozina/opengrok-tag-webrev/
+&gt; 
+
+Looks reasonable. It would be cool if you can write a bunch of junit tests for this change (one test repo for each SCM type affected).
+
+&gt; The result looks like this:
+&gt; 
+&gt; http://people.redhat.com/~skozina/opengrok_with_tags.png
+&gt; 
+&gt; Yes, the colour used for tag box is the same as is the colour of the line below
+&gt; header.
+
+The original idea was to have all changesets colored (in rainbow style), not just the changesets which add a tag but I guess this can be done later as a separate change.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86501</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2012-07-03 09:08:35 +0000</bug_when>
+            <thetext>(In reply to comment #19)
+&gt; Updated patch available here:
+&gt; 
+&gt; http://people.redhat.com/~skozina/opengrok-tag-webrev-2/
+&gt; 
+&gt; List of changes since the last patch:
+&gt;  - fixed parseALaW3C unit test by fixing the test case in order to provide
+&gt; valid output from &quot;cvs log&quot;
+&gt;  - added tests for tag parsing for Git, CVS and Bazaar *HistoryParser classes
+&gt;  - renamed CSS class from .tags to .revtags
+&gt;  - fixed offwhite and polished CSS styles to contain .revtags class
+&gt; 
+&gt; What was not changed:
+&gt;  - The RE property still does not exists because I don&apos;t understand it
+&gt; 
+&gt; My raw development repository can be found:
+&gt; https://bitbucket.org/xersin/opengrok-tag/overview
+
+looks OK to me
+if you want you can address Jenses and Vlads comments and I&apos;d accept it
+however I won&apos;t have time to operate the push for next 2 weeks, setting Vlad as bug owner temporarily, he has access to repo and could accept your patch (or if Knut or Trond pick up, they can switch to themselves)
+and worst case I will take the patch in 2 weeks
+
+dakujeme Stando!
+
+--
+L</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86502</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2012-07-03 09:26:08 +0000</bug_when>
+            <thetext>(In reply to comment #21)
+&gt; (In reply to comment #4)
+&gt; &gt; (In reply to comment #3)
+&gt; &gt; &gt; Please do, it&apos;s not that hard to do middle scale change in OpenGrok even for
+&gt; &gt; &gt; someone who has limited experience with web/Java programming (myself being a
+&gt; &gt; &gt; proof of that).
+&gt; &gt; 
+&gt; &gt; Sorry for long delay (low priority:-), but rather later than never, here we go:
+&gt; &gt; 
+&gt; &gt; http://people.redhat.com/~skozina/opengrok-tag-webrev/
+&gt; &gt; 
+&gt; 
+&gt; Looks reasonable. It would be cool if you can write a bunch of junit tests for
+&gt; this change (one test repo for each SCM type affected).
+
+Actually, I looked at the Mercurial tag parsing again and this will offer only very limited value for repositories like ON which have incremental changesets and use tags for tagging builds. This is because &apos;hg tag&apos; will create a changeset which applies to the latest (previous) changeset only. This means that &apos;hg log&apos; for file added before the tagged changeset will not display the tag although logically (for that particular repo) it should. I.e.:
+
+$ hg log -v
+
+changeset:   3:faa7527804d0
+tag:         tip
+user:        Vladimir Kotal &lt;Vladimir.Kotal@oracle.com&gt;
+date:        Tue Jul 03 11:07:30 2012 +0200
+
+description:
+	third commit
+
+added:
+   blah
+
+
+changeset:   2:3208c7d6ab64
+user:        Vladimir Kotal &lt;Vladimir.Kotal@oracle.com&gt;
+date:        Tue Jul 03 11:07:07 2012 +0200
+
+description:
+	Added tag BETA for changeset 82f1c4a09e06
+
+added:
+   .hgtags
+
+
+changeset:   1:82f1c4a09e06
+tag:         BETA
+user:        Vladimir Kotal &lt;Vladimir.Kotal@oracle.com&gt;
+date:        Tue Jul 03 11:06:56 2012 +0200
+
+description:
+	second commit
+
+added:
+   bar
+
+
+changeset:   0:9afddde72efd
+user:        Vladimir Kotal &lt;Vladimir.Kotal@oracle.com&gt;
+date:        Tue Jul 03 11:06:32 2012 +0200
+
+description:
+	first commit
+
+added:
+   foo
+
+$ hg log --template=&apos;tags: {tags}\n&apos; -v foo
+tags:</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86560</commentid>
+            <who name="Stanislav Kozina">skozina</who>
+            <bug_when>2012-07-17 17:58:42 +0000</bug_when>
+            <thetext>&gt; Actually, I looked at the Mercurial tag parsing again and this will offer only
+&gt; very limited value for repositories like ON which have incremental changesets
+&gt; and use tags for tagging builds. This is because &apos;hg tag&apos; will create a
+&gt; changeset which applies to the latest (previous) changeset only. This means
+&gt; that &apos;hg log&apos; for file added before the tagged changeset will not display the
+&gt; tag although logically (for that particular repo) it should. I.e.:
+
+Vlad,
+
+Thanks, this is perfect catch. The same actually applies to both hg, bzr and git repos, only cvs is safe as &quot;cvs tag&quot; always creates new tag for every file existing in the repository.
+
+I wonder what to do with this. I see only one solution - to create a sorted list of tags (in the history) prior to actual log parsing, and display all tags in the History view which were created in time between the two subsequent commits of given file. Do you agree, or do you see any better solution?
+
+I will try to implement this.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86562</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2012-07-18 08:58:35 +0000</bug_when>
+            <thetext>(In reply to comment #24)
+
+&lt;snip&gt;
+
+&gt; I wonder what to do with this. I see only one solution - to create a sorted
+&gt; list of tags (in the history) prior to actual log parsing, and display all tags
+&gt; in the History view which were created in time between the two subsequent
+&gt; commits of given file. Do you agree, or do you see any better solution?
+
+Yes, this was the original idea. There should be some generic changeset comparison function I think - e.g. for Mercurial the changeset comparison can be done on the basis of revision ID (assuming they are incremental) while for other SCMs it might be necessary to compare the changesets based on time stamp.
+ 
+&gt; I will try to implement this.
+
+Cool, for many this will be a killer feature.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86571</commentid>
+            <who name="Stanislav Kozina">skozina</who>
+            <bug_when>2012-07-22 19:36:43 +0000</bug_when>
+            <thetext>&gt; Yes, this was the original idea. There should be some generic changeset
+&gt; comparison function I think - e.g. for Mercurial the changeset comparison can
+&gt; be done on the basis of revision ID (assuming they are incremental) while for
+&gt; other SCMs it might be necessary to compare the changesets based on time stamp.
+
+It got a bit complicated;-)
+My development webrev (broken, non-functioning, but at least with the basic idea):
+http://people.redhat.com/~skozina/opengrok-tag-webrev-3/
+
+The problem is that we never use `hg log&apos; for all files or directories. Instead we got changed files in each commit during one `hg log&apos; call, and later we simply assign specific commits to given files which were changed by the commit. At least this is how I understand e.g. FileHistoryCache.store() function.
+
+I assume we should not check _all_ commits in the repo for each file, as this would unnecessarily slow. There are much more commits than tags, right? Instead we should use something as `hg tags&apos; to get list of tags, and go through only that list for each file, do you agree?
+That&apos;s why I created new TagEntry class, which is able to compare itself to HistoryEntry class whether it&apos;s newer or older (repo specific). The parsed tag list is part of Repository class, and the parsing itself is repo-specific.
+
+I tried to assign TagEntry objects to commits where they belong, resulting code is in FileHistoryCache.store() in the webrev. But despite the function was running during my testing and during debugging it wrote set tags as I expected, the tags were not displayed on the web page.
+
+Is {File|JDBC}HistoryCache.store() function the right place which generates history entries for both files &amp; directories, or did I missed something?
+
+I see that I need to do same changes to JDBCHistoryCache to keep tags working for Derby as well, correct?
+
+Thanks for ideas, greatly appreciated.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86572</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2012-07-23 08:14:46 +0000</bug_when>
+            <thetext>(In reply to comment #26)
+&gt; &gt; Yes, this was the original idea. There should be some generic changeset
+&gt; &gt; comparison function I think - e.g. for Mercurial the changeset comparison can
+&gt; &gt; be done on the basis of revision ID (assuming they are incremental) while for
+&gt; &gt; other SCMs it might be necessary to compare the changesets based on time stamp.
+&gt; 
+&gt; It got a bit complicated;-)
+&gt; My development webrev (broken, non-functioning, but at least with the basic
+&gt; idea):
+&gt; http://people.redhat.com/~skozina/opengrok-tag-webrev-3/
+&gt; 
+&gt; The problem is that we never use `hg log&apos; for all files or directories. Instead
+&gt; we got changed files in each commit during one `hg log&apos; call, and later we
+&gt; simply assign specific commits to given files which were changed by the commit.
+&gt; At least this is how I understand e.g. FileHistoryCache.store() function.
+
+That&apos;s my understanding as well.
+ 
+&gt; I assume we should not check _all_ commits in the repo for each file, as this
+&gt; would unnecessarily slow. There are much more commits than tags, right? Instead
+&gt; we should use something as `hg tags&apos; to get list of tags, and go through only
+&gt; that list for each file, do you agree?
+
+Yes. There should probably be some sort of caching mechanism (storing the list of tags in history cache should provide it).</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86618</commentid>
+            <who name="Stanislav Kozina">stanislav.kozina</who>
+            <bug_when>2012-09-20 17:11:20 +0000</bug_when>
+            <thetext>Hello,
+
+My apologizes for really slow work, however finally this should be working version of the patch:
+
+http://people.redhat.com/~skozina/opengrok-tag-webrev-4/
+
+My development repository is still available for anonymous pull here:
+https://bitbucket.org/xersin/opengrok-tag/overview
+(there are a few commit-revert pairs, so it would be good to do a recommit before any merging).
+
+Hope this works finally:-) Thanks for any comments in advance.
+
+Features:
+=====
+ - tags are displayed at the latest changeset in the file history as Vlad pointed out in Comment #23
+ - full support for git, bzr and hg repositories. For CVS old approach is used (i.e. tags per each changeset) as CVS tag is created for last changeset in each file
+ - support for both FileHistoryCache as well as JDBCHistoryCache
+ - support for all default, offwhite and polished styles
+ - RE property &apos;-G&apos;, disabled by default. I used capital &apos;G&apos; as capital most of already-used capital letters looks more like a grok &apos;Commands&apos; to me, where lower case letters looks more as a configuration options.
+ - RE option was added to management client GUI as well
+
+Known bugs &amp; missing features:
+=====
+ - None in the implementation
+ - JDBCHistoryCacheTest is failing. This is probably because of database schema change (tags were added as a new table into the database), however I failed to track down why this makes the test to fail. I am still working to fix this.
+
+Design notes:
+=====
+There is a new class to represent a Tag - TagEntry. TagEntry is able to compare itself with HistoryEntry whether it&apos;s newer or older. This comparison is repo-dependant, so there are 3 child classes. We use either the changeset number (hg, bzr), or author date (git) for the comparison.
+NOTE: Should we use author date, or commit date for comparison in git repos?
+
+Every repository is able to build its own list of tags sorted according to tag order (see previous paragraph). This list is built by buildTagList() protected method in all supported repos (hg, bzr, git).
+
+Finally, before storing any History into FileHistoryCache or JDBCHistoryCache, we assign tags from the list per each changeset in the history by calling Repository.assignTagsInHistory(). The same is done when we retrieve new file History by calling Repository.getHistory().
+
+Every repository specifies whether assignTagsInHistory() must be called before we build any History by implementing hasFileBasedTags().</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86619</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2012-09-27 12:09:03 +0000</bug_when>
+            <thetext>From casual inspection:
+  - some env var stanza needs to be added to the OpenGrok shell script to enable the use of -G
+  - the width of the column with Revision in history view needs to be trimmed to make space for the Comments column (this is especially noticeable when particular revision has lots of tags)
+  - during compilation I got these warnings:
+
+    [mkdir] Created dir: /workspaces/opengrok-tag/build/empty
+    [javac] Compiling 230 source files to /workspaces/opengrok-tag/build/classes
+    [javac] warning: [options] bootstrap class path not set in conjunction with -source 1.6
+    [javac] /workspaces/opengrok-tag/src/org/opensolaris/opengrok/management/client/ConfigurationsFrame.java:105: warning: [unchecked] unchecked call to addItem(E) as a member of the raw type JComboBox
+    [javac]             this.consoleLevelCombo.addItem(levels[i]);
+    [javac]                                           ^
+    [javac]   where E is a type-variable:
+    [javac]     E extends Object declared in class JComboBox
+    [javac] /workspaces/opengrok-tag/src/org/opensolaris/opengrok/management/client/ConfigurationsFrame.java:106: warning: [unchecked] unchecked call to addItem(E) as a member of the raw type JComboBox
+    [javac]             this.fileLevelCombo.addItem(levels[i]);
+    [javac]                                        ^
+    [javac]   where E is a type-variable:
+    [javac]     E extends Object declared in class JComboBox
+    [javac] 3 warnings
+     [copy] Copying 9 files to /workspaces/opengrok-tag/build/classes
+
+
+I need to look at the changes and test some more but so far it looks promising.
+
+(In reply to comment #28)
+&gt; Hello,
+&gt; 
+&gt; My apologizes for really slow work, however finally this should be working
+&gt; version of the patch:
+&gt; 
+&gt; http://people.redhat.com/~skozina/opengrok-tag-webrev-4/
+&gt; 
+
+&lt;snip&gt;</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86620</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2012-09-27 12:15:28 +0000</bug_when>
+            <thetext>(In reply to comment #29)
+&gt; From casual inspection:
+&gt;   - some env var stanza needs to be added to the OpenGrok shell script to
+&gt; enable the use of -G
+&gt;   - the width of the column with Revision in history view needs to be trimmed
+&gt; to make space for the Comments column (this is especially noticeable when
+&gt; particular revision has lots of tags)
+&gt;   - during compilation I got these warnings:
+&gt; 
+&gt;     [mkdir] Created dir: /workspaces/opengrok-tag/build/empty
+&gt;     [javac] Compiling 230 source files to
+&gt; /workspaces/opengrok-tag/build/classes
+&gt;     [javac] warning: [options] bootstrap class path not set in conjunction with
+&gt; -source 1.6
+&gt;     [javac]
+&gt; /workspaces/opengrok-tag/src/org/opensolaris/opengrok/management/client/ConfigurationsFrame.java:105:
+&gt; warning: [unchecked] unchecked call to addItem(E) as a member of the raw type
+&gt; JComboBox
+&gt;     [javac]             this.consoleLevelCombo.addItem(levels[i]);
+&gt;     [javac]                                           ^
+&gt;     [javac]   where E is a type-variable:
+&gt;     [javac]     E extends Object declared in class JComboBox
+&gt;     [javac]
+&gt; /workspaces/opengrok-tag/src/org/opensolaris/opengrok/management/client/ConfigurationsFrame.java:106:
+&gt; warning: [unchecked] unchecked call to addItem(E) as a member of the raw type
+&gt; JComboBox
+&gt;     [javac]             this.fileLevelCombo.addItem(levels[i]);
+&gt;     [javac]                                        ^
+&gt;     [javac]   where E is a type-variable:
+&gt;     [javac]     E extends Object declared in class JComboBox
+&gt;     [javac] 3 warnings
+&gt;      [copy] Copying 9 files to /workspaces/opengrok-tag/build/classes
+&gt; 
+&gt; 
+
+please ignore
+these are coming from the new JDK7
+OpenGrok is not fully switching codebase to JDK7 YET (it is just able to run and index properly using JDK7 now - from trunk)
+
+--
+L
+
+&gt; I need to look at the changes and test some more but so far it looks promising.
+
+&gt; 
+&gt; (In reply to comment #28)
+&gt; &gt; Hello,
+&gt; &gt; 
+&gt; &gt; My apologizes for really slow work, however finally this should be working
+&gt; &gt; version of the patch:
+&gt; &gt; 
+&gt; &gt; http://people.redhat.com/~skozina/opengrok-tag-webrev-4/
+&gt; &gt; 
+&gt; 
+&gt; &lt;snip&gt;</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86621</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2012-09-27 12:44:29 +0000</bug_when>
+            <thetext>(In reply to comment #29)
+
+&lt;snip&gt;
+
+&gt;   - the width of the column with Revision in history view needs to be trimmed
+&gt; to make space for the Comments column (this is especially noticeable when
+&gt; particular revision has lots of tags)
+
+Alternatively the tags can be added to the history view as a sort of
+pseudo-changesets. Each tag would be represented by a line in the table of
+changesets. It brings some corner cases though like non-tag changeset being
+tagged (in that case it could be displayed as is now i.e. the tag next to the
+revision in the Revision column) if all of the tags should be displayed for
+given file (i.e. whether to suppress tags above the last applicable tag for
+that file).</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86622</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2012-09-27 13:11:46 +0000</bug_when>
+            <thetext>(In reply to comment #31)
+&gt; (In reply to comment #29)
+&gt; 
+&gt; &lt;snip&gt;
+&gt; 
+&gt; &gt;   - the width of the column with Revision in history view needs to be trimmed
+&gt; &gt; to make space for the Comments column (this is especially noticeable when
+&gt; &gt; particular revision has lots of tags)
+&gt; 
+&gt; Alternatively the tags can be added to the history view as a sort of
+&gt; pseudo-changesets. Each tag would be represented by a line in the table of
+&gt; changesets. It brings some corner cases though like non-tag changeset being
+&gt; tagged (in that case it could be displayed as is now i.e. the tag next to the
+&gt; revision in the Revision column) if all of the tags should be displayed for
+&gt; given file (i.e. whether to suppress tags above the last applicable tag for
+&gt; that file).
+
+Actually, what about displaying just the last applicable tag (for all displayed changesets) and add a JavaScript &apos;+&apos; button to be able to expand the list of tags.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86623</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2012-09-27 13:17:36 +0000</bug_when>
+            <thetext>(In reply to comment #28)
+&gt; Hello,
+&gt; 
+&gt; My apologizes for really slow work, however finally this should be working
+&gt; version of the patch:
+
+could you attach couple of screenshots ?</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86624</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2012-09-27 13:23:47 +0000</bug_when>
+            <thetext>(In reply to comment #33)
+&gt; (In reply to comment #28)
+&gt; &gt; Hello,
+&gt; &gt; 
+&gt; &gt; My apologizes for really slow work, however finally this should be working
+&gt; &gt; version of the patch:
+&gt; 
+&gt; could you attach couple of screenshots ?
+
+Also, one nit - the color chosen for the tags is a bit too bright given this is arguably not the most important part of the view (feedback from a coworker who is looking over my shoulder).</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86625</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2012-09-27 13:47:15 +0000</bug_when>
+            <thetext>(In reply to comment #34)
+&gt; (In reply to comment #33)
+&gt; &gt; (In reply to comment #28)
+&gt; &gt; &gt; Hello,
+&gt; &gt; &gt; 
+&gt; &gt; &gt; My apologizes for really slow work, however finally this should be working
+&gt; &gt; &gt; version of the patch:
+&gt; &gt; 
+&gt; &gt; could you attach couple of screenshots ?
+&gt; 
+&gt; Also, one nit - the color chosen for the tags is a bit too bright given this is
+&gt; arguably not the most important part of the view (feedback from a coworker who
+&gt; is looking over my shoulder).
+
+One more thing - I realized that the placement of the tags should be above the revision number. In linear organization of a repo this makes a lot of sense. The same should be done for the expansion (assuming one tag per line).</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86632</commentid>
+            <who name="Stanislav Kozina">skozina</who>
+            <bug_when>2012-10-12 14:02:52 +0000</bug_when>
+            <thetext>Hello Vlad,
+
+New webrev:
+http://people.redhat.com/~skozina/opengrok-tag-webrev-5/
+Devel repo still at the same location:
+https://bitbucket.org/xersin/opengrok-tag/overview
+
+(In reply to comment #29)
+&gt; From casual inspection:
+&gt;   - some env var stanza needs to be added to the OpenGrok shell script to
+&gt; enable the use of -G
+
+Added OPENGROK_TAG env variable into OpenGrok script.
+
+&gt; Alternatively the tags can be added to the history view as a sort of
+&gt; pseudo-changesets. Each tag would be represented by a line in the table of
+&gt; changesets. It brings some corner cases though like non-tag changeset being
+&gt; tagged (in that case it could be displayed as is now i.e. the tag next to the
+&gt; revision in the Revision column) if all of the tags should be displayed for
+&gt; given file (i.e. whether to suppress tags above the last applicable tag for
+&gt; that file).
+
+I moved all tags so now they are all put into separate row in the table (with colspan over whole row).
+
+&gt; Actually, what about displaying just the last applicable tag (for all displayed
+&gt; changesets) and add a JavaScript &apos;+&apos; button to be able to expand the list of
+&gt; tags.
+
+I add a &quot;Show revision tags&quot; javascript link in the history table header. By default tags are not shown.
+
+&gt; could you attach couple of screenshots ?
+
+Here:
+http://people.redhat.com/~skozina/opengrok-tag/
+I will attach them to the bug as well.
+
+&gt; Also, one nit - the color chosen for the tags is a bit too bright given this is
+&gt; arguably not the most important part of the view (feedback from a coworker who
+&gt; is looking over my shoulder).
+
+So I changed it to light grey - looks still well enough readable on both my desktop monitor &amp; laptop.
+
+&gt; One more thing - I realized that the placement of the tags should be above the
+&gt; revision number. In linear organization of a repo this makes a lot of sense.
+&gt; The same should be done for the expansion (assuming one tag per line).
+
+Row with revision was moved above the tagged commit itself.
+
+I also tried to do some benchmarking - full index of old onnv-gate from OpenSolaris days on my Lenovo X220 with 2-core Core i7-2620M CPU.
+
+First run without tags:
+real    14m9.712s
+user    9m26.610s
+sys     0m53.678s
+
+Second run with tags:
+real    11m44.992s
+user    8m51.254s
+sys     0m48.169s
+
+Third run without tags:
+real    9m44.076s
+user    8m20.016s
+sys     0m47.975s
+
+Hard to say some conclusions, but looks that tags can have up to 20% performance impact on indexing:-/</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86639</commentid>
+            <who name="Stanislav Kozina">skozina</who>
+            <bug_when>2012-10-24 21:30:40 +0000</bug_when>
+            <thetext>Vlad, Lubos,
+
+Could you take a look at the latest version to check if there any any more issues which need to be fixed? Or if you are busy - do you have some estimation where you might find some time to do the review?
+
+Thanks,
+-Stanislav</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86650</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2012-12-28 10:43:51 +0000</bug_when>
+            <thetext>(In reply to comment #37)
+&gt; Vlad, Lubos,
+&gt; 
+&gt; Could you take a look at the latest version to check if there any any more
+&gt; issues which need to be fixed? Or if you are busy - do you have some estimation
+&gt; where you might find some time to do the review?
+&gt; 
+
+Sorry it took so long, please consider this as belated Christmas present :-)
+
+I merged the changes with the current tip, did some style cleanup, 
+rebuilt and retested on our staging server. 
+
+The changes were pushed with:
+
+changeset:   1421:c4ff800fc8b2                       
+tag:         tip
+user:        Stanislav Kozina &lt;skozina@redhat.com&gt;
+date:        Fri Dec 28 11:32:36 2012 +0100
+summary:     Bug 12963 - use tags in History view
+
+Jenkins now reports some failures:
+
+org.opensolaris.opengrok.history.JDBCHistoryCacheTest.testHasCacheForDirectory
+org.opensolaris.opengrok.history.JDBCHistoryCacheTest.testRetryGetOnTimeout
+org.opensolaris.opengrok.history.JDBCHistoryCacheTest.testVeryLongCommitMessage
+org.opensolaris.opengrok.history.JDBCHistoryCacheTest.testStoreAndGet
+org.opensolaris.opengrok.history.JDBCHistoryCacheTest.testNullAuthor
+org.opensolaris.opengrok.search.SearchEngineTest.testSearch
+org.opensolaris.opengrok.history.JDBCHistoryCacheTest.testHasCacheForDirectory
+org.opensolaris.opengrok.history.JDBCHistoryCacheTest.testRetryGetOnTimeout
+org.opensolaris.opengrok.history.JDBCHistoryCacheTest.testVeryLongCommitMessage
+org.opensolaris.opengrok.history.JDBCHistoryCacheTest.testStoreAndGet
+org.opensolaris.opengrok.history.JDBCHistoryCacheTest.testNullAuthor
+org.opensolaris.opengrok.search.SearchEngineTest.testSearch
+
+so you might want to look into these.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86651</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2013-01-02 08:50:02 +0000</bug_when>
+            <thetext>I think the test failures happen because the TAGS table is joined with the old results using an inner join, which means that only the changesets that are associated with a tag will show up. We probably need to change the queries to use outer joins in order to preserve the changesets that have no associated tag. I could take a look at that.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86652</commentid>
+            <who name="Stanislav Kozina">skozina</who>
+            <bug_when>2013-01-02 12:17:22 +0000</bug_when>
+            <thetext>(In reply to comment #38)
+Vlad,
+
+Thanks a lot for merging, your Christmas gift is well appreciated;-)
+
+(In reply to comment #39)
+&gt; I think the test failures happen because the TAGS table is joined with the old
+&gt; results using an inner join, which means that only the changesets that are
+&gt; associated with a tag will show up. We probably need to change the queries to
+&gt; use outer joins in order to preserve the changesets that have no associated
+&gt; tag. I could take a look at that.
+
+Knut,
+
+I&apos;d be very graceful if you could look at it. I have almost no experience with SQL, so the database part is the one I feel the most uncomfortable with. I will try to look at it as well, but not sure when as this month is going to be pretty busy for me.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86653</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2013-01-03 19:59:24 +0000</bug_when>
+            <thetext>I made the getFileHistory and getDirHistory queries use an outer join in changeset 1422:10451cf14f68.
+
+The JUnit tests ran cleanly in my environment after that change.
+
+I also indexed a checked out copy of the OpenGrok repository with history stored in a Derby database and verified that the tags did show up in the history listing. (Except, as Vlad already has noted, only tags on changesets that actually touched the file are shown.)</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86654</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2013-01-03 20:08:54 +0000</bug_when>
+            <thetext>(In reply to comment #41)
+&gt; I also indexed a checked out copy of the OpenGrok repository with history
+&gt; stored in a Derby database and verified that the tags did show up in the
+&gt; history listing. (Except, as Vlad already has noted, only tags on changesets
+&gt; that actually touched the file are shown.)
+
+Hmm... In fact, that seems to work for FileHistoryCache, so it looks like there&apos;s something more that needs to be fixed for JDBCHistoryCache.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86655</commentid>
+            <who name="Stanislav Kozina">skozina</who>
+            <bug_when>2013-01-04 10:52:21 +0000</bug_when>
+            <thetext>&gt; Hmm... In fact, that seems to work for FileHistoryCache, so it looks like
+&gt; there&apos;s something more that needs to be fixed for JDBCHistoryCache.
+
+Knut,
+
+Thanks for fixing the unit tests.
+
+I am very surprised if the tags are not shown in all respective revisions when using JDBCHistoryCache. This is done by pre-reading all tags into list and assigning them to the last previous commit, which should IIRC not be dependant on HistoryCache used.
+
+I will check what happens in case of JDBCHistoryCache, however as I wrote I probably can&apos;t make it till the end of the month.</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

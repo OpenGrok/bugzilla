@@ -1,0 +1,322 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>13728</bug_id>
+          
+          <creation_ts>2010-01-07 13:30:00 +0000</creation_ts>
+          <short_desc>CTags parsing problem:</short_desc>
+          <delta_ts>2010-01-11 16:14:51 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>analyzer</component>
+          <version>unspecified</version>
+          <rep_platform>Other</rep_platform>
+          <op_sys>Linux</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXED</resolution>
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>normal</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Bruce Furber">bruce30062</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          <cc>knut.hatlen</cc>
+    
+    <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>61563</commentid>
+            <who name="Bruce Furber">bruce30062</who>
+            <bug_when>2010-01-07 13:30:25 +0000</bug_when>
+            <thetext>Opengrok version 0.8.1
+Processes about a large number of files then continuosly generates this error.
+
+
+Adding: /gds/prod/s/sflcmpa0.c (CAnalyzer)
+Adding: /gds/prod/s/sflcmpa0.h (CAnalyzer)
+Jan 7, 2010 7:59:45 AM org.opensolaris.opengrok.analysis.Ctags readTags
+WARNING: CTags parsing problem: 
+sun.io.MalformedInputException
+	at sun.io.ByteToCharUTF8.convert(ByteToCharUTF8.java:278)
+	at sun.nio.cs.StreamDecoder$ConverterSD.convertInto(StreamDecoder.java:316)
+	at sun.nio.cs.StreamDecoder$ConverterSD.implRead(StreamDecoder.java:366)
+	at sun.nio.cs.StreamDecoder.read(StreamDecoder.java:252)
+	at java.io.InputStreamReader.read(InputStreamReader.java:212)
+	at java.io.BufferedReader.fill(BufferedReader.java:157)
+	at java.io.BufferedReader.readLine(BufferedReader.java:320)
+	at java.io.BufferedReader.readLine(BufferedReader.java:383)
+	at org.opensolaris.opengrok.analysis.Ctags.readTags(Ctags.java:147)
+	at org.opensolaris.opengrok.analysis.Ctags.doCtags(Ctags.java:138)
+	at org.opensolaris.opengrok.analysis.plain.PlainAnalyzer.analyze(PlainAnalyzer.java:89)
+	at org.opensolaris.opengrok.analysis.c.CAnalyzer.analyze(CAnalyzer.java:58)
+	at org.opensolaris.opengrok.analysis.AnalyzerGuru.getDocument(AnalyzerGuru.java:250)
+	at org.opensolaris.opengrok.index.IndexDatabase.addFile(IndexDatabase.java:560)
+	at org.opensolaris.opengrok.index.IndexDatabase.indexDown(IndexDatabase.java:690)
+	at org.opensolaris.opengrok.index.IndexDatabase.update(IndexDatabase.java:327)
+	at org.opensolaris.opengrok.index.Indexer$2.run(Indexer.java:569)
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:432)
+	at java.util.concurrent.FutureTask$Sync.innerRun(FutureTask.java:284)
+	at java.util.concurrent.FutureTask.run(FutureTask.java:138)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:678)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:703)
+	at java.lang.Thread.run(Thread.java:811)
+Jan 7, 2010 7:59:45 AM org.opensolaris.opengrok.analysis.Ctags readTags
+SEVERE: CTag reader cycle was interrupted!
+Adding: /gds/prod/s/sflcnsa0.c (CAnalyzer)
+Jan 7, 2010 7:59:45 AM org.opensolaris.opengrok.analysis.Ctags readTags
+WARNING: CTags parsing problem: 
+sun.io.MalformedInputException
+	at sun.io.ByteToCharUTF8.convert(ByteToCharUTF8.java:278)</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>61709</commentid>
+              <attachid>3380</attachid>
+            <who name="Bruce Furber">bruce30062</who>
+            <bug_when>2010-01-08 18:59:07 +0000</bug_when>
+            <thetext>Created attachment 3380
+First one with problem</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>61710</commentid>
+              <attachid>3380</attachid>
+            <who name="Bruce Furber">bruce30062</who>
+            <bug_when>2010-01-08 19:00:55 +0000</bug_when>
+            <thetext>Comment on attachment 3380
+First one with problem
+
+File indexed OK in release 0.7</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>61819</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2010-01-11 09:20:00 +0000</bug_when>
+            <thetext>I wasn&apos;t able to reproduce this (OpenGrok 0.8.1, ctags 5.8) with the attached file. I think the problem is with the file that&apos;s indexed after sflcmpa0.h. &quot;Adding: ...&quot; is only printed after the file has been indexed. (Yes, this is misleading. I will file a separate bug for it.)</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>61836</commentid>
+            <who name="Bruce Furber">bruce30062</who>
+            <bug_when>2010-01-11 13:49:56 +0000</bug_when>
+            <thetext>(In reply to comment #3)
+&gt; I wasn&apos;t able to reproduce this (OpenGrok 0.8.1, ctags 5.8) with the attached
+&gt; file. I think the problem is with the file that&apos;s indexed after sflcmpa0.h.
+&gt; &quot;Adding: ...&quot; is only printed after the file has been indexed. (Yes, this is
+&gt; misleading. I will file a separate bug for it.)</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>61839</commentid>
+            <who name="Bruce Furber">bruce30062</who>
+            <bug_when>2010-01-11 13:54:09 +0000</bug_when>
+            <thetext>(In reply to comment #3)
+The SLES10 SP2 system has Ctags 5.5.4 I will work on upgrading it.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>61849</commentid>
+            <who name="Bruce Furber">bruce30062</who>
+            <bug_when>2010-01-11 16:14:51 +0000</bug_when>
+            <thetext>CTAGS 5.8 works OK for me too. Thanks.</thetext>
+          </long_desc>
+      
+          <attachment
+              isobsolete="0"
+              ispatch="0"
+              isprivate="0"
+              isurl="0"
+          >
+            <attachid>3380</attachid>
+            <date>2010-01-08 18:59:00 +0000</date>
+            <delta_ts>2010-01-08 19:00:54 +0000</delta_ts>
+            <desc>First one with problem</desc>
+            <filename>sflcmpa0.h</filename>
+            <type>text/plain</type>
+            <size>8839</size>
+            <attacher>bruce30062</attacher>
+            
+              <data encoding="base64">Ly8qKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioq
+KioqKioqKioqKioqKiAgICAgICAgICAKLy8gSEVBREVSICA9IFNGTENNUCAgICAgICAgIFZFUlNJ
+T04gPSBBMCAgICAgICAgICAgICAgICAgICAgICAgICAgICAgKiAgICAgICAgICAKLy8qKioqKioq
+KioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioq
+KioqKiAgICAgICAgICAKLy8qKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioq
+KioqKioqKioqKioqKioqKioqKioqKioqKioqKiAgICAgICAgICAKLy8gICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgKiAgICAg
+ICAgICAKLy8gSEVBREVSIEZJTEUgTkFNRS4uU0ZMQ01QLkggICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgKiAgICAgICAgICAKLy8gSEVBREVSIEZJTEUgVFlQRS4uVFBGICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgKiAgICAgICAgICAKLy8g
+RE9DVU1FTlQgTkFNRS4uLiAgTm9uZSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgKiAgICAgICAgICAKLy8gREVTQ1JJUFRJT04uLi4uLiAgU3RhbmRhcmQgRnVuY3Rp
+b24gTGlicmFyeSAgICAgICAgICAgICAgICAgICAgICAgKiAgICAgICAgICAKLy8gTEVWRUwuLi4u
+Li4uLi4uLiAgVkVSU0lPTiAxICBNT0RJRklDQVRJT04gMCAgICAgICAgICAgICAgICAgICAgICAg
+KiAgICAgICAgICAKLy8gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgKiAgICAgICAgICAKLy8gRlVOQ1RJT04uLi4gQ29tcHJl
+c3Npb24gZnVuY3Rpb25zLiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgKiAgICAgICAg
+ICAKLy8gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgKiAgICAgICAgICAKLy8qKioqKioqKioqKioqKioqKioqKioqKioqKioq
+KioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKiAgICAgICAgICAKLy8gICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgKiAgICAgICAgICAKLy8gRExMICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgKiAgICAgICAgICAKLy8gICAuIFUyMDQgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgKiAg
+ICAgICAgICAKLy8gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgKiAgICAgICAgICAKLy8gREVQRU5ERU5DSUVTOiAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgKiAgICAgICAgICAK
+Ly8gICAuIE5vbmUgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgKiAgICAgICAgICAKLy8gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgKiAgICAgICAgICAKLy8gUkVTVFJJ
+Q1RJT05TOiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgKiAgICAgICAgICAKLy8gICAuIE5vbmUgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgKiAgICAgICAgICAKLy8gICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgKiAgICAg
+ICAgICAKLy8gU1BFQ0lBTCBDT05TSURFUkFUSU9OUzogICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgKiAgICAgICAgICAKLy8gICAuIE5vbmUgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgKiAgICAgICAgICAKLy8g
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgKiAgICAgICAgICAKLy8qKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioq
+KioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKiAgICAgICAgICAKLy8gICAgICAgICAg
+ICAgICAgICAgICAgICAgIFdTUCBBQ1RJVklUWSBMT0cgICAgICAgICAgICAgICAgICAgICAgICAg
+KiAgICAgICAgICAKLy8gICAgICAgICAgICAgICAgICAgICAgICAgLS0tLS0tLS0tLS0tLS0tLS0g
+ICAgICAgICAgICAgICAgICAgICAgICAgKiAgICAgICAgICAKLy8gICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgKiAgICAgICAg
+ICAKLy8gQ0hBTkdFICAgUFJPR1JBTU1FUiAgREVTQ1JJUFRJT04gICAgICAgICAgICAgICAgICAg
+IFZFUlNJT04gIERBVEUgKiAgICAgICAgICAKLy8gTlVNQkVSICAgICAgTkFNRSAgICAgT0YgVEhF
+IENIQU5HRSAgICAgICAgICAgICAgICAgIE5FVy9GQksgIE1NL1lSKiAgICAgICAgICAKLy8tLS0t
+LS0tLSAgLS0tLS0tLS0tLSAgLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0gIC0tLS0tLS0g
+IC0tLS0tKiAgICAgICAgICAKLy9DUzE5MzUxICAgUmViZWwgICAgICAgQ3JlYXRlIGhlYWRlciAg
+ICAgICAgICAgICAgICAgICBBMC8tLSAgIDA1LzAzKiAgICAgICAgICAKLy8gICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgKiAg
+ICAgICAgICAKLy8qKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioq
+KioqKioqKioqKioqKioqKioqKioqKiAgICAgICAgICAKLyogIC0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS08UHJvbG9nPi0gICAK
+ICAgIE5hbWU6ICAgICAgIHNmbGNvbXAuaCAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAKICAgIFRpdGxlOiAgICAgIENvbXByZXNzaW9uIGZ1bmN0
+aW9ucyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgIFBhY2th
+Z2U6ICAgIFN0YW5kYXJkIEZ1bmN0aW9uIExpYnJhcnkgKFNGTCkgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAKICAgIFdyaXR0ZW46ICAgIDkxLzA1LzIwICBpTWF0aXggU0ZMIHByb2pl
+Y3QgdGVhbSA8c2ZsQGltYXRpeC5jb20+ICAgICAgICAgICAgICAKICAgIFJldmlzZWQ6ICAgIDk3
+LzA5LzA4ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAKICAgIFN5bm9wc2lzOiAgIFZhcmlvdXMgY29tcHJlc3Npb24vZGVjb21wcmVzc2lvbiBm
+dW5jdGlvbnMuICBUaGUgTFotdHlwZSAgICAgICAKICAgICAgICAgICAgICAgIGFsZ29yaXRoIChM
+WlJXMS9LSCkgd2FzIG9yaWdpbmFsbHkgd3JpdHRlbiBieSBLdXJ0IEhhZW5lbiAgICAgICAKICAg
+ICAgICAgICAgICAgIDxnaGdhZWE4QGJsZWt1bDExPiBhbmQgbWFkZSBwb3J0YWJsZSBieSBQLiBI
+aW50amVucy4gVGhpcyAgICAgICAKICAgICAgICAgICAgICAgIGlzIGEgcmVhc29uYWJsZSBMWi9S
+TEUgYWxnb3JpdGhtLCB2ZXJ5IGZhc3QsIGJ1dCBhYm91dCAzMCUgICAgICAKICAgICAgICAgICAg
+ICAgIGxlc3MgZWZmaWNpZW50IHRoYW4gYSBaSVAtdHlwZSBhbGdvcml0aG0gaW4gdGVybXMgb2Yg
+c3BhY2UuICAgICAKICAgICAgICAgICAgICAgIFRoZSBSTEUgYWxnb3JpdGhtcyBhcmUgYmV0dGVy
+IHN1aXRlZCB0byBjb21wcmVzc2luZyBzcGFyc2UgICAgICAKICAgICAgICAgICAgICAgIGRhdGEu
+ICBUaGUgbnVsbHMgdmFyaWFudCBpcyBzcGVjaWZpY2FsbHkgdHVuZWQgdG8gZGF0YSB0aGF0ICAg
+ICAKICAgICAgICAgICAgICAgIGNvbnNpc3RzIG1vc3RseSBvZiBiaW5hcnkgemVyb2VzLiAgVGhl
+IGJpdHMgdmFyaWFudCBpcyAgICAgICAgICAKICAgICAgICAgICAgICAgIHR1bmVkIGZvciBjb21w
+cmVzc2luZyBzcGFyc2UgYml0bWFwcy4gICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgIENv
+cHlyaWdodDogIENvcHlyaWdodCAoYykgMTk5MS05OSBpTWF0aXggQ29ycG9yYXRpb24gICAgICAg
+ICAgICAgICAgICAgICAgICAKICAgIExpY2Vuc2U6ICAgIFRoaXMgaXMgZnJlZSBzb2Z0d2FyZTsg
+eW91IGNhbiByZWRpc3RyaWJ1dGUgaXQgYW5kL29yIG1vZGlmeSAgICAKICAgICAgICAgICAgICAg
+IGl0IHVuZGVyIHRoZSB0ZXJtcyBvZiB0aGUgU0ZMIExpY2Vuc2UgQWdyZWVtZW50IGFzIHByb3Zp
+ZGVkICAgICAKICAgICAgICAgICAgICAgIGluIHRoZSBmaWxlIExJQ0VOU0UuVFhULiAgVGhpcyBz
+b2Z0d2FyZSBpcyBkaXN0cmlidXRlZCBpbiAgICAgICAKICAgICAgICAgICAgICAgIHRoZSBob3Bl
+IHRoYXQgaXQgd2lsbCBiZSB1c2VmdWwsIGJ1dCB3aXRob3V0IGFueSB3YXJyYW50eS4gICAgICAK
+IC0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLTwvUHJvbG9nPi0qLyAKI2lmbmRlZiBTRkxDT01QX0lOQ0xVREVEICAgICAgICAg
+ICAgICAgLyogIEFsbG93IG11bHRpcGxlIGluY2x1c2lvbnMgICAgICAgICovICAKI2RlZmluZSBT
+RkxDT01QX0lOQ0xVREVEICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKLy8qKioqKioqKioqKioqKioq
+KioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioq
+KioqICAKLy8gICAgICAgICAgICAgICAgICAgICAgICAgICAgICBJbmNsdWRlcyAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAqICAKLy8qKioqKioqKioqKioqKioqKioqKioqKioq
+KioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqICAKI2lu
+Y2x1ZGUgPHNmbHByZS5oPiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKLy8qKioqKioqKioq
+KioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioq
+KioqKioqKioqICAKLy8gICAgICAgICAgICAgICAgICAgICAgICAgICAgICBQcm90b3R5cGVzICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAqICAKLy8qKioqKioqKioqKioqKioqKioq
+KioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioq
+ICAKI2lmZGVmIF9fY3BsdXNwbHVzICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAKZXh0ZXJuICJDIiB7ICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKI2VuZGlm
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKd29yZCBjb21wcmVzc19i
+bG9jayAoY29uc3QgYnl0ZSAqc291cmNlLCBieXRlICpkZXN0LCB3b3JkIHNvdXJjZV9zaXplKTsg
+ICAgICAgICAKd29yZCBleHBhbmRfYmxvY2sgICAoY29uc3QgYnl0ZSAqc291cmNlLCBieXRlICpk
+ZXN0LCB3b3JkIHNvdXJjZV9zaXplKTsgICAgICAgICAKd29yZCBjb21wcmVzc19ybGUgICAoICAg
+ICAgYnl0ZSAqc291cmNlLCBieXRlICpkZXN0LCB3b3JkIHNvdXJjZV9zaXplKTsgICAgICAgICAK
+d29yZCBleHBhbmRfcmxlICAgICAoY29uc3QgYnl0ZSAqc291cmNlLCBieXRlICpkZXN0LCB3b3Jk
+IHNvdXJjZV9zaXplKTsgICAgICAgICAKd29yZCBjb21wcmVzc19udWxscyAoICAgICAgYnl0ZSAq
+c291cmNlLCBieXRlICpkZXN0LCB3b3JkIHNvdXJjZV9zaXplKTsgICAgICAgICAKd29yZCBleHBh
+bmRfbnVsbHMgICAoY29uc3QgYnl0ZSAqc291cmNlLCBieXRlICpkZXN0LCB3b3JkIHNvdXJjZV9z
+aXplKTsgICAgICAgICAKd29yZCBjb21wcmVzc19iaXRzICAoICAgICAgYnl0ZSAqc291cmNlLCBi
+eXRlICpkZXN0LCB3b3JkIHNvdXJjZV9zaXplKTsgICAgICAgICAKd29yZCBleHBhbmRfYml0cyAg
+ICAoY29uc3QgYnl0ZSAqc291cmNlLCBieXRlICpkZXN0LCB3b3JkIHNvdXJjZV9zaXplKTsgICAg
+ICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKI2lmZGVmIF9fY3BsdXNwbHVzICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKfSAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAKI2VuZGlmICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAKLy8qKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioq
+KioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqICAKLy8gICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgUHJhZ21hIG1hcHMgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAq
+ICAKLy8qKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioq
+KioqKioqKioqKioqKioqKioqKioqKioqICAKI2lmZGVmIF9fMzcwX18KI3ByYWdtYSBtYXAoY29t
+cHJlc3NfYmxvY2ssIlUyMDQwMTgxIikgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAKI2Vsc2UKICAjZGVmaW5lIGNvbXByZXNzX2Jsb2NrIFUyMDQwMTgxCiNlbmRpZgoj
+aWZkZWYgX18zNzBfXwojcHJhZ21hIG1hcChleHBhbmRfYmxvY2sgICwiVTIwNDAxODIiKSAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAojZWxzZQogICNkZWZpbmUgZXhw
+YW5kX2Jsb2NrICAgVTIwNDAxODIKI2VuZGlmCiNpZmRlZiBfXzM3MF9fCiNwcmFnbWEgbWFwKGNv
+bXByZXNzX3JsZSAgLCJVMjA0MDE4MyIpICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgCiNlbHNlCiAgI2RlZmluZSBjb21wcmVzc19ybGUgICBVMjA0MDE4MwojZW5kaWYK
+I2lmZGVmIF9fMzcwX18KI3ByYWdtYSBtYXAoZXhwYW5kX3JsZSAgICAsIlUyMDQwMTg0IikgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKI2Vsc2UKICAjZGVmaW5lIGV4
+cGFuZF9ybGUgICAgIFUyMDQwMTg0CiNlbmRpZgojaWZkZWYgX18zNzBfXwojcHJhZ21hIG1hcChj
+b21wcmVzc19udWxscywiVTIwNDAxODUiKSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgIAojZWxzZQogICNkZWZpbmUgY29tcHJlc3NfbnVsbHMgVTIwNDAxODUKI2VuZGlm
+CiNpZmRlZiBfXzM3MF9fCiNwcmFnbWEgbWFwKGV4cGFuZF9udWxscyAgLCJVMjA0MDE4NiIpICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiNlbHNlCiAgI2RlZmluZSBl
+eHBhbmRfbnVsbHMgICBVMjA0MDE4NgojZW5kaWYKI2lmZGVmIF9fMzcwX18KI3ByYWdtYSBtYXAo
+Y29tcHJlc3NfYml0cyAsIlUyMDQwMTg3IikgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAKI2Vsc2UKICAjZGVmaW5lIGNvbXByZXNzX2JpdHMgIFUyMDQwMTg3CiNlbmRp
+ZgojaWZkZWYgX18zNzBfXwojcHJhZ21hIG1hcChleHBhbmRfYml0cyAgICwiVTIwNDAxODgiKSAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAojZWxzZQogICNkZWZpbmUg
+ZXhwYW5kX2JpdHMgICAgVTIwNDAxODgKI2VuZGlmCiAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCi8v
+KioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioq
+KioqKioqKioqKioqKioqKioqKiAgCi8vICAgICAgICAgICAgICAgICAgICAgICAgICAgIGVuZCBz
+ZmxjbXAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgKiAgCi8vKioqKioqKioq
+KioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioq
+KioqKioqKioqKiAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiNlbmRpZiAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgCg==
+</data>
+
+          </attachment>
+      
+
+    </bug>
+
+</bugzilla>

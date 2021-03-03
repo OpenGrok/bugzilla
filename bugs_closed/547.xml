@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>547</bug_id>
+          
+          <creation_ts>2008-02-17 14:35:00 +0000</creation_ts>
+          <short_desc>History for root of repository lacks revision numbers and doesn&apos;t show all revisions</short_desc>
+          <delta_ts>2008-03-18 06:55:15 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>scm</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>DUPLICATE</resolution>
+          <dup_id>546</dup_id>
+          
+          
+          
+          
+          <priority>P4</priority>
+          <bug_severity>minor</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Knut Anders Hatlen">knut.hatlen</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>1695</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2008-02-17 14:35:26 +0000</bug_when>
+            <thetext>See http://src.opensolaris.org/source/history/opengrok/
+
+Also, only the first line of each log message is shown.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>2635</commentid>
+            <who name="Trond Norbye">trond.norbye</who>
+            <bug_when>2008-03-18 06:55:15 +0000</bug_when>
+            <thetext>This is a duplicate (but here the index db is found, but it should not be used)
+
+*** This bug has been marked as a duplicate of bug 546 ***</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

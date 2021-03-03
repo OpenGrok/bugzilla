@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>11264</bug_id>
+          
+          <creation_ts>2009-09-09 17:38:00 +0000</creation_ts>
+          <short_desc>Add a python specific language analyzer.</short_desc>
+          <delta_ts>2010-06-23 07:41:40 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>analyzer</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXINSOURCE</resolution>
+          
+          
+          
+          
+          
+          <priority>P4</priority>
+          <bug_severity>enhancement</bug_severity>
+          <target_milestone>0.10</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Garen">garen</reporter>
+          <assigned_to name="Lubos Kosco">Lubos.Kosco</assigned_to>
+          <cc>Lubos.Kosco</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>49304</commentid>
+            <who name="Garen">garen</who>
+            <bug_when>2009-09-09 17:38:01 +0000</bug_when>
+            <thetext>See this thread:
+
+http://www.opensolaris.org/jive/thread.jspa?threadID=111842&amp;tstart=0
+
+Contact Julian Scheid for collaboration.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>74628</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2010-06-22 14:34:54 +0000</bug_when>
+            <thetext>it seems most of stuff can be implemented,
+however signature variables from function definitions will be missing, since ctags doesn&apos;t support them</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>74652</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2010-06-23 07:41:40 +0000</bug_when>
+            <thetext>changeset:   1028:c87ac1c398d8</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

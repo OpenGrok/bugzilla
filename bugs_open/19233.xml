@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>19233</bug_id>
+          
+          <creation_ts>2012-08-04 05:45:00 +0000</creation_ts>
+          <short_desc>SEVERE: Unexpected Exception java.lang.NoClassDefFoundError</short_desc>
+          <delta_ts>2012-08-04 05:45:41 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>indexer</component>
+          <version>unspecified</version>
+          <rep_platform>Xen/i386</rep_platform>
+          <op_sys>Linux</op_sys>
+          <bug_status>NEW</bug_status>
+          
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>major</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Milind Koyande">milind.koyande</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>86573</commentid>
+            <who name="Milind Koyande">milind.koyande</who>
+            <bug_when>2012-08-04 05:45:41 +0000</bug_when>
+            <thetext>Hello,
+
+While generating index (OpenGrok 0.11) I am getting following error:
+==
+[root@centos bin]# OPENGROK_VERBOSE=true ./OpenGrok index /usr/local/opengrok/source
+Loading the default instance configuration ...
+/usr/local/tomcat
+/usr/local/opengrok/bin/lib
+Exception: org/apache/commons/jrcs/rcs/ParseException
+Aug 4, 2012 10:58:45 AM org.opensolaris.opengrok.index.Indexer main
+SEVERE: Unexpected Exception
+java.lang.NoClassDefFoundError: org/apache/commons/jrcs/rcs/ParseException
+        at org.opensolaris.opengrok.history.RepositoryFactory.&lt;clinit&gt;(RepositoryFactory.java:41)
+        at org.opensolaris.opengrok.index.Indexer.main(Indexer.java:421)
+Caused by: java.lang.ClassNotFoundException: org.apache.commons.jrcs.rcs.ParseException
+        at java.net.URLClassLoader$1.run(URLClassLoader.java:202)
+        at java.security.AccessController.doPrivileged(Native Method)
+        at java.net.URLClassLoader.findClass(URLClassLoader.java:190)
+        at java.lang.ClassLoader.loadClass(ClassLoader.java:306)
+        at sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:301)
+        at java.lang.ClassLoader.loadClass(ClassLoader.java:247)
+        ... 2 more
+==
+
+Please assist.</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

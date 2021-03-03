@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>18755</bug_id>
+          
+          <creation_ts>2011-07-28 15:21:00 +0000</creation_ts>
+          <short_desc>missing trailing slash in Masthead links leads to non functional HTTPS</short_desc>
+          <delta_ts>2011-12-13 13:54:37 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>webapp</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>DUPLICATE</resolution>
+          <dup_id>18281</dup_id>
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>major</bug_severity>
+          <target_milestone>0.11</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Vladimir Kotal">vladimir.kotal</reporter>
+          <assigned_to name="Lubos Kosco">Lubos.Kosco</assigned_to>
+          <cc>jel+osolbugs</cc>
+    
+    <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>84544</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2011-07-28 15:21:54 +0000</bug_when>
+            <thetext>After converting OpenGrok instance to HTTPS I realized the &quot;Masthead&quot; links do not work because they are missing ending slash.
+
+E.g. from source code of the page for https://virtual4.cz.oracle.com:8443/source/xref/opengrok-dev/debian/opengrok.install:
+
+ &lt;div id=&quot;Masthead&quot;&gt;&lt;tt&gt;&lt;a href=&quot;/source/xref/&quot;&gt;xref&lt;/a&gt;: /&lt;a href=&quot;/source/xref/opengrok-dev&quot;&gt;opengrok-dev&lt;/a&gt;/&lt;a href=&quot;/source/xref/opengrok-dev/src&quot;&gt;src&lt;/a&gt;
+
+Clicking on the link &apos;opengrok-dev&apos; will take me to http://virtual4.cz.oracle.com:8443/source/xref/opengrok-dev (note the http:// instead of https://) which fails because there is no HTTP protocol available on that port, only HTTPS.
+
+Using https://virtual4.cz.oracle.com:8443/source/xref/opengrok-dev/ works fine.
+
+It&apos;s not clear to me what causes the change from https:// to http:// but the trailing slashes should be added to the Masthead links anyway.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>84548</commentid>
+            <who name="Jens Elkner">jel+osolbugs</who>
+            <bug_when>2011-07-28 18:33:26 +0000</bug_when>
+            <thetext>The trailing slash problem should already been fixed by #18281.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>84563</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2011-07-29 08:04:28 +0000</bug_when>
+            <thetext>(In reply to comment #1)
+&gt; The trailing slash problem should already been fixed by #18281.
+
+I should have added that we are seeing this on 0.10.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>84757</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2011-08-12 14:08:36 +0000</bug_when>
+            <thetext>(In reply to comment #2)
+&gt; (In reply to comment #1)
+&gt; &gt; The trailing slash problem should already been fixed by #18281.
+&gt; 
+&gt; I should have added that we are seeing this on 0.10.
+
+more precisely 0.10 (f6047b328bd2)</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>85910</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2011-12-13 12:02:27 +0000</bug_when>
+            <thetext>I will retry with 0.11 and eventually close as dup ...</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>85914</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2011-12-13 13:54:21 +0000</bug_when>
+            <thetext>I just tested 
+https://virtual8.cz.oracle.com:8443/source/xref/opengrok-dev/
+
+and it works, hence closing as dup
+
+*** This bug has been marked as a duplicate of bug 18281 ***</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

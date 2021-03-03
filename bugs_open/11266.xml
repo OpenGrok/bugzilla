@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>11266</bug_id>
+          
+          <creation_ts>2009-09-09 17:46:00 +0000</creation_ts>
+          <short_desc>Allow language-specific searches</short_desc>
+          <delta_ts>2009-09-09 17:47:14 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>indexer</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>NEW</bug_status>
+          
+          
+          
+          
+          
+          
+          <priority>P4</priority>
+          <bug_severity>enhancement</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Garen">garen</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>49306</commentid>
+            <who name="Garen">garen</who>
+            <bug_when>2009-09-09 17:46:35 +0000</bug_when>
+            <thetext>Searching by extension isn&apos;t always adequate; unfortunately languages have lots of extensions. 
+
+On the plus side, some file/mime.magic should be able to detect most of them.</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

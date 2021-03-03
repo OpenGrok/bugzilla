@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>16454</bug_id>
+          
+          <creation_ts>2010-07-04 18:29:00 +0000</creation_ts>
+          <short_desc>Trayapp shuts down when a window is closed</short_desc>
+          <delta_ts>2010-07-07 21:24:34 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>trayapp</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXED</resolution>
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>minor</bug_severity>
+          <target_milestone>0.10</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Knut Anders Hatlen">knut.hatlen</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>75057</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2010-07-04 18:29:23 +0000</bug_when>
+            <thetext>If you click the [X] button in the window title line to close one of the windows in the trayapp, the entire process shuts down.
+
+Clicking the &quot;Close&quot; button also closes the window, but it leaves the trayapp running. The [X] button should behave the same way.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>75180</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2010-07-07 21:09:19 +0000</bug_when>
+            <thetext>changeset:   1045:fe06f9ba330a
+
+Changed default close operation for ConfigurationsFrame and NotificationsFrame from EXIT to DISPOSE to match the &quot;Close&quot; button.
+
+In SettingsFrame, I changed it from EXIT to NOTHING, and added a WindowListener that calls the same method as the &quot;Close&quot; button (which saves the settings before disposing the frame).</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

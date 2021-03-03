@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>12961</bug_id>
+          
+          <creation_ts>2009-12-01 14:32:00 +0000</creation_ts>
+          <short_desc>use higher number of ctags processes to do indexing</short_desc>
+          <delta_ts>2009-12-02 14:15:17 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>indexer</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXED</resolution>
+          
+          
+          
+          
+          
+          <priority>P4</priority>
+          <bug_severity>enhancement</bug_severity>
+          <target_milestone>0.8.1</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Vladimir Kotal">vladimir.kotal</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          <cc>knut.hatlen</cc>
+    
+    <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>57825</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2009-12-01 14:32:21 +0000</bug_when>
+            <thetext>By default, the number of ctags processes spawned by the indexer is equal to the number of CPUs/threads in the system. On 2 CPU AMD 2GHz system there is still room for improvement since the system is still partially idle (only OpenGrok is running).
+
+In other words - more indexer processes can be spawned by default.
+
+If anyone needs to gather the performance data, just let me know.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>57829</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2009-12-01 15:02:13 +0000</bug_when>
+            <thetext>You can specify how many threads to use in the indexer with the -T option (default is twice the number of available CPUs, I think). Does that increase the number of ctags processes? The number of threads will not exceed the number of projects being indexed, if I remember correctly.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>57830</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2009-12-01 15:07:50 +0000</bug_when>
+            <thetext>I am seeing just 2 ctags processes on a machine with 2 CPUs with default config:
+
+ba64-v20zd-prg06:~$ psrinfo -v
+Status of virtual processor 0 as of: 12/01/2009 16:06:08
+  on-line since 12/01/2009 10:02:59.
+  The i386 processor operates at 2191 MHz,
+	and has an i387 compatible floating point processor.
+Status of virtual processor 1 as of: 12/01/2009 16:06:08
+  on-line since 12/01/2009 10:03:01.
+  The i386 processor operates at 2191 MHz,
+	and has an i387 compatible floating point processor.
+ba64-v20zd-prg06:~$ pgrep exctags
+2956
+2596
+
+
+I am aware of the -T option, haven&apos;t tried it yet. But my point is that the default should be higher.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>57838</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2009-12-01 16:18:11 +0000</bug_when>
+            <thetext>You&apos;re right. The indexer starts as many threads as there are available processors. It&apos;s the history cache creation in HistoryGuru that starts twice as many threads. I don&apos;t see any reason why the indexer should use fewer threads than HistoryGuru.
+
+Do you think two times the number of available CPUs would be a reasonable default, or is there another number you had in mind?</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>57839</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2009-12-01 16:30:23 +0000</bug_when>
+            <thetext>I don&apos;t know. It depends on the workload and HW config (I/O subsystem, the &quot;strenght&quot; of execution units etc.). Some benchmarking should be tried first to see the nature of the performance function (gives time, gets number of threads).  But using nr_threads = 2 x CPU should not be very sub-optimal thanks to the mixed workload of OpenGrok.
+
+For example, this formula is used for ON builds (opensolaris.sh):
+
+     62 # Maximum number of dmake jobs.  The recommended number is 2 + (2 *
+     63 # NCPUS), where NCPUS is the number of CPUs on your build system.
+     64 maxjobs() {
+     65 	ncpu=`/usr/sbin/psrinfo -p`
+     66 	expr $ncpu \* 2 + 2
+     67 }
+     68 DMAKE_MAX_JOBS=`maxjobs`;			export DMAKE_MAX_JOBS</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>57945</commentid>
+            <who name="Trond Norbye">trond.norbye</who>
+            <bug_when>2009-12-02 08:07:16 +0000</bug_when>
+            <thetext>It seems that we have some confusion on how the multi-threading works. Within each &quot;project&quot; the indexing of the source is single threaded (that&apos;s because OpenGrok only does _one_ scan through the code and adds / removes files &quot;on the fly&quot;). We could modify this code to generate a list of files to index and perform the indexing of all the files in a separate threadpool. Currently you will only see multiple ctags processes when you index multiple _projects_, because all of the projects will be indexed in parallel.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>57956</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2009-12-02 09:36:24 +0000</bug_when>
+            <thetext>(In reply to comment #5)
+&gt; It seems that we have some confusion on how the multi-threading works. Within
+&gt; each &quot;project&quot; the indexing of the source is single threaded (that&apos;s because
+&gt; OpenGrok only does _one_ scan through the code and adds / removes files &quot;on the
+&gt; fly&quot;). We could modify this code to generate a list of files to index and
+&gt; perform the indexing of all the files in a separate threadpool. Currently you
+&gt; will only see multiple ctags processes when you index multiple _projects_,
+&gt; because all of the projects will be indexed in parallel.
+
+I see. This bug is tracking the indexing of more projects at once by default.
+
+The other change (parallelization of indexing of single project) is a theme for another bug.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>57989</commentid>
+            <who name="Trond Norbye">trond.norbye</who>
+            <bug_when>2009-12-02 14:15:17 +0000</bug_when>
+            <thetext>changeset:   910:d03918b9eff6</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

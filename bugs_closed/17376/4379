@@ -1,0 +1,29 @@
+# HG changeset patch
+# Parent 02caf782f15d572539fb1c8728838f454c1ca952
+
+This patch fixes a problem I was having with the download link
+displayed in mast.jsp.  The problem was that the link itself
+was not percent encoded, so directories named 'C#' would fail to go to the right
+place generating a 404.
+
+This patch assumes that <https://defect.opensolaris.org/bz/attachment.cgi?id=4376>
+has been applied (for mast.jsp). 
+
+ldavis@fonix.com
+SCA OS0110
+
+diff -r 02caf782f15d web/mast.jsp
+--- a/web/mast.jsp	Mon Nov 08 20:57:46 2010 -0700
++++ b/web/mast.jsp	Mon Nov 08 21:16:29 2010 -0700
+@@ -214,9 +214,9 @@
+                 }
+                String rev = request.getParameter("r");
+                if (rev == null || rev.equals("")) {
+-        %> | <a id="download" href="<%=context+Constants.rawP+path%>">Download</a><%
++        %> | <a id="download" href="<%=context+Constants.rawP+uriEncodedName%>">Download</a><%
+         } else {
+-        %> | <a id="download" href="<%=context+Constants.rawP+path%>?r=<%=rev%>">Download</a><%
++        %> | <a id="download" href="<%=context+Constants.rawP+uriEncodedName%>?r=<%=rev%>">Download</a><%
+         }
+      }
+ 

@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>19238</bug_id>
+          
+          <creation_ts>2012-09-17 13:02:00 +0000</creation_ts>
+          <short_desc>Mercurial history generator needs to be branch aware</short_desc>
+          <delta_ts>2012-09-18 12:31:43 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>indexer</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>INVALID</resolution>
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>normal</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Vladimir Kotal">vladimir.kotal</reporter>
+          <assigned_to name="Vladimir Kotal">vladimir.kotal</assigned_to>
+          <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>86608</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2012-09-17 13:02:49 +0000</bug_when>
+            <thetext>Similarly to Bug #14953 for CVS, Mercurial needs to trim the changesets to given branch, when the repository it is working with is a branch.
+
+This should be easy to do:
+  - check if TOP_LEVEL/.hg/branch file is present
+  - read the contents of the file (to say branchFile string)
+  - add -b followed by branchFile to &apos;cmd&apos; in getHistoryLogExecutor() method</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86612</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2012-09-18 11:27:06 +0000</bug_when>
+            <thetext>This is not so easy. Ideally the history should also include the changesets before the branched changesets. So, if we have something like this:
+
+o 4  default
+|
+|     o 5  foo
+|    /
+|   /
+o  o 3  foo
+| /
+|/
+o  2  default
+|
+|
+o  1  default
+|
+|
+o  0  default
+
+
+Then the output should include changesets 0,1,2,3,5 and nothing else.
+
+However, the initial approach gives us only changesets 3 and 5.
+
+The way to go would be:
+  1. hg log -b foo file
+     - get all changesets on branch foo and determine the first changeset there (3)
+  2. hg log -r:2 file
+     - this gets all changesets before 3-1
+
+I am not sure how this would work in more complicated branching scenarios.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86613</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2012-09-18 11:34:11 +0000</bug_when>
+            <thetext>Actually, the -f flag for hg log might do the trick.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86614</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2012-09-18 11:42:12 +0000</bug_when>
+            <thetext>I realized the problem appears only when hg pull is run on branched clone without the -b argument.
+
+If the repo is maintained as follows:
+
+hg clone -b foo repo
+cd repo
+hg pull -b foo
+hg update
+
+then the problem does not happen.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86615</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2012-09-18 12:01:44 +0000</bug_when>
+            <thetext>(In reply to comment #3)
+&gt; I realized the problem appears only when hg pull is run on branched clone
+&gt; without the -b argument.
+&gt; 
+&gt; If the repo is maintained as follows:
+&gt; 
+&gt; hg clone -b foo repo
+&gt; cd repo
+&gt; hg pull -b foo
+&gt; hg update
+&gt; 
+&gt; then the problem does not happen.
+
+Nevertheless, the fix (with additional -f for hg log if repo is a branch) can be added for repos which update across branches.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86616</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2012-09-18 12:26:38 +0000</bug_when>
+            <thetext>I see that -f is already present for files in MercurialRepository.java regardless whether the repo is branched, so this would be a NOP, closing.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86617</commentid>
+              <attachid>4669</attachid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2012-09-18 12:31:43 +0000</bug_when>
+            <thetext>Created attachment 4669
+diff of the original fix
+
+Here&apos;s the diff of the original fix for reference and in case anyone needs to determine hg root programatically.</thetext>
+          </long_desc>
+      
+          <attachment
+              isobsolete="0"
+              ispatch="0"
+              isprivate="0"
+              isurl="0"
+          >
+            <attachid>4669</attachid>
+            <date>2012-09-18 12:31:00 +0000</date>
+            <delta_ts>2012-09-18 12:31:43 +0000</delta_ts>
+            <desc>diff of the original fix</desc>
+            <filename>bug-19238.diff</filename>
+            <type>application/octet-stream</type>
+            <size>4351</size>
+            <attacher>vladimir.kotal</attacher>
+            
+              <data encoding="base64">ZGlmZiAtLWdpdCBhL3NyYy9vcmcvb3BlbnNvbGFyaXMvb3Blbmdyb2svaGlzdG9yeS9NZXJjdXJp
+YWxSZXBvc2l0b3J5LmphdmEgYi9zcmMvb3JnL29wZW5zb2xhcmlzL29wZW5ncm9rL2hpc3Rvcnkv
+TWVyY3VyaWFsUmVwb3NpdG9yeS5qYXZhCi0tLSBhL3NyYy9vcmcvb3BlbnNvbGFyaXMvb3Blbmdy
+b2svaGlzdG9yeS9NZXJjdXJpYWxSZXBvc2l0b3J5LmphdmEKKysrIGIvc3JjL29yZy9vcGVuc29s
+YXJpcy9vcGVuZ3Jvay9oaXN0b3J5L01lcmN1cmlhbFJlcG9zaXRvcnkuamF2YQpAQCAtMjYsNiAr
+MjYsNyBAQAogaW1wb3J0IGphdmEuaW8uQnl0ZUFycmF5SW5wdXRTdHJlYW07CiBpbXBvcnQgamF2
+YS5pby5CeXRlQXJyYXlPdXRwdXRTdHJlYW07CiBpbXBvcnQgamF2YS5pby5GaWxlOworaW1wb3J0
+IGphdmEuaW8uRmlsZVJlYWRlcjsKIGltcG9ydCBqYXZhLmlvLklPRXhjZXB0aW9uOwogaW1wb3J0
+IGphdmEuaW8uSW5wdXRTdHJlYW07CiBpbXBvcnQgamF2YS5pby5JbnB1dFN0cmVhbVJlYWRlcjsK
+QEAgLTU0LDkgKzU1LDExIEBACiAgICAgLyoqIFRoZSBjb21tYW5kIHRvIHVzZSB0byBhY2Nlc3Mg
+dGhlIHJlcG9zaXRvcnkgaWYgbm9uZSB3YXMgZ2l2ZW4gZXhwbGljaXRseSAqLwogICAgIHB1Ymxp
+YyBzdGF0aWMgZmluYWwgU3RyaW5nIENNRF9GQUxMQkFDSyA9ICJoZyI7CiAKLSAgICAvKiogVGhl
+IGJvb2xlYW4gcHJvcGVydHkgYW5kIGVudmlyb25tZW50IHZhcmlhYmxlIG5hbWUgdG8gaW5kaWNh
+dGUKKyAgICAvKioKKyAgICAgKiBUaGUgYm9vbGVhbiBwcm9wZXJ0eSBhbmQgZW52aXJvbm1lbnQg
+dmFyaWFibGUgbmFtZSB0byBpbmRpY2F0ZQogICAgICAqIHdoZXRoZXIgZm9yZXN0LWV4dGVuc2lv
+biBpbiBNZXJjdXJpYWwgYWRkcyByZXBvc2l0b3JpZXMgaW5zaWRlIHRoZQotICAgICAqIHJlcG9z
+aXRvcmllcy4gKi8KKyAgICAgKiByZXBvc2l0b3JpZXMuCisgICAgICovCiAgICAgcHVibGljIHN0
+YXRpYyBmaW5hbCBTdHJpbmcgTk9GT1JFU1RfUFJPUEVSVFlfS0VZID0KICAgICAgICAgIm9yZy5v
+cGVuc29sYXJpcy5vcGVuZ3Jvay5oaXN0b3J5Lm1lcmN1cmlhbC5kaXNhYmxlRm9yZXN0IjsKIApA
+QCAtNzUsNiArNzgsMzggQEAKICAgICAgICAgZGF0ZVBhdHRlcm4gPSAieXl5eS1NTS1kZCBoaDpt
+bSBaWlpaIjsKICAgICB9CiAKKworICAgIC8qKgorICAgICAqIERldGVybWluZSBoZyByb290IGZv
+ciBhIGZpbGUuCisgICAgICoKKyAgICAgKiBAcGFyYW0gZmlsZSBUaGUgZmlsZSB0byByZXRyaWV2
+ZSBoZyByb290IGZvcgorICAgICAqIEByZXR1cm4gU3RyaW5nIHdpdGggYWJzb2x1dGUgLmhnIGRp
+cmVjdG9yeSBwYXRoCisgICAgICovCisgICAgcHJpdmF0ZSBTdHJpbmcgZ2V0SGdSb290KEZpbGUg
+ZmlsZSkgeworICAgICAgICBTdHJpbmcgaGdyb290ID0gbnVsbDsKKwlGaWxlIGRpciA9IGZpbGU7
+CisKKyAgICAgICAgaWYgKCFkaXIuaXNEaXJlY3RvcnkoKSkKKyAgICAgICAgICAgIGRpciA9IGZp
+bGUuZ2V0UGFyZW50RmlsZSgpOworCisgICAgICAgIGRvIHsKKyAgICAgICAgICAgIEZpbGVbXSBs
+aXN0T2ZGaWxlcyA9IGRpci5saXN0RmlsZXMoKTsKKyAgICAgICAgICAgIGZvciAoRmlsZSBmIDog
+bGlzdE9mRmlsZXMpIHsKKyAgICAgICAgICAgICAgICBpZiAoZi5nZXROYW1lKCkuZXF1YWxzKCIu
+aGciKSkgeworICAgICAgICAgICAgICAgICAgICBoZ3Jvb3QgPSBmLmdldEFic29sdXRlUGF0aCgp
+OworICAgICAgICAgICAgICAgICAgICBicmVhazsKKyAgICAgICAgICAgICAgICB9CisgICAgICAg
+ICAgICAgICAgaWYgKGhncm9vdCAhPSBudWxsKQorICAgICAgICAgICAgICAgICAgICBicmVhazsK
+KyAgICAgICAgICAgIH0KKyAgICAgICAgICAgIGRpciA9IGRpci5nZXRQYXJlbnRGaWxlKCk7Cisg
+ICAgICAgIH0gd2hpbGUgKGRpciAhPSBudWxsKTsKKworICAgICAgICByZXR1cm4gaGdyb290Owor
+ICAgIH0KKworICAgIHByaXZhdGUgQm9vbGVhbiBpc0JyYW5jaCA9IG51bGw7CisgICAgcHJpdmF0
+ZSBTdHJpbmcgYnJhbmNoTmFtZSA9IG51bGw7CiAgICAgLyoqCiAgICAgICogR2V0IGFuIGV4ZWN1
+dG9yIHRvIGJlIHVzZWQgZm9yIHJldHJpZXZpbmcgdGhlIGhpc3RvcnkgbG9nIGZvciB0aGUKICAg
+ICAgKiBuYW1lZCBmaWxlLgpAQCAtOTcsNyArMTMyLDQ3IEBACiAgICAgICAgIGVuc3VyZUNvbW1h
+bmQoQ01EX1BST1BFUlRZX0tFWSwgQ01EX0ZBTExCQUNLKTsKICAgICAgICAgY21kLmFkZCh0aGlz
+LmNtZCk7CiAgICAgICAgIGNtZC5hZGQoImxvZyIpOwotICAgICAgICBpZiAoICFmaWxlLmlzRGly
+ZWN0b3J5KCkgKSB7IGNtZC5hZGQoIi1mIik7IH0KKyAgICAgICAgaWYgKCFmaWxlLmlzRGlyZWN0
+b3J5KCkpIHsgY21kLmFkZCgiLWYiKTsgfQorCisgICAgICAgIC8qIFdlIG9ubHkgd2FudCBjaGFu
+Z2VzZXRzIGZvciBwYXJ0aWN1bGFyIGJyYW5jaC4gKi8KKyAgICAgICAgaWYgKGlzQnJhbmNoID09
+IG51bGwpIHsKKyAgICAgICAgICAgIFN0cmluZyBoZ0RpciA9IGdldEhnUm9vdChmaWxlKTsKKyAg
+ICAgICAgICAgIGlmIChoZ0RpciA9PSBudWxsKSB7CisgICAgICAgICAgICAgICAgT3Blbkdyb2tM
+b2dnZXIuZ2V0TG9nZ2VyKCkubG9nKExldmVsLldBUk5JTkcsCisgICAgICAgICAgICAgICAgICAg
+ICJGYWlsZWQgdG8gZ2V0IGhnIHJvb3QgZm9yOiAiCisgICAgICAgICAgICAgICAgICAgICsgZmls
+ZS5nZXRBYnNvbHV0ZVBhdGgoKSk7CisgICAgICAgICAgICAgICAgLyogUmF0aGVyIHRoYW4gcmV0
+dXJuaW5nIGZhbHNlIGRhdGEgd2UgcmV0dXJuIG5vdGhpbmcuICovCisgICAgICAgICAgICAgICAg
+cmV0dXJuIG51bGw7CisgICAgICAgICAgICB9CisgICAgICAgICAgICBGaWxlIGJyYW5jaEZpbGUg
+PSBuZXcgRmlsZShoZ0RpciwgImJyYW5jaCIpOworICAgICAgICAgICAgaWYgKGJyYW5jaEZpbGUu
+aXNGaWxlKCkpIHsKKyAgICAgICAgICAgICAgICBTdHJpbmcgbGluZTsKKwkJaXNCcmFuY2ggPSBC
+b29sZWFuLlRSVUU7CisgICAgICAgICAgICAgICAgQnVmZmVyZWRSZWFkZXIgaW5wdXQgPQorICAg
+ICAgICAgICAgICAgICAgICBuZXcgQnVmZmVyZWRSZWFkZXIobmV3IEZpbGVSZWFkZXIoYnJhbmNo
+RmlsZSkpOworICAgICAgICAgICAgICAgIHRyeSB7CisgICAgICAgICAgICAgICAgICAgIGxpbmUg
+PSBpbnB1dC5yZWFkTGluZSgpOworICAgICAgICAgICAgICAgICAgICBpZiAobGluZSAhPSBudWxs
+KSB7CisgICAgICAgICAgICAgICAgICAgICAgICBicmFuY2hOYW1lID0gbGluZTsKKyAgICAgICAg
+ICAgICAgICAgICAgfQorICAgICAgICAgICAgICAgIH0KKyAgICAgICAgICAgICAgICBjYXRjaCAo
+amF2YS5pby5JT0V4Y2VwdGlvbiBlKSB7CisgICAgICAgICAgICAgICAgICAgIE9wZW5Hcm9rTG9n
+Z2VyLmdldExvZ2dlcigpLmxvZyhMZXZlbC5XQVJOSU5HLAorICAgICAgICAgICAgICAgICAgICAg
+ICAgIkZhaWxlZCB0byBnZXQgYnJhbmNoIGZyb206ICIgKyBicmFuY2hGaWxlKTsKKyAgICAgICAg
+ICAgICAgICAgICAgcmV0dXJuIG51bGw7CisgICAgICAgICAgICAgICAgfQorICAgICAgICAgICAg
+ICAgIGZpbmFsbHkgeworICAgICAgICAgICAgICAgICAgICBJT1V0aWxzLmNsb3NlKGlucHV0KTsK
+KyAgICAgICAgICAgICAgICB9CisgICAgICAgICAgICB9IGVsc2UgeworCSAgICAgICAgaXNCcmFu
+Y2ggPSBCb29sZWFuLkZBTFNFOworCSAgICB9CisgICAgICAgIH0KKyAgICAgICAgaWYgKGlzQnJh
+bmNoLmVxdWFscyhCb29sZWFuLlRSVUUpICYmIGJyYW5jaE5hbWUgIT0gbnVsbAorICAgICAgICAg
+ICAgJiYgIWJyYW5jaE5hbWUuaXNFbXB0eSgpKSB7CisgICAgICAgICAgICBjbWQuYWRkKCItYiIp
+OworICAgICAgICAgICAgY21kLmFkZChicmFuY2hOYW1lKTsKKyAgICAgICAgfQogCiAgICAgICAg
+IGlmIChjaGFuZ2VzZXQgIT0gbnVsbCkgewogICAgICAgICAgICAgY21kLmFkZCgiLXIiKTsKQEAg
+LTMwMCwxMSArMzc1LDExIEBACiAKICAgICBAT3ZlcnJpZGUKICAgICBib29sZWFuIGlzUmVwb3Np
+dG9yeUZvcihGaWxlIGZpbGUpIHsKLSAgICAgIGlmIChmaWxlLmlzRGlyZWN0b3J5KCkpIHsKLSAg
+ICAgICAgRmlsZSBmID0gbmV3IEZpbGUoZmlsZSwgIi5oZyIpOwotICAgICAgICByZXR1cm4gZi5l
+eGlzdHMoKSAmJiBmLmlzRGlyZWN0b3J5KCk7Ci0gICAgICB9Ci0gICAgICByZXR1cm4gZmFsc2U7
+CisgICAgICAgIGlmIChmaWxlLmlzRGlyZWN0b3J5KCkpIHsKKyAgICAgICAgICAgIEZpbGUgZiA9
+IG5ldyBGaWxlKGZpbGUsICIuaGciKTsKKyAgICAgICAgICAgIHJldHVybiBmLmV4aXN0cygpICYm
+IGYuaXNEaXJlY3RvcnkoKTsKKyAgICAgICAgfQorICAgICAgICByZXR1cm4gZmFsc2U7CiAgICAg
+fQogCiAgICAgQE92ZXJyaWRlCg==
+</data>
+
+          </attachment>
+      
+
+    </bug>
+
+</bugzilla>

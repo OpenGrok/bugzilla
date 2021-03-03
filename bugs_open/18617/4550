@@ -1,0 +1,136 @@
+# HG changeset patch
+# User jel+opengrok@cs.uni-magdeburg.de
+# Date 1309058228 -7200
+# Node ID 6d68997da907c13d0e8f099952ac08331beacced
+# Parent  5b933ad97e9bf98c1576ee3f9c61dcd38b8eb88e
+put opengrok.jar as well as source.war into $distdir/lib of the tar.gz package and adjust MF classpath
+
+diff -r 5b933ad97e9b -r 6d68997da907 OpenGrok
+--- a/OpenGrok	Thu Jun 23 13:03:47 2011 +0200
++++ b/OpenGrok	Sun Jun 26 05:17:08 2011 +0200
+@@ -114,10 +114,12 @@
+             # Handle Developer Build Environments
+             OPENGROK_DISTRIBUTION_BASE="${SCRIPT_DIRECTORY}/dist"
+             LOGGER_CONF_SOURCE="${SCRIPT_DIRECTORY}/${LOGGER_CONFIG_FILE}"
++            LDIR=""
+         else
+             # Handle Binary Distributions
+-            OPENGROK_DISTRIBUTION_BASE="${SCRIPT_DIRECTORY}/../lib"
+-            LOGGER_CONF_SOURCE="${OPENGROK_DISTRIBUTION_BASE}/../doc/${LOGGER_CONFIG_FILE}"
++            OPENGROK_DISTRIBUTION_BASE="${SCRIPT_DIRECTORY}/.."
++            LOGGER_CONF_SOURCE="${OPENGROK_DISTRIBUTION_BASE}/doc/${LOGGER_CONFIG_FILE}"
++            LDIR="lib"
+         fi
+     fi
+ 
+@@ -150,12 +152,12 @@
+     LOGGER_PROPERTIES="-Djava.util.logging.config.file=${LOGGER_CONFIG_PATH}"
+ 
+     # REQUIRED: Java Archive of OpenGrok (Installation Location)
+-    OPENGROK_JAR="${OPENGROK_DISTRIBUTION_BASE}/opengrok.jar"
++    OPENGROK_JAR="${OPENGROK_DISTRIBUTION_BASE}/$LDIR/opengrok.jar"
+ 
+     # REQUIRED(deploy): Web Archive of OpenGrok (Distribution Location)
+     #           (user building from source code will find this and other key
+     #            files in the "dist" directory after the build is completed)
+-    OPENGROK_DIST_WAR="${OPENGROK_DISTRIBUTION_BASE}/source.war"
++    OPENGROK_DIST_WAR="${OPENGROK_DISTRIBUTION_BASE}/$LDIR/source.war"
+ 
+     # REQUIRED: Exuberant CTags (http://ctags.sf.net)
+     EXUBERANT_CTAGS="${EXUBERANT_CTAGS:-`FindExuberantCTags`}"
+diff -r 5b933ad97e9b -r 6d68997da907 build.xml
+--- a/build.xml	Thu Jun 23 13:03:47 2011 +0200
++++ b/build.xml	Sun Jun 26 05:17:08 2011 +0200
+@@ -261,7 +261,6 @@
+                 <pathelement path="${javac.classpath}"/>
+             </path>
+             <flattenmapper/>
+-            <map from="" to="lib/"/>
+         </pathconvert>
+     </target>
+ 
+@@ -269,7 +268,7 @@
+     <target name="-update-manifest-classpath">
+         <manifest file="${manifest.file}" mode="update">
+             <attribute name="Class-Path"
+-                   value="${opengrok.lib.files} lib/derbyclient.jar lib/derby.jar"/>
++                   value="${opengrok.lib.files} derbyclient.jar derby.jar"/>
+         </manifest>
+     </target>
+ 
+@@ -284,8 +283,8 @@
+         <copy todir="${dist.dir}/lib">
+             <fileset file="${file.reference.ant.jar}"/>
+         </copy>
+-        <copy todir="${dist.dir}">
+-            <fileset dir="." includes="${opengrok.lib.files}"/>
++        <copy todir="${dist.dir}/lib">
++            <fileset dir="lib" includes="${opengrok.lib.files}"/>
+         </copy>
+     </target>
+ 
+@@ -334,9 +333,11 @@
+             <tarfileset dir="${dist.dir}" prefix="${distname}-${version}/lib">
+                 <include name="opengrok.jar"/>
+                 <include name="source.war"/>
+-                <include name="lib/*"/>
+-                <exclude name="lib/servlet-api.jar"/>
+             </tarfileset>
++        	<tarfileset dir="${dist.dir}/lib" prefix="${distname}-${version}/lib">
++                <include name="*.jar"/>
++                <exclude name="servlet-api.jar"/>
++			</tarfileset>        		
+             <tarfileset dir="${dist.dir}" prefix="${distname}-${version}/man/man1">
+                 <include name="opengrok.1"/>
+             </tarfileset>
+diff -r 5b933ad97e9b -r 6d68997da907 debian/opengrok.install
+--- a/debian/opengrok.install	Thu Jun 23 13:03:47 2011 +0200
++++ b/debian/opengrok.install	Sun Jun 26 05:17:08 2011 +0200
+@@ -1,4 +1,4 @@
+-dist/opengrok.jar	usr/share/opengrok/ 
+-dist/source.war	usr/share/opengrok/
++dist/opengrok.jar	usr/share/opengrok/lib/
++dist/source.war	usr/share/opengrok/lib/
+ dist/lib/jrcs.jar	usr/share/opengrok/lib/
+ dist/lib/jrcs.jar	usr/share/opengrok/lib/
+diff -r 5b933ad97e9b -r 6d68997da907 opengrok-indexer/pom.xml
+--- a/opengrok-indexer/pom.xml	Thu Jun 23 13:03:47 2011 +0200
++++ b/opengrok-indexer/pom.xml	Sun Jun 26 05:17:08 2011 +0200
+@@ -89,7 +89,6 @@
+                         <manifest>
+                             <mainClass>org.opensolaris.opengrok.index.Indexer</mainClass>
+                             <addClasspath>true</addClasspath>
+-                            <classpathPrefix>lib/</classpathPrefix>
+                         </manifest>
+                         <manifestEntries>
+                             <!--
+@@ -97,7 +96,7 @@
+                                 up the classpath so that it's found
+                                 at runtime if it's installed.
+                             -->
+-                            <Class-Path>lib/derbyclient.jar lib/derby.jar</Class-Path>
++                            <Class-Path>derbyclient.jar derby.jar</Class-Path>
+                         </manifestEntries>
+                     </archive>
+                 </configuration>
+diff -r 5b933ad97e9b -r 6d68997da907 tools/smf/indexer.sh
+--- a/tools/smf/indexer.sh	Thu Jun 23 13:03:47 2011 +0200
++++ b/tools/smf/indexer.sh	Sun Jun 26 05:17:08 2011 +0200
+@@ -60,7 +60,7 @@
+       # that should be selected by default (note that the parameter here
+       # is the path to the project)
+       # ADD_PROJECTS="-S -P -p /onnv-gate -W ${DATA_ROOT}/../configuration.xml"
+-      ${JAVA_HOME}/bin/java -Xmx1524m -jar ${PROGDIR}/opengrok.jar \
++      ${JAVA_HOME}/bin/java -Xmx1524m -jar ${PROGDIR}/lib/opengrok.jar \
+                     -H -R ${DATA_ROOT}/../configuration.xml \
+                     ${ADD_PROJECTS} >> ${output} 2>&1
+ 
+@@ -84,7 +84,7 @@
+ 
+                   # Tell the web server to use the new configuration
+                  ${JAVA_HOME}/bin/java -Xmx1524m \
+-                                       -jar ${PROGDIR}/opengrok.jar \
++                                       -jar ${PROGDIR}/lib/opengrok.jar \
+                                        -U ${f} \
+                                        -R ${DATA_ROOT}/../configuration.xml \
+                                        -n  >> ${output} 2>&1

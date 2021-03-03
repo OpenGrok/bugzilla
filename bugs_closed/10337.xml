@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>10337</bug_id>
+          
+          <creation_ts>2009-07-28 07:00:00 +0000</creation_ts>
+          <short_desc>Webapp is not in sync with the latest index files</short_desc>
+          <delta_ts>2009-07-31 02:12:24 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>webapp</component>
+          <version>unspecified</version>
+          <rep_platform>i86pc/i386</rep_platform>
+          <op_sys>Solaris</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>INVALID</resolution>
+          
+          
+          
+          
+          
+          <priority>P1</priority>
+          <bug_severity>critical</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Harshit">guntasg</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          <cc>Lubos.Kosco</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>45217</commentid>
+            <who name="Harshit">guntasg</who>
+            <bug_when>2009-07-28 07:00:18 +0000</bug_when>
+            <thetext>Hi,
+
+I generated the indices by running the indexer. But when I try to search for a file then it does not show me result from the just-now indexed projects.
+
+Two things could be possible:
+1. Either the file to be searched is not present in the newly indexed projects.
+2. Or there is some synchronization problem between the webapp and the indexer. Indexer did the job but webapp is not able to read from the latest index.
+
+Negating 1 as i am sure that the file resides in the newly indexed project.
+
+Could you please help me know why the webapp is not showing me the records from the newly indexed projects?
+
+But when i re-deploy the webapp by starting and stopping the application server, it shows me the results correctly.
+
+Thanks.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>45226</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2009-07-28 07:49:11 +0000</bug_when>
+            <thetext>restarting the webapp is one option
+
+what the rest of us is doing is remote update using send of configuration xml
+see http://opensolaris.org/os/project/opengrok/manual/installdescription/
+&quot;Suggested Step - Send the project XML config file to local web application&quot;</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>45556</commentid>
+            <who name="Harshit">guntasg</who>
+            <bug_when>2009-07-31 02:12:24 +0000</bug_when>
+            <thetext>Thanks Lucos this procedure worked for me.
+
+Closing this ticket.</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

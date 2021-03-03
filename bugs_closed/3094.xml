@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>3094</bug_id>
+          
+          <creation_ts>2008-08-26 14:15:00 +0000</creation_ts>
+          <short_desc>IndexOutOfBoundsException when indexing jar files</short_desc>
+          <delta_ts>2008-08-26 15:16:52 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>indexer</component>
+          <version>unspecified</version>
+          <rep_platform>Other</rep_platform>
+          <op_sys>Solaris</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXED</resolution>
+          
+          
+          
+          
+          
+          <priority>P2</priority>
+          <bug_severity>minor</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Knut Anders Hatlen">knut.hatlen</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>11148</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2008-08-26 14:15:17 +0000</bug_when>
+            <thetext>Got this error while indexing the OpenGrok source tree. It worked fine after I removed all the jar files under lib.
+
+$ java -jar /code/opengrok/trunk/dist/opengrok.jar -P -s src -d $PWD/data -W conf/config.xml -S -v -H
+.
+.
+.
+Adding: /opengrok/lib/bcel-5.1.jar (JarAnalyzer)
+Aug 26, 2008 11:11:16 PM org.opensolaris.opengrok.index.IndexDatabase$1 run
+WARNING: Problem updating lucene index database: 
+java.lang.IndexOutOfBoundsException: Index: 0, Size: 0
+        at java.util.LinkedList.entry(LinkedList.java:365)
+        at java.util.LinkedList.remove(LinkedList.java:357)
+        at org.opensolaris.opengrok.analysis.List2TokenStream.next(List2TokenStream.java:42)
+        at org.apache.lucene.index.DocumentWriter.invertDocument(DocumentWriter.java:219)
+        at org.apache.lucene.index.DocumentWriter.addDocument(DocumentWriter.java:95)
+        at org.apache.lucene.index.IndexWriter.buildSingleDocSegment(IndexWriter.java:1013)
+        at org.apache.lucene.index.IndexWriter.addDocument(IndexWriter.java:1001)
+        at org.opensolaris.opengrok.index.IndexDatabase.addFile(IndexDatabase.java:469)
+        at org.opensolaris.opengrok.index.IndexDatabase.indexDown(IndexDatabase.java:568)
+        at org.opensolaris.opengrok.index.IndexDatabase.indexDown(IndexDatabase.java:552)
+        at org.opensolaris.opengrok.index.IndexDatabase.update(IndexDatabase.java:255)
+        at org.opensolaris.opengrok.index.IndexDatabase$1.run(IndexDatabase.java:128)
+        at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:441)
+        at java.util.concurrent.FutureTask$Sync.innerRun(FutureTask.java:303)
+        at java.util.concurrent.FutureTask.run(FutureTask.java:138)
+        at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:885)
+        at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:907)
+        at java.lang.Thread.run(Thread.java:619)</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>11164</commentid>
+            <who name="Trond Norbye">trond.norbye</who>
+            <bug_when>2008-08-26 15:16:52 +0000</bug_when>
+            <thetext>Fixed in changeset:   481:ae1b039c17c6</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

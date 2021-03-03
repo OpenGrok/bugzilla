@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>18227</bug_id>
+          
+          <creation_ts>2011-04-28 21:15:00 +0000</creation_ts>
+          <short_desc>Too many open files when using perforce</short_desc>
+          <delta_ts>2011-04-29 17:21:00 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>indexer</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>NEW</bug_status>
+          
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>normal</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Doug McLaren">dougmc+opensolaris</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          <cc>dougmc+opensolaris</cc>
+    
+    <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>82529</commentid>
+            <who name="Doug McLaren">dougmc+opensolaris</who>
+            <bug_when>2011-04-28 21:15:40 +0000</bug_when>
+            <thetext>I&apos;m using the latest version of opengrok, 0.10, under Linux -- Fedora 8.
+I&apos;m running it with Sun&apos;s jdk 1.6.0_25.
+
+I&apos;m indexing about 300,000 files, mostly java, for a total of 14 GB.  I didn&apos;t see this issue when I was doing fewer files, but I can&apos;t tell you what the magic number is.
+
+The problem is that it runs for a while, then things start failing with &quot;too many open files&quot; errors. The indexing doesn&apos;t stop, but it has problems reading files and writing index files, so the index is basically unusable after this.  (Searches don&apos;t fail, but much of the content isn&apos;t indexed so searches can&apos;t find it.)
+
+This happens when indexing from scratch and when updating existing indexes.
+
+Here&apos;s a sample stack --
+
+Apr 28, 2011 3:20:45 PM org.opensolaris.opengrok.util.Executor exec
+SEVERE: Failed to read from process: p4
+java.io.IOException: Cannot run program &quot;p4&quot; (in directory &quot;/x/search/opengrok/stage1/source/ContentSuite_8.0-cefix/appsvcs-ui/src/jsp/serviceprovider/role/images&quot;): java.io.IOException: error=24, Too ma
+ny open files
+        at java.lang.ProcessBuilder.start(ProcessBuilder.java:460)
+        at org.opensolaris.opengrok.util.Executor.exec(Executor.java:127)
+        at org.opensolaris.opengrok.util.Executor.exec(Executor.java:95)
+        at org.opensolaris.opengrok.util.Executor.exec(Executor.java:84)
+        at org.opensolaris.opengrok.history.PerforceRepository.isInP4Depot(PerforceRepository.java:172)
+        at org.opensolaris.opengrok.history.PerforceHistoryParser.parse(PerforceHistoryParser.java:57)
+        at org.opensolaris.opengrok.history.PerforceRepository.getHistory(PerforceRepository.java:209)
+        at org.opensolaris.opengrok.history.FileHistoryCache.get(FileHistoryCache.java:223)
+        at org.opensolaris.opengrok.history.HistoryGuru.getHistory(HistoryGuru.java:203)
+        at org.opensolaris.opengrok.history.HistoryGuru.getHistoryReader(HistoryGuru.java:167)
+        at org.opensolaris.opengrok.analysis.AnalyzerGuru.getDocument(AnalyzerGuru.java:228)
+        at org.opensolaris.opengrok.index.IndexDatabase.addFile(IndexDatabase.java:584)
+        at org.opensolaris.opengrok.index.IndexDatabase.indexDown(IndexDatabase.java:786)
+        at org.opensolaris.opengrok.index.IndexDatabase.indexDown(IndexDatabase.java:759)
+        at org.opensolaris.opengrok.index.IndexDatabase.indexDown(IndexDatabase.java:759)
+        at org.opensolaris.opengrok.index.IndexDatabase.indexDown(IndexDatabase.java:759)
+        at org.opensolaris.opengrok.index.IndexDatabase.indexDown(IndexDatabase.java:759)
+        at org.opensolaris.opengrok.index.IndexDatabase.indexDown(IndexDatabase.java:759)
+        at org.opensolaris.opengrok.index.IndexDatabase.indexDown(IndexDatabase.java:759)
+        at org.opensolaris.opengrok.index.IndexDatabase.update(IndexDatabase.java:354)
+        at org.opensolaris.opengrok.index.IndexDatabase$1.run(IndexDatabase.java:157)
+        at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:441)
+        at java.util.concurrent.FutureTask$Sync.innerRun(FutureTask.java:303)
+        at java.util.concurrent.FutureTask.run(FutureTask.java:138)
+        at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
+        at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
+        at java.lang.Thread.run(Thread.java:662)
+Caused by: java.io.IOException: java.io.IOException: error=24, Too many open files
+        at java.lang.UNIXProcess.&lt;init&gt;(UNIXProcess.java:148)
+        at java.lang.ProcessImpl.start(ProcessImpl.java:65)
+        at java.lang.ProcessBuilder.start(ProcessBuilder.java:453)
+        ... 26 more
+
+... though the errors aren&apos;t restricted to running p4 -- they also happen when reading and writing files.  They just seem to be *caused* by running p4.
+
+If I disable perforce (history), the problem goes away.
+
+Looking at lsof output, the problem appears to be a large number of these --
+
+java    22918 dmclaren  196r  FIFO                0,6          2489631013 pipe
+java    22918 dmclaren  197w  FIFO                0,6          2489635145 pipe
+java    22918 dmclaren  198r  FIFO                0,6          2489631014 pipe
+java    22918 dmclaren  200r  FIFO                0,6          2489631420 pipe
+java    22918 dmclaren  201r  FIFO                0,6          2489635146 pipe
+java    22918 dmclaren  202w  FIFO                0,6          2489631212 pipe
+
+the number of these fluctuates wildly and quickly -- 
+
+   lsof -p PID | grep pipe | wc -l
+
+will say 200 one second, then 700 the next second, etc.  It&apos;s clearly not a nice slow connection leak -- these pipes are being generated and closed very quickly.
+
+There&apos;s never more than a handful (five or six?) of p4 or ctag commands running any any given time, even with hundreds of these FIFOs being open, and I don&apos;t see any other processes owned by the java process.
+
+I&apos;m doing the indexing like this --
+
+P4PORT=...
+P4CONFIG=.p4config
+
+java -Xmx2560m -jar /x/search/opengrok/lib/opengrok.jar \
+   -W /x/search/opengrok/etc/configuration.xml \
+   -c /usr/local/bin/ctags -P -S -v \
+   -s /x/search/opengrok/stage1/source \
+   -d /x/search/opengrok/stage1/data \
+   -r on -H 2&gt;&amp;1 | tee index.`date +&quot;%Y%m%d-%H%M%S&quot;`.out
+
+If it&apos;s relevant, I&apos;m running into a &quot;p4 dirs *&quot; problem with &quot;client map too twisted for directory list&quot; issue which results in an error --
+
+Apr 28, 2011 2:04:26 PM org.opensolaris.opengrok.util.Executor exec
+SEVERE: Non-zero exit status 1 from command [p4, files, *] in directory /x/search/opengrok/stage1/source/product_7.5
+
+which is not opengrok&apos;s fault (and it doesn&apos;t happen all the time, so the histories are still useful) but these seem to have stopped long before we run out of file descriptors.
+
+Ideas?</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>82530</commentid>
+            <who name="Doug McLaren">dougmc+opensolaris</who>
+            <bug_when>2011-04-28 21:24:25 +0000</bug_when>
+            <thetext>I should also mention that I&apos;m using a 64 bit JVM and OS.
+
+I imagine that the file descriptor limit I&apos;m hitting is the default ulimit for file descriptors is 1024.
+
+I have not yet tried setting this limit to 16384 or something -- it used to be that this often didn&apos;t work, as select() (I think?) didn&apos;t work with more than 1024 file descriptors, but it may be worth trying now.
+
+(In general, if your app runs out of file descriptors at 1024, it&apos;ll run out at 16384 too -- it&apos;ll just take longer -- but considering how wildly the number fluctuates, maybe that will do it.)
+
+Another possible workaround might be to index without perforce enabled initially, then add history information.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>82554</commentid>
+            <who name="Doug McLaren">dougmc+opensolaris</who>
+            <bug_when>2011-04-29 17:05:38 +0000</bug_when>
+            <thetext>Setting the filedescriptor limit to 16384 seems to have gotten around the issue.
+
+I&apos;d say that needing more than 1000 is still a bug, but this is adequate for me anyways.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>82555</commentid>
+            <who name="Trond Norbye">trond.norbye</who>
+            <bug_when>2011-04-29 17:21:00 +0000</bug_when>
+            <thetext>It _could_ be a bug in the P4 repository code in opengrok that it doesn&apos;t close all of the resources it use... I&apos;ve not been able to test the P4 code myself, so this would just be guessing from my side. I guess a code review of the P4 class would be a smart thing to do...</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

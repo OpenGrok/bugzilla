@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>19196</bug_id>
+          
+          <creation_ts>2012-03-24 06:57:00 +0000</creation_ts>
+          <short_desc>RFE: project based Charset encoding</short_desc>
+          <delta_ts>2012-08-16 10:54:28 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>analyzer</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>NEW</bug_status>
+          
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>enhancement</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Jens Elkner">jel+osbugs</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          <cc>lexxthefox</cc>
+    
+    <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>86362</commentid>
+            <who name="Jens Elkner">jel+osbugs</who>
+            <bug_when>2012-03-24 06:57:03 +0000</bug_when>
+            <thetext>Right now TextAnalyzer as well as list.jsp (anything else?) use the JVM&apos;s default charset for all projects if they can&apos;t determine it automatically (which is probably the most common case) - on many *x it defaults to ISO8859-1, on others to UTF-8 etc. ...
+
+So a per project setting of the charset to use for reading text files is desirable.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86363</commentid>
+            <who name="Jens Elkner">jel+osbugs</who>
+            <bug_when>2012-03-24 07:13:21 +0000</bug_when>
+            <thetext>web/Util::dump methods as well</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86582</commentid>
+            <who name="Alexey Ivanov">lexxthefox</who>
+            <bug_when>2012-08-16 10:54:28 +0000</bug_when>
+            <thetext>This enhancement would be highly appreciated as it would help search source code for large internal corporate projects which contain comments in native language.
+It is possible to fiddle with file.encoding and client.encoding.override java parameters but it is of little help as search results still show ?s in place of NLS and it does not let specify encoding per project.</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

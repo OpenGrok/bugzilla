@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>18932</bug_id>
+          
+          <creation_ts>2011-09-14 12:29:00 +0000</creation_ts>
+          <short_desc>non escaped backslash in output javascript causes issues</short_desc>
+          <delta_ts>2011-09-15 07:08:49 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>webapp</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>Windows</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXINSOURCE</resolution>
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>minor</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Jan Keirse">jan.keirse</reporter>
+          <assigned_to name="Lubos Kosco">Lubos.Kosco</assigned_to>
+          <cc>jan.keirse</cc>
+    
+    <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>85243</commentid>
+            <who name="Jan Keirse">jan.keirse</who>
+            <bug_when>2011-09-14 12:29:32 +0000</bug_when>
+            <thetext>In menu.jspf on line 68, documents.projects is set to jsProjects.toString()
+This should be escaped. I have a project calles 10.2Brelatief\ and the end backslash in the resulting javascript escapes the closing quote. I fixed it for my case by changing 
+sProjects.toString()
+to
+jsProjects.toString().replace(&quot;\\&quot;,&quot;\\\\&quot;)
+but I&apos;m not quite sure if that&apos;s a solution that will catch all potential similar problems.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>85244</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2011-09-14 12:54:53 +0000</bug_when>
+            <thetext>hmm, I will push a proper fix, we already have an escape method somewhere in utils
+
+thnx
+L</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>85252</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2011-09-15 07:08:49 +0000</bug_when>
+            <thetext>changeset:   1274:8437902142f0</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

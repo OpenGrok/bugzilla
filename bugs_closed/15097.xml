@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>15097</bug_id>
+          
+          <creation_ts>2010-03-09 14:36:00 +0000</creation_ts>
+          <short_desc>make the search bar in listing stay on top of the page</short_desc>
+          <delta_ts>2010-03-24 17:11:26 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>webapp</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXINSOURCE</resolution>
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>enhancement</bug_severity>
+          <target_milestone>0.9</target_milestone>
+          
+          <blocked>11749</blocked>
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Lubos Kosco">Lubos.Kosco</reporter>
+          <assigned_to name="Lubos Kosco">Lubos.Kosco</assigned_to>
+          <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>68749</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2010-03-09 14:36:14 +0000</bug_when>
+            <thetext>e.g. if the source file is long it takes too much to scroll up
+the search bar should be there always and ready to serve :) ...</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>68993</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2010-03-11 15:47:38 +0000</bug_when>
+            <thetext>changeset:   954:8338f0317a1f</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>274</bug_id>
+          
+          <creation_ts>2007-11-30 09:50:00 +0000</creation_ts>
+          <short_desc>Unable to view Subversion historical revisions across renames</short_desc>
+          <delta_ts>2008-08-21 13:11:54 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>scm</component>
+          <version>unspecified</version>
+          <rep_platform>Other</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>WONTFIX</resolution>
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>major</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Stephen Lau">stevel</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>752</commentid>
+            <who name="Stephen Lau">stevel</who>
+            <bug_when>2007-11-30 09:50:04 +0000</bug_when>
+            <thetext>Example:
+http://dingo.songbirdnest.com:8080/source/history/feathers/basic-layouts/content/xul/mainplayer.xul
+
+in revision 6668 mainwin.xul was renamed to mainplayer.xul.  OpenGrok correctly shows the full history for the file dating back to when it was called mainwin.xul, but attempting to view a historical revision for when it was called mainwin.xul fails with the failure:
+
+org.tigris.subversion.javahl.ClientException: HTTP Path Not Found
+svn: PROPFIND request failed on &apos;/songbird/client/!svn/bc/6555/trunk/feathers/basic-layouts/content/xul/mainplayer.xul&apos;
+svn: &apos;/songbird/client/!svn/bc/6555/trunk/feathers/basic-layouts/content/xul/mainplayer.xul&apos; path not found
+
+        at org.tigris.subversion.javahl.SVNClient.fileContent(Native Method)   
+        at org.tigris.subversion.javahl.SVNClient.fileContent(Unknown Source)
+        at org.opensolaris.opengrok.history.SubversionGet.read(SubversionGet.java:82)   
+
+
+It looks like it&apos;s trying to retrieve the history by its current name rather than its old name.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>10780</commentid>
+            <who name="Trond Norbye">trond.norbye</who>
+            <bug_when>2008-08-21 13:11:54 +0000</bug_when>
+            <thetext>The Subversion support was re-written to use the Subversion binary instead. Please try again and re-open the bug if the problem still exists.</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

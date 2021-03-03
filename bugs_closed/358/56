@@ -1,0 +1,19 @@
+diff -r 483b8ace156a build.generic.xml
+--- a/build.generic.xml	Sat Jan 12 16:14:48 2008 +0100
++++ b/build.generic.xml	Sun Jan 13 22:15:54 2008 +0530
+@@ -25,7 +25,6 @@ ident	"%Z%%M% %I%     %E% SMI"
+ 
+ -->
+ <project default="build">
+-    <taskdef classname="JFlex.anttask.JFlexTask" name="jflex"/>
+     <property name="version" value="0.5"/>
+     <property name="builddir" value="build"/>
+     <property name="distdir" value="dist"/>
+@@ -45,6 +44,7 @@ ident	"%Z%%M% %I%     %E% SMI"
+     <path refid="runcp"/>
+         <pathelement location="${classdir}"/>
+     </path>
++    <taskdef classname="JFlex.anttask.JFlexTask" name="jflex" classpathref="compilecp"/>
+     <target name="jflex">
+         <mkdir dir="${gensrcdir}"/>
+         <jflex file="src/org/opensolaris/opengrok/analysis/plain/PlainXref.lex" destdir="${gensrcdir}"/>

@@ -1,0 +1,100 @@
+write(1, "<logentry\n   revision=\"5813\">\n<a"..., 440) = 440
+write(1, "<logentry\n   revision=\"5812\">\n<a"..., 387) = 387
+write(1, "<logentry\n   revision=\"5811\">\n<a"..., 422) = 422
+write(1, "<logentry\n   revision=\"5810\">\n<a"..., 243) = 243
+write(1, "<logentry\n   revision=\"5809\">\n<a"..., 440) = 440
+write(1, "<logentry\n   revision=\"5808\">\n<a"..., 268) = 268
+write(1, "<logentry\n   revision=\"5807\">\n<a"..., 200) = 200
+write(1, "<logentry\n   revision=\"5806\">\n<a"..., 298) = 298
+write(1, "<logentry\n   revision=\"5805\">\n<a"..., 323) = 323
+write(1, "<logentry\n   revision=\"5804\">\n<a"..., 256) = 256
+write(1, "<logentry\n   revision=\"5803\">\n<a"..., 363) = 363
+write(1, "<logentry\n   revision=\"5802\">\n<a"..., 241) = 241
+write(1, "<logentry\n   revision=\"5801\">\n<a"..., 244) = 244
+write(1, "<logentry\n   revision=\"5800\">\n<a"..., 240) = 240
+write(1, "<logentry\n   revision=\"5799\">\n<a"..., 238) = 238
+write(1, "<logentry\n   revision=\"5798\">\n<a"..., 235) = 235
+write(1, "<logentry\n   revision=\"5797\">\n<a"..., 236) = 236
+write(1, "<logentry\n   revision=\"5796\">\n<a"..., 234) = 234
+write(1, "<logentry\n   revision=\"5795\">\n<a"..., 230) = 230
+write(1, "<logentry\n   revision=\"5794\">\n<a"..., 228) = 228
+write(1, "<logentry\n   revision=\"5793\">\n<a"..., 218) = 218
+write(1, "<logentry\n   revision=\"5792\">\n<a"..., 218) = 218
+write(1, "<logentry\n   revision=\"5791\">\n<a"..., 221) = 221
+write(1, "<logentry\n   revision=\"5790\">\n<a"..., 226) = 226
+write(1, "<logentry\n   revision=\"5789\">\n<a"..., 222) = 222
+write(1, "<logentry\n   revision=\"5788\">\n<a"..., 341) = 341
+write(1, "<logentry\n   revision=\"5787\">\n<a"..., 212) = 212
+write(1, "<logentry\n   revision=\"5786\">\n<a"..., 206) = 206
+write(1, "<logentry\n   revision=\"5785\">\n<a"..., 322) = 322
+write(1, "<logentry\n   revision=\"5784\">\n<a"..., 324) = 324
+write(1, "<logentry\n   revision=\"5783\">\n<a"..., 233) = 233
+write(1, "<logentry\n   revision=\"5782\">\n<a"..., 419) = 419
+write(1, "<logentry\n   revision=\"5781\">\n<a"..., 242) = 242
+write(1, "<logentry\n   revision=\"5780\">\n<a"..., 239) = 239
+write(1, "<logentry\n   revision=\"5779\">\n<a"..., 238) = 238
+write(1, "<logentry\n   revision=\"5778\">\n<a"..., 236) = 236
+write(1, "<logentry\n   revision=\"5777\">\n<a"..., 239) = 239
+write(1, "<logentry\n   revision=\"5776\">\n<a"..., 232) = 232
+write(1, "<logentry\n   revision=\"5775\">\n<a"..., 234) = 234
+write(1, "<logentry\n   revision=\"5774\">\n<a"..., 228) = 228
+write(1, "<logentry\n   revision=\"5773\">\n<a"..., 226) = 226
+write(1, "<logentry\n   revision=\"5772\">\n<a"..., 216) = 216
+write(1, "<logentry\n   revision=\"5771\">\n<a"..., 219) = 219
+write(1, "<logentry\n   revision=\"5770\">\n<a"..., 216) = 216
+write(1, "<logentry\n   revision=\"5769\">\n<a"..., 220) = 220
+write(1, "<logentry\n   revision=\"5768\">\n<a"..., 224) = 224
+write(1, "<logentry\n   revision=\"5767\">\n<a"..., 357) = 357
+write(1, "<logentry\n   revision=\"5766\">\n<a"..., 210) = 210
+write(1, "<logentry\n   revision=\"5765\">\n<a"..., 335) = 335
+write(1, "<logentry\n   revision=\"5764\">\n<a"..., 209) = 209
+write(1, "<logentry\n   revision=\"5763\">\n<a"..., 211) = 211
+write(1, "<logentry\n   revision=\"5762\">\n<a"..., 306) = 306
+write(1, "<logentry\n   revision=\"5761\">\n<a"..., 204) = 204
+write(1, "<logentry\n   revision=\"5760\">\n<a"..., 303) = 303
+write(1, "<logentry\n   revision=\"5759\">\n<a"..., 205) = 205
+write(1, "<logentry\n   revision=\"5758\">\n<a"..., 209) = 209
+write(1, "<logentry\n   revision=\"5757\">\n<a"..., 289) = 289
+write(1, "<logentry\n   revision=\"5756\">\n<a"..., 208) = 208
+write(1, "<logentry\n   revision=\"5755\">\n<a"..., 322) = 322
+write(1, "<logentry\n   revision=\"5754\">\n<a"..., 245) = 245
+write(1, "<logentry\n   revision=\"5753\">\n<a"..., 258) = 258
+write(1, "<logentry\n   revision=\"5752\">\n<a"..., 1024) = 1024
+write(1, "s.</msg>\n", 9)               = 9
+write(1, "</logentry>\n", 12)           = 12
+write(1, "<logentry\n   revision=\"5751\">\n<a"..., 276) = 276
+write(1, "<logentry\n   revision=\"5750\">\n<a"..., 253) = 253
+write(1, "<logentry\n   revision=\"5749\">\n<a"..., 242) = 242
+write(1, "<logentry\n   revision=\"5748\">\n<a"..., 384) = 384
+write(1, "<logentry\n   revision=\"5747\">\n<a"..., 220) = 220
+write(1, "<logentry\n   revision=\"5746\">\n<a"..., 217) = 217
+write(1, "<logentry\n   revision=\"5745\">\n<a"..., 800) = 800
+write(1, "<logentry\n   revision=\"5744\">\n<a"..., 365) = 365
+write(1, "<logentry\n   revision=\"5743\">\n<a"..., 508) = 508
+write(1, "<logentry\n   revision=\"5742\">\n<a"..., 647) = 647
+write(1, "<logentry\n   revision=\"5741\">\n<a"..., 1024) = -1 EPIPE (Broken pipe)
+--- SIGPIPE (Broken pipe) @ 0 (0) ---
+--- SIGTERM (Terminated) @ 0 (0) ---
+rt_sigaction(SIGTERM, {SIG_IGN}, {0x8052b80, [], SA_INTERRUPT}, 8) = 0
+sigreturn()                             = ? (mask now [QUIT])
+open("/usr/share/locale/en_AU.UTF-8/LC_MESSAGES/libc.mo", O_RDONLY) = -1 ENOENT (No such file or directory)
+open("/usr/share/locale/en_AU.utf8/LC_MESSAGES/libc.mo", O_RDONLY) = -1 ENOENT (No such file or directory)
+open("/usr/share/locale/en_AU/LC_MESSAGES/libc.mo", O_RDONLY) = -1 ENOENT (No such file or directory)
+open("/usr/share/locale/en.UTF-8/LC_MESSAGES/libc.mo", O_RDONLY) = -1 ENOENT (No such file or directory)
+open("/usr/share/locale/en.utf8/LC_MESSAGES/libc.mo", O_RDONLY) = -1 ENOENT (No such file or directory)
+open("/usr/share/locale/en/LC_MESSAGES/libc.mo", O_RDONLY) = -1 ENOENT (No such file or directory)
+open("/usr/share/locale-langpack/en_AU.UTF-8/LC_MESSAGES/libc.mo", O_RDONLY) = -1 ENOENT (No such file or directory)
+open("/usr/share/locale-langpack/en_AU.utf8/LC_MESSAGES/libc.mo", O_RDONLY) = -1 ENOENT (No such file or directory)
+open("/usr/share/locale-langpack/en_AU/LC_MESSAGES/libc.mo", O_RDONLY) = -1 ENOENT (No such file or directory)
+open("/usr/share/locale-langpack/en.UTF-8/LC_MESSAGES/libc.mo", O_RDONLY) = -1 ENOENT (No such file or directory)
+open("/usr/share/locale-langpack/en.utf8/LC_MESSAGES/libc.mo", O_RDONLY) = -1 ENOENT (No such file or directory)
+open("/usr/share/locale-langpack/en/LC_MESSAGES/libc.mo", O_RDONLY) = -1 ENOENT (No such file or directory)
+close(4)                                = 0
+write(2, "svn: Write error: Broken pipe\n", 30) = 30
+munmap(0xb7131000, 270336)              = 0
+munmap(0xb6fad000, 1056768)             = 0
+munmap(0xb6aed000, 2105344)             = 0
+brk(0x88ff000)                          = 0x88ff000
+brk(0x80f9000)                          = 0x80f9000
+exit_group(1)                           = ?
+Process 30154 detached

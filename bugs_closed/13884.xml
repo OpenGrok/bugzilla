@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>13884</bug_id>
+          
+          <creation_ts>2010-01-14 11:21:00 +0000</creation_ts>
+          <short_desc>IndexOutOfBoundsException in List2TokenStream.next()</short_desc>
+          <delta_ts>2010-01-21 09:55:51 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>analyzer</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXED</resolution>
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>normal</bug_severity>
+          <target_milestone>0.9</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Knut Anders Hatlen">knut.hatlen</reporter>
+          <assigned_to name="Knut Anders Hatlen">knut.hatlen</assigned_to>
+          <cc>jorgen.austvik</cc>
+    
+    <cc>Lubos.Kosco</cc>
+    
+    <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>62370</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2010-01-14 11:21:05 +0000</bug_when>
+            <thetext>Seen in the same scenario as reported in bug #13364.
+
+java.lang.IndexOutOfBoundsException: Index: 0, Size: 0
+        at java.util.LinkedList.entry(LinkedList.java:365)
+        at java.util.LinkedList.remove(LinkedList.java:357)
+        at org.opensolaris.opengrok.analysis.List2TokenStream.next(List2TokenStream.java:43)
+        at org.apache.lucene.index.DocumentWriter.invertDocument(DocumentWriter.java:219)
+        at org.apache.lucene.index.DocumentWriter.addDocument(DocumentWriter.java:95)
+        at org.apache.lucene.index.IndexWriter.buildSingleDocSegment(IndexWriter.java:1013)
+        at org.apache.lucene.index.IndexWriter.addDocument(IndexWriter.java:1001)
+        at org.opensolaris.opengrok.index.IndexDatabase.addFile(IndexDatabase.java:478)
+        at org.opensolaris.opengrok.index.IndexDatabase.indexDown(IndexDatabase.java:577)
+        at org.opensolaris.opengrok.index.IndexDatabase.update(IndexDatabase.java:258)
+        at org.opensolaris.opengrok.index.IndexDatabase$1.run(IndexDatabase.java:128)
+        at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:441)
+        at java.util.concurrent.FutureTask$Sync.innerRun(FutureTask.java:303)
+        at java.util.concurrent.FutureTask.run(FutureTask.java:138)
+        at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
+        at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
+        at java.lang.Thread.run(Thread.java:619)</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>62371</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2010-01-14 11:22:48 +0000</bug_when>
+            <thetext>It was first seen after this commit:
+
+changeset:   457:5f85bad1e8af
+user:        Jorgen Austvik &lt;jorgen.austvik@sun.com&gt;
+date:        Fri Aug 22 21:17:41 2008 +0200
+summary:     Fix PMD interfaces warnings</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>62400</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2010-01-14 16:25:09 +0000</bug_when>
+            <thetext>The problem appears to be caused by the change from l.remove() to l.remove(0) in List2TokenStream.next(). Although both of these are supposed to do the same thing (remove the first element in the list), the former fails with NoSuchElementException if the list is empty and the latter fails with IndexOutOfBoundsException. Apparently, Lucene knows how to handle the case where next() raises a NoSuchElementException (although I think that&apos;s undocumented and should not be relied upon), but not IndexOutOfBoundsException.
+
+A workaround for this problem was committed in changeset ae1b039c17c6. Now, next() returns null when the list is empty, and it also writes a message to the log. The new behaviour is correct, but since we will always reach the end of the list, we&apos;ll always see the log message when List2TokenStream is used. So I think we should remove the logging in that method.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>62405</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2010-01-14 16:53:40 +0000</bug_when>
+            <thetext>Fixed in changeset 7c7a4cce5217f3455c9bc242ef89ff01c843bc87.</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

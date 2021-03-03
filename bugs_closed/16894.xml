@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>16894</bug_id>
+          
+          <creation_ts>2010-08-22 19:30:00 +0000</creation_ts>
+          <short_desc>Maven build lacks info.properties</short_desc>
+          <delta_ts>2011-05-17 10:32:08 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>build</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXED</resolution>
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>minor</bug_severity>
+          <target_milestone>0.11</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Knut Anders Hatlen">knut.hatlen</reporter>
+          <assigned_to name="Knut Anders Hatlen">knut.hatlen</assigned_to>
+          <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>76845</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2010-08-22 19:30:20 +0000</bug_when>
+            <thetext>When building with Maven, the resulting jar file doesn&apos;t include info.properties.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>82783</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2011-05-09 19:57:39 +0000</bug_when>
+            <thetext>We could probably use the Build Number Maven Plugin for this. http://mojo.codehaus.org/buildnumber-maven-plugin/</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>82999</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2011-05-17 10:32:08 +0000</bug_when>
+            <thetext>The build number plugin didn&apos;t seem to pick up the changeset id from .hg_archival.txt, which is required when building from the source tarball, so I made the pom call our existing ant target that generates info.properties.
+
+Fixed in changeset:   1222:394eb09df9de</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

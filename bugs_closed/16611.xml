@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>16611</bug_id>
+          
+          <creation_ts>2010-07-21 13:56:00 +0000</creation_ts>
+          <short_desc>svn repository with svn:// protocol as urn results in NPE when reading history</short_desc>
+          <delta_ts>2010-07-26 08:38:50 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>scm</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXED</resolution>
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>minor</bug_severity>
+          <target_milestone>0.10</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Lubos Kosco">Lubos.Kosco</reporter>
+          <assigned_to name="Knut Anders Hatlen">knut.hatlen</assigned_to>
+          <cc>Alan.Burlison</cc>
+    
+    <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>75691</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2010-07-21 13:56:50 +0000</bug_when>
+            <thetext>E.g.
+
+INFO: Create historycache for /srv/oel-dvd/SRPMS/kdnssd-avahi-0.1.3-0.1.20060713svn.fc6/kdnssd-avahi (SubversionRepository)
+Jul 21, 2010 3:38:44 PM org.opensolaris.opengrok.history.SubversionHistoryParser processStream
+SEVERE: An error occurred while parsing the xml output
+java.lang.NullPointerException
+        at java.lang.String.startsWith(String.java:1421)
+        at java.lang.String.startsWith(String.java:1450)
+        at org.opensolaris.opengrok.history.SubversionHistoryParser$Handler.endElement(SubversionHistoryParser.java:100)
+        at com.sun.org.apache.xerces.internal.parsers.AbstractSAXParser.endElement(AbstractSAXParser.java:601)
+        at com.sun.org.apache.xerces.internal.impl.XMLDocumentFragmentScannerImpl.scanEndElement(XMLDocumentFragmentScannerImpl.java:1782)
+        at com.sun.org.apache.xerces.internal.impl.XMLDocumentFragmentScannerImpl$FragmentContentDriver.next(XMLDocumentFragmentScannerImpl.java:2938)
+        at com.sun.org.apache.xerces.internal.impl.XMLDocumentScannerImpl.next(XMLDocumentScannerImpl.java:648)
+        at com.sun.org.apache.xerces.internal.impl.XMLDocumentFragmentScannerImpl.scanDocument(XMLDocumentFragmentScannerImpl.java:511)
+        at com.sun.org.apache.xerces.internal.parsers.XML11Configuration.parse(XML11Configuration.java:808)
+        at com.sun.org.apache.xerces.internal.parsers.XML11Configuration.parse(XML11Configuration.java:737)
+        at com.sun.org.apache.xerces.internal.parsers.XMLParser.parse(XMLParser.java:119)
+        at com.sun.org.apache.xerces.internal.parsers.AbstractSAXParser.parse(AbstractSAXParser.java:1205)
+        at com.sun.org.apache.xerces.internal.jaxp.SAXParserImpl$JAXPSAXParser.parse(SAXParserImpl.java:522)
+        at javax.xml.parsers.SAXParser.parse(SAXParser.java:395)
+        at javax.xml.parsers.SAXParser.parse(SAXParser.java:198)
+        at org.opensolaris.opengrok.history.SubversionHistoryParser.processStream(SubversionHistoryParser.java:192)
+        at org.opensolaris.opengrok.util.Executor.exec(Executor.java:151)
+        at org.opensolaris.opengrok.history.SubversionHistoryParser.parse(SubversionHistoryParser.java:163)
+        at org.opensolaris.opengrok.history.SubversionRepository.getHistory(SubversionRepository.java:202)
+        at org.opensolaris.opengrok.history.Repository.createCache(Repository.java:200)
+        at org.opensolaris.opengrok.history.HistoryGuru.createCache(HistoryGuru.java:434)
+        at org.opensolaris.opengrok.history.HistoryGuru.access$000(HistoryGuru.java:51)
+        at org.opensolaris.opengrok.history.HistoryGuru$1.run(HistoryGuru.java:465)
+        at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:441)
+        at java.util.concurrent.FutureTask$Sync.innerRun(FutureTask.java:303)
+        at java.util.concurrent.FutureTask.run(FutureTask.java:138)
+        at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
+        at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
+        at java.lang.Thread.run(Thread.java:619)</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>75700</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2010-07-21 16:38:35 +0000</bug_when>
+            <thetext>When I run svn info in the working copy, I see this output:
+
+Path: .
+URL: svn://anonsvn.kde.org/home/kde/trunk/playground/network
+Repository UUID: 283d02a7-25f6-0310-bc7c-ecb5cbfe19da
+Revision: 561994
+Node Kind: directory
+Schedule: normal
+Last Changed Author: scripty
+Last Changed Rev: 549986
+Last Changed Date: 2006-06-10 16:57:08 +0200 (Sat, 10 Jun 2006)
+
+There should have been a line that said
+
+Repository Root: svn://anonsvn.kde.org/home/kde
+
+If I run svn update and then svn info, the line is included.
+
+SubversionRepository.setDirectoryName() needs the repository root to initialize the field reposPath. It&apos;s because this field is null SubversionHistoryParser ends up throwing a NullPointerException.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>75702</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2010-07-21 16:51:48 +0000</bug_when>
+            <thetext>It looks like the sources were checked out with an old version of svn. I see the same thing when I try to use Subversion 1.1 to check out some other sources. When I run svn info on those checkouts, even with newer versions of svn, the repository root is missing. Running svn update with a newer version upgrades the storage format of the local copy and fixes the issue.
+
+Since we already have minimum version requirements on Subversion (1.4, I think, because we use the --xml option), I don&apos;t think we need to try to make the parser understand these older checkouts.
+
+It would be nice if it didn&apos;t blow up because of it, though. SubversionRepository.setDirectoryName() [1] already has code to disable history for the repository if the svn info command fails, by calling setWorking(false). I think we should do the same if we for some reason don&apos;t understand the output from the command.
+
+[1] http://src.opensolaris.org/source/xref/opengrok/trunk/src/org/opensolaris/opengrok/history/SubversionRepository.java#setDirectoryName</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>75880</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2010-07-26 08:38:50 +0000</bug_when>
+            <thetext>changeset:   1052:e58f43316cea</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

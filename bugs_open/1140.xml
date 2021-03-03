@@ -1,0 +1,340 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>1140</bug_id>
+          
+          <creation_ts>2008-04-11 15:47:00 +0000</creation_ts>
+          <short_desc>svn indexing is tremendously slow</short_desc>
+          <delta_ts>2008-10-22 14:38:08 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>indexer</component>
+          <version>unspecified</version>
+          <rep_platform>Other</rep_platform>
+          <op_sys>Windows</op_sys>
+          <bug_status>REOPENED</bug_status>
+          
+          
+          
+          
+          
+          
+          <priority>P2</priority>
+          <bug_severity>major</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Moisei">moisei</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          <cc>cremick</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>3670</commentid>
+            <who name="Moisei">moisei</who>
+            <bug_when>2008-04-11 15:47:15 +0000</bug_when>
+            <thetext>svn indexing is tremendously slow - indexing with svn history took
+    me 4 days and without history, it takes about 10 hours.
+
+environment: windows / java 1.5 / local svn available via file://  /multiproject
+
+-T 12 -W &quot;%CFG_FILE%&quot; -m 150000 -v -P -p /2.0.01 -Q off -S a on -s
+&quot;%SRC_ROOT%&quot; -d &quot;%DATA_ROOT%&quot;</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>7472</commentid>
+            <who name="Cory Remick">cremick</who>
+            <bug_when>2008-05-29 13:25:41 +0000</bug_when>
+            <thetext>(In reply to comment #0)
+&gt; svn indexing is tremendously slow - indexing with svn history took
+&gt;     me 4 days and without history, it takes about 10 hours.
+&gt; environment: windows / java 1.5 / local svn available via file:// 
+&gt; /multiproject
+&gt; -T 12 -W &quot;%CFG_FILE%&quot; -m 150000 -v -P -p /2.0.01 -Q off -S a on -s
+&gt; &quot;%SRC_ROOT%&quot; -d &quot;%DATA_ROOT%&quot;
+
+I had a simliar problem that may or may not relate to yours since you mentioned in your environment that svn is avialable via file://. 
+
+In my case even though the repository and source root were on the same server, I did a checkout to the source root using http://... through the Apache svn module instead of doing &quot;svn co file://...&quot; checkout. The history reader would go back to Apache to read the history and it took forever. But once it knew it was local it would bypass the Apache module and use the svn-javahl.jar library to fetch the history.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>10781</commentid>
+            <who name="Trond Norbye">trond.norbye</who>
+            <bug_when>2008-08-21 13:15:31 +0000</bug_when>
+            <thetext>The Subversion support was rewritten to use the subversion binary instead. Try to create a history cache with -H. This will remove the need for issuing a svn command for each file when the indexer adds the file to the index database.
+
+Please reopen the bug if it still doesn&apos;t work.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>15677</commentid>
+              <attachid>618</attachid>
+            <who name="Moisei">moisei</who>
+            <bug_when>2008-10-22 14:36:44 +0000</bug_when>
+            <thetext>Created attachment 618
+beginning of the indexer log with -H options
+
+The performance is not improved and even seems
+to be  degradated significantly:
+Attached is the log of the indexer.
+Even -H option was used, I still observe several
+svn log -xml &lt;FILE&gt;
+calls in the proceplorer (addvanced taskmanager)
+This is the command line that I run.
+java -Xms1024m -Xmx1024m -jar &quot;D:\grok\opengrok\opengrok.jar&quot; -T 20 -H -m 150000 -v -c &quot;D:\grok\ctags57\ctags.exe&quot; -P -p /2.0.01 -Q off -S -w search  -i &lt;many patterns&gt; -a on -s &quot;D:\grok\working-copies&quot; -d &quot;D:\grok\index&quot; 
+
+Note I am working in multiproject environment.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>15678</commentid>
+            <who name="Moisei">moisei</who>
+            <bug_when>2008-10-22 14:38:08 +0000</bug_when>
+            <thetext>look at Comment #3</thetext>
+          </long_desc>
+      
+          <attachment
+              isobsolete="0"
+              ispatch="0"
+              isprivate="0"
+              isurl="0"
+          >
+            <attachid>618</attachid>
+            <date>2008-10-22 14:36:00 +0000</date>
+            <delta_ts>2008-10-22 14:36:44 +0000</delta_ts>
+            <desc>beginning of the indexer log with -H options</desc>
+            <filename>reopened-because-of-svn-log-calls.txt</filename>
+            <type>text/plain</type>
+            <size>11713</size>
+            <attacher>moisei</attacher>
+            
+              <data encoding="base64">RDpcZ3Jva1xvcGVuZ3Jvaz5qYXZhIC1YbXMxMDI0bSAtWG14MTAyNG0gLWphciAiRDpcZ3Jva1xv
+cGVuZ3Jva1xvcGVuZ3Jvay5qYXIiIC1UIDIwIC1IIC1tIDE1MDAwMCAtdiAtYyAiRDpcZ3Jva1xj
+dGFnczU3XGN0YWdzLmV4ZSIgLVAgLXAgLzIuMC4wMSAtUSBvZmYgLVMgLXcgc2VhcmNoICAtaSAu
+Y3ZzaWdub3JlIC1pIENWU1JPT1QgLWkgLnN2biAtaSBqYXJzIC1pIHBhY2thZ2UgLWkgY2xhc3Nl
+cyAtaSBUZWFtTmV3czRTZXR1cCAtaSBDb2RlY3MgLWkgKi4wIC1pICouMDAwIC1pICouMDAxIC1p
+ICouMDAyIC1pICouMDAzIC1pICouMDA0IC1pICouMSAtaSAqLjMgLWkgKi5hIC1pICouYTEgLWkg
+Ki5hMiAtaSAqLmFiYyAtaSAqLmFjIC1pICouYWNvIC1pICouYWxpYXMgLWkgKi5hbSAtaSAqLmFw
+cyAtaSAqLmFzYSAtaSAqLmFzYyAtaSAqLmFzeCAtaSAqLmF2aSAtaSAqLmF4IC1pICouYmFzIC1p
+ICouYmluIC1pICouYm1wIC1pICouYm1wXyAtaSAqLmJwaSAtaSAqLmJwbCAtaSAqLmNhYiAtaSAq
+LmNkIC1pICouY2R4IC1pICouY2VyIC1pICouY2ZnIC1pICouY2d0IC1pICouY2hhcnNldCAtaSAq
+LmNobSAtaSAqLmNsYXNzIC1pICouY2xhc3NwYXRoIC1pICouY2xzIC1pICouY2x3IC1pICouY2x4
+IC1pICouY21hcCAtaSAqLmNudCAtaSAqLmNvbmYgLWkgKi5jb25maWcgLWkgKi5jb25maWd1cmUg
+LWkgKi5jc2V0IC1pICouY3Nwcm9qIC1pICouY3RoIC1pICouY3VwIC1pICouY3VyIC1pICouY3c5
+cHJqIC1pICouY3dsIC1pICouZGFyd2luIC1pICouZGF0IC1pICouZGF0YXNvdXJjZSAtaSAqLmRi
+IC1pICouZGJmIC1pICouZGNwIC1pICouZGNyIC1pICouZGN1IC1pICouZGVmIC1pICouZGVwIC1p
+ICouZGV2IC1pICouZGZtIC1pICouZGljIC1pICouZGljdCAtaSAqLmRpciAtaSAqLmRpeiAtaSAq
+LmRqZ3BwIC1pICouZGxsIC1pICouZG9jIC1pICouZG9jcyAtaSAqLmRvZiAtaSAqLmRveHlnZW4g
+LWkgKi5kcGsgLWkgKi5kcGwgLWkgKi5kcHIgLWkgKi5kcyAtaSAqLmRzX3N0b3JlIC1pICouZHNr
+IC1pICouZHNtIC1pICouZHNwXyAtaSAqLmRzdyAtaSAqLmR0ZCAtaSAqLmR0aSAtaSAqLmR2IC1p
+ICouZW1mIC1pICouZXJkIC1pICouZXhlIC1pICouZmNzIC1pICouZmlsIC1pICouZmlsZXMgLWkg
+Ki5mbGEgLWkgKi5mb3JtIC1pICouZnB0IC1pICouZnJtIC1pICouZnJ4IC1pICouZ2lkIC1pICou
+Z2lmIC1pICouZ2xvYmFsIC1pICouZ3JmIC1pICouZ3Vlc3MgLWkgKi5neGYgLWkgKi5oZmQgLWkg
+Ki5obHAgLWkgKi5obSAtaSAqLmhvd3RvIC1pICouaHRhIC1pICouaWNvIC1pICouaWRiIC1pICou
+aWRzIC1pICouaWR4IC1pICouaW1mIC1pICouaW1sIC1pICouaW5jIC1pICouaW5mIC1pICouaW5s
+IC1pICouaW5zdCAtaSAqLmlwciAtaSAqLmlybCAtaSAqLmlzciAtaSAqLmlzdSAtaSAqLmlzdiAt
+aSAqLml3cyAtaSAqLml3eiAtaSAqLmphciAtaSAqLmpubHAgLWkgKi5qcGVnIC1pICouanBnIC1p
+ICouanBsdWdpbiAtaSAqLmp3cyAtaSAqLmtiZCAtaSAqLmxhaSAtaSAqLmxleCAtaSAqLmxpXyAt
+aSAqLmxpYiAtaSAqLmxpYyAtaSAqLmxpbnV4IC1pICoubG5rIC1pICoubHN0IC1pICoubSAtaSAq
+Lm0wIC1pICoubTJ2IC1pICoubTQgLWkgKi5tX2luZGV4IC1pICoubWFuaWZlc3QgLWkgKi5tYXAg
+LWkgKi5tYXQgLWkgKi5tYyAtaSAqLm1jcCAtaSAqLm1kbCAtaSAqLm1lIC1pICoubWVuIC1pICou
+bWYgLWkgKi5tZnQgLWkgKi5taW5ndzMyIC1pICoubWsgLWkgKi5tbGV0IC1pICoubW8gLWkgKi5t
+b2QgLWkgKi5tcDIgLWkgKi5tcDMgLWkgKi5tcGcgLWkgKi5tc3ZjIC1pICoubXVsdGkgLWkgKi5u
+YXMgLWkgKi5uY2IgLWkgKi5ub2kgLWkgKi5uc2kgLWkgKi5vYmogLWkgKi5vY2EgLWkgKi5vY3gg
+LWkgKi5vZGwgLWkgKi5vZHQgLWkgKi5vbGQgLWkgKi5vcHQgLWkgKi5vcmlnaW5hbCAtaSAqLm9z
+MiAtaSAqLm91dHB1dCAtaSAqLnBhdCAtaSAqLnBieHByb2ogLWkgKi5wY2ggLWkgKi5wY2grKyAt
+aSAqLnBjeCAtaSAqLnBkZiAtaSAqLnBmeCAtaSAqLnBnciAtaSAqLnBsYyAtaSAqLnBsZyAtaSAq
+LnBsaXN0IC1pICoucG5nIC1pICoucG9saWN5IC1pICoucG9zaXRpb25zIC1pICoucHB0IC1pICou
+cHJvcGVydGllcyAtaSAqLnByeCAtaSAqLnBzIC1pICoucHNkIC1pICoucHdsaSAtaSAqLnB3cyAt
+aSAqLnB5IC1pICouciAtaSAqLnJhIC1pICoucmFtIC1pICoucmFzIC1pICoucmRzIC1pICoucmVj
+IC1pICoucmVuYW1lZCAtaSAqLnJlcCAtaSAqLnJlcyAtaSAqLnJlc29yZyAtaSAqLnJlc3ggLWkg
+Ki5yZ3MgLWkgKi5ycHQgLWkgKi5yc3UgLWkgKi5ydGYgLWkgKi5yd3MgLWkgKi5zYW1wbGUgLWkg
+Ki5zY2MgLWkgKi5zY20gLWkgKi5zZXR0aW5ncyAtaSAqLnNpbiAtaSAqLnNrbCAtaSAqLnNsbiAt
+aSAqLnNtIC1pICouc25kIC1pICouc3BlYyAtaSAqLnN0YXRpYyAtaSAqLnN0cyAtaSAqLnN1YiAt
+aSAqLnN1byAtaSAqLnN3ZiAtaSAqLnN5cyAtaSAqLnQzIC1pICoudGNkIC1pICoudGNzIC1pICou
+dGVtcGxhdGUgLWkgKi50Z2EgLWkgKi50aWYgLWkgKi50bGIgLWkgKi50bHggLWkgKi50bXBsIC1p
+ICoudG1zdG1wIC1pICoudHBsIC1pICoudHJlIC1pICoudHJnIC1pICoudHRmIC1pICoudHRoIC1p
+ICoudHRrIC1pICoudW5peCAtaSAqLnZiZyAtaSAqLnZicCAtaSAqLnZidyAtaSAqLnZjcHJvaiAt
+aSAqLnZlciAtaSAqLnZzZCAtaSAqLnZzcHNjYyAtaSAqLnZzc3NjYyAtaSAqLnZ1cCAtaSAqLnZ3
+cyAtaSAqLndhdiAtaSAqLndibXAgLWkgKi53aW5ndGsgLWkgKi53bWEgLWkgKi53bWYgLWkgKi53
+bWwgLWkgKi53bWx0IC1pICoud212IC1pICoud29lMzIgLWkgKi53cmkgLWkgKi53c20gLWkgKi53
+c3AgLWkgKi54bHMgLWkgKi54c2QgLWkgKi54dGMgLWkgKi55IC1pICouemlwIC1pICoufmRmIC1p
+ICoufmRwIC1pICoufmggLWkgKi5+cGEgLWkgKi4wIC1pICouMDAwIC1pICouMDAxIC1pICouMDAy
+IC1pICouMDAzIC1pICouMDA0IC1pICouMSAtaSAqLjMgLWkgKi5BIC1pICouQTEgLWkgKi5BMiAt
+aSAqLkFCQyAtaSAqLkFDIC1pICouQUNPIC1pICouQUxJQVMgLWkgKi5BTSAtaSAqLkFQUyAtaSAq
+LkFTQSAtaSAqLkFTQyAtaSAqLkFTWCAtaSAqLkFWSSAtaSAqLkFYIC1pICouQkFTIC1pICouQklO
+IC1pICouQk1QIC1pICouQk1QXyAtaSAqLkJQSSAtaSAqLkJQTCAtaSAqLkNBQiAtaSAqLkNEIC1p
+ICouQ0RYIC1pICouQ0VSIC1pICouQ0ZHIC1pICouQ0dUIC1pICouQ0hBUnNldCAtaSAqLkNITSAt
+aSAqLkNMQVNTIC1pICouQ0xBU1NQQVRIIC1pICouQ0xTIC1pICouQ0xXIC1pICouQ0xYIC1pICou
+Q01BUCAtaSAqLkNOVCAtaSAqLkNPTkYgLWkgKi5DT05GSUcgLWkgKi5DT05GSUdVUkUgLWkgKi5D
+c2V0IC1pICouQ1NQUk9KIC1pICouQ1RIIC1pICouQ1VQIC1pICouQ1VSIC1pICouQ1c5UFJKIC1p
+ICouQ1dMIC1pICouREFSV0lOIC1pICouREFUIC1pICouREFUQVNPVVJDRSAtaSAqLkRCIC1pICou
+REJGIC1pICouRENQIC1pICouRENSIC1pICouRENVIC1pICouREVGIC1pICouREVQIC1pICouREVW
+IC1pICouREZNIC1pICouRElDIC1pICouRElDVCAtaSAqLkRJUiAtaSAqLkRJWiAtaSAqLkRKR1BQ
+IC1pICouRExMIC1pICouRE9DIC1pICouRE9DUyAtaSAqLkRPRiAtaSAqLkRPWFlHRU4gLWkgKi5E
+UEsgLWkgKi5EUEwgLWkgKi5EUFIgLWkgKi5EUyAtaSAqLkRTX1NUT1JFIC1pICouRFNLIC1pICou
+RFNNIC1pICouRFNQXyAtaSAqLkRTVyAtaSAqLkRURCAtaSAqLkRUSSAtaSAqLkRWIC1pICouRU1G
+IC1pICouRVJEIC1pICouRVhFIC1pICouRkNTIC1pICouRklMIC1pICouRklMRVMgLWkgKi5GTEEg
+LWkgKi5GT1JNIC1pICouRlBUIC1pICouRlJNIC1pICouRlJYIC1pICouR0lEIC1pICouR0lGIC1p
+ICouR0xPQkFMIC1pICouR1JGIC1pICouR1VFU1MgLWkgKi5HWEYgLWkgKi5IRkQgLWkgKi5ITFAg
+LWkgKi5ITSAtaSAqLkhPV1RPIC1pICouSFRBIC1pICouSUNPIC1pICouSURCIC1pICouSURTIC1p
+ICouSURYIC1pICouSU1GIC1pICouSU1MIC1pICouSU5DIC1pICouSU5GIC1pICouSU5MIC1pICou
+SU5TVCAtaSAqLklQUiAtaSAqLklSTCAtaSAqLklTUiAtaSAqLklTVSAtaSAqLklTViAtaSAqLklX
+UyAtaSAqLklXWiAtaSAqLkpBUiAtaSAqLkpOTFAgLWkgKi5KUEVHIC1pICouSlBHIC1pICouSlBM
+VUdJTiAtaSAqLkpXUyAtaSAqLktCRCAtaSAqLkxBSSAtaSAqLkxFWCAtaSAqLkxJXyAtaSAqLkxJ
+QiAtaSAqLkxJQyAtaSAqLkxJTlVYIC1pICouTE5LIC1pICouTFNUIC1pICouTSAtaSAqLk0wIC1p
+ICouTTJWIC1pICouTTQgLWkgKi5NX0lOREVYIC1pICouTUFOSUZFU1QgLWkgKi5NQVAgLWkgKi5N
+QVQgLWkgKi5NQyAtaSAqLk1DUCAtaSAqLk1ETCAtaSAqLk1FIC1pICouTUVOIC1pICouTUYgLWkg
+Ki5NRlQgLWkgKi5NSU5HVzMyIC1pICouTUsgLWkgKi5NTEVUIC1pICouTU8gLWkgKi5NT0QgLWkg
+Ki5NUDIgLWkgKi5NUDMgLWkgKi5NUEcgLWkgKi5NU1ZDIC1pICouTVVMVEkgLWkgKi5OQVMgLWkg
+Ki5OQ0IgLWkgKi5OT0kgLWkgKi5OU0kgLWkgKi5PQkogLWkgKi5PQ0EgLWkgKi5PQ1ggLWkgKi5P
+REwgLWkgKi5PRFQgLWkgKi5PTEQgLWkgKi5PUFQgLWkgKi5PUklHSU5BTCAtaSAqLk9TMiAtaSAq
+Lk9VVFBVVCAtaSAqLlBBVCAtaSAqLlBCWFBST0ogLWkgKi5QQ0ggLWkgKi5QQ0grKyAtaSAqLlBD
+WCAtaSAqLlBERiAtaSAqLlBGWCAtaSAqLlBHUiAtaSAqLlBMQyAtaSAqLlBMRyAtaSAqLlBMSVNU
+IC1pICouUE5HIC1pICouUE9MSUNZIC1pICouUE9TSVRJT05TIC1pICouUFBUIC1pICouUFJPUEVS
+VElFUyAtaSAqLlBSWCAtaSAqLlBTIC1pICouUFNEIC1pICouUFdMSSAtaSAqLlBXUyAtaSAqLlBZ
+IC1pICouUiAtaSAqLlJBIC1pICouUkFNIC1pICouUkFTIC1pICouUkRTIC1pICouUkVDIC1pICou
+UkVOQU1FRCAtaSAqLlJFUCAtaSAqLlJFUyAtaSAqLlJFU09SRyAtaSAqLlJFU1ggLWkgKi5SR1Mg
+LWkgKi5SUFQgLWkgKi5SU1UgLWkgKi5SVEYgLWkgKi5SV1MgLWkgKi5TQU1QTEUgLWkgKi5TQ0Mg
+LWkgKi5TQ00gLWkgKi5TRVRUSU5HUyAtaSAqLlNJTiAtaSAqLlNLTCAtaSAqLlNMTiAtaSAqLlNN
+IC1pICouU05EIC1pICouU1BFQyAtaSAqLlNUQVRJQyAtaSAqLlNUUyAtaSAqLlNVQiAtaSAqLlNV
+TyAtaSAqLlNXRiAtaSAqLlNZUyAtaSAqLlQzIC1pICouVENEIC1pICouVENTIC1pICouVEVNUExB
+VEUgLWkgKi5UR0EgLWkgKi5USUYgLWkgKi5UTEIgLWkgKi5UTFggLWkgKi5UTVBMIC1pICouVE1T
+VE1QIC1pICouVFBMIC1pICouVFJFIC1pICouVFJHIC1pICouVFRGIC1pICouVFRIIC1pICouVFRL
+IC1pICouVU5JWCAtaSAqLlZCRyAtaSAqLlZCUCAtaSAqLlZCVyAtaSAqLlZDUFJPSiAtaSAqLlZF
+UiAtaSAqLlZTRCAtaSAqLlZTUFNDQyAtaSAqLlZTU1NDQyAtaSAqLlZVUCAtaSAqLlZXUyAtaSAq
+LldBViAtaSAqLldCTVAgLWkgKi5XSU5HVEsgLWkgKi5XTUEgLWkgKi5XTUYgLWkgKi5XTUwgLWkg
+Ki5XTUxUIC1pICouV01WIC1pICouV09FMzIgLWkgKi5XUkkgLWkgKi5XU00gLWkgKi5XU1AgLWkg
+Ki5YTFMgLWkgKi5YU0QgLWkgKi5YVEMgLWkgKi5ZIC1pICouWklQIC1pICoufkRGIC1pICoufkRQ
+IC1pICoufkggLWkgKi5+UEEgLWEgb24gLXMgIkQ6XGdyb2tcd29ya2luZy1jb3BpZXMiIC1kICJE
+Olxncm9rXGluZGV4IiANClNjYW5uaW5nIGZvciByZXBvc2l0b3JpZXMuLi4NCk9jdCAyMiwgMjAw
+OCA1OjA0OjMzIFBNIG9yZy5vcGVuc29sYXJpcy5vcGVuZ3Jvay5oaXN0b3J5Lkhpc3RvcnlHdXJ1
+IGFkZFJlcG9zaXRvcmllcw0KSU5GTzogQWRkaW5nIDxvcmcub3BlbnNvbGFyaXMub3Blbmdyb2su
+aGlzdG9yeS5TdWJ2ZXJzaW9uUmVwb3NpdG9yeT4gcmVwb3NpdG9yeTogPEQ6XGdyb2tcd29ya2lu
+Zy1jb3BpZXNcMS40LjI4Pg0KT2N0IDIyLCAyMDA4IDU6MDQ6MzQgUE0gb3JnLm9wZW5zb2xhcmlz
+Lm9wZW5ncm9rLmhpc3RvcnkuSGlzdG9yeUd1cnUgYWRkUmVwb3NpdG9yaWVzDQpJTkZPOiBBZGRp
+bmcgPG9yZy5vcGVuc29sYXJpcy5vcGVuZ3Jvay5oaXN0b3J5LlN1YnZlcnNpb25SZXBvc2l0b3J5
+PiByZXBvc2l0b3J5OiA8RDpcZ3Jva1x3b3JraW5nLWNvcGllc1wxLjQuMzE+DQpPY3QgMjIsIDIw
+MDggNTowNDozNCBQTSBvcmcub3BlbnNvbGFyaXMub3Blbmdyb2suaGlzdG9yeS5IaXN0b3J5R3Vy
+dSBhZGRSZXBvc2l0b3JpZXMNCklORk86IEFkZGluZyA8b3JnLm9wZW5zb2xhcmlzLm9wZW5ncm9r
+Lmhpc3RvcnkuU3VidmVyc2lvblJlcG9zaXRvcnk+IHJlcG9zaXRvcnk6IDxEOlxncm9rXHdvcmtp
+bmctY29waWVzXDEuNC4zMj4NCk9jdCAyMiwgMjAwOCA1OjA0OjM0IFBNIG9yZy5vcGVuc29sYXJp
+cy5vcGVuZ3Jvay5oaXN0b3J5Lkhpc3RvcnlHdXJ1IGFkZFJlcG9zaXRvcmllcw0KSU5GTzogQWRk
+aW5nIDxvcmcub3BlbnNvbGFyaXMub3Blbmdyb2suaGlzdG9yeS5TdWJ2ZXJzaW9uUmVwb3NpdG9y
+eT4gcmVwb3NpdG9yeTogPEQ6XGdyb2tcd29ya2luZy1jb3BpZXNcMS40LjMzPg0KT2N0IDIyLCAy
+MDA4IDU6MDQ6MzUgUE0gb3JnLm9wZW5zb2xhcmlzLm9wZW5ncm9rLmhpc3RvcnkuSGlzdG9yeUd1
+cnUgYWRkUmVwb3NpdG9yaWVzDQpJTkZPOiBBZGRpbmcgPG9yZy5vcGVuc29sYXJpcy5vcGVuZ3Jv
+ay5oaXN0b3J5LlN1YnZlcnNpb25SZXBvc2l0b3J5PiByZXBvc2l0b3J5OiA8RDpcZ3Jva1x3b3Jr
+aW5nLWNvcGllc1wxLjQuMzQ+DQpPY3QgMjIsIDIwMDggNTowNDozNSBQTSBvcmcub3BlbnNvbGFy
+aXMub3Blbmdyb2suaGlzdG9yeS5IaXN0b3J5R3VydSBhZGRSZXBvc2l0b3JpZXMNCklORk86IEFk
+ZGluZyA8b3JnLm9wZW5zb2xhcmlzLm9wZW5ncm9rLmhpc3RvcnkuU3VidmVyc2lvblJlcG9zaXRv
+cnk+IHJlcG9zaXRvcnk6IDxEOlxncm9rXHdvcmtpbmctY29waWVzXDEuNS4wNz4NCk9jdCAyMiwg
+MjAwOCA1OjA0OjM1IFBNIG9yZy5vcGVuc29sYXJpcy5vcGVuZ3Jvay5oaXN0b3J5Lkhpc3RvcnlH
+dXJ1IGFkZFJlcG9zaXRvcmllcw0KSU5GTzogQWRkaW5nIDxvcmcub3BlbnNvbGFyaXMub3Blbmdy
+b2suaGlzdG9yeS5TdWJ2ZXJzaW9uUmVwb3NpdG9yeT4gcmVwb3NpdG9yeTogPEQ6XGdyb2tcd29y
+a2luZy1jb3BpZXNcMS41LjA4Pg0KT2N0IDIyLCAyMDA4IDU6MDQ6MzUgUE0gb3JnLm9wZW5zb2xh
+cmlzLm9wZW5ncm9rLmhpc3RvcnkuSGlzdG9yeUd1cnUgYWRkUmVwb3NpdG9yaWVzDQpJTkZPOiBB
+ZGRpbmcgPG9yZy5vcGVuc29sYXJpcy5vcGVuZ3Jvay5oaXN0b3J5LlN1YnZlcnNpb25SZXBvc2l0
+b3J5PiByZXBvc2l0b3J5OiA8RDpcZ3Jva1x3b3JraW5nLWNvcGllc1wyLjAuMDE+DQpPY3QgMjIs
+IDIwMDggNTowNDozNiBQTSBvcmcub3BlbnNvbGFyaXMub3Blbmdyb2suaGlzdG9yeS5IaXN0b3J5
+R3VydSBhZGRSZXBvc2l0b3JpZXMNCklORk86IEFkZGluZyA8b3JnLm9wZW5zb2xhcmlzLm9wZW5n
+cm9rLmhpc3RvcnkuU3VidmVyc2lvblJlcG9zaXRvcnk+IHJlcG9zaXRvcnk6IDxEOlxncm9rXHdv
+cmtpbmctY29waWVzXDMuMC4wMT4NCk9jdCAyMiwgMjAwOCA1OjA0OjM2IFBNIG9yZy5vcGVuc29s
+YXJpcy5vcGVuZ3Jvay5oaXN0b3J5Lkhpc3RvcnlHdXJ1IGFkZFJlcG9zaXRvcmllcw0KSU5GTzog
+QWRkaW5nIDxvcmcub3BlbnNvbGFyaXMub3Blbmdyb2suaGlzdG9yeS5TdWJ2ZXJzaW9uUmVwb3Np
+dG9yeT4gcmVwb3NpdG9yeTogPEQ6XGdyb2tcd29ya2luZy1jb3BpZXNcRGFsZXQ1Pg0KT2N0IDIy
+LCAyMDA4IDU6MDQ6MzYgUE0gb3JnLm9wZW5zb2xhcmlzLm9wZW5ncm9rLmhpc3RvcnkuSGlzdG9y
+eUd1cnUgYWRkUmVwb3NpdG9yaWVzDQpJTkZPOiBBZGRpbmcgPG9yZy5vcGVuc29sYXJpcy5vcGVu
+Z3Jvay5oaXN0b3J5LlN1YnZlcnNpb25SZXBvc2l0b3J5PiByZXBvc2l0b3J5OiA8RDpcZ3Jva1x3
+b3JraW5nLWNvcGllc1x0cnVuaz4NCkRvbmUgc2VhcmNoaW5nIGZvciByZXBvc2l0b3JpZXMgKDVz
+KQ0KT2N0IDIyLCAyMDA4IDU6MDQ6MzYgUE0gb3JnLm9wZW5zb2xhcmlzLm9wZW5ncm9rLmhpc3Rv
+cnkuSGlzdG9yeUd1cnUgY3JlYXRlQ2FjaGUNCklORk86IENyZWF0ZSBoaXN0b3J5Y2FjaGUgZm9y
+IEQ6XGdyb2tcd29ya2luZy1jb3BpZXNcMi4wLjAxIChTdWJ2ZXJzaW9uUmVwb3NpdG9yeSkNCk9j
+dCAyMiwgMjAwOCA1OjMyOjExIFBNIG9yZy5vcGVuc29sYXJpcy5vcGVuZ3Jvay5oaXN0b3J5Lkhp
+c3RvcnlHdXJ1IGNyZWF0ZUNhY2hlDQpJTkZPOiBDcmVhdGluZyBoaXN0b3J5Y2FjaGUgZm9yIEQ6
+XGdyb2tcd29ya2luZy1jb3BpZXNcMi4wLjAxIHRvb2sgKDE2NTUyNTVtcykNCk9jdCAyMiwgMjAw
+OCA1OjMyOjExIFBNIG9yZy5vcGVuc29sYXJpcy5vcGVuZ3Jvay5oaXN0b3J5Lkhpc3RvcnlHdXJ1
+IGNyZWF0ZUNhY2hlDQpJTkZPOiBDcmVhdGUgaGlzdG9yeWNhY2hlIGZvciBEOlxncm9rXHdvcmtp
+bmctY29waWVzXDEuNC4zMSAoU3VidmVyc2lvblJlcG9zaXRvcnkpDQpPY3QgMjIsIDIwMDggNToz
+NzoyMCBQTSBvcmcub3BlbnNvbGFyaXMub3Blbmdyb2suaGlzdG9yeS5IaXN0b3J5R3VydSBjcmVh
+dGVDYWNoZQ0KSU5GTzogQ3JlYXRpbmcgaGlzdG9yeWNhY2hlIGZvciBEOlxncm9rXHdvcmtpbmct
+Y29waWVzXDEuNC4zMSB0b29rICgzMDgxMThtcykNCk9jdCAyMiwgMjAwOCA1OjM3OjIwIFBNIG9y
+Zy5vcGVuc29sYXJpcy5vcGVuZ3Jvay5oaXN0b3J5Lkhpc3RvcnlHdXJ1IGNyZWF0ZUNhY2hlDQpJ
+TkZPOiBDcmVhdGUgaGlzdG9yeWNhY2hlIGZvciBEOlxncm9rXHdvcmtpbmctY29waWVzXDEuNC4z
+MiAoU3VidmVyc2lvblJlcG9zaXRvcnkpDQpPY3QgMjIsIDIwMDggNTo0MzoyMyBQTSBvcmcub3Bl
+bnNvbGFyaXMub3Blbmdyb2suaGlzdG9yeS5IaXN0b3J5R3VydSBjcmVhdGVDYWNoZQ0KSU5GTzog
+Q3JlYXRpbmcgaGlzdG9yeWNhY2hlIGZvciBEOlxncm9rXHdvcmtpbmctY29waWVzXDEuNC4zMiB0
+b29rICgzNjM4NjVtcykNCk9jdCAyMiwgMjAwOCA1OjQzOjIzIFBNIG9yZy5vcGVuc29sYXJpcy5v
+cGVuZ3Jvay5oaXN0b3J5Lkhpc3RvcnlHdXJ1IGNyZWF0ZUNhY2hlDQpJTkZPOiBDcmVhdGUgaGlz
+dG9yeWNhY2hlIGZvciBEOlxncm9rXHdvcmtpbmctY29waWVzXDEuNC4yOCAoU3VidmVyc2lvblJl
+cG9zaXRvcnkpDQpPY3QgMjIsIDIwMDggNTo0NTo1MCBQTSBvcmcub3BlbnNvbGFyaXMub3Blbmdy
+b2suaGlzdG9yeS5IaXN0b3J5R3VydSBjcmVhdGVDYWNoZQ0KSU5GTzogQ3JlYXRpbmcgaGlzdG9y
+eWNhY2hlIGZvciBEOlxncm9rXHdvcmtpbmctY29waWVzXDEuNC4yOCB0b29rICgxNDY1MjhtcykN
+Ck9jdCAyMiwgMjAwOCA1OjQ1OjUwIFBNIG9yZy5vcGVuc29sYXJpcy5vcGVuZ3Jvay5oaXN0b3J5
+Lkhpc3RvcnlHdXJ1IGNyZWF0ZUNhY2hlDQpJTkZPOiBDcmVhdGUgaGlzdG9yeWNhY2hlIGZvciBE
+Olxncm9rXHdvcmtpbmctY29waWVzXDEuNC4zMyAoU3VidmVyc2lvblJlcG9zaXRvcnkpDQpPY3Qg
+MjIsIDIwMDggNTo0NjoyNyBQTSBvcmcub3BlbnNvbGFyaXMub3Blbmdyb2suaGlzdG9yeS5IaXN0
+b3J5R3VydSBjcmVhdGVDYWNoZQ0KSU5GTzogQ3JlYXRpbmcgaGlzdG9yeWNhY2hlIGZvciBEOlxn
+cm9rXHdvcmtpbmctY29waWVzXDEuNC4zMyB0b29rICgzNzA3N21zKQ0KT2N0IDIyLCAyMDA4IDU6
+NDY6MjcgUE0gb3JnLm9wZW5zb2xhcmlzLm9wZW5ncm9rLmhpc3RvcnkuSGlzdG9yeUd1cnUgY3Jl
+YXRlQ2FjaGUNCklORk86IENyZWF0ZSBoaXN0b3J5Y2FjaGUgZm9yIEQ6XGdyb2tcd29ya2luZy1j
+b3BpZXNcMS40LjM0IChTdWJ2ZXJzaW9uUmVwb3NpdG9yeSkNCk9jdCAyMiwgMjAwOCA2OjEzOjQ1
+IFBNIG9yZy5vcGVuc29sYXJpcy5vcGVuZ3Jvay5oaXN0b3J5Lkhpc3RvcnlHdXJ1IGNyZWF0ZUNh
+Y2hlDQpJTkZPOiBDcmVhdGluZyBoaXN0b3J5Y2FjaGUgZm9yIEQ6XGdyb2tcd29ya2luZy1jb3Bp
+ZXNcMS40LjM0IHRvb2sgKDE2Mzc5MTFtcykNCk9jdCAyMiwgMjAwOCA2OjEzOjQ1IFBNIG9yZy5v
+cGVuc29sYXJpcy5vcGVuZ3Jvay5oaXN0b3J5Lkhpc3RvcnlHdXJ1IGNyZWF0ZUNhY2hlDQpJTkZP
+OiBDcmVhdGUgaGlzdG9yeWNhY2hlIGZvciBEOlxncm9rXHdvcmtpbmctY29waWVzXDMuMC4wMSAo
+U3VidmVyc2lvblJlcG9zaXRvcnkpDQpPY3QgMjIsIDIwMDggNjo0MjowNCBQTSBvcmcub3BlbnNv
+bGFyaXMub3Blbmdyb2suaGlzdG9yeS5IaXN0b3J5R3VydSBjcmVhdGVDYWNoZQ0KSU5GTzogQ3Jl
+YXRpbmcgaGlzdG9yeWNhY2hlIGZvciBEOlxncm9rXHdvcmtpbmctY29waWVzXDMuMC4wMSB0b29r
+ICgxNjk5MzMybXMpDQpPY3QgMjIsIDIwMDggNjo0MjowNCBQTSBvcmcub3BlbnNvbGFyaXMub3Bl
+bmdyb2suaGlzdG9yeS5IaXN0b3J5R3VydSBjcmVhdGVDYWNoZQ0KSU5GTzogQ3JlYXRlIGhpc3Rv
+cnljYWNoZSBmb3IgRDpcZ3Jva1x3b3JraW5nLWNvcGllc1wxLjUuMDcgKFN1YnZlcnNpb25SZXBv
+c2l0b3J5KQ0KT2N0IDIyLCAyMDA4IDY6NTA6MDUgUE0gb3JnLm9wZW5zb2xhcmlzLm9wZW5ncm9r
+Lmhpc3RvcnkuSGlzdG9yeUd1cnUgY3JlYXRlQ2FjaGUNCklORk86IENyZWF0aW5nIGhpc3Rvcnlj
+YWNoZSBmb3IgRDpcZ3Jva1x3b3JraW5nLWNvcGllc1wxLjUuMDcgdG9vayAoNDgwODAwbXMpDQpP
+Y3QgMjIsIDIwMDggNjo1MDowNSBQTSBvcmcub3BlbnNvbGFyaXMub3Blbmdyb2suaGlzdG9yeS5I
+aXN0b3J5R3VydSBjcmVhdGVDYWNoZQ0KSU5GTzogQ3JlYXRlIGhpc3RvcnljYWNoZSBmb3IgRDpc
+Z3Jva1x3b3JraW5nLWNvcGllc1wxLjUuMDggKFN1YnZlcnNpb25SZXBvc2l0b3J5KQ0KT2N0IDIy
+LCAyMDA4IDc6MDM6MzEgUE0gb3JnLm9wZW5zb2xhcmlzLm9wZW5ncm9rLmhpc3RvcnkuSGlzdG9y
+eUd1cnUgY3JlYXRlQ2FjaGUNCklORk86IENyZWF0aW5nIGhpc3RvcnljYWNoZSBmb3IgRDpcZ3Jv
+a1x3b3JraW5nLWNvcGllc1wxLjUuMDggdG9vayAoODA1NTEwbXMpDQpPY3QgMjIsIDIwMDggNzow
+MzozMSBQTSBvcmcub3BlbnNvbGFyaXMub3Blbmdyb2suaGlzdG9yeS5IaXN0b3J5R3VydSBjcmVh
+dGVDYWNoZQ0KSU5GTzogQ3JlYXRlIGhpc3RvcnljYWNoZSBmb3IgRDpcZ3Jva1x3b3JraW5nLWNv
+cGllc1x0cnVuayAoU3VidmVyc2lvblJlcG9zaXRvcnkpDQpPY3QgMjIsIDIwMDggNzo0Nzo0NyBQ
+TSBvcmcub3BlbnNvbGFyaXMub3Blbmdyb2suaGlzdG9yeS5IaXN0b3J5R3VydSBjcmVhdGVDYWNo
+ZQ0KSU5GTzogQ3JlYXRpbmcgaGlzdG9yeWNhY2hlIGZvciBEOlxncm9rXHdvcmtpbmctY29waWVz
+XHRydW5rIHRvb2sgKDI2NTY2ODJtcykNCk9jdCAyMiwgMjAwOCA3OjQ3OjQ3IFBNIG9yZy5vcGVu
+c29sYXJpcy5vcGVuZ3Jvay5oaXN0b3J5Lkhpc3RvcnlHdXJ1IGNyZWF0ZUNhY2hlDQpJTkZPOiBD
+cmVhdGUgaGlzdG9yeWNhY2hlIGZvciBEOlxncm9rXHdvcmtpbmctY29waWVzXERhbGV0NSAoU3Vi
+dmVyc2lvblJlcG9zaXRvcnkpDQpPY3QgMjIsIDIwMDggNzo0Nzo1NiBQTSBvcmcub3BlbnNvbGFy
+aXMub3Blbmdyb2suaGlzdG9yeS5IaXN0b3J5R3VydSBjcmVhdGVDYWNoZQ0KSU5GTzogQ3JlYXRp
+bmcgaGlzdG9yeWNhY2hlIGZvciBEOlxncm9rXHdvcmtpbmctY29waWVzXERhbGV0NSB0b29rICg4
+NDA2bXMpDQpPY3QgMjIsIDIwMDggNzo0Nzo1NiBQTSBvcmcub3BlbnNvbGFyaXMub3Blbmdyb2su
+aW5kZXguSW5kZXhlciBkb0luZGV4ZXJFeGVjdXRpb24NCklORk86IFN0YXJ0aW5nIGluZGV4RXhl
+Y3V0aW9uDQpBZGRpbmc6IC90cnVuay9WZXIgMS40L0FjdGl2ZUxvZy9BY3RpdmVMb2dTZXR1cC9S
+RUZSRVNILkJBVCAoUGxhaW5BbmFseXplcikNCg==
+</data>
+
+          </attachment>
+      
+
+    </bug>
+
+</bugzilla>

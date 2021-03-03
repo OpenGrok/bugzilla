@@ -1,0 +1,93 @@
+--- src.ori/org/opensolaris/opengrok/configuration/Configuration.java	2010-05-11 02:12:43.000000000 -0700
++++ src/org/opensolaris/opengrok/configuration/Configuration.java	2010-08-11 19:50:29.361928555 -0700
+@@ -74,6 +74,7 @@
+     private boolean allowLeadingWildcard;
+     private IgnoredNames ignoredNames;
+     private String userPage;
++    private String userPageSuffix;
+     private String bugPage;
+     private String bugPattern;
+     private String reviewPage;
+@@ -323,6 +324,14 @@
+         return userPage;
+     }
+ 
++    public void setUserPageSuffix(String userPageSuffix) {
++        this.userPageSuffix = userPageSuffix;
++    }
++
++    public String getUserPageSuffix() {
++        return userPageSuffix;
++    }
++
+     public void setBugPage(String bugPage) {
+         this.bugPage = bugPage;
+     }
+--- src.ori/org/opensolaris/opengrok/configuration/RuntimeEnvironment.java	2010-05-11 02:12:43.000000000 -0700
++++ src/org/opensolaris/opengrok/configuration/RuntimeEnvironment.java	2010-08-11 19:53:53.408314080 -0700
+@@ -471,6 +471,22 @@
+     }
+ 
+     /**
++     * Returns the user page suffix for the history listing
++     * @return the URL string fragment following the username
++     */
++    public String getUserPageSuffix() {
++        return threadConfig.get().getUserPageSuffix();
++    }
++
++    /**
++     * Sets the user page suffix for the history listing
++     * @param userPageSuffix the URL fragment following the username from history
++     */
++    public void setUserPageSuffix(String userPageSuffix) {
++        threadConfig.get().setUserPageSuffix(userPageSuffix);
++    }
++
++    /**
+      * Returns the bug page for the history listing
+      * @return the URL string fragment preceeding the bug ID
+      */
+--- src.ori/org/opensolaris/opengrok/index/CommandLineOptions.java	2010-05-11 02:12:43.000000000 -0700
++++ src/org/opensolaris/opengrok/index/CommandLineOptions.java	2010-08-11 19:19:06.240930585 -0700
+@@ -98,6 +98,8 @@
+         options.add(new Option('s', "/path/to/source/root", "The root directory of the source tree"));
+         options.add(new Option('d', "/path/to/data/root", "The directory where OpenGrok stores the generated data"));
+         options.add(new Option('T', "number", "The number of threads to use for index generation. By default the number of threads will be set to the number of available CPUs"));        
++        options.add(new Option('I', "url", "Base URL of the user Information provider. Default: \"http://www.opensolaris.org/viewProfile.jspa?username=\""));
++        options.add(new Option('X', "url:suffix", "URL Suffix for the user Information provider. Default: \"\""));
+         options.add(new Option('?', null, "Help"));
+         options.add(new Option('V', null, "Print version and quit"));
+     }
+--- src.ori/org/opensolaris/opengrok/index/Indexer.java	2010-05-11 02:12:43.000000000 -0700
++++ src/org/opensolaris/opengrok/index/Indexer.java	2010-08-11 19:20:26.028493217 -0700
+@@ -348,6 +348,12 @@
+                                 System.err.println("           \"-l off\" will disable locks in Lucene");
+                             }
+                             break;
++                        case 'I':
++                            env.setUserPage(getopt.getOptarg());
++                            break;
++                        case 'X':
++                            env.setUserPageSuffix(getopt.getOptarg());
++                            break;
+                         case 'V':
+                             System.out.println(Info.getFullVersion());
+                             System.exit(0);
+--- src.ori/org/opensolaris/opengrok/web/Util.java	2010-05-11 02:12:43.000000000 -0700
++++ src/org/opensolaris/opengrok/web/Util.java	2010-08-11 19:16:04.176245018 -0700
+@@ -390,10 +390,14 @@
+                 out.write(" ");
+             }
+             String link = RuntimeEnvironment.getInstance().getUserPage();
++            String suffix = RuntimeEnvironment.getInstance().getUserPageSuffix();
+             if (link != null && link.length() > 0) {
+                 out.write(anchorLinkStart);
+                 out.write(link);
+                 out.write(URIEncode(a));
++                if (suffix != null && 0 < suffix.length()) {
++                    out.write(suffix);
++                }
+                 out.write(closeQuotedTag);
+                 htmlize(a, out);
+                 out.write(anchorEnd);

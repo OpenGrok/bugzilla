@@ -1,0 +1,24 @@
+
+diff -r ee1cd6c6a83d src/org/opensolaris/opengrok/history/PerforceHistoryParser.java
+--- a/src/org/opensolaris/opengrok/history/PerforceHistoryParser.java	Wed May 26 14:04:38 2010 -0700
++++ b/src/org/opensolaris/opengrok/history/PerforceHistoryParser.java	Tue Jul 27 13:34:58 2010 -0700
+@@ -115,6 +115,7 @@
+                 int year = Integer.parseInt(matcher.group(2));
+                 int month = Integer.parseInt(matcher.group(3));
+                 int day = Integer.parseInt(matcher.group(4));
+-                Calendar calendar = new GregorianCalendar(year, month, day);
++                /* GregorianCalendar months are 0 based, but p4's are 1 based*/
++                Calendar calendar = new GregorianCalendar(year, month - 1, day);
+                 entry.setDate(calendar.getTime());
+                 entry.setAuthor(matcher.group(5));
+                 entry.setMessage(matcher.group(6).trim());
+@@ -155,7 +157,9 @@
+                 int year = Integer.parseInt(matcher.group(2));
+                 int month = Integer.parseInt(matcher.group(3));
+                 int day = Integer.parseInt(matcher.group(4));
+-                Calendar calendar = new GregorianCalendar(year, month, day);
++                /* GregorianCalendar months are 0 based, but p4's are 1 based*/
++                Calendar calendar = new GregorianCalendar(year, month - 1, day);
+                 entry.setDate(calendar.getTime());
+                 entry.setAuthor(matcher.group(5));
+                 entry.setActive(true);

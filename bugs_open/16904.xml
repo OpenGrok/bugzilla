@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>16904</bug_id>
+          
+          <creation_ts>2010-08-24 09:27:00 +0000</creation_ts>
+          <short_desc>Simplify browsing code by providing code folding</short_desc>
+          <delta_ts>2010-08-25 14:30:11 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>analyzer</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>NEW</bug_status>
+          
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>enhancement</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Patrik Larsson">patrik.mrx</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          <cc>Lubos.Kosco</cc>
+    
+    <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>76886</commentid>
+            <who name="Patrik Larsson">patrik.mrx</who>
+            <bug_when>2010-08-24 09:27:53 +0000</bug_when>
+            <thetext>I do not know if this enhancement request should be put on the indexer, analyzer or the webapp. In the end all three will be affected when this enhancement is implemented.
+
+When browsing long files/functions it can shorten the time needed to understand code if it is folded as many IDEs can do.
+
+Providing this enhancement would probably mean extending the language parsers to include information on where code blocks start and end in the specific language which are used to fold the code correctly.
+
+I cannot tell at this point what version of HTML is required for this to work or if AJAX or similar must be used.
+
+I did search this bugzilla but could not find anything similar to this enhancement request.
+
+Thank you so much for an awesome tool!</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>76995</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2010-08-25 14:30:11 +0000</bug_when>
+            <thetext>this is definitely a great idea
+I think even in current state one could implement a button which would collapse all comments (since they have a class, so css flip triggered by js to hide it will work)
+obviously for more functionality analyzer(xref generator) changes would be needed
+if you want you can start on adding a button for collapsing comments, I should be able to help with review of code and push to main trunk ...
+
+thnx for your help
+Lubos</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

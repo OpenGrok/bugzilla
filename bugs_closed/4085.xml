@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>4085</bug_id>
+          
+          <creation_ts>2008-10-20 04:17:00 +0000</creation_ts>
+          <short_desc>system.out calls should be replaced by java.util.logging</short_desc>
+          <delta_ts>2010-11-09 11:02:49 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>indexer</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>Solaris</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXED</resolution>
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>enhancement</bug_severity>
+          <target_milestone>0.10</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Vladimir Kotal">vladimir.kotal</reporter>
+          <assigned_to name="Lubos Kosco">Lubos.Kosco</assigned_to>
+          <cc>knut.hatlen</cc>
+    
+    <cc>Lubos.Kosco</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>15334</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2008-10-20 04:17:19 +0000</bug_when>
+            <thetext>With recent work done on logging it is now possible to configure logging (via &apos;java.util.logging.config.file&apos; define) with great degree of granularity. However, some system.out() messages are still left in the code. They should be replaced by java.util.logging calls.
+
+E.g. it should be possible to suppress all messages written to console except SEVERE level so that mail is sent to root only in case there is some failure (handy when running the indexer from crontab).
+
+Right now, it writes e.g. the following to the console:
+
+Scanning for repositories...
+Done searching for repositories (54s)
+Writing configuration to /opengrok/configuration.xml
+Done...
+Remove stale file: /opengrok-trunk/README.txt
+Adding: /opengrok-trunk/README.txt (PlainAnalyzer)
+...
+
+The above messages should be configurable as well (seems like INFO level would be suitable in this case).</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>79057</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2010-11-09 11:02:49 +0000</bug_when>
+            <thetext>I think Ľuboš has removed most of the noise now (checked in under various bug reports, e.g., bug #15468 and bug #16677), so I&apos;m closing this bug as fixed in the next release.
+
+I don&apos;t see any output from the indexer when using logging.properties from trunk and setting java.util.logging.ConsoleHandler.level = SEVERE.</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

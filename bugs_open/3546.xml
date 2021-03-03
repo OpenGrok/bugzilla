@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>3546</bug_id>
+          
+          <creation_ts>2008-09-23 01:18:00 +0000</creation_ts>
+          <short_desc>configurable regexp for Author field search</short_desc>
+          <delta_ts>2010-08-12 06:10:47 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>webapp</component>
+          <version>unspecified</version>
+          <rep_platform>Other</rep_platform>
+          <op_sys>Solaris</op_sys>
+          <bug_status>NEW</bug_status>
+          
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>enhancement</bug_severity>
+          <target_milestone>0.8</target_milestone>
+          
+          <blocked>16786</blocked>
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Vladimir Kotal">vladimir.kotal</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>12966</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2008-09-23 01:18:02 +0000</bug_when>
+            <thetext>In History mode, OpenGrok displays list of changesets/versions of particular file. One of the columns lists person who did the integration.
+
+In case of ON consolidation (which recently switched to Mercurial) the author field is usually something like &apos;Firstname Surname &lt;email_address&gt;&apos;. In most cases, this confuses any user search engines [*].
+
+Hence, there should be a configurable regexp for taking out e.g. e-mail address. If there is no regexp, user field should be passed verbatim, otherwise the regexp should be used.
+
+[*] In case of http://src.opensolaris.org/ there is one bigger problem and that is mapping user field to OpenSolaris IDs but this is out of scope of this RFE.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>12967</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2008-09-23 01:42:49 +0000</bug_when>
+            <thetext>In config file this could look like this:
+
+  &lt;void property=&quot;userPage&quot;&gt;
+   &lt;string&gt;http://namefinder/NameFinder?nfquery=&lt;/string&gt;
+  &lt;/void&gt;
+  &lt;void property=&quot;userRegexp&quot;&gt;
+   &lt;string&gt;\([A-Za-z ]+\)\&lt;\([a-z.@]+\)\&gt;&lt;/string&gt;
+  &lt;/void&gt;
+
+The above regexp is just an example.
+
+The catch is that to make the extraction possible it seems that replacement would have to be used. (add another configurable string ?)</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

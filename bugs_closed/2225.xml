@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>2225</bug_id>
+          
+          <creation_ts>2008-06-12 12:56:00 +0000</creation_ts>
+          <short_desc>Links to classes referenced in XML are incorrect</short_desc>
+          <delta_ts>2008-08-02 12:33:51 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>webapp</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>Solaris</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXED</resolution>
+          
+          
+          
+          
+          
+          <priority>P4</priority>
+          <bug_severity>normal</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Scott Rankin">scott.rankin</reporter>
+          <assigned_to name="Knut Anders Hatlen">knut.hatlen</assigned_to>
+          
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>8032</commentid>
+            <who name="Scott Rankin">scott.rankin</who>
+            <bug_when>2008-06-12 12:56:35 +0000</bug_when>
+            <thetext>Hello,
+
+When I pull up an XML document that references a Java class in the OpenGrok webapp, there is a clickable link on the class name. Clicking that link results in an incorrect search.  For example, the following XML:
+
+&lt;foo&gt;
+    &lt;bar name=&quot;com.foo.bar.MyClass&quot;/&gt;
+&lt;/foo&gt;
+
+Clicking on the &quot;com.foo.bar.MyClass&quot; yields a search of path:&quot;ibg.aoe.forms.prefill.action.SubmitFormAction&quot;.  If the dots were slashes, like path:&quot;ibg/aoe/forms/prefill/action/SubmitFormAction&quot;, then clicking on the link would work. 
+
+This is a pretty common occurrence in Spring config files, for example.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>9767</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2008-08-02 12:33:51 +0000</bug_when>
+            <thetext>Fixed in changeset 332:1168f40593c7.</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

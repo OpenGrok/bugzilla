@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>6081</bug_id>
+          
+          <creation_ts>2009-01-12 15:03:00 +0000</creation_ts>
+          <short_desc>Separate OpenGrok IPS packages for Tomcat and GlassFish</short_desc>
+          <delta_ts>2009-01-12 15:03:24 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>build</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>OpenSolaris</op_sys>
+          <bug_status>NEW</bug_status>
+          
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>enhancement</bug_severity>
+          <target_milestone>0.8</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Knut Anders Hatlen">knut.hatlen</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>24973</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2009-01-12 15:03:24 +0000</bug_when>
+            <thetext>Currently, the IPS package depends on SUNWtcat (Apache Tomcat). Since you can use OpenGrok without Tomcat (e.g., by using GlassFish or just the CLI), the package should not require Tomcat to be installed. Instead, we should have a separate package that depends on the core OpenGrok package and Tomcat, and that installs source.war somewhere Tomcat can find it. A similar package should also be created for GlassFish.
+
+This has been discussed on opengrok-dev. See: http://mail.opensolaris.org/pipermail/opengrok-dev/2009-January/000191.html</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

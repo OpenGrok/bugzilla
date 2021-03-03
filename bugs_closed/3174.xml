@@ -1,0 +1,365 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>3174</bug_id>
+          
+          <creation_ts>2008-08-31 01:23:00 +0000</creation_ts>
+          <short_desc>Last-modified-time should reflect the modification for the revision</short_desc>
+          <delta_ts>2012-07-05 12:46:01 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>webapp</component>
+          <version>unspecified</version>
+          <rep_platform>Other</rep_platform>
+          <op_sys>OpenSolaris</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXINSOURCE</resolution>
+          
+          
+          
+          
+          
+          <priority>P4</priority>
+          <bug_severity>enhancement</bug_severity>
+          <target_milestone>next</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Trond Norbye">trond.norbye</reporter>
+          <assigned_to name="Knut Anders Hatlen">knut.hatlen</assigned_to>
+          <cc>jel+osbugs</cc>
+    
+    <cc>knut.hatlen</cc>
+    
+    <cc>vladimir.kotal</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>11514</commentid>
+            <who name="Trond Norbye">trond.norbye</who>
+            <bug_when>2008-08-31 01:23:04 +0000</bug_when>
+            <thetext>Last-modified-time in the webapp should reflect the version of the file, and not the filesystem modification time</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>75999</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2010-07-29 15:43:43 +0000</bug_when>
+            <thetext>This can be pretty confusing and also makes the search for most recently modified file in a directory pretty cumbersome, especially if all the files have the same date.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86184</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2012-02-13 09:08:16 +0000</bug_when>
+            <thetext>I have a patch for this (almost) ready. I plan to make DirectoryListing.PrintDateSize() fetch the modification date from the history cache.
+
+This information is currently not easily available in FileHistoryCache. There you have to fetch the full history for every file in the directory in order to find the modification date, and that&apos;s quite time consuming. I&apos;ll therefore only enable this in JDBCHistoryCache for now.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86194</commentid>
+              <attachid>4629</attachid>
+            <who name="Jens Elkner">jel+osbugs</who>
+            <bug_when>2012-02-15 05:10:41 +0000</bug_when>
+            <thetext>Created attachment 4629
+better LM date support</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86195</commentid>
+            <who name="Jens Elkner">jel+osbugs</who>
+            <bug_when>2012-02-15 05:29:51 +0000</bug_when>
+            <thetext>(In reply to comment #2)
+&gt; I have a patch for this (almost) ready. I plan to make
+&gt; DirectoryListing.PrintDateSize() fetch the modification date from the history
+&gt; cache.
+&gt; 
+&gt; This information is currently not easily available in FileHistoryCache. There
+&gt; you have to fetch the full history for every file in the directory in order to
+&gt; find the modification date, and that&apos;s quite time consuming. I&apos;ll therefore
+&gt; only enable this in JDBCHistoryCache for now.
+
+Ooops - missed it on the mailing list. Anyway, IMHO doing this may make the &quot;getting old page&quot; problem even worse, since at least FF seems to calculate the fressness of the page based based on the LM date, if available. The whole story:
+ http://mxr.mozilla.org/mozilla/source/netwerk/protocol/http/src/nsHttpChannel.cpp#1636 ff.
+http://mxr.mozilla.org/mozilla/source/netwerk/protocol/http/src/nsHttpResponseHead.cpp#273 ff.
+https://developer.mozilla.org/en/Mozilla_Networking_Preferences#Cache -  browser.cache.check_doc_frequency</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86197</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2012-02-15 08:39:50 +0000</bug_when>
+            <thetext>Just to clarify, the patch I have planned will only change the dates shown in the directory listings. It won&apos;t change the modification time in the HTTP headers. The HTTP headers will still reflect the file system modification time.
+
+Jens&apos;s patch seems to address some other problem. It&apos;s probably better to file a separate bug that describes that issue, rather than handling them both in this bug.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86206</commentid>
+            <who name="Jens Elkner">jel+osbugs</who>
+            <bug_when>2012-02-15 16:47:37 +0000</bug_when>
+            <thetext>(In reply to comment #5)
+&gt; Just to clarify, the patch I have planned will only change the dates shown in
+&gt; the directory listings. It won&apos;t change the modification time in the HTTP
+&gt; headers. The HTTP headers will still reflect the file system modification time.
+&gt; 
+&gt; Jens&apos;s patch seems to address some other problem. It&apos;s probably better to file
+&gt; a separate bug that describes that issue, rather than handling them both in
+&gt; this bug.
+
+Ja - sorry - was probably too late (I should stop working earlier ;-)).</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86521</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2012-07-05 12:46:01 +0000</bug_when>
+            <thetext>I forgot that I had a patch lying in my sandbox...
+
+Pushed now, so that we can start testing it. The fix was split in two changesets:
+
+changeset:   1402:f9beaec122dd
+changeset:   1403:b1bcd6c6de73
+
+The first changeset changes the format of the history cache. In particular, it adds a PARENT column to the DIRECTORIES table so that it&apos;s easier to find all sub-directories of a given directory. It also adds code that automatically upgrades the format of the history cache, so that one doesn&apos;t have to rebuild the cache on upgrade. (Could of course remove this code and tell users to drop the old cache on upgrade, if we&apos;d prefer to keep the code simpler.)
+
+The second changeset adds a method to the HistoryCache interface:
+
+    Map&lt;String, Date&gt; getLastModifiedTimes(
+            File directory, Repository repository)
+        throws HistoryException;
+
+The implementation in FileHistoryCache returns an empty map so that the webapp falls back to using the file system&apos;s time stamps. In JDBCHistoryCache, the method fetches the last modification time for all files/sub-directories of the specified directory from the database.</thetext>
+          </long_desc>
+      
+          <attachment
+              isobsolete="0"
+              ispatch="1"
+              isprivate="0"
+              isurl="0"
+          >
+            <attachid>4629</attachid>
+            <date>2012-02-15 05:10:00 +0000</date>
+            <delta_ts>2012-02-15 05:10:41 +0000</delta_ts>
+            <desc>better LM date support</desc>
+            <filename>lmdate.patch</filename>
+            <type>text/plain</type>
+            <size>11192</size>
+            <attacher>jel+osbugs</attacher>
+            
+              <data encoding="base64">IyBIRyBjaGFuZ2VzZXQgcGF0Y2gKIyBVc2VyIGplbCtvcGVuZ3Jva0Bjcy51bmktbWFnZGVidXJn
+LmRlCiMgRGF0ZSAxMzI5MjgxMDU0IC0zNjAwCiMgTm9kZSBJRCBhODg1MGY3ZDcwMTcyMzE4ODM3
+NjE2ZWFiZDBiMzRlYTM3OTI5MWU4CiMgUGFyZW50ICA1YzNhYTQ2ODllNWM1NTgxZTZhOTM3M2Vh
+ZWUyMjdhYzY2NzVlZGU2Ci0gbmV3IGNvbW1hbmQgbGluZSBvcHRpb24gLVogKGVuYWJsZSBzdGF0
+dXMgcGFnZSkKLSBmaXggTGFzdC1Nb2RpZmllZCBIVFRQIGhlYWRlcnMvaGFuZGxpbmcgdG8gc3Vw
+cG9ydCBiZXR0ZXIvY29ycmVjdCBjYWNoaW5nCgpkaWZmIC1yIDVjM2FhNDY4OWU1YyAtciBhODg1
+MGY3ZDcwMTcgYnVpbGQueG1sCi0tLSBhL2J1aWxkLnhtbAlUdWUgRmViIDE0IDAyOjA2OjI5IDIw
+MTIgKzAxMDAKKysrIGIvYnVpbGQueG1sCVdlZCBGZWIgMTUgMDU6NDQ6MTQgMjAxMiArMDEwMApA
+QCAtMjMxLDYgKzIzMSw4IEBACiAgICAgICAgICAgICBmaWxlPSIke2J1aWxkLmNsYXNzZXMuZGly
+fS9vcmcvb3BlbnNvbGFyaXMvb3Blbmdyb2svaW5mby5wcm9wZXJ0aWVzIj4KICAgICAgICAgICAg
+IDxlbnRyeSAga2V5PSJ2ZXJzaW9uIiB2YWx1ZT0iJHt2ZXJzaW9ufSIvPgogICAgICAgICAgICAg
+PGVudHJ5ICBrZXk9ImNoYW5nZXNldCIgdmFsdWU9IiR7Y2hhbmdlc2V0fSIvPgorICAgICAgICAg
+ICAgPGVudHJ5ICBrZXk9ImxtZGF0ZSIgIHZhbHVlPSJub3ciIHBhdHRlcm49ImRkIE1NTSB5eXl5
+IEhIOm1tOnNzIFoiCisgICAgICAgICAgICAgICAgdHlwZT0iZGF0ZSIgLz4KICAgICAgICAgPC9w
+cm9wZXJ0eWZpbGU+ICAgICAgICAKICAgICA8L3RhcmdldD4KICAgICAgICAgCmRpZmYgLXIgNWMz
+YWE0Njg5ZTVjIC1yIGE4ODUwZjdkNzAxNyBzcmMvb3JnL29wZW5zb2xhcmlzL29wZW5ncm9rL0lu
+Zm8uamF2YQotLS0gYS9zcmMvb3JnL29wZW5zb2xhcmlzL29wZW5ncm9rL0luZm8uamF2YQlUdWUg
+RmViIDE0IDAyOjA2OjI5IDIwMTIgKzAxMDAKKysrIGIvc3JjL29yZy9vcGVuc29sYXJpcy9vcGVu
+Z3Jvay9JbmZvLmphdmEJV2VkIEZlYiAxNSAwNTo0NDoxNCAyMDEyICswMTAwCkBAIC0yNCw2ICsy
+NCwxMCBAQAogCiBpbXBvcnQgamF2YS5pby5JT0V4Y2VwdGlvbjsKIGltcG9ydCBqYXZhLmlvLklu
+cHV0U3RyZWFtOworaW1wb3J0IGphdmEudGV4dC5QYXJzZUV4Y2VwdGlvbjsKK2ltcG9ydCBqYXZh
+LnRleHQuU2ltcGxlRGF0ZUZvcm1hdDsKK2ltcG9ydCBqYXZhLnV0aWwuRGF0ZTsKK2ltcG9ydCBq
+YXZhLnV0aWwuTG9jYWxlOwogaW1wb3J0IGphdmEudXRpbC5Qcm9wZXJ0aWVzOwogaW1wb3J0IG9y
+Zy5vcGVuc29sYXJpcy5vcGVuZ3Jvay51dGlsLklPVXRpbHM7CiAKQEAgLTM4LDYgKzQyLDcgQEAK
+IAogICAgIHByaXZhdGUgc3RhdGljIGZpbmFsIFN0cmluZyBWRVJTSU9OOwogICAgIHByaXZhdGUg
+c3RhdGljIGZpbmFsIFN0cmluZyBSRVZJU0lPTjsKKyAgICBwcml2YXRlIHN0YXRpYyBmaW5hbCBs
+b25nIExBU1RfTU9ESUZJRUQ7CiAKICAgICBzdGF0aWMgewogICAgICAgICBJbnB1dFN0cmVhbSBp
+biA9IG51bGw7CkBAIC00OCw2ICs1MywxNSBAQAogICAgICAgICAgICAgfQogICAgICAgICAgICAg
+VkVSU0lPTiA9IHByb3BlcnRpZXMuZ2V0UHJvcGVydHkoInZlcnNpb24iLCAidW5rbm93biIpOwog
+ICAgICAgICAgICAgUkVWSVNJT04gPSBwcm9wZXJ0aWVzLmdldFByb3BlcnR5KCJjaGFuZ2VzZXQi
+LCAidW5rbm93biIpOworICAgICAgICAgICAgLy8gUkZDIDgyMjIgMy4zIGNvbXBsaWFudAorICAg
+ICAgICAgICAgU2ltcGxlRGF0ZUZvcm1hdCBkZiA9IG5ldyBTaW1wbGVEYXRlRm9ybWF0KCJkZCBN
+TU0geXl5eSBISDptbTpzcyBaIiwgTG9jYWxlLkVOR0xJU0gpOworICAgICAgICAgICAgRGF0ZSBs
+bWRhdGUgPSBudWxsOworICAgICAgICAgICAgdHJ5IHsKKyAgICAgICAgICAgICAgICBsbWRhdGUg
+PSBkZi5wYXJzZShwcm9wZXJ0aWVzLmdldFByb3BlcnR5KCJsbWRhdGUiKSk7CisgICAgICAgICAg
+ICB9IGNhdGNoIChQYXJzZUV4Y2VwdGlvbiBlKSB7CisgICAgICAgICAgICAgICAgbG1kYXRlID0g
+bmV3IERhdGUoKTsgLy8gbm93CisgICAgICAgICAgICB9CisgICAgICAgICAgICBMQVNUX01PRElG
+SUVEID0gbG1kYXRlLmdldFRpbWUoKTsKICAgICAgICAgfSBjYXRjaCAoSU9FeGNlcHRpb24gaW9l
+KSB7CiAgICAgICAgICAgICB0aHJvdyBuZXcgUnVudGltZUV4Y2VwdGlvbihpb2UpOwogICAgICAg
+ICB9IGZpbmFsbHkgewpAQCAtNzksNiArOTMsMTUgQEAKICAgICAgICAgcmV0dXJuIFJFVklTSU9O
+OwogICAgIH0KIAorICAgIC8qKgorICAgICAqIEdldCB0aGUgdGltZSwgd2hlbiB0aGlzIGFyY2hp
+dmUgd2FzIGJ1aWx0L2xhc3QgbW9kaWZpZWQuCisgICAgICogQHJldHVybiB0aW1lIG9mIGxhc3Qg
+bW9kaWZpY2F0aW9uIGluIG1pbGxpc2Vjb25kcyBzaW5jZSAKKyAgICAgKiAgSmFudWFyeSAxLCAx
+OTcwLCAwMDowMDowMCBHTVQKKyAgICAgKi8KKyAgICBwdWJsaWMgc3RhdGljIGxvbmcgZ2V0TGFz
+dE1vZGlmaWVkKCkgeworICAgICAgICByZXR1cm4gTEFTVF9NT0RJRklFRDsKKyAgICB9CisKICAg
+ICBwcml2YXRlIEluZm8oKSB7CiAgICAgfQogfQpkaWZmIC1yIDVjM2FhNDY4OWU1YyAtciBhODg1
+MGY3ZDcwMTcgc3JjL29yZy9vcGVuc29sYXJpcy9vcGVuZ3Jvay9jb25maWd1cmF0aW9uL0NvbmZp
+Z3VyYXRpb24uamF2YQotLS0gYS9zcmMvb3JnL29wZW5zb2xhcmlzL29wZW5ncm9rL2NvbmZpZ3Vy
+YXRpb24vQ29uZmlndXJhdGlvbi5qYXZhCVR1ZSBGZWIgMTQgMDI6MDY6MjkgMjAxMiArMDEwMAor
+KysgYi9zcmMvb3JnL29wZW5zb2xhcmlzL29wZW5ncm9rL2NvbmZpZ3VyYXRpb24vQ29uZmlndXJh
+dGlvbi5qYXZhCVdlZCBGZWIgMTUgMDU6NDQ6MTQgMjAxMiArMDEwMApAQCAtNTExLDE3ICs1MTEs
+NDEgQEAKICAgICAgICAgdGhpcy5pbmRleFZlcnNpb25lZEZpbGVzT25seSA9IGluZGV4VmVyc2lv
+bmVkRmlsZXNPbmx5OwogICAgIH0KIAotICAgIHByaXZhdGUgdHJhbnNpZW50IERhdGUgbGFzdE1v
+ZGlmaWVkOworICAgIHByaXZhdGUgdHJhbnNpZW50IGxvbmcgbGFzdE1vZGlmaWVkOworICAgIC8q
+KgorICAgICAqIEdldCB0aGUgdGltZSwgd2hlbiB0aGlzIGluc3RhbmNlIGhhcyBiZWVuIG1vZGlm
+aWVkLiBJZiBub3QgZXhwbGljaXRseSBzZXQKKyAgICAgKiBvciBzZXQgdG8ge0Bjb2RlIDB9LCBp
+dCBnZXRzIGluaXRpYWxpemVkIHdpdGggdGhlIHRpbWUgb2YgdGhlIGZpcnN0IGNhbGwgCisgICAg
+ICogdG8gdGhpcyBtZXRob2QgYWZ0ZXIgaW5zdGFudGlhdGlvbi9kZS1zZXJpYWxpemF0aW9uLgor
+ICAgICAqIAorICAgICAqIEByZXR1cm4gdGltZSBpbiBtaWxsaXNlY29uZHMgc2luY2UgMSBKYW4g
+MTk3MCAwMDowMDowMCBHTVQKKyAgICAgKi8KKyAgICBwdWJsaWMgbG9uZyBnZXRMYXN0TW9kaWZp
+ZWQoKSB7CisgICAgICAgIGlmIChsYXN0TW9kaWZpZWQgPT0gMCkgeworICAgICAgICAgICAgLy8g
+c2luY2Ugd2UgdXNlIGl0IGZvciBJZi1MYXN0LU1vZGlmaWVkLVNpbmNlIGV2YWxzLCB3aGljaCBo
+YXMgbm8gCisgICAgICAgICAgICAvLyBtaWxsaXMsIHdlIG5lZWQgdG8gY2xlYXIgdGhlIG1pbGxp
+c2Vjb25kcyBwYXJ0CisgICAgICAgICAgICBsYXN0TW9kaWZpZWQgPSBTeXN0ZW0uY3VycmVudFRp
+bWVNaWxsaXMoKS8xMDAwICogMTAwMDsKKyAgICAgICAgfQorICAgICAgICByZXR1cm4gbGFzdE1v
+ZGlmaWVkOworICAgIH0KKyAgICAvKioKKyAgICAgKiBTZXQgdGhlIHRpbWUsIHdoZW4gdGhpcyBj
+b25maWd1cmF0aW9uIGhhcyBiZWVuIG1vZGlmaWVkIGZvciB0aGUgbGFzdCB0aW1lLgorICAgICAq
+IEBwYXJhbSBsYXN0TW9kaWZpZWQgdGhlIHRpbWUgaW4gbWlsbGlzZWNvbmRzIHNpbmNlIDEgSmFu
+IDE5NzAgMDA6MDA6MDAgR01UCisgICAgICovCisgICAgcHVibGljIHZvaWQgc2V0TGFzdE1vZGlm
+aWVkKGxvbmcgbGFzdE1vZGlmaWVkKSB7CisgICAgICAgIHRoaXMubGFzdE1vZGlmaWVkID0gbGFz
+dE1vZGlmaWVkLzEwMDAgKiAxMDAwOworICAgIH0KKworICAgIHByaXZhdGUgdHJhbnNpZW50IERh
+dGUgaW5kZXhMYXN0TW9kaWZpZWQ7CiAgICAgLyoqCiAgICAgICogR2V0IHRoZSBkYXRlIG9mIHRo
+ZSBsYXN0IGluZGV4IHVwZGF0ZS4KICAgICAgKiBAcmV0dXJuIHRoZSB0aW1lIG9mIHRoZSBsYXN0
+IGluZGV4IHVwZGF0ZS4KICAgICAgKi8KICAgICBwdWJsaWMgRGF0ZSBnZXREYXRlRm9yTGFzdElu
+ZGV4UnVuKCkgewotICAgIAlpZiAobGFzdE1vZGlmaWVkID09IG51bGwpIHsKKyAgICAJaWYgKGlu
+ZGV4TGFzdE1vZGlmaWVkID09IG51bGwpIHsKICAgICAJCUZpbGUgdGltZXN0YW1wID0gbmV3IEZp
+bGUoZ2V0RGF0YVJvb3QoKSwgInRpbWVzdGFtcCIpOwotICAgICAgICAJbGFzdE1vZGlmaWVkID0g
+bmV3IERhdGUodGltZXN0YW1wLmxhc3RNb2RpZmllZCgpKTsKKyAgICAJCWluZGV4TGFzdE1vZGlm
+aWVkID0gbmV3IERhdGUodGltZXN0YW1wLmxhc3RNb2RpZmllZCgpKTsKICAgICAJfQotICAgIAly
+ZXR1cm4gbGFzdE1vZGlmaWVkOworICAgIAlyZXR1cm4gaW5kZXhMYXN0TW9kaWZpZWQ7CiAgICAg
+fQogCiAgICAgLyoqCkBAIC02NjAsNyArNjg0LDcgQEAKICAgICBwdWJsaWMgdm9pZCBzZXRDaGF0
+dHlTdGF0dXNQYWdlKGJvb2xlYW4gY2hhdHR5U3RhdHVzUGFnZSkgewogICAgICAgICB0aGlzLmNo
+YXR0eVN0YXR1c1BhZ2UgPSBjaGF0dHlTdGF0dXNQYWdlOwogICAgIH0KLQorICAgIAogICAgIC8q
+KgogICAgICAqIFdyaXRlIHRoZSBjdXJyZW50IGNvbmZpZ3VyYXRpb24gdG8gYSBmaWxlCiAgICAg
+ICogQHBhcmFtIGZpbGUgdGhlIGZpbGUgdG8gd3JpdGUgdGhlIGNvbmZpZ3VyYXRpb24gaW50bwpk
+aWZmIC1yIDVjM2FhNDY4OWU1YyAtciBhODg1MGY3ZDcwMTcgc3JjL29yZy9vcGVuc29sYXJpcy9v
+cGVuZ3Jvay9pbmRleC9Db21tYW5kTGluZU9wdGlvbnMuamF2YQotLS0gYS9zcmMvb3JnL29wZW5z
+b2xhcmlzL29wZW5ncm9rL2luZGV4L0NvbW1hbmRMaW5lT3B0aW9ucy5qYXZhCVR1ZSBGZWIgMTQg
+MDI6MDY6MjkgMjAxMiArMDEwMAorKysgYi9zcmMvb3JnL29wZW5zb2xhcmlzL29wZW5ncm9rL2lu
+ZGV4L0NvbW1hbmRMaW5lT3B0aW9ucy5qYXZhCVdlZCBGZWIgMTUgMDU6NDQ6MTQgMjAxMiArMDEw
+MApAQCAtMTExLDYgKzExMSw3IEBACiAgICAgICAgIG9wdGlvbnMuYWRkKG5ldyBPcHRpb24oJ3cn
+LCAid2ViYXBwLWNvbnRleHQiLCAiQ29udGV4dCBvZiB3ZWJhcHAuIERlZmF1bHQgaXMgL3NvdXJj
+ZS4gSWYgeW91IHNwZWNpZnkgYSBkaWZmZXJlbnQgbmFtZSwgbWFrZSBzdXJlIHRvIHJlbmFtZSBz
+b3VyY2Uud2FyIHRvIHRoYXQgbmFtZS4iKSk7CiAgICAgICAgIG9wdGlvbnMuYWRkKG5ldyBPcHRp
+b24oJ1gnLCAidXJsOnN1ZmZpeCIsICJVUkwgU3VmZml4IGZvciB0aGUgdXNlciBJbmZvcm1hdGlv
+biBwcm92aWRlci4gRGVmYXVsdDogXCJcIiIpKTsKICAgICAgICAgb3B0aW9ucy5hZGQobmV3IE9w
+dGlvbigneicsIE5VTUJFUiwgImRlcHRoIG9mIHNjYW5uaW5nIGZvciByZXBvc2l0b3JpZXMgaW4g
+ZGlyZWN0b3J5IHN0cnVjdHVyZSByZWxhdGl2ZSB0byBzb3VyY2Ugcm9vdCIpKTsKKyAgICAgICAg
+b3B0aW9ucy5hZGQobmV3IE9wdGlvbignWicsIG51bGwsICJhbGxvdyBwcmludGluZyB0aGUgaW50
+ZXJuYWwgc2V0dGluZ3MgaW4gL3N0YXR1cy5qc3AuIFBlciBkZWZhdWx0IGl0IGlzIGRpc2FibGVk
+IGZvciBzZWN1cml0eSByZWFzb25zLiIpKTsKICAgICB9CiAKICAgICBwdWJsaWMgU3RyaW5nIGdl
+dENvbW1hbmRTdHJpbmcoKSB7CmRpZmYgLXIgNWMzYWE0Njg5ZTVjIC1yIGE4ODUwZjdkNzAxNyBz
+cmMvb3JnL29wZW5zb2xhcmlzL29wZW5ncm9rL2luZGV4L0luZGV4ZXIuamF2YQotLS0gYS9zcmMv
+b3JnL29wZW5zb2xhcmlzL29wZW5ncm9rL2luZGV4L0luZGV4ZXIuamF2YQlUdWUgRmViIDE0IDAy
+OjA2OjI5IDIwMTIgKzAxMDAKKysrIGIvc3JjL29yZy9vcGVuc29sYXJpcy9vcGVuZ3Jvay9pbmRl
+eC9JbmRleGVyLmphdmEJV2VkIEZlYiAxNSAwNTo0NDoxNCAyMDEyICswMTAwCkBAIC00MDUsNiAr
+NDA1LDkgQEAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgU3lzdGVtLmV4aXQoMSk7
+CiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgfQogICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgIGJyZWFrOworICAgICAgICAgICAgICAgICAgICAgICAgY2FzZSAnWic6CisgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgY2ZnLnNldENoYXR0eVN0YXR1c1BhZ2UodHJ1ZSk7CisgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgYnJlYWs7CiAgICAgICAgICAgICAgICAgICAgICAgICBkZWZh
+dWx0OgogICAgICAgICAgICAgICAgICAgICAgICAgICAgIFN5c3RlbS5lcnIucHJpbnRsbigiSW50
+ZXJuYWwgRXJyb3IgLSBVbmltcGxlbWVudGVkIGNtZGxpbmUgb3B0aW9uOiAiICsgKGNoYXIpIGNt
+ZCk7CiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgU3lzdGVtLmV4aXQoMSk7CmRpZmYgLXIg
+NWMzYWE0Njg5ZTVjIC1yIGE4ODUwZjdkNzAxNyBzcmMvb3JnL29wZW5zb2xhcmlzL29wZW5ncm9r
+L3dlYi9VdGlsLmphdmEKLS0tIGEvc3JjL29yZy9vcGVuc29sYXJpcy9vcGVuZ3Jvay93ZWIvVXRp
+bC5qYXZhCVR1ZSBGZWIgMTQgMDI6MDY6MjkgMjAxMiArMDEwMAorKysgYi9zcmMvb3JnL29wZW5z
+b2xhcmlzL29wZW5ncm9rL3dlYi9VdGlsLmphdmEJV2VkIEZlYiAxNSAwNTo0NDoxNCAyMDEyICsw
+MTAwCkBAIC0zNyw2ICszNyw3IEBACiBpbXBvcnQgamF2YS50ZXh0LkRlY2ltYWxGb3JtYXQ7CiBp
+bXBvcnQgamF2YS50ZXh0Lk51bWJlckZvcm1hdDsKIGltcG9ydCBqYXZhLnV0aWwuQ29sbGVjdGlv
+bjsKK2ltcG9ydCBqYXZhLnV0aWwuRGF0ZTsKIGltcG9ydCBqYXZhLnV0aWwuTGlua2VkTGlzdDsK
+IGltcG9ydCBqYXZhLnV0aWwubG9nZ2luZy5MZXZlbDsKIGltcG9ydCBqYXZhLnV0aWwubG9nZ2lu
+Zy5Mb2dnZXI7CkBAIC03MzAsNiArNzMxLDEwIEBACiAgICAgICAgICAgICBlbnYuaXNBbGxvd0xl
+YWRpbmdXaWxkY2FyZCgpKTsKICAgICAgICAgcHJpbnRUYWJsZVJvdyhvdXQsICJIaXN0b3J5IGNh
+Y2hlIiwgSGlzdG9yeUd1cnUuZ2V0SW5zdGFuY2UoKQogICAgICAgICAgICAgLmdldENhY2hlSW5m
+bygpKTsKKyAgICAgICAgcHJpbnRUYWJsZVJvdyhvdXQsICJWZXJzaW9uIiwgSW5mby5nZXRWZXJz
+aW9uKCkgKyAnQCcgKyBJbmZvLmdldFJldmlzaW9uKCkKKyAgICAgICAgICAgICsgIiAgIiArIG5l
+dyBEYXRlKEluZm8uZ2V0TGFzdE1vZGlmaWVkKCkpKTsKKyAgICAgICAgcHJpbnRUYWJsZVJvdyhv
+dXQsICJMYXN0IE1vZGlmaWVkIiwgCisgICAgICAgICAgICBuZXcgRGF0ZShlbnYuZ2V0Q29uZmln
+dXJhdGlvbigpLmdldExhc3RNb2RpZmllZCgpKSk7CiAgICAgICAgIG91dC5hcHBlbmQoIjwvdGFi
+bGU+Iik7CiAgICAgfQogCmRpZmYgLXIgNWMzYWE0Njg5ZTVjIC1yIGE4ODUwZjdkNzAxNyB3ZWIv
+aGVscC5qc3AKLS0tIGEvd2ViL2hlbHAuanNwCVR1ZSBGZWIgMTQgMDI6MDY6MjkgMjAxMiArMDEw
+MAorKysgYi93ZWIvaGVscC5qc3AJV2VkIEZlYiAxNSAwNTo0NDoxNCAyMDEyICswMTAwCkBAIC0y
+OCw2ICsyOCwxMiBAQAogewogICAgIGNmZyA9IFBhZ2VDb25maWcuZ2V0KHJlcXVlc3QpOwogICAg
+IGNmZy5zZXRUaXRsZSgiT3Blbkdyb2sgSGVscCIpOworICAgIGxvbmcgbG1kYXRlID0gY2ZnLmdl
+dEVudigpLmdldENvbmZpZ3VyYXRpb24oKS5nZXRMYXN0TW9kaWZpZWQoKTsKKyAgICBpZiAocmVx
+dWVzdC5nZXREYXRlSGVhZGVyKCJJZi1Nb2RpZmllZC1TaW5jZSIpID49IGxtZGF0ZSkgeworICAg
+ICAgICByZXNwb25zZS5zZXRTdGF0dXMoSHR0cFNlcnZsZXRSZXNwb25zZS5TQ19OT1RfTU9ESUZJ
+RUQpOworICAgICAgICByZXR1cm47CisgICAgfQorICAgIHJlc3BvbnNlLnNldERhdGVIZWFkZXIo
+Ikxhc3QtTW9kaWZpZWQiLCBsbWRhdGUpOwogJT48JUAKIAogaW5jbHVkZSBmaWxlPSJodHRwaGVh
+ZGVyLmpzcGYiCmRpZmYgLXIgNWMzYWE0Njg5ZTVjIC1yIGE4ODUwZjdkNzAxNyB3ZWIvaW5kZXgu
+anNwCi0tLSBhL3dlYi9pbmRleC5qc3AJVHVlIEZlYiAxNCAwMjowNjoyOSAyMDEyICswMTAwCisr
+KyBiL3dlYi9pbmRleC5qc3AJV2VkIEZlYiAxNSAwNTo0NDoxNCAyMDEyICswMTAwCkBAIC0yOSw2
+ICsyOSwxMyBAQAogewogICAgIGNmZyA9IFBhZ2VDb25maWcuZ2V0KHJlcXVlc3QpOwogICAgIGNm
+Zy5zZXRUaXRsZSgiU2VhcmNoIik7CisgICAgbG9uZyBsbWRhdGUgPSBjZmcuZ2V0RW52KCkuZ2V0
+Q29uZmlndXJhdGlvbigpLmdldExhc3RNb2RpZmllZCgpOworICAgIGlmIChyZXF1ZXN0LmdldERh
+dGVIZWFkZXIoIklmLU1vZGlmaWVkLVNpbmNlIikgPj0gbG1kYXRlKSB7CisgICAgICAgIHJlc3Bv
+bnNlLnNldFN0YXR1cyhIdHRwU2VydmxldFJlc3BvbnNlLlNDX05PVF9NT0RJRklFRCk7CisgICAg
+ICAgIHJldHVybjsKKyAgICB9CisgICAgcmVzcG9uc2Uuc2V0RGF0ZUhlYWRlcigiTGFzdC1Nb2Rp
+ZmllZCIsIGxtZGF0ZSk7CisKICU+PCVACiAKIGluY2x1ZGUgZmlsZT0iaHR0cGhlYWRlci5qc3Bm
+IgpkaWZmIC1yIDVjM2FhNDY4OWU1YyAtciBhODg1MGY3ZDcwMTcgd2ViL21hc3QuanNwCi0tLSBh
+L3dlYi9tYXN0LmpzcAlUdWUgRmViIDE0IDAyOjA2OjI5IDIwMTIgKzAxMDAKKysrIGIvd2ViL21h
+c3QuanNwCVdlZCBGZWIgMTUgMDU6NDQ6MTQgMjAxMiArMDEwMApAQCAtNDcsOCArNDcsMTEgQEAK
+ICAgICAgICAgfQogICAgICAgICByZXR1cm47CiAgICAgfQotICAgIC8vIGplbDogaG1tbSAtIHF1
+ZXN0aW9uYWJsZSBmb3IgZHluYW1pYyBjb250ZW50Ci0gICAgbG9uZyBmbGFzdCA9IGNmZy5nZXRM
+YXN0TW9kaWZpZWQoKTsKKyAgICBsb25nIGZsYXN0ID0gY2ZnLmdldExhc3RNb2RpZmllZCgpLzEw
+MDAgKiAxMDAwOworICAgIGxvbmcgbG1kYXRlID0gY2ZnLmdldEVudigpLmdldENvbmZpZ3VyYXRp
+b24oKS5nZXRMYXN0TW9kaWZpZWQoKTsKKyAgIAlpZiAobG1kYXRlID4gZmxhc3QpIHsKKyAgIAkJ
+Zmxhc3QgPSBsbWRhdGU7CisgICAJfQogICAgIGlmIChyZXF1ZXN0LmdldERhdGVIZWFkZXIoIklm
+LU1vZGlmaWVkLVNpbmNlIikgPj0gZmxhc3QpIHsKICAgICAgICAgcmVzcG9uc2Uuc2V0U3RhdHVz
+KEh0dHBTZXJ2bGV0UmVzcG9uc2UuU0NfTk9UX01PRElGSUVEKTsKICAgICAgICAgcmV0dXJuOwpk
+aWZmIC1yIDVjM2FhNDY4OWU1YyAtciBhODg1MGY3ZDcwMTcgd2ViL3Jhdy5qc3AKLS0tIGEvd2Vi
+L3Jhdy5qc3AJVHVlIEZlYiAxNCAwMjowNjoyOSAyMDEyICswMTAwCisrKyBiL3dlYi9yYXcuanNw
+CVdlZCBGZWIgMTUgMDU6NDQ6MTQgMjAxMiArMDEwMApAQCAtNjIsMTQgKzYyLDE4IEBACiAgICAg
+ICAgICAgICBpbiA9IEhpc3RvcnlHdXJ1LmdldEluc3RhbmNlKCkuZ2V0UmV2aXNpb24oZi5nZXRQ
+YXJlbnQoKSwKICAgICAgICAgICAgICAgICBmLmdldE5hbWUoKSwgcmV2aXNpb24uc3Vic3RyaW5n
+KDIpKTsKICAgICAgICAgfSBlbHNlIHsKLSAgICAgICAgICAgIGxvbmcgZmxhc3QgPSBjZmcuZ2V0
+TGFzdE1vZGlmaWVkKCk7CisgICAgICAgICAgICBsb25nIGZsYXN0ID0gZi5sYXN0TW9kaWZpZWQo
+KS8xMDAwICogMTAwMDsKKyAgICAgICAgICAgIGxvbmcgbG1kYXRlID0gY2ZnLmdldEVudigpLmdl
+dENvbmZpZ3VyYXRpb24oKS5nZXRMYXN0TW9kaWZpZWQoKTsKKyAgICAgICAgICAgIGlmIChsbWRh
+dGUgPiBmbGFzdCkgeworICAgICAgICAgICAgCWZsYXN0ID0gbG1kYXRlOworICAgICAgICAgICAg
+fQogICAgICAgICAgICAgaWYgKHJlcXVlc3QuZ2V0RGF0ZUhlYWRlcigiSWYtTW9kaWZpZWQtU2lu
+Y2UiKSA+PSBmbGFzdCkgewogICAgICAgICAgICAgICAgIHJlc3BvbnNlLnNldFN0YXR1cyhIdHRw
+U2VydmxldFJlc3BvbnNlLlNDX05PVF9NT0RJRklFRCk7CiAgICAgICAgICAgICAgICAgcmV0dXJu
+OwogICAgICAgICAgICAgfQogICAgICAgICAgICAgaW4gPSBuZXcgRmlsZUlucHV0U3RyZWFtKGYp
+OwogICAgICAgICAgICAgcmVzcG9uc2Uuc2V0Q29udGVudExlbmd0aCgoaW50KSBmLmxlbmd0aCgp
+KTsKLSAgICAgICAgICAgIHJlc3BvbnNlLnNldERhdGVIZWFkZXIoIkxhc3QtTW9kaWZpZWQiLCBm
+Lmxhc3RNb2RpZmllZCgpKTsKKyAgICAgICAgICAgIHJlc3BvbnNlLnNldERhdGVIZWFkZXIoIkxh
+c3QtTW9kaWZpZWQiLCBmbGFzdCk7CiAgICAgICAgIH0KICAgICB9IGNhdGNoIChFeGNlcHRpb24g
+ZSkgewogICAgICAgICByZXNwb25zZS5zZW5kRXJyb3IoSHR0cFNlcnZsZXRSZXNwb25zZS5TQ19O
+T1RfRk9VTkQpOwpkaWZmIC1yIDVjM2FhNDY4OWU1YyAtciBhODg1MGY3ZDcwMTcgd2ViL3N0YXR1
+cy5qc3AKLS0tIGEvd2ViL3N0YXR1cy5qc3AJVHVlIEZlYiAxNCAwMjowNjoyOSAyMDEyICswMTAw
+CisrKyBiL3dlYi9zdGF0dXMuanNwCVdlZCBGZWIgMTUgMDU6NDQ6MTQgMjAxMiArMDEwMApAQCAt
+MzMsNiArMzMsMTIgQEAKIHsKICAgICBjZmcgPSBQYWdlQ29uZmlnLmdldChyZXF1ZXN0KTsKICAg
+ICBjZmcuc2V0VGl0bGUoIlN0YXR1cyIpOworICAgIGxvbmcgbG1kYXRlID0gY2ZnLmdldEVudigp
+LmdldENvbmZpZ3VyYXRpb24oKS5nZXRMYXN0TW9kaWZpZWQoKTsKKyAgICBpZiAocmVxdWVzdC5n
+ZXREYXRlSGVhZGVyKCJJZi1Nb2RpZmllZC1TaW5jZSIpID49IGxtZGF0ZSkgeworICAgICAgICBy
+ZXNwb25zZS5zZXRTdGF0dXMoSHR0cFNlcnZsZXRSZXNwb25zZS5TQ19OT1RfTU9ESUZJRUQpOwor
+ICAgICAgICByZXR1cm47CisgICAgfQorICAgIHJlc3BvbnNlLnNldERhdGVIZWFkZXIoIkxhc3Qt
+TW9kaWZpZWQiLCBsbWRhdGUpOwogJT48JUAKIAogaW5jbHVkZSBmaWxlPSJodHRwaGVhZGVyLmpz
+cGYiCkBAIC02MCw3ICs2Niw4IEBACiAgICAgICAgICU+PHA+CiBGb3Igc2VjdXJpdHkgcmVhc29u
+cywgcHJpbnRpbmcgb2YgaW50ZXJuYWwgc2V0dGluZ3MgaXMgbm90IGVuYWJsZWQgYnkKIGRlZmF1
+bHQuIFRvIGVuYWJsZSwgc2V0IHRoZSBwcm9wZXJ0eSA8dHQ+Y2hhdHR5U3RhdHVzUGFnZTwvdHQ+
+IHRvCi08dHQ+dHJ1ZTwvdHQ+IGluIDx0dD5jb25maWd1cmF0aW9uLnhtbDwvdHQ+LjwvcD48JQor
+PHR0PnRydWU8L3R0PiBpbiA8dHQ+Y29uZmlndXJhdGlvbi54bWw8L3R0PiBvciB1c2UgdGhlIGNv
+bW1hbmRsaW5lIG9wdGlvbiAKKzx0dD4tWjwvdHQ+LjwvcD48JQogICAgICAgICB9CiAgICAgICAg
+ICU+CiAgICAgICAgIDwvZGl2Pgo=
+</data>
+
+          </attachment>
+      
+
+    </bug>
+
+</bugzilla>

@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>13184</bug_id>
+          
+          <creation_ts>2009-12-09 14:47:00 +0000</creation_ts>
+          <short_desc>provide quick links to annotate,history and download from search results view</short_desc>
+          <delta_ts>2010-10-25 08:00:35 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>webapp</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXINSOURCE</resolution>
+          
+          
+          
+          
+          
+          <priority>P4</priority>
+          <bug_severity>enhancement</bug_severity>
+          <target_milestone>0.10</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Lubos Kosco">Lubos.Kosco</reporter>
+          <assigned_to name="Lubos Kosco">Lubos.Kosco</assigned_to>
+          <cc>milan.jurik</cc>
+    
+    <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>58969</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2009-12-09 14:47:51 +0000</bug_when>
+            <thetext>save one click ;)</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>62990</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2010-01-20 16:35:21 +0000</bug_when>
+            <thetext>another idea is intelligent link creation, so e.g. you search in history for some bug, it will automatically generate the link for the diff of that file for the bug found in history revision log</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>63005</commentid>
+            <who name="Milan Jurik">milan.jurik</who>
+            <bug_when>2010-01-20 18:29:14 +0000</bug_when>
+            <thetext>(In reply to comment #1)
+&gt; another idea is intelligent link creation, so e.g. you search in history for
+&gt; some bug, it will automatically generate the link for the diff of that file for
+&gt; the bug found in history revision log
+
+Yes, bug it is separate RFE I think. But very valuable for investigation of changes introduced by some fix, helpful for OpenSolaris code maintaince. And it saves more than one click :-)</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>78178</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2010-10-08 09:13:59 +0000</bug_when>
+            <thetext>will add this just as simple links for now</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>78575</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2010-10-20 11:21:44 +0000</bug_when>
+            <thetext>changeset:   1111:eeb5f054fc9c
+
+just simple links
+I&apos;ll leave this bug open and ev. create a new one for the intelligent links</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>78702</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2010-10-25 08:00:35 +0000</bug_when>
+            <thetext>changeset:   1113:4d16fc9304f3
+
+introduces the diff link</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

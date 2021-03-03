@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>1058</bug_id>
+          
+          <creation_ts>2008-04-09 07:35:00 +0000</creation_ts>
+          <short_desc>RFE: convert user-specified keywords in src code  into custom URLs</short_desc>
+          <delta_ts>2010-08-12 06:10:47 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>analyzer</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>NEW</bug_status>
+          
+          
+          
+          
+          
+          
+          <priority>P4</priority>
+          <bug_severity>enhancement</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          <blocked>16786</blocked>
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Hemang Lavana">HemangLavana</reporter>
+          <assigned_to name="Lubos Kosco">Lubos.Kosco</assigned_to>
+          <cc>Lubos.Kosco</cc>
+    
+    <cc>vasanth.manickam</cc>
+    
+    <cc>vladimir.kotal</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>3453</commentid>
+            <who name="Hemang Lavana">HemangLavana</who>
+            <bug_when>2008-04-09 07:35:49 +0000</bug_when>
+            <thetext>Currently the history page allows us to specify custom URLs for author and bugid. Similarly, provide a mechanism for the admin to specify custom URLs for specific keywords or patterns found in source code.
+
+For example, the bugid may be listed under code comments in the source code and I would like to see it as clickable link on xref pages.
+
+Hemang.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>70034</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2010-03-24 14:04:16 +0000</bug_when>
+            <thetext>*** Bug 12856 has been marked as a duplicate of this bug. ***</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>70035</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2010-03-24 14:07:15 +0000</bug_when>
+            <thetext>we just spoke with Vladimir,
+that this could be a nice idea,
+we&apos;d get rid of bug and arc patterns and urls
+and just have an array of them pattern1...X and respective url1..X
+
+another thing is to have proper matcher which would replace the matches in url
+according to groups/back reference
+
+e.g. the pattern would have more groups, which would then be filled into the
+url
+
+this way we&apos;d get a universal solution for this (and duplicate) bug ...
+
+now only just to get it done ;)</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>70036</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2010-03-24 14:12:33 +0000</bug_when>
+            <thetext>The idea is to be able to do things like this in read-only configuration:
+
+  &lt;void property=&quot;pattern&quot;&gt; 
+   &lt;string&gt;\\b([12456789][0-9]{6})\\b&lt;string&gt;
+   &lt;string&gt;http://buglookup/showbug.cgi?cr=\1&lt;/string&gt; 
+  &lt;/void&gt;
+  &lt;void property=&quot;pattern&quot;&gt; 
+   &lt;string&gt;({FW,PS}ARC)[\\b/](\\d{4}/\\d{3})\\b&lt;/string&gt;
+   &lt;string&gt;http://cases/\1/\2/&lt;/string&gt; 
+  &lt;/void&gt;
+
+Or something like that (the XML structure should probably be better).
+
+The second regexp is probably wrong but you get the idea.</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

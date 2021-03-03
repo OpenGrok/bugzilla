@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>15995</bug_id>
+          
+          <creation_ts>2010-05-18 08:29:00 +0000</creation_ts>
+          <short_desc>diff view is empty in Internet Explorer</short_desc>
+          <delta_ts>2010-05-25 19:54:56 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>webapp</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>INVALID</resolution>
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>minor</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Knut Anders Hatlen">knut.hatlen</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          <cc>Lubos.Kosco</cc>
+    
+    <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>73106</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2010-05-18 08:29:49 +0000</bug_when>
+            <thetext>When viewing a diff between two versions of a file in OpenGrok 0.9, Internet Explorer only shows the header. See this thread: http://mail.opensolaris.org/pipermail/opengrok-discuss/2010-May/002270.html</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>73130</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2010-05-18 13:44:01 +0000</bug_when>
+            <thetext>I&apos;ve investigated this together with Lubos, and we only manage to reproduce the problem using a small IE window on Windows 2003. We didn&apos;t manage to reproduce it on Windows XP using the exact same version of Internet Explorer 8, so it may be a Win2003 bug of some kind.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>73459</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2010-05-25 15:42:20 +0000</bug_when>
+            <thetext>On 20.5.2010 15:52, Lubos Kosco wrote:
+&gt; On 19.5.2010 3:09, Jun wrote:
+&gt;&gt; My system is Windows XP version 2002, SP3
+&gt;&gt; IE: 8.0.6001.18702CO
+&gt;
+&gt; hmm, I installed some IE compatibility view update from latest updates and we are not able to reproduce this problem anymore ...
+&gt; I will however check the css we use again to see if I could somehow avoid this even for not updated IEs ...
+
+I think it was this one:
+http://support.microsoft.com/kb/980302
+
+-- 
+L</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>73471</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2010-05-25 19:54:56 +0000</bug_when>
+            <thetext>Closing as invalid on the assumption that this is caused by a bug in IE fixed by the compatibility update mentioned by Ľuboš. If someone can reproduce it on a fully updated system, feel free to reopen.</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

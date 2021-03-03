@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>17555</bug_id>
+          
+          <creation_ts>2010-12-06 15:48:00 +0000</creation_ts>
+          <short_desc>Browser&apos;s Back button doesn&apos;t goes back between anchors on the same page</short_desc>
+          <delta_ts>2010-12-09 12:15:08 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>webapp</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>DUPLICATE</resolution>
+          <dup_id>17556</dup_id>
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>minor</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Miroslav Osladil">mira</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>79774</commentid>
+            <who name="Miroslav Osladil">mira</who>
+            <bug_when>2010-12-06 15:48:13 +0000</bug_when>
+            <thetext>Steps to reproduce:
+1. Search for some function
+2. Select some result and jump into by line anchor
+3. Click on the function on that line which switch you on the place where it is defined
+4. Let&apos;s assume that it is the same file
+5. Now, click on Back button in your browser
+
+Expected result:
+You stay on the line by function anchor, after browser Back, page is back on line anchor.
+
+Actual result:
+First Back action - nothing happens.
+Second Back action - you are back on search result
+
+You can try to use attached file by opening sample.cpp#68 and then by clicking on function().
+
+Seems Windows affected only using IE7/FF3.6. I&apos;m not able to reproduce it on Mac.
+
+Used software:
+OpenGrok 0.10-rc, Apache Tomcat 6.0.29, Sun Java 6 1.6.0_20-b02, Debian GNU/Linux 5.0, IE</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>79887</commentid>
+            <who name="Miroslav Osladil">mira</who>
+            <bug_when>2010-12-09 12:15:08 +0000</bug_when>
+            <thetext>Oops, some network issue sends two same requests when filling bug. Marking as DUPLICATE of the second one which contains also an attachment.
+
+I&apos;m sorry.
+
+*** This bug has been marked as a duplicate of bug 17556 ***</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

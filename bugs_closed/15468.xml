@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>15468</bug_id>
+          
+          <creation_ts>2010-04-02 08:46:00 +0000</creation_ts>
+          <short_desc>Log useful info from indexer regardless of -v</short_desc>
+          <delta_ts>2010-07-29 12:31:29 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>indexer</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXINSOURCE</resolution>
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>enhancement</bug_severity>
+          <target_milestone>0.10</target_milestone>
+          
+          <blocked>16677</blocked>
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Knut Anders Hatlen">knut.hatlen</reporter>
+          <assigned_to name="Lubos Kosco">Lubos.Kosco</assigned_to>
+          <cc>Lubos.Kosco</cc>
+    
+    <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>70659</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2010-04-02 08:46:43 +0000</bug_when>
+            <thetext>The indexer lets you to enable printing of more info to the console with the -v option. Some of this info will be written to the log file as well (if logging is enabled for that level) but most of it is just written to the console. If logging is enabled, all of this should be written to the log, regardless of -v being specified.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>70660</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2010-04-02 08:48:28 +0000</bug_when>
+            <thetext>To find the affected messages, do a usage search on RuntimeEnvironment.isVerbose().</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>71384</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2010-04-14 13:18:01 +0000</bug_when>
+            <thetext>this will print a lot of stuff
+I am thinking about another change to default logging.properties,
+which is to ommit ConsoleHandler for production builds ...</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>75990</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2010-07-29 12:27:36 +0000</bug_when>
+            <thetext>I did a major cleanup of logging 
+and the next plan is to revamp option -v (will log a separate bug and write down rules for it)</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>75992</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2010-07-29 12:29:13 +0000</bug_when>
+            <thetext>changeset:   1054:8c74a4f29837</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

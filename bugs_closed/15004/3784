@@ -1,0 +1,446 @@
+diff -r 79402e76ba5a -r 48eff0be4f99 src/org/opensolaris/opengrok/analysis/AnalyzerGuru.java
+--- a/src/org/opensolaris/opengrok/analysis/AnalyzerGuru.java	Tue Mar 02 16:55:49 2010 +0100
++++ b/src/org/opensolaris/opengrok/analysis/AnalyzerGuru.java	Wed Mar 03 17:21:51 2010 -0500
+@@ -442,6 +442,12 @@
+             return null;
+         }
+ 
++        String contentNoBOMStr = stripBOM(new String(content, 0, len));
++        byte[] contentNoBOM = null;
++        if (contentNoBOMStr != null) {
++        	contentNoBOM = contentNoBOMStr.getBytes();
++        }
++        
+         FileAnalyzerFactory factory = find(content);
+         if (factory != null) {
+             return factory;
+@@ -449,6 +455,9 @@
+ 
+         for (FileAnalyzerFactory.Matcher matcher : matchers) {
+             FileAnalyzerFactory fac = matcher.isMagic(content, in);
++            if (fac == null && contentNoBOM != null) {
++            	fac = matcher.isMagic(contentNoBOM, in);
++            }
+             if (fac != null) {
+                 return fac;
+             }
+diff -r 79402e76ba5a -r 48eff0be4f99 src/org/opensolaris/opengrok/analysis/TextAnalyzer.java
+--- /dev/null	Thu Jan 01 00:00:00 1970 +0000
++++ b/src/org/opensolaris/opengrok/analysis/TextAnalyzer.java	Wed Mar 03 17:21:51 2010 -0500
+@@ -0,0 +1,46 @@
++package org.opensolaris.opengrok.analysis;
++
++import java.io.IOException;
++import java.io.InputStream;
++import java.io.InputStreamReader;
++import java.nio.charset.Charset;
++
++import org.apache.lucene.document.Document;
++
++public abstract class TextAnalyzer extends FileAnalyzer {
++	public TextAnalyzer(FileAnalyzerFactory factory) {
++		super(factory);
++	}
++
++    public final void analyze(Document doc, InputStream in) throws IOException {
++    	String charset = null;
++    	
++    	in.mark(3);
++    	
++    	byte[] head = new byte[3];
++    	int br = in.read(head, 0, 3);
++
++    	if (br >= 2) {
++    		if ((head[0] == (byte)0xFE && head[1] == (byte)0xFF) || (head[0] == (byte)0xFF && (byte)head[1] == (byte)0xFE)) {
++    			charset = "UTF16";
++    			in.reset();	
++    		}
++    	}
++    	if (br >= 3) {
++    		if (head[0] == (byte)0xEF && head[1] == (byte)0xBB && head[2] == (byte)0xBF) {
++    			/* InputStreamReader does not properly discard BOM on UTF8 streams,
++    			 * so don't reset the stream. */ 
++    			charset = "UTF8";
++    		}
++    	}
++    	
++    	if (charset == null) {
++    		in.reset();
++    		charset = Charset.defaultCharset().name();
++    	}
++    	
++        analyze(doc, new InputStreamReader(in, charset));
++    }
++    
++	protected abstract void analyze(Document doc, InputStreamReader reader) throws IOException;
++}
+diff -r 79402e76ba5a -r 48eff0be4f99 src/org/opensolaris/opengrok/analysis/c/CAnalyzer.java
+--- a/src/org/opensolaris/opengrok/analysis/c/CAnalyzer.java	Tue Mar 02 16:55:49 2010 +0100
++++ b/src/org/opensolaris/opengrok/analysis/c/CAnalyzer.java	Wed Mar 03 17:21:51 2010 -0500
+@@ -25,9 +25,11 @@
+ 
+ import java.io.IOException;
+ import java.io.InputStream;
++import java.io.InputStreamReader;
+ import java.io.Reader;
+ import java.io.StringReader;
+ import java.io.Writer;
++
+ import org.apache.lucene.analysis.TokenStream;
+ import org.apache.lucene.document.Document;
+ import org.apache.lucene.document.Field;
+@@ -54,7 +56,7 @@
+         xref = new CXref(dummy);
+     }
+ 
+-    public void analyze(Document doc, InputStream in) throws IOException {
++    public void analyze(Document doc, InputStreamReader in) throws IOException {
+         super.analyze(doc, in);
+         doc.add(new Field("refs", dummy));
+     }    
+diff -r 79402e76ba5a -r 48eff0be4f99 src/org/opensolaris/opengrok/analysis/c/CxxAnalyzer.java
+--- a/src/org/opensolaris/opengrok/analysis/c/CxxAnalyzer.java	Tue Mar 02 16:55:49 2010 +0100
++++ b/src/org/opensolaris/opengrok/analysis/c/CxxAnalyzer.java	Wed Mar 03 17:21:51 2010 -0500
+@@ -25,9 +25,11 @@
+ 
+ import java.io.IOException;
+ import java.io.InputStream;
++import java.io.InputStreamReader;
+ import java.io.Reader;
+ import java.io.StringReader;
+ import java.io.Writer;
++
+ import org.apache.lucene.analysis.TokenStream;
+ import org.apache.lucene.document.Document;
+ import org.apache.lucene.document.Field;
+@@ -51,7 +53,7 @@
+         xref = new CxxXref(dummy);
+     }
+ 
+-    public void analyze(Document doc, InputStream in) throws IOException {
++    public void analyze(Document doc, InputStreamReader in) throws IOException {
+         super.analyze(doc, in);
+         doc.add(new Field("refs", dummy));
+     }    
+diff -r 79402e76ba5a -r 48eff0be4f99 src/org/opensolaris/opengrok/analysis/fortran/FortranAnalyzer.java
+--- a/src/org/opensolaris/opengrok/analysis/fortran/FortranAnalyzer.java	Tue Mar 02 16:55:49 2010 +0100
++++ b/src/org/opensolaris/opengrok/analysis/fortran/FortranAnalyzer.java	Wed Mar 03 17:21:51 2010 -0500
+@@ -25,9 +25,11 @@
+ 
+ import java.io.IOException;
+ import java.io.InputStream;
++import java.io.InputStreamReader;
+ import java.io.Reader;
+ import java.io.StringReader;
+ import java.io.Writer;
++
+ import org.apache.lucene.analysis.TokenStream;
+ import org.apache.lucene.document.Document;
+ import org.apache.lucene.document.Field;
+@@ -51,7 +53,7 @@
+     }
+ 
+     @Override
+-    public void analyze(Document doc, InputStream in) throws IOException {
++    public void analyze(Document doc, InputStreamReader in) throws IOException {
+         super.analyze(doc, in);
+         doc.add(new Field("refs", dummy));
+     }
+diff -r 79402e76ba5a -r 48eff0be4f99 src/org/opensolaris/opengrok/analysis/java/JavaAnalyzer.java
+--- a/src/org/opensolaris/opengrok/analysis/java/JavaAnalyzer.java	Tue Mar 02 16:55:49 2010 +0100
++++ b/src/org/opensolaris/opengrok/analysis/java/JavaAnalyzer.java	Wed Mar 03 17:21:51 2010 -0500
+@@ -25,9 +25,11 @@
+ 
+ import java.io.IOException;
+ import java.io.InputStream;
++import java.io.InputStreamReader;
+ import java.io.Reader;
+ import java.io.StringReader;
+ import java.io.Writer;
++
+ import org.apache.lucene.analysis.TokenStream;
+ import org.apache.lucene.document.Document;
+ import org.apache.lucene.document.Field;
+@@ -53,7 +55,7 @@
+         xref = new JavaXref(dummy);
+     }
+ 
+-    public void analyze(Document doc, InputStream in) throws IOException {
++    public void analyze(Document doc, InputStreamReader in) throws IOException {
+         super.analyze(doc, in);
+         doc.add(new Field("refs", dummy));
+     }    
+diff -r 79402e76ba5a -r 48eff0be4f99 src/org/opensolaris/opengrok/analysis/lisp/LispAnalyzer.java
+--- a/src/org/opensolaris/opengrok/analysis/lisp/LispAnalyzer.java	Tue Mar 02 16:55:49 2010 +0100
++++ b/src/org/opensolaris/opengrok/analysis/lisp/LispAnalyzer.java	Wed Mar 03 17:21:51 2010 -0500
+@@ -25,9 +25,11 @@
+ 
+ import java.io.IOException;
+ import java.io.InputStream;
++import java.io.InputStreamReader;
+ import java.io.Reader;
+ import java.io.StringReader;
+ import java.io.Writer;
++
+ import org.apache.lucene.analysis.TokenStream;
+ import org.apache.lucene.document.Document;
+ import org.apache.lucene.document.Field;
+@@ -48,7 +50,7 @@
+         xref = new LispXref(dummy);
+     }
+ 
+-    public void analyze(Document doc, InputStream in) throws IOException {
++    public void analyze(Document doc, InputStreamReader in) throws IOException {
+         super.analyze(doc, in);
+         doc.add(new Field("refs", dummy));
+     }
+diff -r 79402e76ba5a -r 48eff0be4f99 src/org/opensolaris/opengrok/analysis/plain/PlainAnalyzer.java
+--- a/src/org/opensolaris/opengrok/analysis/plain/PlainAnalyzer.java	Tue Mar 02 16:55:49 2010 +0100
++++ b/src/org/opensolaris/opengrok/analysis/plain/PlainAnalyzer.java	Wed Mar 03 17:21:51 2010 -0500
+@@ -34,9 +34,9 @@
+ import org.apache.lucene.document.Field;
+ import org.opensolaris.opengrok.analysis.Definitions;
+ import org.opensolaris.opengrok.analysis.ExpandTabsReader;
+-import org.opensolaris.opengrok.analysis.FileAnalyzer;
+ import org.opensolaris.opengrok.analysis.FileAnalyzerFactory;
+ import org.opensolaris.opengrok.analysis.Hash2TokenStream;
++import org.opensolaris.opengrok.analysis.TextAnalyzer;
+ import org.opensolaris.opengrok.configuration.Project;
+ import org.opensolaris.opengrok.history.Annotation;
+ 
+@@ -46,7 +46,7 @@
+  *
+  * @author Chandan
+  */
+-public class PlainAnalyzer extends FileAnalyzer {
++public class PlainAnalyzer extends TextAnalyzer {
+ 
+     protected char[] content;
+     protected int len;
+@@ -67,9 +67,10 @@
+     }
+ 
+     @Override
+-    public void analyze(Document doc, InputStream in) throws IOException {
+-        Reader inReader =
+-                ExpandTabsReader.wrap(new InputStreamReader(in), project);
++    public void analyze(Document doc, InputStreamReader in) throws IOException {
++    	Reader inReader =
++    		ExpandTabsReader.wrap(in, project);
++    	
+         len = 0;
+         do {
+             int rbytes = inReader.read(content, len, content.length - len);
+diff -r 79402e76ba5a -r 48eff0be4f99 src/org/opensolaris/opengrok/analysis/plain/XMLAnalyzer.java
+--- a/src/org/opensolaris/opengrok/analysis/plain/XMLAnalyzer.java	Tue Mar 02 16:55:49 2010 +0100
++++ b/src/org/opensolaris/opengrok/analysis/plain/XMLAnalyzer.java	Wed Mar 03 17:21:51 2010 -0500
+@@ -29,11 +29,12 @@
+ import java.io.Reader;
+ import java.io.StringReader;
+ import java.io.Writer;
++
+ import org.apache.lucene.analysis.TokenStream;
+ import org.apache.lucene.document.Document;
+ import org.apache.lucene.document.Field;
+-import org.opensolaris.opengrok.analysis.FileAnalyzer;
+ import org.opensolaris.opengrok.analysis.FileAnalyzerFactory;
++import org.opensolaris.opengrok.analysis.TextAnalyzer;
+ import org.opensolaris.opengrok.configuration.Project;
+ import org.opensolaris.opengrok.history.Annotation;
+ 
+@@ -43,7 +44,7 @@
+  *
+  * @author Chandan
+  */
+-public class XMLAnalyzer extends FileAnalyzer {
++public class XMLAnalyzer extends TextAnalyzer {
+     
+     private char[] content;
+     private int len;
+@@ -63,11 +64,10 @@
+     }
+     
+     @Override
+-    public void analyze(Document doc, InputStream in) throws IOException {
+-        InputStreamReader inReader = new InputStreamReader(in);
++    public void analyze(Document doc, InputStreamReader in) throws IOException {
+         len = 0;
+         do{
+-            int rbytes = inReader.read(content, len, content.length - len);
++            int rbytes = in.read(content, len, content.length - len);
+             if(rbytes > 0 ) {
+                 if(rbytes == (content.length - len)) {
+                     char[] content2 = new char[content.length * 2];
+diff -r 79402e76ba5a -r 48eff0be4f99 src/org/opensolaris/opengrok/analysis/sh/ShAnalyzer.java
+--- a/src/org/opensolaris/opengrok/analysis/sh/ShAnalyzer.java	Tue Mar 02 16:55:49 2010 +0100
++++ b/src/org/opensolaris/opengrok/analysis/sh/ShAnalyzer.java	Wed Mar 03 17:21:51 2010 -0500
+@@ -25,9 +25,11 @@
+ 
+ import java.io.IOException;
+ import java.io.InputStream;
++import java.io.InputStreamReader;
+ import java.io.Reader;
+ import java.io.StringReader;
+ import java.io.Writer;
++
+ import org.apache.lucene.analysis.TokenStream;
+ import org.apache.lucene.document.Document;
+ import org.apache.lucene.document.Field;
+@@ -54,7 +56,7 @@
+         xref = new ShXref(dummy);
+     }
+ 
+-    public void analyze(Document doc, InputStream in) throws IOException {
++    public void analyze(Document doc, InputStreamReader in) throws IOException {
+         super.analyze(doc, in);
+         doc.add(new Field("refs", dummy));
+     }    
+diff -r 79402e76ba5a -r 48eff0be4f99 src/org/opensolaris/opengrok/analysis/tcl/TclAnalyzer.java
+--- a/src/org/opensolaris/opengrok/analysis/tcl/TclAnalyzer.java	Tue Mar 02 16:55:49 2010 +0100
++++ b/src/org/opensolaris/opengrok/analysis/tcl/TclAnalyzer.java	Wed Mar 03 17:21:51 2010 -0500
+@@ -25,9 +25,11 @@
+ 
+ import java.io.IOException;
+ import java.io.InputStream;
++import java.io.InputStreamReader;
+ import java.io.Reader;
+ import java.io.StringReader;
+ import java.io.Writer;
++
+ import org.apache.lucene.analysis.TokenStream;
+ import org.apache.lucene.document.Document;
+ import org.apache.lucene.document.Field;
+@@ -48,7 +50,7 @@
+         xref = new TclXref(dummy);
+     }
+ 
+-    public void analyze(Document doc, InputStream in) throws IOException {
++    public void analyze(Document doc, InputStreamReader in) throws IOException {
+         super.analyze(doc, in);
+         doc.add(new Field("refs", dummy));
+     }
+diff -r 79402e76ba5a -r 48eff0be4f99 test/org/opensolaris/opengrok/analysis/AnalyzerGuruTest.java
+--- a/test/org/opensolaris/opengrok/analysis/AnalyzerGuruTest.java	Tue Mar 02 16:55:49 2010 +0100
++++ b/test/org/opensolaris/opengrok/analysis/AnalyzerGuruTest.java	Wed Mar 03 17:21:51 2010 -0500
+@@ -48,6 +48,17 @@
+     }
+ 
+     @Test
++    public void testUTF8ByteOrderMarkPlainFile() throws Exception {
++        byte[] bytes = { (byte) 0xEF, (byte) 0xBB, (byte) 0xBF, // UTF-8 BOM
++                       'h', 'e', 'l', 'l', 'e', ' ',
++                       'w', 'o', 'r', 'l', 'd'};
++        
++        ByteArrayInputStream in = new ByteArrayInputStream(bytes);
++        FileAnalyzer fa = AnalyzerGuru.getAnalyzer(in, "/dummy/file");
++        assertSame(PlainAnalyzer.class, fa.getClass());
++    }
++
++    @Test
+     public void addExtension() throws Exception {
+         // should not find analyzer for this unlikely extension
+         assertNull(AnalyzerGuru.find("file.unlikely_extension"));
+diff -r 79402e76ba5a -r 48eff0be4f99 test/org/opensolaris/opengrok/analysis/TextAnazlyzerTest.java
+--- /dev/null	Thu Jan 01 00:00:00 1970 +0000
++++ b/test/org/opensolaris/opengrok/analysis/TextAnazlyzerTest.java	Wed Mar 03 17:21:51 2010 -0500
+@@ -0,0 +1,100 @@
++package org.opensolaris.opengrok.analysis;
++
++import java.io.BufferedReader;
++import java.io.ByteArrayInputStream;
++import java.io.IOException;
++import java.io.InputStream;
++import java.io.InputStreamReader;
++import java.nio.ByteBuffer;
++import java.nio.charset.Charset;
++
++import junit.framework.Assert;
++
++import org.apache.lucene.document.Document;
++import org.junit.Test;
++
++public class TextAnazlyzerTest {
++	private String defaultEncoding = new InputStreamReader(new ByteArrayInputStream(new byte[0])).getEncoding();
++	private String encoding;
++	private String contents;
++	
++	@Test
++	public void defaultEncoding() throws IOException {
++		new TestableTextAnalyzer().analyze(new Document(),
++				new ByteArrayInputStream("hello".getBytes()));
++		
++		Assert.assertEquals(defaultEncoding, encoding);
++		
++		Assert.assertEquals("hello", contents);
++	}
++	
++	@Test
++	public void resetsStreamOnShortInput() throws IOException {
++		new TestableTextAnalyzer().analyze(new Document(),
++				new ByteArrayInputStream("hi".getBytes()));
++		
++		Assert.assertEquals(defaultEncoding, encoding);
++		
++		Assert.assertEquals("hi", contents);
++	}
++	
++	@Test
++	public void utf8WithBOM() throws IOException {
++		byte[] buffer = new byte[] {(byte) 239, (byte) 187, (byte) 191, 'h', 'e', 'l', 'l', 'o'};
++		new TestableTextAnalyzer().analyze(new Document(),
++				new ByteArrayInputStream(buffer));
++		
++		Assert.assertEquals("hello", contents);
++		Assert.assertEquals("UTF8", encoding);
++	}
++	
++	@Test
++	public void utf16WithBOM() throws IOException {
++		final ByteBuffer utf16str = Charset.forName("UTF-16").encode("hello");
++		byte[] bytes = new byte[utf16str.remaining()];
++		utf16str.get(bytes, 0, bytes.length);
++		
++		new TestableTextAnalyzer().analyze(new Document(),
++				new ByteArrayInputStream(bytes));
++		
++		Assert.assertEquals("UTF-16", encoding);
++		
++		Assert.assertEquals("hello", contents);
++	}
++	
++	@Test
++	public void utf16WithBOMAlternate() throws IOException {
++		final ByteBuffer utf16str = Charset.forName("UTF-16").encode("hello");
++		byte[] bytes = new byte[utf16str.remaining()];
++		utf16str.get(bytes, 0, bytes.length);
++		
++		for (int i=0; i<bytes.length; i+=2) {
++			byte b = bytes[i];
++			bytes[i] = bytes[i+1];
++			bytes[i+1] = b;
++		}
++		
++		new TestableTextAnalyzer().analyze(new Document(),
++				new ByteArrayInputStream(bytes));
++		
++		Assert.assertEquals("UTF-16", encoding);
++		
++		Assert.assertEquals("hello", contents);
++	}
++	
++	public class TestableTextAnalyzer extends TextAnalyzer {
++		public TestableTextAnalyzer() {
++			super(null);
++		}
++		
++		@Override
++		protected void analyze(Document doc, InputStreamReader r) throws IOException {
++			encoding = r.getEncoding();
++
++			char[] buf = new char[1024];
++			int br = r.read(buf);
++			
++			contents = new String(buf, 0, br);
++		}
++	}
++}

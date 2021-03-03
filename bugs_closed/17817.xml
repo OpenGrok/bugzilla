@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>17817</bug_id>
+          
+          <creation_ts>2011-02-03 15:24:00 +0000</creation_ts>
+          <short_desc>xref treats include statements with angle brackets and quote marks differently when they contain path part</short_desc>
+          <delta_ts>2011-02-07 12:08:28 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>analyzer</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>Linux</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXED</resolution>
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>minor</bug_severity>
+          <target_milestone>0.11</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter>zweiberg</reporter>
+          <assigned_to name="Knut Anders Hatlen">knut.hatlen</assigned_to>
+          <cc>knut.hatlen</cc>
+    
+    <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>80854</commentid>
+            <who name="">zweiberg</who>
+            <bug_when>2011-02-03 15:24:07 +0000</bug_when>
+            <thetext>It seems that OpenGrok (xref) treats include statements with angle brackets and quote marks differently when they contain path part. For example:
+
+With &lt;path/file.h&gt; the whole path/file.h part is used as one searchable “File Path” item.
+
+With “path/file.h” there are two link items, path and file.h. This would be preferred also with angle brackets since usually setting path correctly requires some makefile/parser magic to work and path/file.h cannot be found by OG (0.9).</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>80968</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2011-02-06 21:13:46 +0000</bug_when>
+            <thetext>Fixed in changeset 1162:3e8c741ff182.
+
+The fix makes the statements with angle brackets result in the same links as the statements with quotes.
+
+For the record, the generated links are not exactly as described in the bug description. For &quot;path/file.h&quot;, there are two links: &quot;path&quot; which searches for &quot;path&quot;, and &quot;file.h&quot; which searches for &quot;path/file.h&quot; (including the path component). This is now also how &lt;path/file.h&gt; is handled. So even though the fix does what was requested in this bug report (changing the behaviour of &lt;..&gt; to match &quot;..&quot;) clicking on &quot;file.h&quot; will still search using the full path, which may not be exactly what the reporter wanted. Changing how the breadcrumb paths are laid out will affect many other xrefs than C and C++, so if such a change is desired, that would be better handled in a separate bug report.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>80973</commentid>
+            <who name="">zweiberg</who>
+            <bug_when>2011-02-07 11:08:13 +0000</bug_when>
+            <thetext>(In reply to comment #1)
+&gt; Fixed in changeset 1162:3e8c741ff182.
+&gt; 
+&gt; The fix makes the statements with angle brackets result in the same links as
+&gt; the statements with quotes.
+&gt; 
+&gt; For the record, the generated links are not exactly as described in the bug
+&gt; description. For &quot;path/file.h&quot;, there are two links: &quot;path&quot; which searches for
+&gt; &quot;path&quot;, and &quot;file.h&quot; which searches for &quot;path/file.h&quot; (including the path
+&gt; component). This is now also how &lt;path/file.h&gt; is handled. So even though the
+&gt; fix does what was requested in this bug report (changing the behaviour of &lt;..&gt;
+&gt; to match &quot;..&quot;) clicking on &quot;file.h&quot; will still search using the full path,
+&gt; which may not be exactly what the reporter wanted. Changing how the breadcrumb
+&gt; paths are laid out will affect many other xrefs than C and C++, so if such a
+&gt; change is desired, that would be better handled in a separate bug report.
+
+I&apos;m happy with the correction description (have not tested the actual fix), and I&apos;m not going to request extra functionality related to this. Thanks for the very fast correction :)</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>80974</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2011-02-07 12:08:28 +0000</bug_when>
+            <thetext>Thanks for the feedback! Sounds like it&apos;s OK to close this bug, then.</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

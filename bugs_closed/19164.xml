@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>19164</bug_id>
+          
+          <creation_ts>2012-02-09 16:09:00 +0000</creation_ts>
+          <short_desc>OpenGrok shell script should have a way to tell not to send config to webapp</short_desc>
+          <delta_ts>2012-02-15 10:17:14 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>indexer</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXINSOURCE</resolution>
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>enhancement</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Vladimir Kotal">vladimir.kotal</reporter>
+          <assigned_to name="Vladimir Kotal">vladimir.kotal</assigned_to>
+          <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>86171</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2012-02-09 16:09:52 +0000</bug_when>
+            <thetext>OpenGrok shell script always sets WEBAPP_CONFIG_ADDRESS in DefaultInstanceConfiguration()
+
+    221     # OPTIONAL: Configuration Address (host:port)
+    222     #           (conf/web.xml default is localhost:2424)
+    223     WEBAPP_CONFIG_ADDRESS=&quot;-U localhost:2424&quot;
+
+which is later used in StdInvocation():
+
+    672 StdInvocation()
+    673 {
+    674     ${DO} ${JAVA} ${JAVA_OPTS} ${PROPERTIES}                    \
+    675         ${LOGGER_PROPERTIES}                                    \
+    676         ${JAVA_DEBUG}                                           \
+    677         -jar ${OPENGROK_JAR}                                    \
+    678         ${IGNORE_PATTERNS} ${ENABLE_PROJECTS}                   \
+    679         ${DERBY_HISTORY_CACHE}                                  \
+    680         ${SCAN_FOR_REPOSITORY} ${REMOTE_REPOSITORIES}           \
+    681         ${SCAN_DEPTH}                                           \
+    682         ${VERBOSE} ${QUIET}                                     \
+    683         ${PROGRESS}                                             \
+    684         ${EXUBERANT_CTAGS:+-c} ${EXUBERANT_CTAGS}               \
+    685         ${MAX_INDEXED_WORDS} ${SKIN} ${LEADING_WILDCARD}        \
+    686         ${READ_XML_CONF}                                        \
+    687         -W ${XML_CONFIGURATION}                                 \
+    688         ${WEBAPP_CONFIG_ADDRESS}                                \
+    689         -s ${SRC_ROOT} -d ${DATA_ROOT}                          \
+    690         &quot;${@}&quot;
+    691 
+    692 }
+
+Sometimes, e.g. when performing reindexing on the side in preparation for upgrade to new OpenGrok version one does not want the configuration to be sent to the web application at the end of reindexing.
+
+OpenGrok script should offer an option to suppress WEBAPP_CONFIG_ADDRESS for the standard invocation.
+
+Also, it would not hurt if it was configurable.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86173</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2012-02-09 17:35:11 +0000</bug_when>
+            <thetext>We can do both at the same time. Make it configurable and the user can either set it to valid alternative location or run the OpenGrok script like this:
+
+  OPENGROK_WEBAPP_CFGADDR=&quot;none&quot; /usr/opengrok/bin/OpenGrok
+
+and the configuration will not be sent anywhere.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86200</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2012-02-15 10:17:14 +0000</bug_when>
+            <thetext>pushed the fix:
+
+changeset:   1327:3cf95ee27247
+tag:         tip
+user:        Vladimir Kotal &lt;Vladimir.Kotal@oracle.com&gt;
+date:        Wed Feb 15 11:17:17 2012 +0100
+
+description:
+	Bug 19164 - OpenGrok shell script should have a way to tell not to send config to webapp
+
+modified:
+   OpenGrok
+
+
+reviewed by Lubos Kosco.</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

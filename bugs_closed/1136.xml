@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>1136</bug_id>
+          
+          <creation_ts>2008-04-11 15:40:00 +0000</creation_ts>
+          <short_desc>compare button brings to the index.jsp</short_desc>
+          <delta_ts>2008-08-31 03:21:27 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>webapp</component>
+          <version>unspecified</version>
+          <rep_platform>Other</rep_platform>
+          <op_sys>Windows</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>INVALID</resolution>
+          
+          
+          
+          
+          
+          <priority>P2</priority>
+          <bug_severity>normal</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Moisei">moisei</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          <cc>moisei</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>3666</commentid>
+            <who name="Moisei">moisei</who>
+            <bug_when>2008-04-11 15:40:34 +0000</bug_when>
+            <thetext>environment: windows / java 1.5 / local svn available via file://  /multiproject
+- compare button just takes me back to &quot;home&quot; location  (to the index.jsp)</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>7555</commentid>
+            <who name="Trond Norbye">trond.norbye</who>
+            <bug_when>2008-06-01 14:35:31 +0000</bug_when>
+            <thetext>I just tried to compare two revisions of http://src.opensolaris.org/source/history/ppc-dev/ppc-dev/generated.fl and I did not see any problems. 
+
+Could you please provide:
+a) the URL you see in the browser for the page
+b) the content of the page (you can mail it directly to me ( trond.norbye@sun.com ) to avoid the content being distributed if you like, or you could edit the page and just leave the links in there)
+c) your source root setting
+d) the subversion url to your code</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>11519</commentid>
+            <who name="Trond Norbye">trond.norbye</who>
+            <bug_when>2008-08-31 03:21:27 +0000</bug_when>
+            <thetext>The Subversion support was reimplemented a while ago, and I have not been able to reproduce this bug.
+
+Please reopen the bug if it still occurs with the new version of the Subversion support.</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

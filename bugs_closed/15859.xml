@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>15859</bug_id>
+          
+          <creation_ts>2010-05-04 11:06:00 +0000</creation_ts>
+          <short_desc>html analyzer doesn&apos;t escape forms</short_desc>
+          <delta_ts>2010-05-07 22:49:52 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>indexer</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXED</resolution>
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>minor</bug_severity>
+          <target_milestone>0.9</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Lubos Kosco">Lubos.Kosco</reporter>
+          <assigned_to name="Knut Anders Hatlen">knut.hatlen</assigned_to>
+          <cc>jakub.jirsa</cc>
+    
+    <cc>knut.hatlen</cc>
+    
+    <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>72473</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2010-05-04 11:06:12 +0000</bug_when>
+            <thetext>see http://grok.czech.sun.com:8080/source/xref/sg-firmware-5.20-patchdev/src/tools/ptool/SUNWsgpt/public/pt2/talk2.html
+
+the form will be working, escaping to &amp;lt,... didn&apos;t work ...</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>72675</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2010-05-07 22:10:20 +0000</bug_when>
+            <thetext>There&apos;s a typo in XMLXref.lex:
+
+&lt;STRING, STRING, COMMENT, CDATA&gt; {
+ &quot;&lt;&quot;    {out.write( &quot;&amp;lt;&quot;);}
+ &quot;&gt;&quot;    {out.write( &quot;&amp;gt;&quot;);}
+}
+
+It says STRING twice. One of them should have said SSTRING. Because of this, &lt; and &gt; are not escaped in single-quoted strings.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>72682</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2010-05-07 22:29:37 +0000</bug_when>
+            <thetext>Note also that the talk2.html file has a typo that triggers the bug:
+
+    &lt;input type&apos;&quot;text&quot; name=&quot;hostName&quot;
+
+If the single-quote (&apos;) had been replaced with an equals sign (=), the file would be a valid HTML document and it would have been rendered correctly.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>72683</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2010-05-07 22:49:52 +0000</bug_when>
+            <thetext>changeset:   1000:9f80c09bdbb9</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

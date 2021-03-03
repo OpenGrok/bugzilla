@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>14060</bug_id>
+          
+          <creation_ts>2010-01-22 11:27:00 +0000</creation_ts>
+          <short_desc>Annotate for man pages does not work</short_desc>
+          <delta_ts>2010-01-22 11:27:14 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>misc</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>NEW</bug_status>
+          
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>normal</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Marcel Telka">marcel.telka</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>63348</commentid>
+            <who name="Marcel Telka">marcel.telka</who>
+            <bug_when>2010-01-22 11:27:14 +0000</bug_when>
+            <thetext>The Annotate function for man pages does not work. Example:
+
+http://src.opensolaris.org/source/xref/onnv/onnv-gate/usr/src/tools/scripts/nightly.1?a=true
+
+Maybe this is related to Bug 1043.</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

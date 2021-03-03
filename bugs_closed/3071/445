@@ -1,0 +1,3 @@
+<link rel="search" type="application/opensearchdescription+xml"
+      title="CLONE_NAME@MACHINE_HOSTNAME"
+      href="MACHINE_BASE_URL/opensearch/grok-CLONE_NAME.xml">

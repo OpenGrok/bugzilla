@@ -1,0 +1,1394 @@
+# HG changeset patch
+# User jel+opengrok@cs.uni-magdeburg.de
+# Date 1329109967 -3600
+# Node ID 261116507c7ae7e640a63cd43271988908d92c4f
+# Parent  61549026aafef91699307ca0073e80033bd6e4d0
+logging consolidation:
+- stack traces are never logged at a level >= CONFIG to avoid user annoyance
+  with one exception: the UncaughtExceptionHandler ;-)
+- each class logs to its own logger (FQCN) to allow a more fine grained, selective logging;
+  OpenGrokLogger is just used as very simple Logging Configurator
+- file and path names are usually enclosed in single quotes
+- commands and contents of a line in brackets ([])
+- warnings+ are usually always logged: no need to use formatter for those msgs
+
+diff -r 61549026aafe -r 261116507c7a src/org/opensolaris/opengrok/OpenGrokLogger.java
+--- a/src/org/opensolaris/opengrok/OpenGrokLogger.java	Sun Feb 12 04:37:36 2012 +0100
++++ b/src/org/opensolaris/opengrok/OpenGrokLogger.java	Mon Feb 13 06:12:47 2012 +0100
+@@ -183,8 +183,7 @@
+             log.addHandler(ch);
+ 
+         } catch (Exception ex1) {
+-            System.err.println("Exception logging " + ex1);
+-            throw new IOException("Exception setting up logging " + ex1);
++            throw new IOException("Exception setting up logging " + ex1.getMessage());
+         }
+         log.setLevel(filelevel);
+         return logpath;
+diff -r 61549026aafe -r 261116507c7a src/org/opensolaris/opengrok/analysis/AnalyzerGuru.java
+--- a/src/org/opensolaris/opengrok/analysis/AnalyzerGuru.java	Sun Feb 12 04:37:36 2012 +0100
++++ b/src/org/opensolaris/opengrok/analysis/AnalyzerGuru.java	Mon Feb 13 06:12:47 2012 +0100
+@@ -35,10 +35,11 @@
+ import java.util.SortedMap;
+ import java.util.TreeMap;
+ import java.util.logging.Level;
++import java.util.logging.Logger;
++
+ import org.apache.lucene.document.DateTools;
+ import org.apache.lucene.document.Document;
+ import org.apache.lucene.document.Field;
+-import org.opensolaris.opengrok.OpenGrokLogger;
+ import org.opensolaris.opengrok.analysis.FileAnalyzer.Genre;
+ import org.opensolaris.opengrok.analysis.archive.BZip2AnalyzerFactory;
+ import org.opensolaris.opengrok.analysis.archive.GZIPAnalyzerFactory;
+@@ -46,6 +47,7 @@
+ import org.opensolaris.opengrok.analysis.archive.ZipAnalyzerFactory;
+ import org.opensolaris.opengrok.analysis.c.CAnalyzerFactory;
+ import org.opensolaris.opengrok.analysis.c.CxxAnalyzerFactory;
++import org.opensolaris.opengrok.analysis.csharp.CSharpAnalyzerFactory;
+ import org.opensolaris.opengrok.analysis.data.IgnorantAnalyzerFactory;
+ import org.opensolaris.opengrok.analysis.data.ImageAnalyzerFactory;
+ import org.opensolaris.opengrok.analysis.document.TroffAnalyzerFactory;
+@@ -64,7 +66,6 @@
+ import org.opensolaris.opengrok.analysis.sh.ShAnalyzerFactory;
+ import org.opensolaris.opengrok.analysis.sql.SQLAnalyzerFactory;
+ import org.opensolaris.opengrok.analysis.tcl.TclAnalyzerFactory;
+-import org.opensolaris.opengrok.analysis.csharp.CSharpAnalyzerFactory;
+ import org.opensolaris.opengrok.analysis.vb.VBAnalyzerFactory;
+ import org.opensolaris.opengrok.configuration.Project;
+ import org.opensolaris.opengrok.history.Annotation;
+@@ -82,7 +83,7 @@
+  * @author Chandan
+  */
+ public class AnalyzerGuru {
+-
++    private static final Logger logger = Logger.getLogger(AnalyzerGuru.class.getName());
+     /** The default {@code FileAnalyzerFactory} instance. */
+     private static final FileAnalyzerFactory
+         DEFAULT_ANALYZER_FACTORY = new FileAnalyzerFactory();
+@@ -242,7 +243,8 @@
+                 // date = hr.getLastCommentDate() //RFE
+             }
+         } catch (HistoryException e) {
+-            OpenGrokLogger.getLogger().log(Level.WARNING, "An error occurred while reading history: ", e);
++            logger.warning("An error occurred while reading history: " +  e.getMessage());
++            logger.log(Level.FINE, "getDocument", e);
+         }
+         doc.add(new Field("date", date, Field.Store.YES, Field.Index.NOT_ANALYZED));
+         if (path != null) {
+diff -r 61549026aafe -r 261116507c7a src/org/opensolaris/opengrok/analysis/Ctags.java
+--- a/src/org/opensolaris/opengrok/analysis/Ctags.java	Sun Feb 12 04:37:36 2012 +0100
++++ b/src/org/opensolaris/opengrok/analysis/Ctags.java	Mon Feb 13 06:12:47 2012 +0100
+@@ -53,7 +53,7 @@
+         this.binary = binary;
+     }
+ 
+-    public void close() throws IOException {
++    public void close() {
+         IOUtils.close(ctagsIn);
+         if (ctags != null) {
+             ctags.destroy();
+@@ -91,21 +91,25 @@
+ 
+         Thread errThread = new Thread(new Runnable() {
+ 
++            @SuppressWarnings("synthetic-access")
++            @Override
+             public void run() {
+                 StringBuilder sb = new StringBuilder();
+                 try {
+                     String s;
+                     while ((s = error.readLine()) != null) {
++                        sb.append("\n\t");
+                         sb.append(s);
+-                        sb.append('\n');
+                     }
+                 } catch (IOException exp) {
+-                     log.log(Level.WARNING, "Got an exception reading ctags error stream: ", exp);
++                     log.warning("Got an exception reading ctags error stream: "
++                         + exp.getMessage());
++                     log.log(Level.FINE, "run", exp);
+                 } finally {
+                     IOUtils.close(error);
+                 }
+                 if (sb.length() > 0) {
+-                     log.warning("Error from ctags: " + sb.toString());
++                     log.warning("ctags problems:" + sb.toString());
+                 }
+             }
+         });
+@@ -151,9 +155,10 @@
+                     log.warning("Unexpected end of file!");
+                     try {
+                         int val = ctags.exitValue();
+-                        log.warning("ctags exited with code: " + val);
++                        log.warning("ctags exited with code " + val);
+                     } catch (Exception e) {
+-                        log.log(Level.WARNING, "Ctags problem: ", e);
++                        log.warning("Ctags problem: " + e.getMessage());
++                        log.log(Level.FINE, "readTags", e);
+                     }
+                     log.fine("Ctag read");
+                     return;
+@@ -165,7 +170,7 @@
+ 
+                 //fix for bug #16334
+                 if (tagLine.endsWith(CTAGS_FILTER_TERMINATOR)) {
+-                    log.log(Level.WARNING, "ctags encountered a problem while generating tags for the file. The index will be incomplete.");
++                    log.warning("ctags encountered a problem while generating tags for the file. The index will be incomplete.");
+                     return;
+                 }
+ 
+@@ -236,7 +241,8 @@
+             //log.fine("Read = " + def + " : " + lnum + " = " + kind + " IS " + inher + " M " + match);
+             } while (true);
+         } catch (Exception e) {
+-            log.log(Level.WARNING, "CTags parsing problem: ", e);
++            log.warning("CTags parsing problem: " + e.getMessage());
++            log.log(Level.FINE, "readTags", e);
+         }
+         log.severe("CTag reader cycle was interrupted!");
+     }
+diff -r 61549026aafe -r 261116507c7a src/org/opensolaris/opengrok/analysis/ExpandTabsReader.java
+--- a/src/org/opensolaris/opengrok/analysis/ExpandTabsReader.java	Sun Feb 12 04:37:36 2012 +0100
++++ b/src/org/opensolaris/opengrok/analysis/ExpandTabsReader.java	Mon Feb 13 06:12:47 2012 +0100
+@@ -70,11 +70,9 @@
+      * tabs as defined by the project's settings
+      */
+     public static Reader wrap(Reader in, Project p) {
+-        if (p != null && p.hasTabSizeSetting()) {
+-            return new ExpandTabsReader(in, p.getTabSize());
+-        } else {
+-            return in;
+-        }
++        return (p != null && p.hasTabSizeSetting())
++            ? new ExpandTabsReader(in, p.getTabSize())
++            : in;
+     }
+ 
+     @Override
+diff -r 61549026aafe -r 261116507c7a src/org/opensolaris/opengrok/analysis/FileAnalyzer.java
+--- a/src/org/opensolaris/opengrok/analysis/FileAnalyzer.java	Sun Feb 12 04:37:36 2012 +0100
++++ b/src/org/opensolaris/opengrok/analysis/FileAnalyzer.java	Mon Feb 13 06:12:47 2012 +0100
+@@ -32,12 +32,12 @@
+ import java.io.OutputStreamWriter;
+ import java.io.Reader;
+ import java.io.Writer;
+-import java.util.logging.Level;
++import java.util.logging.Logger;
+ import java.util.zip.GZIPOutputStream;
++
+ import org.apache.lucene.analysis.Analyzer;
+ import org.apache.lucene.analysis.TokenStream;
+ import org.apache.lucene.document.Document;
+-import org.opensolaris.opengrok.OpenGrokLogger;
+ import org.opensolaris.opengrok.configuration.Project;
+ import org.opensolaris.opengrok.configuration.RuntimeEnvironment;
+ import org.opensolaris.opengrok.util.IOUtils;
+@@ -59,7 +59,7 @@
+  * @author Chandan
+  */
+ public class FileAnalyzer extends Analyzer {
+-
++    private static final Logger logger = Logger.getLogger(FileAnalyzer.class.getName());
+     protected Project project;
+     private final FileAnalyzerFactory factory;
+ 
+@@ -149,7 +149,7 @@
+         } else if ("hist".equals(fieldName)) {
+             return hista.tokenStream(fieldName, reader);
+         }
+-        OpenGrokLogger.getLogger().log(Level.WARNING, "Have no analyzer for: {0}", fieldName);
++        logger.warning("Have no analyzer for '" + fieldName + "'");
+         return null;
+     }
+ 
+diff -r 61549026aafe -r 261116507c7a src/org/opensolaris/opengrok/analysis/archive/GZIPAnalyzer.java
+--- a/src/org/opensolaris/opengrok/analysis/archive/GZIPAnalyzer.java	Sun Feb 12 04:37:36 2012 +0100
++++ b/src/org/opensolaris/opengrok/analysis/archive/GZIPAnalyzer.java	Mon Feb 13 06:12:47 2012 +0100
+@@ -27,15 +27,14 @@
+ import java.io.InputStream;
+ import java.io.Reader;
+ import java.io.Writer;
+-import java.util.logging.Level;
++import java.util.logging.Logger;
+ import java.util.zip.GZIPInputStream;
++
+ import org.apache.lucene.analysis.TokenStream;
+ import org.apache.lucene.document.Document;
+ import org.apache.lucene.document.Field;
+-import org.opensolaris.opengrok.OpenGrokLogger;
+ import org.opensolaris.opengrok.analysis.AnalyzerGuru;
+ import org.opensolaris.opengrok.analysis.FileAnalyzer;
+-import org.opensolaris.opengrok.analysis.FileAnalyzer.Genre;
+ import org.opensolaris.opengrok.analysis.FileAnalyzerFactory;
+ 
+ /**
+@@ -45,6 +44,7 @@
+  * @author Chandan
+  */
+ public class GZIPAnalyzer extends FileAnalyzer {
++    private static final Logger logger = Logger.getLogger(GZIPAnalyzer.class.getName());
+     private Genre g;
+     @Override
+     public Genre getGenre() {
+@@ -71,7 +71,7 @@
+             fa = AnalyzerGuru.getAnalyzer(gzis, newname);
+             if (fa == null) {
+                 this.g = Genre.DATA;
+-                OpenGrokLogger.getLogger().log(Level.WARNING, "Did not analyze {0}, detected as data.", newname);
++                logger.warning("Did not analyze '" + newname +"', detected as data.");
+             } else { // cant recurse!
+                 if (fa.getGenre() == Genre.PLAIN || fa.getGenre() == Genre.XREFABLE) {
+                     this.g = Genre.XREFABLE;
+diff -r 61549026aafe -r 261116507c7a src/org/opensolaris/opengrok/analysis/plain/PlainAnalyzerFactory.java
+--- a/src/org/opensolaris/opengrok/analysis/plain/PlainAnalyzerFactory.java	Sun Feb 12 04:37:36 2012 +0100
++++ b/src/org/opensolaris/opengrok/analysis/plain/PlainAnalyzerFactory.java	Mon Feb 13 06:12:47 2012 +0100
+@@ -38,13 +38,10 @@
+ public final class PlainAnalyzerFactory extends FileAnalyzerFactory {
+ 
+     private static final Matcher MATCHER = new Matcher() {
++            @Override
+             public FileAnalyzerFactory isMagic(byte[] content, InputStream in)
+                     throws IOException {
+-                if (isPlainText(content)) {
+-                    return DEFAULT_INSTANCE;
+-                } else {
+-                    return null;
+-                }
++                return isPlainText(content) ? DEFAULT_INSTANCE : null;
+             }
+ 
+             /**
+@@ -75,11 +72,10 @@
+                             (b == 13)) {        // carriage return
+                         // is plain text so far, go to next byte
+                         continue;
+-                    } else {
+-                        // 8-bit values or unprintable control characters,
+-                        // probably not plain text
+-                        return false;
+                     }
++                    // 8-bit values or unprintable control characters,
++                    // probably not plain text
++                    return false;
+                 }
+                 return true;
+             }
+diff -r 61549026aafe -r 261116507c7a src/org/opensolaris/opengrok/configuration/Configuration.java
+--- a/src/org/opensolaris/opengrok/configuration/Configuration.java	Sun Feb 12 04:37:36 2012 +0100
++++ b/src/org/opensolaris/opengrok/configuration/Configuration.java	Mon Feb 13 06:12:47 2012 +0100
+@@ -58,6 +58,12 @@
+  * package scope, but that didn't work with the XMLDecoder/XMLEncoder.
+  */
+ public final class Configuration {
++    /** The property name used to obtain the ctags command to use. */
++    public static final String CTAGS_CMD_PROPERTY_KEY = 
++        "org.opensolaris.opengrok.analysis.Ctags";
++    /** The command to use if no ctags command was given explicitly */
++    public static final String CTAGS_CMD_FALLBACK = "ctags";
++
+     private String ctags;
+ 
+     /** Should the history log be cached? */
+@@ -150,7 +156,7 @@
+         setRepositories(new ArrayList<RepositoryInfo>());
+         setUrlPrefix("/source/s?");
+         //setUrlPrefix("../s?"); // TODO generate relative search paths, get rid of -w <webapp> option to indexer !
+-        setCtags(System.getProperty("org.opensolaris.opengrok.analysis.Ctags", "ctags"));
++        setCtags(System.getProperty(CTAGS_CMD_PROPERTY_KEY, CTAGS_CMD_FALLBACK));
+         //below can cause an outofmemory error, since it is defaulting to NO LIMIT
+         setIndexWordLimit(Integer.MAX_VALUE);
+         setVerbose(false);
+@@ -540,7 +546,8 @@
+         } catch (java.io.FileNotFoundException e) {
+             /* should usually not happen */
+         } catch (java.io.IOException e) {
+-            logger.warning("failed to read header include file: " + e.getMessage());
++            logger.warning("failed to read include file '" + file.getName() 
++                + "': " + e.getMessage());
+         } finally {
+         	if (input != null) {
+ 	            try { input.close(); } 
+diff -r 61549026aafe -r 261116507c7a src/org/opensolaris/opengrok/configuration/Project.java
+--- a/src/org/opensolaris/opengrok/configuration/Project.java	Sun Feb 12 04:37:36 2012 +0100
++++ b/src/org/opensolaris/opengrok/configuration/Project.java	Mon Feb 13 06:12:47 2012 +0100
+@@ -78,7 +78,8 @@
+     }
+ 
+     /**
+-     * Set a textual description of this project, prefferably don't use " , " in the name, since it's used as delimiter for more projects
++     * Set a textual description of this project, prefferably don't use " , " 
++     * in the name, since it's used as delimiter for more projects
+      * @param description a textual description of the project
+      */
+     public void setDescription(String description) {
+@@ -87,7 +88,8 @@
+ 
+     /**
+      * Set the path (relative from source root) this project is located
+-     * It seems that you should ALWAYS prefix the path with current file.separator , current environment should always have it set up
++     * It seems that you should ALWAYS prefix the path with current 
++     * file.separator , current environment should always have it set up
+      * @param path the relative path from source sroot where this project is
+      *             located.
+      */
+diff -r 61549026aafe -r 261116507c7a src/org/opensolaris/opengrok/configuration/RuntimeEnvironment.java
+--- a/src/org/opensolaris/opengrok/configuration/RuntimeEnvironment.java	Sun Feb 12 04:37:36 2012 +0100
++++ b/src/org/opensolaris/opengrok/configuration/RuntimeEnvironment.java	Mon Feb 13 06:12:47 2012 +0100
+@@ -41,7 +41,6 @@
+ import java.util.logging.Level;
+ import java.util.logging.Logger;
+ 
+-import org.opensolaris.opengrok.OpenGrokLogger;
+ import org.opensolaris.opengrok.history.HistoryGuru;
+ import org.opensolaris.opengrok.history.RepositoryInfo;
+ import org.opensolaris.opengrok.index.Filter;
+@@ -90,7 +89,9 @@
+             }
+             return file.getCanonicalPath();
+         } catch (IOException ex) {
+-            OpenGrokLogger.getLogger().log(Level.SEVERE, "Failed to get canonical path", ex);
++            log.warning("Failed to get canonical path for '" + s + "': " 
++                + ex.getMessage());
++            log.log(Level.FINE, "getCanonicalPath", ex);
+             return s;
+         }
+     }
+@@ -185,7 +186,8 @@
+                 return canonicalPath.substring(allowedTarget.length() + stripCount);
+             }
+         }
+-        throw new FileNotFoundException("Failed to resolve ["+canonicalPath+"] relative to source root ["+sourceRoot+"]");
++        throw new FileNotFoundException("Failed to resolve '" + canonicalPath 
++            + "' relative to source root '" + sourceRoot + "'");
+     }
+ 
+     /**
+@@ -283,10 +285,11 @@
+         executor.exec(false);
+         String output = executor.getOutputString();
+         if (output == null || output.indexOf("Exuberant Ctags") == -1) {
+-            log.log(Level.SEVERE,"Error: No Exuberant Ctags found in PATH!\n" +
+-                    "(tried running " + "{0}" + ")\n" +
+-                    "Please use option -c to specify path to a good Exuberant Ctags program\n"+
+-                    "Or set it in java property org.opensolaris.opengrok.analysis.Ctags", getCtags());
++            log.warning("No Exuberant Ctags found in PATH!\n" +
++                "(tried running '" + getCtags() + "')\n" +
++                "Please use option -c to specify path to a good Exuberant Ctags program\n"+
++                "Or set it in java system property " 
++                + Configuration.CTAGS_CMD_PROPERTY_KEY);
+             ret =  false;
+         }
+ 
+@@ -809,7 +812,7 @@
+                         try {
+                             s = sock.accept();
+                             bos.reset();
+-                            log.log(Level.FINE, "OpenGrok: Got request from {0}",
++                            log.info("Re-configure request from " +
+                                 s.getInetAddress().getHostAddress());
+                             in = new BufferedInputStream(s.getInputStream());
+                             byte[] buf = new byte[1024];
+@@ -819,7 +822,7 @@
+                             }
+                             buf = bos.toByteArray();
+                             if (log.isLoggable(Level.FINE)) {
+-                                log.log(Level.FINE, "new config:" + new String(buf));
++                                log.fine("New config: \n" + new String(buf));
+                             }
+                             XMLDecoder d = new XMLDecoder(new ByteArrayInputStream(buf));
+                             Object obj = d.readObject();
+@@ -830,9 +833,11 @@
+                                 log.log(Level.INFO, "Configuration updated: {0}", configuration.getSourceRoot());
+                             }
+                         } catch (IOException e) {
+-                            log.log(Level.SEVERE, "Error reading config file: ",e);
++                            log.warning("Error reading config file: " + e.getMessage());
++                            log.log(Level.FINE, "run", e);
+                         } catch (RuntimeException e) {
+-                            log.log(Level.SEVERE, "Error parsing config file: ", e);
++                            log.warning("Error parsing config file: " + e.getMessage());
++                            log.log(Level.FINE, "run", e);
+                         } finally {
+                             IOUtils.close(s);
+                             IOUtils.close(in);
+@@ -842,9 +847,9 @@
+             });
+             t.start();
+         } catch (UnknownHostException ex) {
+-            log.log(Level.FINE,"Problem resolving sender: ",ex);
+-        } catch (IOException ex) {
+-            log.log(Level.FINE,"I/O error when waiting for config: ",ex);
++            log.log(Level.FINE,"Problem resolving sender", ex);
++        } catch (IOException ex) { 
++            log.log(Level.FINE,"I/O error when waiting for config", ex);
+         }
+ 
+         if (!ret && configServerSocket != null) {
+diff -r 61549026aafe -r 261116507c7a src/org/opensolaris/opengrok/history/BazaarHistoryParser.java
+--- a/src/org/opensolaris/opengrok/history/BazaarHistoryParser.java	Sun Feb 12 04:37:36 2012 +0100
++++ b/src/org/opensolaris/opengrok/history/BazaarHistoryParser.java	Mon Feb 13 06:12:47 2012 +0100
+@@ -34,7 +34,8 @@
+ import java.util.Date;
+ import java.util.List;
+ import java.util.logging.Level;
+-import org.opensolaris.opengrok.OpenGrokLogger;
++import java.util.logging.Logger;
++
+ import org.opensolaris.opengrok.configuration.RuntimeEnvironment;
+ import org.opensolaris.opengrok.util.Executor;
+ 
+@@ -42,7 +43,7 @@
+  * Parse a stream of Bazaar log comments.
+  */
+ class BazaarHistoryParser implements Executor.StreamHandler {
+-
++    private static final Logger logger = Logger.getLogger(BazaarHistoryParser.class.getName());
+     private String myDir;
+     private List<HistoryEntry> entries = new ArrayList<HistoryEntry>(); //NOPMD
+     private BazaarRepository repository=new BazaarRepository(); //NOPMD
+@@ -58,12 +59,12 @@
+             int status = executor.exec(true, this);
+ 
+             if (status != 0) {
+-                throw new HistoryException("Failed to get history for: \"" +
+-                                           file.getAbsolutePath() + "\" Exit code: " + status);
++                throw new HistoryException("Failed to get history for '" +
++                    file.getAbsolutePath() + "' - Exit code " + status);
+             }
+         } catch (IOException e) {
+-            throw new HistoryException("Failed to get history for: \"" +
+-                                       file.getAbsolutePath() + "\"", e);
++            throw new HistoryException("Failed to get history for '" +
++                file.getAbsolutePath() + "'", e);
+         }
+ 
+         // If a changeset to start from is specified, remove that changeset
+@@ -128,8 +129,9 @@
+                             Date date = df.parse(s.substring("timestamp:".length()).trim());
+                             entry.setDate(date);
+                         } catch (ParseException e) {
+-                            OpenGrokLogger.getLogger().log(Level.WARNING,
+-                                    "Failed to parse history timestamp:" + s, e);
++                            logger.warning("Failed to parse history timestamp " 
++                                + s + ": " + e.getMessage());
++                            logger.log(Level.FINE, "processStream", e);
+                         }
+                         ++state;
+                     }
+@@ -165,7 +167,7 @@
+                     }
+                     break;
+                 default:
+-                    OpenGrokLogger.getLogger().warning("Unknown parser state: " + state);
++                    logger.warning("Unknown parser state " + state);
+                     break;
+                 }
+         }
+diff -r 61549026aafe -r 261116507c7a src/org/opensolaris/opengrok/history/BazaarRepository.java
+--- a/src/org/opensolaris/opengrok/history/BazaarRepository.java	Sun Feb 12 04:37:36 2012 +0100
++++ b/src/org/opensolaris/opengrok/history/BazaarRepository.java	Mon Feb 13 06:12:47 2012 +0100
+@@ -32,9 +32,10 @@
+ import java.util.ArrayList;
+ import java.util.List;
+ import java.util.logging.Level;
++import java.util.logging.Logger;
+ import java.util.regex.Matcher;
+ import java.util.regex.Pattern;
+-import org.opensolaris.opengrok.OpenGrokLogger;
++
+ import org.opensolaris.opengrok.util.Executor;
+ 
+ /**
+@@ -42,6 +43,7 @@
+  *
+  */
+ public class BazaarRepository extends Repository {
++    private static final Logger logger = Logger.getLogger(BazaarRepository.class.getName());
+     private static final long serialVersionUID = 1L;
+     /** The property name used to obtain the client command for thisrepository. */
+     public static final String CMD_PROPERTY_KEY =
+@@ -116,8 +118,9 @@
+ 
+             ret = new ByteArrayInputStream(out.toByteArray());
+         } catch (Exception exp) {
+-            OpenGrokLogger.getLogger().log(Level.SEVERE,
+-                "Failed to get history: " + exp.getClass().toString(), exp);
++            logger.warning("Failed to get history for '" + parent 
++                + File.separator + basename + "': " + exp.getMessage());
++            logger.log(Level.FINE, "getHistoryGet", exp);
+         } finally {
+             // Clean up zombie-processes...
+             if (process != null) {
+@@ -162,9 +165,8 @@
+         int status = exec.exec();
+ 
+         if (status != 0) {
+-            OpenGrokLogger.getLogger().log(Level.WARNING,
+-                "Failed to get annotations for: \"{0}\" Exit code: {1}",
+-                new Object[]{file.getAbsolutePath(), String.valueOf(status)});
++            logger.warning("Failed to get annotations for '" + file.getAbsolutePath()
++                + "' - Exit code " + status);
+         }
+ 
+         return parseAnnotation(exec.getOutputReader(), file.getName());
+@@ -186,8 +188,8 @@
+                 String author = matcher.group(2).trim();
+                 ret.addLine(rev, author, true);
+             } else {
+-                OpenGrokLogger.getLogger().log(Level.SEVERE,
+-                    "Error: did not find annotation in line {0}: [{1}]",
++                logger.log(Level.WARNING,
++                    "Did not find annotation in line {0} [{1}]",
+                     new Object[]{String.valueOf(lineno), line});
+             }
+         }
+diff -r 61549026aafe -r 261116507c7a src/org/opensolaris/opengrok/history/CVSHistoryParser.java
+--- a/src/org/opensolaris/opengrok/history/CVSHistoryParser.java	Sun Feb 12 04:37:36 2012 +0100
++++ b/src/org/opensolaris/opengrok/history/CVSHistoryParser.java	Mon Feb 13 06:12:47 2012 +0100
+@@ -33,14 +33,15 @@
+ import java.text.ParseException;
+ import java.util.ArrayList;
+ import java.util.logging.Level;
+-import org.opensolaris.opengrok.OpenGrokLogger;
++import java.util.logging.Logger;
++
+ import org.opensolaris.opengrok.util.Executor;
+ 
+ /**
+  * Parse a stream of CVS log comments.
+  */
+ class CVSHistoryParser implements Executor.StreamHandler {
+-
++    private static final Logger logger = Logger.getLogger(CVSHistoryParser.class.getName());
+     private enum ParseState {
+         REVISION, METADATA, COMMENT
+     }
+@@ -89,7 +90,9 @@
+                             val = val.replace('/', '-');
+                             entry.setDate(df.parse(val));
+                         } catch (ParseException pe) {
+-                            OpenGrokLogger.getLogger().log(Level.WARNING, "Failed to parse date: '" + val + "'", pe);
++                            logger.warning("Failed to parse date " + val 
++                                + ": " + pe.getMessage());
++                            logger.log(Level.FINE, "processStream", pe);
+                         }
+                     } else if ("author".equals(key)) {
+                         entry.setAuthor(val);
+@@ -132,12 +135,12 @@
+             int status = executor.exec(true, this);
+ 
+             if (status != 0) {
+-                throw new HistoryException("Failed to get history for: \"" +
+-                                           file.getAbsolutePath() + "\" Exit code: " + status);
++                throw new HistoryException("Failed to get history for '" +
++                    file.getAbsolutePath() + "' - Exit code " + status);
+             }
+         } catch (IOException e) {
+-            throw new HistoryException("Failed to get history for: \"" +
+-                                       file.getAbsolutePath() + "\"", e);
++            throw new HistoryException("Failed to get history for '" +
++                file.getAbsolutePath() + "'", e);
+         }
+ 
+         return history;
+diff -r 61549026aafe -r 261116507c7a src/org/opensolaris/opengrok/history/CVSRepository.java
+--- a/src/org/opensolaris/opengrok/history/CVSRepository.java	Sun Feb 12 04:37:36 2012 +0100
++++ b/src/org/opensolaris/opengrok/history/CVSRepository.java	Mon Feb 13 06:12:47 2012 +0100
+@@ -34,9 +34,10 @@
+ import java.util.ArrayList;
+ import java.util.List;
+ import java.util.logging.Level;
++import java.util.logging.Logger;
+ import java.util.regex.Matcher;
+ import java.util.regex.Pattern;
+-import org.opensolaris.opengrok.OpenGrokLogger;
++
+ import org.opensolaris.opengrok.util.Executor;
+ import org.opensolaris.opengrok.util.IOUtils;
+ 
+@@ -44,6 +45,7 @@
+  * Access to a local CVS repository.
+  */
+ public class CVSRepository extends RCSRepository {
++    private static final Logger logger = Logger.getLogger(CVSRepository.class.getName());
+     private static final long serialVersionUID = 1L;
+     /** The property name used to obtain the client command for repository. */
+     public static final String CMD_PROPERTY_KEY =
+@@ -120,32 +122,30 @@
+         cmd.add("log");
+         cmd.add("-N"); //don't display tags
+ 
+-        if (isBranch==null) {
++        if (isBranch == null) {
+             File tagFile = new File(getDirectoryName(), "CVS/Tag");
+-            if ( tagFile.isFile() ) {
+-                isBranch=Boolean.TRUE;
++            if (tagFile.isFile()) {
++                isBranch = Boolean.TRUE;
+                 try {
+-                 BufferedReader br=new BufferedReader(new FileReader(tagFile));
+-                 try {
+-                  String line=br.readLine();
+-                  if (line!=null) {
+-                         branch=line.substring(1); }
+-                 } catch (Exception exp) {
+-                    OpenGrokLogger.getLogger().log(Level.WARNING,
+-                        "Failed to get revision tag of {0}",
+-                        getDirectoryName() + ": "+exp.getClass().toString() );
+-                 } finally {
+-                    IOUtils.close(br);
+-                   }
+-                } catch (IOException ex){
+-                 OpenGrokLogger.getLogger().log(Level.WARNING,
+-                     "Failed to work with CVS/Tag file of {0}",
+-                     getDirectoryName() + ": "+ex.getClass().toString() );
++                    BufferedReader br = new BufferedReader(new FileReader(tagFile));
++                    try {
++                        String line = br.readLine();
++                        if (line != null) {
++                            branch = line.substring(1);
++                        }
++                    } catch (Exception exp) {
++                        logger.warning("Failed to get revision tag of '"
++                            + getDirectoryName() + "': " + exp.getMessage());
++                    } finally {
++                        IOUtils.close(br);
++                    }
++                } catch (IOException ex) {
++                    logger.warning("Failed to work with CVS/Tag file of '"
++                        + getDirectoryName() + "': " + ex.getMessage());
+                 }
+-
+-
++            } else {
++                isBranch = Boolean.FALSE;
+             }
+-            else { isBranch=Boolean.FALSE; }
+         }
+         if (isBranch.equals(Boolean.TRUE) && branch!=null && !branch.isEmpty())
+         {
+@@ -190,8 +190,7 @@
+ 
+             ret = new ByteArrayInputStream(out.toByteArray());
+         } catch (Exception exp) {
+-            OpenGrokLogger.getLogger().log(Level.SEVERE,
+-                "Failed to get history: {0}", exp.getClass().toString());
++            logger.warning("Failed to get history: " + exp.getMessage());
+         } finally {
+             IOUtils.close(in);
+             // Clean up zombie-processes...
+@@ -242,9 +241,8 @@
+         int status = exec.exec();
+ 
+         if (status != 0) {
+-            OpenGrokLogger.getLogger().log(Level.WARNING,
+-                "Failed to get annotations for: \"{0}\" Exit code: {1}",
+-                new Object[]{file.getAbsolutePath(), String.valueOf(status)});
++            logger.warning("Failed to get annotations for '"
++                + file.getAbsolutePath() + "' -  Exit code " + status);
+         }
+ 
+         return parseAnnotation(exec.getOutputReader(), file.getName());
+@@ -280,8 +278,7 @@
+                 String author = matcher.group(2).trim();
+                 ret.addLine(rev, author, true);
+             } else {
+-                OpenGrokLogger.getLogger().log(Level.SEVERE,
+-                    "Error: did not find annotation in line {0}: [{1}]",
++                logger.log(Level.WARNING, "Did not find annotation in line {0} [{1}]",
+                     new Object[]{String.valueOf(lineno), line});
+             }
+         }
+diff -r 61549026aafe -r 261116507c7a src/org/opensolaris/opengrok/history/ClearCaseHistoryParser.java
+--- a/src/org/opensolaris/opengrok/history/ClearCaseHistoryParser.java	Sun Feb 12 04:37:36 2012 +0100
++++ b/src/org/opensolaris/opengrok/history/ClearCaseHistoryParser.java	Mon Feb 13 06:12:47 2012 +0100
+@@ -30,14 +30,15 @@
+ import java.util.ArrayList;
+ import java.util.List;
+ import java.util.logging.Level;
+-import org.opensolaris.opengrok.OpenGrokLogger;
++import java.util.logging.Logger;
++
+ import org.opensolaris.opengrok.util.Executor;
+ 
+ /**
+  * Parse a stream of ClearCase log comments.
+  */
+ class ClearCaseHistoryParser implements Executor.StreamHandler {
+-
++    private static final Logger logger = Logger.getLogger(ClearCaseHistoryParser.class.getName());
+     private History history;
+     private ClearCaseRepository repository=new ClearCaseRepository();
+ 
+@@ -48,14 +49,14 @@
+             int status = executor.exec(true, this);
+ 
+             if (status != 0) {
+-                throw new HistoryException("Failed to get history for: \"" +
+-                                           file.getAbsolutePath() + "\" Exit code: " + status);
++                throw new HistoryException("Failed to get history for '" +
++                    file.getAbsolutePath() + "' - Exit code " + status);
+             }
+ 
+             return history;
+         } catch (IOException e) {
+-            throw new HistoryException("Failed to get history for: \"" +
+-                                       file.getAbsolutePath() + "\"", e);
++            throw new HistoryException("Failed to get history for '" +
++                file.getAbsolutePath() + "'", e);
+         }
+     }
+ 
+@@ -90,7 +91,8 @@
+                 try {
+                     entry.setDate(df.parse(s));
+                 } catch (ParseException pe) {
+-                    OpenGrokLogger.getLogger().log(Level.WARNING, "Could not parse date: " + s, pe);
++                    logger.warning("Could not parse date " + s + ": " + pe.getMessage());
++                    logger.log(Level.FINE, "processStream", pe);
+                 }
+             }
+             if ((s = in.readLine()) != null) {
+diff -r 61549026aafe -r 261116507c7a src/org/opensolaris/opengrok/history/ClearCaseRepository.java
+--- a/src/org/opensolaris/opengrok/history/ClearCaseRepository.java	Sun Feb 12 04:37:36 2012 +0100
++++ b/src/org/opensolaris/opengrok/history/ClearCaseRepository.java	Mon Feb 13 06:12:47 2012 +0100
+@@ -33,8 +33,9 @@
+ import java.util.Arrays;
+ import java.util.List;
+ import java.util.logging.Level;
++import java.util.logging.Logger;
+ import java.util.regex.Pattern;
+-import org.opensolaris.opengrok.OpenGrokLogger;
++
+ import org.opensolaris.opengrok.util.Executor;
+ import org.opensolaris.opengrok.util.IOUtils;
+ 
+@@ -44,6 +45,7 @@
+  */
+ public class ClearCaseRepository extends Repository {
+     private static final long serialVersionUID = 1L;
++    private static final Logger logger = Logger.getLogger(ClearCaseRepository.class.getName());
+     /** The property name used to obtain the client command for this repository. */
+     public static final String CMD_PROPERTY_KEY =
+         "org.opensolaris.opengrok.history.ClearCase";
+@@ -117,8 +119,7 @@
+ 
+             // cleartool can't get to a previously existing file
+             if (tmp.exists() && !tmp.delete()) {
+-                OpenGrokLogger.getLogger().log(Level.WARNING,
+-                    "Failed to remove temporary file used by history cache");
++                logger.warning("Failed to remove temporary file used by history cache");
+             }
+ 
+             String decorated = filename + "@@" + rev;
+@@ -146,8 +147,9 @@
+                 }
+             };
+         } catch (Exception exp) {
+-            OpenGrokLogger.getLogger().log(Level.SEVERE,
+-                "Failed to get history: " + exp.getClass().toString(), exp);
++            logger.warning("Failed to get history for '" + parent 
++                + File.separator + basename + "': " + exp.getMessage());
++            logger.log(Level.FINE, "getHistoryGet", exp);
+         } finally {
+             // Clean up zombie-processes...
+             if (process != null) {
+@@ -176,8 +178,7 @@
+             } catch (IOException ioe) {
+                 // ignored - stream isn't seekable, but skipped variable still
+                 // has correct value.
+-                OpenGrokLogger.getLogger().log(Level.FINEST,
+-                    "Stream not seekable", ioe);
++                logger.log(Level.FINEST, "Stream not seekable", ioe);
+             }
+             if (skipped == 0 && in.read() == -1) {
+                 // No bytes skipped, checked that we've reached EOF with read()
+@@ -221,9 +222,7 @@
+             in = new BufferedReader(new InputStreamReader(process.getInputStream()));
+             Annotation a = new Annotation(file.getName());
+             String line;
+-            int lineno = 0;
+             while ((line = in.readLine()) != null) {
+-                ++lineno;
+                 String parts[] = line.split("\\|");
+                 String aAuthor = parts[0];
+                 String aRevision = parts[1];
+@@ -255,6 +254,7 @@
+             try {
+                 return process.waitFor();
+             } catch (InterruptedException exp) {
++                // ok
+             }
+         } while (true);
+     }
+@@ -347,8 +347,9 @@
+                     }
+                 }
+             } catch (IOException e) {
+-                OpenGrokLogger.getLogger().log(Level.WARNING,
+-                    "Could not get canonical path for \""+file+"\"", e);
++                logger.warning("Could not get canonical path for '" + file 
++                    + "': " + e.getMessage());
++                logger.log(Level.FINE, "isRepositoryFor", e);
+             }
+         }
+         return false;
+@@ -373,18 +374,15 @@
+                 String output = exec.getOutputString();
+ 
+                 if (output == null) {
+-                    OpenGrokLogger.getLogger().log(Level.SEVERE,
+-                        "\"cleartool lsvob -s\" output was null");
++                    logger.warning("[cleartool lsvob -s] output was null");
+                     return new String[0];
+                 }
+                 String sep = System.getProperty("line.separator");
+                 String[] vobs = output.split(Pattern.quote(sep));
+-                OpenGrokLogger.getLogger().log(Level.CONFIG, "Found VOBs: {0}",
+-                    Arrays.asList(vobs));
++                logger.log(Level.FINE, "Found VOBs: {0}", Arrays.asList(vobs));
+                 return vobs;
+             }
+-            OpenGrokLogger.getLogger().log(Level.SEVERE,
+-                "\"cleartool lsvob -s\" returned non-zero status: " + rc);
++            logger.warning("[cleartool lsvob -s] returned non-zero status " + rc);
+         }
+         return new String[0];
+     }
+diff -r 61549026aafe -r 261116507c7a src/org/opensolaris/opengrok/history/DirectoryHistoryReader.java
+--- a/src/org/opensolaris/opengrok/history/DirectoryHistoryReader.java	Sun Feb 12 04:37:36 2012 +0100
++++ b/src/org/opensolaris/opengrok/history/DirectoryHistoryReader.java	Mon Feb 13 06:12:47 2012 +0100
+@@ -33,6 +33,8 @@
+ import java.util.SortedSet;
+ import java.util.TreeSet;
+ import java.util.logging.Level;
++import java.util.logging.Logger;
++
+ import org.apache.lucene.document.DateTools;
+ import org.apache.lucene.document.Document;
+ import org.apache.lucene.index.IndexReader;
+@@ -43,7 +45,6 @@
+ import org.apache.lucene.search.Sort;
+ import org.apache.lucene.search.SortField;
+ import org.apache.lucene.search.TopFieldDocs;
+-import org.opensolaris.opengrok.OpenGrokLogger;
+ import org.opensolaris.opengrok.analysis.CompatibleAnalyser;
+ import org.opensolaris.opengrok.configuration.RuntimeEnvironment;
+ import org.opensolaris.opengrok.index.IndexDatabase;
+@@ -58,7 +59,7 @@
+  * @author Lubos Kosco update for lucene 3.0.0
+  */
+ public class DirectoryHistoryReader {
+-
++    private static final Logger logger = Logger.getLogger(DirectoryHistoryReader.class.getName());
+     private final Map<Date, Map<String, Map<String, SortedSet<String>>>> hash =
+         new LinkedHashMap<Date, Map<String, Map<String, SortedSet<String>>>>();
+     Iterator<Date> diter;
+@@ -94,7 +95,9 @@
+                 fdocs=searcher.search(query, null,fdocs.totalHits, sort);
+                 hits = fdocs.scoreDocs;
+             } catch (org.apache.lucene.queryParser.ParseException e) {
+-                OpenGrokLogger.getLogger().log(Level.WARNING, "An error occured while parsing search query", e);
++                logger.warning("An error occured while parsing search query: " 
++                    + e.getMessage());
++                logger.log(Level.FINE, "DirectoryHistoryReader", e);
+             }
+             if (hits != null) {
+                 for (int i = 0; i < 40 && i < hits.length; i++) {
+@@ -108,7 +111,9 @@
+                     try {
+                         cdate = DateTools.stringToDate(doc.get("date"));
+                     } catch (java.text.ParseException ex) {
+-                        OpenGrokLogger.getLogger().log(Level.WARNING, "Could not get date for " + path, ex);
++                        logger.warning("Could not get date for '" + path 
++                            + "': " + ex.getMessage());
++                        logger.log(Level.FINE, "DirectoryHistoryReader", ex);
+                         cdate = new Date();
+                     }
+                     int ls = rpath.lastIndexOf('/');
+@@ -120,7 +125,9 @@
+                             File f = new File(src_root + rparent, rbase);
+                             hist = HistoryGuru.getInstance().getHistory(f);
+                         } catch (HistoryException e) {
+-                            OpenGrokLogger.getLogger().log(Level.WARNING, "An error occured while getting history reader", e);
++                            logger.warning("An error occured while getting history reader: "
++                                + e.getMessage());
++                            logger.log(Level.FINE, "DirectoryHistoryReader", e);
+                         }
+                         if (hist == null) {
+                             put(cdate, "-", "", rpath);
+@@ -142,14 +149,18 @@
+                 try {
+                     searcher.close();
+                 } catch (Exception ex) {
+-                    OpenGrokLogger.getLogger().log(Level.WARNING, "An error occured while closing searcher", ex);
++                    logger.warning("An error occured while closing searcher: " 
++                        + ex.getMessage());
++                    logger.log(Level.FINE, "DirectoryHistoryReader", ex);
+                 }
+             }
+             if (ireader != null) {
+                 try {
+                     ireader.close();
+                 } catch (Exception ex) {
+-                    OpenGrokLogger.getLogger().log(Level.WARNING, "An error occured while closing reader", ex);
++                    logger.warning("An error occured while closing reader: " 
++                        + ex.getMessage());
++                    logger.log(Level.FINE, "DirectoryHistoryReader", ex);
+                 }
+             }
+         }
+diff -r 61549026aafe -r 261116507c7a src/org/opensolaris/opengrok/history/FileHistoryCache.java
+--- a/src/org/opensolaris/opengrok/history/FileHistoryCache.java	Sun Feb 12 04:37:36 2012 +0100
++++ b/src/org/opensolaris/opengrok/history/FileHistoryCache.java	Mon Feb 13 06:12:47 2012 +0100
+@@ -40,13 +40,15 @@
+ import java.util.List;
+ import java.util.Map;
+ import java.util.logging.Level;
++import java.util.logging.Logger;
+ import java.util.zip.GZIPInputStream;
+ import java.util.zip.GZIPOutputStream;
+-import org.opensolaris.opengrok.OpenGrokLogger;
++
+ import org.opensolaris.opengrok.configuration.RuntimeEnvironment;
+ import org.opensolaris.opengrok.util.IOUtils;
+ 
+ class FileHistoryCache implements HistoryCache {
++    private static final Logger logger = Logger.getLogger(FileHistoryCache.class.getName());
+     private final Object lock = new Object();
+ 
+     static class FilePersistenceDelegate extends PersistenceDelegate {
+@@ -95,7 +97,8 @@
+             sb.append(add);
+             sb.append(".gz");
+         } catch (IOException e) {
+-            throw new HistoryException("Failed to get path relative to source root for " + file, e);
++            throw new HistoryException("Failed to get path relative to source root for '" 
++                + file + "'", e);
+         }
+ 
+         return new File(sb.toString());
+@@ -124,7 +127,7 @@
+         File dir = cache.getParentFile();
+         if (!dir.isDirectory() && !dir.mkdirs()) {
+             throw new HistoryException(
+-                    "Unable to create cache directory '" + dir + "'.");
++                "Unable to create cache directory '" + dir + "'");
+         }
+ 
+         // We have a problem that multiple threads may access the cache layer
+@@ -154,16 +157,16 @@
+         synchronized (lock) {
+             if (!cache.delete() && cache.exists()) {
+                 if (!output.delete()) {
+-                    OpenGrokLogger.getLogger().log(Level.WARNING, "Failed to remove temporary history cache file");
++                    logger.warning("Failed to remove temporary history cache file");
+                 }
+                 throw new HistoryException(
+-                        "Cachefile exists, and I could not delete it.");
++                    "Cache file exists, and I could not delete it");
+             }
+             if (!output.renameTo(cache)) {
+                 if (!output.delete()) {
+-                    OpenGrokLogger.getLogger().log(Level.WARNING, "Failed to remove temporary history cache file");
++                    logger.warning("Failed to remove temporary history cache file");
+                 }
+-                throw new HistoryException("Failed to rename cache tmpfile.");
++                throw new HistoryException("Failed to rename cache tmpfile");
+             }
+         }
+     }
+@@ -212,8 +215,9 @@
+             try {
+                 return readCache(cache);
+             } catch (Exception e) {
+-                OpenGrokLogger.getLogger().log(Level.WARNING,
+-                        "Error when reading cache file '" + cache, e);
++                logger.warning("Error when reading cache file '" + cache 
++                    + "': " + e.getMessage());
++                logger.log(Level.FINE, "get", e);
+             }
+         }
+ 
+@@ -278,7 +282,8 @@
+         try {
+             dir = new File(dir, env.getPathRelativeToSourceRoot(new File(repos.getDirectoryName()), 0));
+         } catch (IOException e) {
+-            throw new HistoryException("Could not resolve "+repos.getDirectoryName()+" relative to source root", e);
++            throw new HistoryException("Could not resolve '"
++                + repos.getDirectoryName() + "' relative to source root", e);
+         }
+         return dir.exists();
+     }
+diff -r 61549026aafe -r 261116507c7a src/org/opensolaris/opengrok/history/GitHistoryParser.java
+--- a/src/org/opensolaris/opengrok/history/GitHistoryParser.java	Sun Feb 12 04:37:36 2012 +0100
++++ b/src/org/opensolaris/opengrok/history/GitHistoryParser.java	Mon Feb 13 06:12:47 2012 +0100
+@@ -32,7 +32,8 @@
+ import java.text.ParseException;
+ import java.util.ArrayList;
+ import java.util.logging.Level;
+-import org.opensolaris.opengrok.OpenGrokLogger;
++import java.util.logging.Logger;
++
+ import org.opensolaris.opengrok.configuration.RuntimeEnvironment;
+ import org.opensolaris.opengrok.util.Executor;
+ import org.opensolaris.opengrok.util.IOUtils;
+@@ -42,7 +43,7 @@
+  * Parse a stream of Git log comments.
+  */
+ class GitHistoryParser implements Executor.StreamHandler {
+-
++    private static final Logger logger = Logger.getLogger(GitHistoryParser.class.getName());
+     private enum ParseState {
+ 
+         HEADER, MESSAGE, FILES
+@@ -97,7 +98,9 @@
+                     try {
+                         entry.setDate(df.parse(dateString));
+                     } catch (ParseException pe) {
+-                        OpenGrokLogger.getLogger().log(Level.WARNING, "Failed to parse author date: " + s, pe);
++                        logger.warning("Failed to parse author date " + s 
++                            + ": " + pe.getMessage());
++                        logger.log(Level.FINE, "process", pe);
+                     }
+                 } else if (StringUtils.isOnlyWhitespace(s)) {
+                     // We are done reading the heading, start to read the message
+@@ -158,12 +161,12 @@
+             int status = executor.exec(true, this);
+ 
+             if (status != 0) {
+-                throw new HistoryException("Failed to get history for: \"" +
+-                        file.getAbsolutePath() + "\" Exit code: " + status);
++                throw new HistoryException("Failed to get history for '" +
++                    file.getAbsolutePath() + "' - Exit code " + status);
+             }
+         } catch (IOException e) {
+-            throw new HistoryException("Failed to get history for: \"" +
+-                    file.getAbsolutePath() + "\"", e);
++            throw new HistoryException("Failed to get history for '" +
++                file.getAbsolutePath() + "'", e);
+         }
+ 
+         return history;
+diff -r 61549026aafe -r 261116507c7a src/org/opensolaris/opengrok/history/GitRepository.java
+--- a/src/org/opensolaris/opengrok/history/GitRepository.java	Sun Feb 12 04:37:36 2012 +0100
++++ b/src/org/opensolaris/opengrok/history/GitRepository.java	Mon Feb 13 06:12:47 2012 +0100
+@@ -33,10 +33,10 @@
+ import java.util.ArrayList;
+ import java.util.List;
+ import java.util.logging.Level;
++import java.util.logging.Logger;
+ import java.util.regex.Matcher;
+ import java.util.regex.Pattern;
+ 
+-import org.opensolaris.opengrok.OpenGrokLogger;
+ import org.opensolaris.opengrok.util.Executor;
+ 
+ /**
+@@ -45,6 +45,7 @@
+  */
+ public class GitRepository extends Repository {
+ 
++    private static final Logger logger = Logger.getLogger(GitRepository.class.getName());
+     private static final long serialVersionUID = 1L;
+     /** The property name used to obtain the client command for this repository. */
+     public static final String CMD_PROPERTY_KEY =
+@@ -83,7 +84,7 @@
+ 
+         int status = exec.exec();
+         if (status != 0) {
+-            OpenGrokLogger.getLogger().log(Level.SEVERE, "Failed to get blame list in resolving correct path");
++            logger.warning("Failed to get blame list in resolving correct path");
+             return path;
+         }
+         BufferedReader in = new BufferedReader(exec.getOutputReader());
+@@ -198,8 +199,8 @@
+ 
+             ret = new ByteArrayInputStream(output.toByteArray());
+         } catch (Exception exp) {
+-            OpenGrokLogger.getLogger().log(Level.SEVERE,
+-                "Failed to get history: " + exp.getClass().toString(), exp);
++            logger.warning("Failed to get history: " + exp.getMessage());
++            logger.log(Level.FINE, "getHistoryGet", exp);
+         } finally {
+             // Clean up zombie-processes...
+             if (process != null) {
+@@ -252,7 +253,7 @@
+             exec = new Executor(cmd, file.getParentFile());
+             status = exec.exec();
+             if (status != 0) {
+-                OpenGrokLogger.getLogger().log(Level.SEVERE, "Failed to get blame list");
++                logger.warning("Failed to get blame list");
+             }
+             BufferedReader in = new BufferedReader(exec.getOutputReader());
+             try {
+@@ -278,7 +279,7 @@
+                         exec = new Executor(cmd, directory);
+                         status = exec.exec();
+                         if (status != 0) {
+-                            OpenGrokLogger.getLogger().log(Level.SEVERE, "Failed to get blame details for modified file path");
++                            logger.warning("Failed to get blame details for modified file path");
+                         }
+                         break;
+                     }
+@@ -289,9 +290,8 @@
+         }
+ 
+         if (status != 0) {
+-            OpenGrokLogger.getLogger().log(Level.WARNING,
+-                "Failed to get annotations for: \"{0}\" Exit code: {1}",
+-                new Object[]{file.getAbsolutePath(), String.valueOf(status)});
++            logger.warning("Failed to get annotations for '"
++                + file.getAbsolutePath() + "' - Exit code " + status);
+         }
+ 
+         return parseAnnotation(
+@@ -314,9 +314,9 @@
+                 String author = matcher.group(2).trim();
+                 ret.addLine(rev, author, true);
+             } else {
+-                OpenGrokLogger.getLogger().log(Level.SEVERE,
+-                    "Error: did not find annotation in line {0}: [{1}] of {2}",
+-                    new Object[]{String.valueOf(lineno), line, fileName});
++                logger.log(Level.WARNING,
++                    "Did not find annotation in line {0} [{1}] of {2}",
++                    new Object[] { String.valueOf(lineno), line, fileName });
+             }
+         }
+         return ret;
+diff -r 61549026aafe -r 261116507c7a src/org/opensolaris/opengrok/history/HistoryEntry.java
+--- a/src/org/opensolaris/opengrok/history/HistoryEntry.java	Sun Feb 12 04:37:36 2012 +0100
++++ b/src/org/opensolaris/opengrok/history/HistoryEntry.java	Mon Feb 13 06:12:47 2012 +0100
+@@ -31,7 +31,6 @@
+ import java.util.TreeSet;
+ import java.util.logging.Level;
+ import java.util.logging.Logger;
+-import org.opensolaris.opengrok.OpenGrokLogger;
+ 
+ /**
+  * Collect all information of a given revision
+@@ -73,8 +72,10 @@
+     }
+ 
+     public void dump() {
+-        Logger log = OpenGrokLogger.getLogger();
+-
++        Logger log = Logger.getLogger(HistoryEntry.class.getName());
++        if (!log.isLoggable(Level.FINE)) {
++            return;
++        }
+         log.log(Level.FINE, "HistoryEntry : revision       = {0}", revision);
+         log.log(Level.FINE, "HistoryEntry : date           = {0}", date);
+         log.log(Level.FINE, "HistoryEntry : author         = {0}", author);
+diff -r 61549026aafe -r 261116507c7a src/org/opensolaris/opengrok/history/HistoryGuru.java
+--- a/src/org/opensolaris/opengrok/history/HistoryGuru.java	Sun Feb 12 04:37:36 2012 +0100
++++ b/src/org/opensolaris/opengrok/history/HistoryGuru.java	Mon Feb 13 06:12:47 2012 +0100
+@@ -36,7 +36,7 @@
+ import java.util.concurrent.TimeUnit;
+ import java.util.logging.Level;
+ import java.util.logging.Logger;
+-import org.opensolaris.opengrok.OpenGrokLogger;
++
+ import org.opensolaris.opengrok.configuration.RuntimeEnvironment;
+ import org.opensolaris.opengrok.index.IgnoredNames;
+ 
+@@ -47,7 +47,8 @@
+  * @author Chandan
+  */
+ public final class HistoryGuru {
+-    private static final Logger log = OpenGrokLogger.getLogger();
++    private static final Logger logger = 
++        Logger.getLogger(HistoryGuru.class.getName());
+ 
+     /** The one and only instance of the HistoryGuru */
+     private static HistoryGuru instance = new HistoryGuru();
+@@ -76,8 +77,8 @@
+             try {
+                 cache.initialize();
+             } catch (HistoryException he) {
+-                log.log(Level.WARNING,
+-                        "Failed to initialize the history cache", he);
++                logger.warning("Failed to initialize the history cache: " + he.getMessage());
++                logger.log(Level.FINE, "HistoryGuru", he);
+                 // Failed to initialize, run without a history cache
+                 cache = null;
+             }
+@@ -131,8 +132,7 @@
+             try {
+                 hist = repos.getHistory(file);
+             } catch (HistoryException ex) {
+-                Logger.getLogger(HistoryGuru.class.getName()).log(Level.FINEST,
+-                    "Cannot get messages for tooltip: ", ex);
++                logger.log(Level.FINEST, "Cannot get messages for tooltip", ex);
+             }
+             if (hist != null && ret != null) {
+              Set<String> revs=ret.getRevisions();
+@@ -290,19 +290,20 @@
+             try {
+                 repository = RepositoryFactory.getRepository(file);
+             } catch (InstantiationException ie) {
+-                log.log(Level.WARNING, "Could not create repoitory for '"
+-                    + file + "', could not instantiate the repository.", ie);
++                logger.warning("Could not create repoitory for '"
++                    + file + "', could not instantiate the repository: "
++                    + ie.getMessage());
++                logger.log(Level.FINE, "addRepositories", ie);
+             } catch (IllegalAccessException iae) {
+-                log.log(Level.WARNING, "Could not create repoitory for '"
+-                    + file + "', missing access rights.", iae);
++                logger.warning("Could not create repoitory for '"
++                    + file + "', missing access rights: " + iae.getMessage());
+             }
+             if (repository == null) {
+                 // Not a repository, search it's sub-dirs
+                 if (file.isDirectory() && !ignoredNames.ignore(file)) {
+                     File subFiles[] = file.listFiles();
+                     if (subFiles == null) {
+-                        log.log(Level.WARNING,
+-                            "Failed to get sub directories for '"
++                        logger.warning("Failed to get sub directories for '"
+                             + file.getAbsolutePath()
+                             + "', check access permissions.");
+                     } else if (depth<=scanningDepth) {
+@@ -314,7 +315,7 @@
+                     String path = file.getCanonicalPath();
+                     repository.setDirectoryName(path);
+                     if (RuntimeEnvironment.getInstance().isVerbose()) {
+-                        log.log(Level.CONFIG, "Adding <{0}> repository: <{1}>",
++                        logger.log(Level.FINE, "Adding <{0}> repository: <{1}>",
+                             new Object[]{repository.getClass().getName(), path});
+                     }
+ 
+@@ -324,8 +325,7 @@
+                     if (recursiveSearch && repository.supportsSubRepositories()) {
+                         File subFiles[] = file.listFiles();
+                         if (subFiles == null) {
+-                            log.log(Level.WARNING,
+-                                "Failed to get sub directories for '"
++                            logger.warning("Failed to get sub directories for '"
+                                 + file.getAbsolutePath()
+                                 + "', check access permissions.");
+                         } else if (depth<=scanningDepth) {
+@@ -337,9 +337,10 @@
+                     }
+ 
+                 } catch (IOException exp) {
+-                    log.log(Level.WARNING, "Failed to get canonical path for "
+-                        + file.getAbsolutePath() + ": " + exp.getMessage());
+-                    log.log(Level.WARNING, "Repository will be ignored...", exp);
++                    logger.warning("Failed to get canonical path for '"
++                        + file.getAbsolutePath() 
++                        + "'. Repository will be ignored: " + exp.getMessage());
++                    logger.log(Level.FINE, "addRepositories", exp);
+                 }
+             }
+         }
+@@ -373,22 +374,23 @@
+ 
+             if (repository.isWorking()) {
+                 if (verbose) {
+-                    log.info(String.format("Update %s repository in %s",
+-                        type, path));
++                    logger.log(Level.INFO, "Update {0} repository in ''{1}''",
++                        new String[] { type, path });
+                 }
+ 
+                 try {
+                     repository.update();
+                 } catch (UnsupportedOperationException e) {
+-                    log.warning(String.format("Skipping update of %s repository"
+-                        + " in %s: Not implemented", type, path));
++                    logger.warning("Skipping update of " + type + " repository"
++                        + " in '" + path + "': Not implemented");
+                 } catch (Exception e) {
+-                    log.log(Level.WARNING, "An error occured while updating "
+-                        + path + " (" + type + ")", e);
++                    logger.warning("An error occured while updating '"
++                        + path + "' (" + type + "): " + e.getMessage());
++                    logger.log(Level.FINE, "updateRepositories", e);
+                 }
+             } else {
+-                log.warning(String.format("Skipping update of %s repository in "
+-                    + "%s: Missing SCM dependencies?", type, path));
++                logger.warning("Skipping update of " + type + " repository in '"
++                    + path + "': Missing SCM dependencies?");
+             }
+         }
+     }
+@@ -407,24 +409,25 @@
+ 
+             if (repository.isWorking()) {
+                 if (verbose) {
+-                    log.info(String.format("Update %s repository in %s", type,
+-                        repository.getDirectoryName()));
++                    logger.log(Level.INFO, "Update {0} repository in ''{1}''", 
++                        new String[] { type, repository.getDirectoryName()});
+                 }
+ 
+                 try {
+                     repository.update();
+                 } catch (UnsupportedOperationException e) {
+-                    log.warning(String.format("Skipping update of %s repository"
+-                        + " in %s: Not implemented", type,
+-                        repository.getDirectoryName()));
++                    logger.warning("Skipping update of " + type + " repository"
++                        + " in '" + repository.getDirectoryName() 
++                        + "': Not implemented");
+                 } catch (Exception e) {
+-                    log.log(Level.WARNING, "An error occured while updating "
+-                        + repository.getDirectoryName() + " (" + type + ")", e);
++                    logger.warning("An error occured while updating '"
++                        + repository.getDirectoryName() + "' (" + type + "): "
++                        + e.getMessage());
++              	    logger.log(Level.FINE, "updateRepositories", e);
+                 }
+             } else {
+-                log.warning(String.format("Skipping update of %s repository in"
+-                    + " %s: Missing SCM dependencies?", type,
+-                    repository.getDirectoryName()));
++                logger.warning("Skipping update of " + type + " repository in '"
++                    + repository.getDirectoryName() + "': Missing SCM dependencies?");
+             }
+         }
+     }
+@@ -442,26 +445,26 @@
+             long start = System.currentTimeMillis();
+ 
+             if (verbose) {
+-                log.log(Level.INFO, "Create historycache for {0} ({1})",
+-                    new Object[]{path, type});
++                logger.log(Level.INFO, "Create historycache for ''{0}'' ({1})",
++                    new String[]{path, type});
+             }
+ 
+             try {
+                 repository.createCache(historyCache, sinceRevision);
+             } catch (Exception e) {
+-                log.log(Level.WARNING,
+-                    "An error occured while creating cache for " + path + " ("
+-                    + type + ")", e);
++                logger.warning("An error occured while creating cache for '" 
++                    + path + "' (" + type + "): " + e.getMessage());
++                logger.log(Level.FINE, "createCache", e);
+             }
+ 
+             if (verbose) {
+                 long stop = System.currentTimeMillis();
+-                log.log(Level.INFO, "Creating historycache for {0} took ({1}ms)",
+-                    new Object[]{path, String.valueOf(stop - start)});
++                logger.log(Level.INFO, "Creating historycache for ''{0}'' took {1}ms",
++                    new String[]{path, String.valueOf(stop - start)});
+             }
+         } else {
+-            log.log(Level.WARNING, "Skipping creation of historycache of "
+-                + type + " repository in " + path + ": Missing SCM dependencies?");
++            logger.warning("Skipping creation of historycache of "
++                + type + " repository in '" + path + "': Missing SCM dependencies?");
+         }
+     }
+ 
+@@ -474,10 +477,9 @@
+             try {
+     

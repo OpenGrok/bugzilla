@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>5880</bug_id>
+          
+          <creation_ts>2008-12-17 08:26:00 +0000</creation_ts>
+          <short_desc>the width of search fields on the frontpage should not be hardcoded</short_desc>
+          <delta_ts>2008-12-17 08:26:34 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>webapp</component>
+          <version>unspecified</version>
+          <rep_platform>Other</rep_platform>
+          <op_sys>Solaris</op_sys>
+          <bug_status>NEW</bug_status>
+          
+          
+          
+          
+          
+          
+          <priority>P4</priority>
+          <bug_severity>minor</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Vladimir Kotal">vladimir.kotal</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>23847</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2008-12-17 08:26:34 +0000</bug_when>
+            <thetext>The size of the search fields is hardcoded in web/menu.jspf to 300 pixels: 
+
+ 30                     &lt;tr&gt;&lt;td align=&quot;right&quot;&gt; Full&amp;nbsp;Search &lt;/td&gt;&lt;td&gt;&lt;input class=&quot;q&quot; name=&quot;q&quot; size=&quot;45&quot; style=&quot;width: 300px&quot; value=&quot;&lt;%=Util.formQuoteEscape(q)%&gt;&quot;/&gt;&lt;/td&gt;&lt;/tr&gt;
+     31                     &lt;tr&gt;&lt;td align=&quot;right&quot;&gt; Definition &lt;/td&gt;&lt;td&gt;&lt;input class=&quot;q&quot; name=&quot;defs&quot; size=&quot;25&quot; style=&quot;width: 300px&quot; value=&quot;&lt;%=Util.formQuoteEscape(defs)%&gt;&quot;/&gt;&lt;/td&gt;&lt;/tr&gt;
+     32                     &lt;tr&gt;&lt;td align=&quot;right&quot;&gt; Symbol &lt;/td&gt;&lt;td&gt;&lt;input class=&quot;q&quot; name=&quot;refs&quot; size=&quot;25&quot; style=&quot;width: 300px&quot; value=&quot;&lt;%=Util.formQuoteEscape(refs)%&gt;&quot;/&gt;&lt;/td&gt;&lt;/tr&gt;
+     33                     &lt;tr&gt;&lt;td align=&quot;right&quot;&gt; File&amp;nbsp;Path &lt;/td&gt;&lt;td&gt;&lt;input class=&quot;q&quot; name=&quot;path&quot; size=&quot;25&quot; style=&quot;width: 300px&quot; value=&quot;&lt;%=Util.formQuoteEscape(path)%&gt;&quot;/&gt;&lt;/td&gt;&lt;/tr&gt;
+     34                     &lt;tr&gt;&lt;td align=&quot;right&quot;&gt; History &lt;/td&gt;&lt;td&gt;&lt;input class=&quot;q&quot; name=&quot;hist&quot; size=&quot;25&quot; style=&quot;width: 300px&quot; value=&quot;&lt;%=Util.formQuoteEscape(hist)%&gt;&quot;/&gt;&lt;/td&gt;&lt;/tr&gt;
+     35                     &lt;% if (hasProjects) { %&gt;
+     36                     &lt;tr&gt;
+     37                         &lt;td align=&quot;right&quot; valign=&quot;top&quot;&gt; Project &lt;/td&gt;
+     38                         &lt;td&gt;
+     39                             &lt;select class=&quot;q&quot; name=&quot;project&quot; size=&quot;&lt;%=Math.min(5, env.getProjects().size())%&gt;&quot; style=&quot;width: 300px&quot;&gt;
+
+
+Instead, it should be part of the CSSs.</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

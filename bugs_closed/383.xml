@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>383</bug_id>
+          
+          <creation_ts>2008-01-17 17:15:00 +0000</creation_ts>
+          <short_desc>ArrayOutOfBoundsException in PlainLineTokenizer.dumpRest</short_desc>
+          <delta_ts>2008-08-13 06:47:53 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>analyzer</component>
+          <version>unspecified</version>
+          <rep_platform>Other</rep_platform>
+          <op_sys>Linux</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXED</resolution>
+          
+          
+          
+          
+          
+          <priority>P4</priority>
+          <bug_severity>minor</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Leo Davis">ldavis</reporter>
+          <assigned_to name="Knut Anders Hatlen">knut.hatlen</assigned_to>
+          <cc>knut.hatlen</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>1076</commentid>
+              <attachid>61</attachid>
+            <who name="Leo Davis">ldavis</who>
+            <bug_when>2008-01-17 17:15:38 +0000</bug_when>
+            <thetext>Created attachment 61
+Patch for the out of bounds exception
+
+I got an ArrayOutOfBoundsException when viewing a file where the search term was in quite a few very long lines.  My guess is between 90-100 lines (40551 lines total) where the search term was, and each line is about 420-550 characters on a line (it varies, but it seems to be at least that long).
+
+With the patch, the exception is fixed.  But other problems show up:
+-- if the buffer limit is hit, the [all . . .] link doesn&apos;t get displayed.  Neither do subsequent hits (it quit displaying hits on hit 4).
+-- even if I had the full view available, the output is somewhat mangled.  Output seems to have problems at the buffer size boundary.
+
+For example, my search term is &quot;ACNA&quot;. The output is truncated:
+
+38238 CPP_SWITCHES=/nologo /W3 /I &quot;.\ce&quot; /I &quot;.\acna
+
+and also truncated and elided with part of the next line output:
+
+926 CPP_PROJ=/nologo /W3 /I &quot;.\ce&quot; /I &quot;.\acnaACNA&quot; /D _WIN32_WCE=$(CEVersion) ...</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>10040</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2008-08-10 11:09:48 +0000</bug_when>
+            <thetext>It seems like there are three different issues mentioned here:
+
+  1) ArrayIndexOutOfBoundsException when a long line (&gt; 100 chars) is not terminated with a newline before the buffer boundary
+
+  2) Lines that cross the buffer boundary are truncated and should have (...) appended to show that
+
+  3) If the last character before the buffer boundary is a newline, the [all...] link is not displayed
+
+The attached patch (thanks, Leo!) addresses (1) and (2).
+
+I have checked in a fix for (1) in changeset 369:36681cbbf802, along with a JUnit test that exposes the ArrayIndexOutOfBoundsException without the fix. I used a slightly different approach than Leo and changed the loop condition from (i&lt;zzEndRead) to (rest+i&lt;zzEndRead).</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>10158</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2008-08-13 06:47:53 +0000</bug_when>
+            <thetext>The remaining issues were fixed in changesets 373:53ced9858ec6 and 389:5907399f876d.</thetext>
+          </long_desc>
+      
+          <attachment
+              isobsolete="0"
+              ispatch="1"
+              isprivate="0"
+              isurl="0"
+          >
+            <attachid>61</attachid>
+            <date>2008-01-17 17:15:00 +0000</date>
+            <delta_ts>2008-01-17 17:15:38 +0000</delta_ts>
+            <desc>Patch for the out of bounds exception</desc>
+            <filename>PlainLineTokenizer-bounds.patch</filename>
+            <type>text/plain</type>
+            <size>2728</size>
+            <attacher>ldavis</attacher>
+            
+              <data encoding="base64">IyBIRyBjaGFuZ2VzZXQgcGF0Y2gKIyBVc2VyIExlbyBEYXZpcyA8bGRhdmlzQGZvbml4LmNvbT4K
+IyBEYXRlIDEyMDA2MTczNzMgMjUyMDAKIyBOb2RlIElEIDJlMjFhMTQ0NzQyZDZhMTI4MDA1ZGRk
+ZjU2ZDEwMzhkNjlmYmJkNGIKIyBQYXJlbnQgIDgyMTZlZGEyM2U1ZWExN2NmMDc0OTE4YWE4YTY0
+YjI1MWMwY2IxZmYKRml4ZXMgYW4gQXJyYXlPdXRPZkJvdW5kc0V4Y2VwdGlvbi4KCnNyYy9vcmcv
+b3BlbnNvbGFyaXMvb3Blbmdyb2svc2VhcmNoL2NvbnRleHQvUGxhaW5MaW5lVG9rZW5pemVyLmxl
+eAooZHVtcFJlc3QpOiBmaXggQXJyYXlPdXRPZkJvdW5kc0V4Y2VwdGlvbiwgYWRkIG1pbm9yIGZv
+cm1hdHRpbmcgY2x1ZSB0byBzaG93CnRoYXQgb3V0cHV0IGlzIGJlaW5nIHRydW5jYXRlZC4KCmRp
+ZmYgLXIgODIxNmVkYTIzZTVlIC1yIDJlMjFhMTQ0NzQyZCBzcmMvb3JnL29wZW5zb2xhcmlzL29w
+ZW5ncm9rL3NlYXJjaC9jb250ZXh0L1BsYWluTGluZVRva2VuaXplci5sZXgKLS0tIGEvc3JjL29y
+Zy9vcGVuc29sYXJpcy9vcGVuZ3Jvay9zZWFyY2gvY29udGV4dC9QbGFpbkxpbmVUb2tlbml6ZXIu
+bGV4CU1vbiBKYW4gMTQgMjE6NDA6MTkgMjAwOCAtMDcwMAorKysgYi9zcmMvb3JnL29wZW5zb2xh
+cmlzL29wZW5ncm9rL3NlYXJjaC9jb250ZXh0L1BsYWluTGluZVRva2VuaXplci5sZXgJVGh1IEph
+biAxNyAxNzo0OTozMyAyMDA4IC0wNzAwCkBAIC0zMDQsMjAgKzMwNCwyNiBAQCBpbXBvcnQgb3Jn
+Lm9wZW5zb2xhcmlzLm9wZW5ncm9rLnNlYXJjaC5ICiAJcmVzdCA9IHp6TWFya2VkUG9zOwogICB9
+CiAgIHB1YmxpYyB2b2lkIGR1bXBSZXN0KCkgdGhyb3dzIElPRXhjZXB0aW9uIHsKLQlpZihkdW1w
+UmVzdCkgewotCQlmb3IoaW50IGk9MDsgaTx6ekVuZFJlYWQgJiYgaTwxMDA7IGkrKykgewotCQkJ
+aWYoenpCdWZmZXJbcmVzdCtpXSA9PSAnXG4nKSB7CisgICAgICAgIGlmKGR1bXBSZXN0KSB7Cisg
+ICAgICAgICAgICAgICAgYm9vbGVhbiBjdXRvZmYgPSBmYWxzZTsKKyAgICAgICAgICAgICAgICBm
+b3IoaW50IGk9MDsgaTx6ekVuZFJlYWQgJiYgIWN1dG9mZjsgaSsrKSB7CisgICAgICAgICAgICAg
+ICAgICAgICAgICBib29sZWFuIGVsbGlwc2lzID0gIShpIDwgMTAwICYmIChyZXN0K2kpIDwgenpC
+dWZmZXIubGVuZ3RoKTsKKyAgICAgICAgICAgICAgICAgICAgICAgIGN1dG9mZiA9ICBlbGxpcHNp
+cyB8fCB6ekJ1ZmZlcltyZXN0K2ldID09ICdcbic7CisgICAgICAgICAgICAgICAgICAgICAgICBp
+ZihjdXRvZmYpIHsKICAgICAgICAgICAgICAgICAgICAgICAgICAgIGlmIChvdXQgIT0gbnVsbCkg
+ewotCQkJCXByaW50V2l0aE51bSh6ekJ1ZmZlciwgcmVzdCwgcmVzdCtpLTEsIG1hcmtlZExpbmUp
+OwotCQkJCS8vb3V0LndyaXRlKHp6QnVmZmVyLCByZXN0LCBpKTsKLQkJCQlvdXQud3JpdGUoIjwv
+YT4iKTsKLQkJCQlpZiAocHJldkhpKSB7Ci0JCQkJCW91dC53cml0ZSgiIDxpPiAiKTsKLQkJCQkJ
+U3RyaW5nW10gZGVzYyA9IHRhZ3MucmVtb3ZlKHByZXZMbik7Ci0JCQkJCW91dC53cml0ZShkZXNj
+WzJdKTsKLQkJCQkJb3V0LndyaXRlKCIgPC9pPiIpOwotCQkJCX0KLQkJCQlvdXQud3JpdGUoIjxi
+ci8+Iik7CisgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHByaW50V2l0aE51bSh6ekJ1
+ZmZlciwgcmVzdCwgcmVzdCtpLTEsIG1hcmtlZExpbmUpOworICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAvL291dC53cml0ZSh6ekJ1ZmZlciwgcmVzdCwgaSk7CisgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgIGlmIChlbGxpcHNpcykgeworICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgb3V0LndyaXRlKCImaGVsbGlwOyIpOworICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICB9CisgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIG91dC53cml0
+ZSgiPC9hPiIpOworICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBpZiAocHJldkhpKSB7
+CisgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgb3V0LndyaXRlKCIgPGk+
+ICIpOworICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIFN0cmluZ1tdIGRl
+c2MgPSB0YWdzLnJlbW92ZShwcmV2TG4pOworICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgIG91dC53cml0ZShkZXNjWzJdKTsKKyAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICBvdXQud3JpdGUoIiA8L2k+Iik7CisgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgIH0KKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgb3V0LndyaXRlKCI8
+YnIvPiIpOwogICAgICAgICAgICAgICAgICAgICAgICAgICAgfSBlbHNlIHsKICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICBmb3JtYXRXaXRoTnVtKHp6QnVmZmVyLCByZXN0LCByZXN0K2kt
+MSwgbWFya2VkTGluZSk7CiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgaGl0LnNldExp
+bmUoc2IudG9TdHJpbmcoKSk7CkBAIC0zMjcsNyArMzMzLDYgQEAgaW1wb3J0IG9yZy5vcGVuc29s
+YXJpcy5vcGVuZ3Jvay5zZWFyY2guSAogCQkJICAgICAgIH0KICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICBoaXRzLmFkZChoaXQpOwogICAgICAgICAgICAgICAgICAgICAgICAgICAgfQot
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgYnJlYWs7CiAJCQl9CiAJCX0KIAl9Cg==
+</data>
+
+          </attachment>
+      
+
+    </bug>
+
+</bugzilla>

@@ -1,0 +1,3541 @@
+diff -r 09f0768a7ec1 src/org/opensolaris/opengrok/analysis/JFlexXref.java
+--- a/src/org/opensolaris/opengrok/analysis/JFlexXref.java	Fri May 06 21:41:59 2011 +0200
++++ b/src/org/opensolaris/opengrok/analysis/JFlexXref.java	Sat May 07 06:37:00 2011 +0200
+@@ -19,6 +19,7 @@
+ 
+ /*
+  * Copyright (c) 2009, 2010, Oracle and/or its affiliates. All rights reserved.
++ * Portions Copyright 2011 Jens Elkner.
+  */
+ 
+ package org.opensolaris.opengrok.analysis;
+@@ -53,6 +54,16 @@
+     protected Definitions defs;
+     /** EOF value returned by yylex(). */
+     private final int yyeof;
++    /** See {@link RuntimeEnvironment#getUserPage()}. Per default initialized
++     * in the constructor and here to be consistent and avoid lot of 
++     * unnecessary lookups.
++     * @see #startNewLine() */
++    protected String userPageLink;
++    /** See {@link RuntimeEnvironment#getUserPageSuffix()}. Per default 
++     * initialized in the constructor and here to be consistent and avoid lot of 
++     * unnecessary lookups.
++     * @see #startNewLine() */
++    protected String userPageSuffix;
+ 
+     /**
+      * Description of styles to use for different types of definitions. Each
+@@ -92,6 +103,14 @@
+             // reflection.
+             Field f = getClass().getField("YYEOF");
+             yyeof = f.getInt(null);
++            userPageLink = RuntimeEnvironment.getInstance().getUserPage();
++            if (userPageLink != null && userPageLink.length() == 0) {
++            	userPageLink = null;
++            }
++            userPageSuffix = RuntimeEnvironment.getInstance().getUserPageSuffix();
++            if (userPageSuffix != null && userPageSuffix.length() == 0) {
++            	userPageSuffix = null;
++            }
+         } catch (Exception e) {
+             // The auto-generated constructors for the Xref classes don't
+             // expect a checked exception, so wrap it in an AssertionError.
+@@ -232,9 +251,8 @@
+                 first = false;
+             }
+         }
+-
+-        out.append("];}");
+-        out.append("/* ]]> */</script>\n");
++        /* no LF intentionally - xml is whitespace aware ... */
++        out.append("];} /* ]]> */</script>"); 
+     }
+ 
+     /**
+@@ -264,7 +282,7 @@
+     protected void startNewLine() throws IOException {
+         int line = getLineNumber() + 1;
+         setLineNumber(line);
+-        Util.readableLine(line, out, annotation);
++        Util.readableLine(line, out, annotation, userPageLink, userPageSuffix);
+     }
+ 
+     /**
+@@ -355,7 +373,7 @@
+      */
+     protected void writeUnicodeChar(char c) throws IOException {
+         if (!Character.isISOControl(c)) {
+-            out.append("&#").append(Integer.toString((int) c)).append(';');
++            out.append("&#").append(Integer.toString(c)).append(';');
+         }
+     }
+ 
+diff -r 09f0768a7ec1 src/org/opensolaris/opengrok/analysis/archive/TarAnalyzer.java
+--- a/src/org/opensolaris/opengrok/analysis/archive/TarAnalyzer.java	Fri May 06 21:41:59 2011 +0200
++++ b/src/org/opensolaris/opengrok/analysis/archive/TarAnalyzer.java	Sat May 07 06:37:00 2011 +0200
+@@ -46,7 +46,7 @@
+  */
+ 
+ public class TarAnalyzer extends FileAnalyzer {
+-    private char[] content;
++    private StringBuilder content;
+     private int len;
+     
+     private static final Reader dummy = new StringReader("");
+@@ -55,34 +55,28 @@
+ 
+     protected TarAnalyzer(FileAnalyzerFactory factory) {
+         super(factory);
+-        content = new char[64*1024];
++        content = new StringBuilder(64*1024);
+         plainfull = new PlainFullTokenizer(dummy);
+     }
+ 
+     @Override
+     public void analyze(Document doc, InputStream in) throws IOException {
+-        len = 0;
++        content.setLength(0);
+ 
+         TarInputStream zis = new TarInputStream(in);
+         TarEntry entry;
+         while ((entry = zis.getNextEntry()) != null) {
+-            String ename = entry.getName();
+-            if(len + ename.length() >= content.length) {
+-                int max = content.length * 2;
+-                char[] content2 = new char[max];
+-                System.arraycopy(content, 0, content2, 0, len);
+-                content = content2;
+-            }
+-            ename.getChars(0, ename.length(), content, len);
+-            len += ename.length();
+-            content[len++] = '\n';
++            content.append(entry.getName()).append('\n');
+         }
++        content.trimToSize();
+         doc.add(new Field("full",dummy));
+     }
+     
+     public TokenStream tokenStream(String fieldName, Reader reader) {
+         if("full".equals(fieldName)) {
+-            plainfull.reInit(content,len);
++        	char[] cs = new char[content.length()];
++        	content.getChars(0, cs.length, cs, 0);
++            plainfull.reInit(cs, cs.length);
+             return plainfull;
+         }
+         return super.tokenStream(fieldName, reader);
+@@ -93,6 +87,6 @@
+      * @param out Writer to store HTML cross-reference
+      */
+     public void writeXref(Writer out) throws IOException {
+-        Util.htmlize(content, len, out);
++        out.write(Util.htmlize(content));
+     }
+ }
+diff -r 09f0768a7ec1 src/org/opensolaris/opengrok/analysis/archive/ZipAnalyzer.java
+--- a/src/org/opensolaris/opengrok/analysis/archive/ZipAnalyzer.java	Fri May 06 21:41:59 2011 +0200
++++ b/src/org/opensolaris/opengrok/analysis/archive/ZipAnalyzer.java	Sat May 07 06:37:00 2011 +0200
+@@ -45,8 +45,7 @@
+  * @author Chandan
+  */
+ public class ZipAnalyzer extends FileAnalyzer {
+-    private char[] content;
+-    private int len;
++    private StringBuilder content;
+ 
+     private static final Reader dummy = new StringReader("");
+     
+@@ -54,33 +53,27 @@
+ 
+     protected ZipAnalyzer(FileAnalyzerFactory factory) {
+         super(factory);
+-        content = new char[64*1024];
++        content = new StringBuilder(64*1024);
+         plainfull = new PlainFullTokenizer(dummy);
+     }
+ 
+     @Override
+     public void analyze(Document doc, InputStream in) throws IOException {
+-        len = 0;
++    	content.setLength(0);
+         ZipInputStream zis = new ZipInputStream(in);
+         ZipEntry entry;
+         while ((entry = zis.getNextEntry()) != null) {
+-            String ename = entry.getName();
+-            if(len + ename.length() >= content.length) {
+-                int max = content.length * 2;
+-                char[] content2 = new char[max];
+-                System.arraycopy(content, 0, content2, 0, len);
+-                content = content2;
+-            }
+-            ename.getChars(0, ename.length(), content, len);
+-            len += ename.length();
+-            content[len++] = '\n';
++            content.append(entry.getName()).append('\n');
+         }
++        content.trimToSize();
+         doc.add(new Field("full",dummy));
+     }
+     
+     public TokenStream tokenStream(String fieldName, Reader reader) {
+         if("full".equals(fieldName)) {
+-            plainfull.reInit(content,len);
++        	char[] cs = new char[content.length()];
++        	content.getChars(0, cs.length, cs, 0);
++            plainfull.reInit(cs, cs.length);
+             return plainfull;
+         }
+         return super.tokenStream(fieldName, reader);
+@@ -91,6 +84,6 @@
+      * @param out Writer to store HTML cross-reference
+      */
+     public void writeXref(Writer out) throws IOException {
+-        Util.htmlize(content, len, out);
++        out.write(Util.htmlize(content));
+     }
+ }
+diff -r 09f0768a7ec1 src/org/opensolaris/opengrok/analysis/document/TroffAnalyzer.java
+--- a/src/org/opensolaris/opengrok/analysis/document/TroffAnalyzer.java	Fri May 06 21:41:59 2011 +0200
++++ b/src/org/opensolaris/opengrok/analysis/document/TroffAnalyzer.java	Sat May 07 06:37:00 2011 +0200
+@@ -63,11 +63,11 @@
+     @Override
+     public void analyze(Document doc, InputStream in) throws IOException {
+         len = 0;
+-        do{
++        do {
+             InputStreamReader inReader = new InputStreamReader(in);
+             int rbytes = inReader.read(content, len, content.length - len);
+-            if(rbytes > 0 ) {
+-                if(rbytes == (content.length - len)) {
++            if (rbytes > 0 ) {
++                if (rbytes == (content.length - len)) {
+                     char[] content2 = new char[content.length * 2];
+                     System.arraycopy(content,0, content2, 0, content.length);
+                     content = content2;
+@@ -96,9 +96,9 @@
+     public void writeXref(Writer out) throws IOException {
+         xref.reInit(content, len);
+         xref.project = project;
+-        out.write("</pre>");
++        out.write("</pre><div id=\"man\">");
+         xref.write(out);
+-        out.write("<pre>");
++        out.write("</div><pre>");
+     }
+     
+     /**
+@@ -112,8 +112,8 @@
+         TroffXref xref = new TroffXref(in);
+         xref.project = project;
+         xref.setDefs(defs);
+-        out.write("</pre>");
++        out.write("</pre><div id=\"man\">");
+         xref.write(out);
+-        out.write("<pre>");
++        out.write("</div><pre>");
+     }
+ }
+diff -r 09f0768a7ec1 src/org/opensolaris/opengrok/analysis/document/TroffXref.lex
+--- a/src/org/opensolaris/opengrok/analysis/document/TroffXref.lex	Fri May 06 21:41:59 2011 +0200
++++ b/src/org/opensolaris/opengrok/analysis/document/TroffXref.lex	Sat May 07 06:37:00 2011 +0200
+@@ -19,6 +19,8 @@
+ 
+ /*
+  * Copyright (c) 2005, 2010, Oracle and/or its affiliates. All rights reserved.
++ *
++ * Portions Copyright 2011 Jens Elkner.
+  */
+ 
+ package org.opensolaris.opengrok.analysis.document;
+@@ -35,10 +37,15 @@
+ %unicode
+ %int
+ %{ 
+-  boolean p = false;
++  int p;
++  int span;
++  int div;
+ 
+   @Override
+   public void write(Writer out) throws IOException {
++  		p = 0;
++  		span = 0;
++  		div = 0;
+         yyline++;
+         this.out = out;
+         while(yylex() != YYEOF) {
+@@ -50,8 +57,69 @@
+   protected int getLineNumber() { return yyline; }
+   @Override
+   protected void setLineNumber(int x) { yyline = x; }
++  
++  // Q&D methods to asure well-formed documents
++  protected void closePara() throws IOException {
++  	if (p > 0) {
++  		out.write("</p>");
++  		p--;
++  	}
++  }
++  protected void closeSpan() throws IOException {
++  	if (span > 0) {
++  		out.write("</span>");
++  		span--;
++  	}
++  }
++  protected void closeDiv() throws IOException {
++  	if (div > 0) {
++  		out.write("</div>");
++  		div--;
++  	}
++  }
++  protected void openPara() throws IOException {
++  	out.write("<p>");
++  	p++;
++  }
++  protected void openSpan(char cssClass) throws IOException {
++  	out.write("<span class=\"");
++  	out.write(cssClass);
++  	out.write("\">");
++  	span++;
++  }
++
++  protected void openDiv(String cssClass) throws IOException {
++  	out.write("<div class=\"");
++  	out.write(cssClass);
++  	out.write("\">");
++  	div++;
++  }
++  
++  protected void cleanup() {
++    try {
++	  while (span > 0) {
++	  	closeSpan();
++	  }
++	  while (p > 0) {
++	  	closePara();
++	  }
++	} catch (IOException e) {
++		// nothing we can do here
++	}
++  }
+ %}
+ 
++%eof{
++	cleanup();
++	try {
++		while (div > 0) {
++			closeDiv();
++		}
++	} catch (IOException e) {
++		// nothing we can do here
++	}
++%eof}
++
+ WhiteSpace     = [ \t\f]
+ EOL = \r|\n|\r\n
+ FNameChar = [a-zA-Z0-9_\-\.]
+@@ -62,66 +130,65 @@
+ 
+ %%
+ <YYINITIAL> {
+-^\.(SH|TH|SS|IP|NH|TL|UH)       { yybegin(HEADER);out.write("<div class=\"b\">");}
+-^(".\\\"")|(\'\\\")|("...\\\"") { yybegin(COMMENT);out.write("<span class=\"c\">");}
++^\.(SH|TH|SS|IP|NH|TL|UH)       { yybegin(HEADER); cleanup(); openDiv("b");}
++^(".\\\"")|(\'\\\")|("...\\\"") { yybegin(COMMENT);openSpan('c');}
+ }
+ 
+ <HEADER> {
+-{EOL}   { yybegin(YYINITIAL);out.write("</div>"); yyline++;}
++{EOL}   { yybegin(YYINITIAL); cleanup(); closeDiv(); yyline++;}
+ }
+ 
+ <COMMENT> {
+-{EOL}   { yybegin(YYINITIAL);out.write("</span><br>"); yyline++;}
++{EOL}   { yybegin(YYINITIAL); closeSpan(); out.write("<br/>"); yyline++;}
+ }
+ 
+-^\.(B|U|BI|BX|UL|LG|NL|SB|BR|RB) { yybegin(BOLD); out.write("<span class=\"b\">"); }
+-^\.(I|SM|IB|IR|RI|IX) { yybegin(BOLD); out.write("<span class=\"s\">"); }
+-^\.(CW) { yybegin(BOLD); out.write("<span class=\"k\">"); }
+-^\.(DS|LD|ID|BD|CD|RD) { out.write("<span class=\"k\">"); }
+-^\.DE   { out.write("</span>"); }
++^\.(B|U|BI|BX|UL|LG|NL|SB|BR|RB) { yybegin(BOLD); openSpan('b'); }
++^\.(I|SM|IB|IR|RI|IX) { yybegin(BOLD); openSpan('s'); }
++^\.(CW) { yybegin(BOLD); openSpan('k'); }
++^\.(DS|LD|ID|BD|CD|RD) { openSpan('k'); }
++^\.DE   { closeSpan(); }
+ 
+ <BOLD> {
+-{EOL}      { yybegin(YYINITIAL);out.write("</span> "); yyline++;}
++{EOL}      { yybegin(YYINITIAL); closeSpan(); out.write(' '); yyline++;}
+ }
+ 
+-"\\fB"  { out.write("<span class=\"b\">"); }
+-"\\fI"  { out.write("<span class=\"s\">"); }
+-"\\fC"|"\\f(CW" { out.write("<span class=\"k\">"); }
+-"\\fR"  { out.write("</span>"); }
+-"\\fP"  { out.write("</span>"); }
++"\\fB"  { openSpan('b'); }
++"\\fI"  { openSpan('s'); }
++"\\fC"|"\\f(CW" { openSpan('k'); }
++"\\fR"  { closeSpan(); }
++"\\fP"  { closeSpan(); }
+ 
+-^\.(PP|LP|P|TP|IP|HP|PD|SP|br|mk) { 
+-    if(p)// TODO isn't this buggy ?
+-        out.write("</p>");
+-    out.write("<p>");
+-    p = true;
++^\.(PP|LP|P|TP|IP|HP|PD|SP|br|mk|ce) { 
++    cleanup();
++    openPara();
+ }
+ 
+-^\.(RS|RE)[^\n]* { out.write("\n"); }
++^\.(RS)[^\n]* { cleanup(); openDiv("rs"); openPara(); }
++^\.(RE)[^\n]* { cleanup(); closeDiv(); }
+ 
+ ^\.so {out.write(".so ");}
+-^\.(EQ|in|sp|ne|rt|br|pn|ds|de|if|ig|el|ft|hy|ie|ll|ps|rm|ta|ti)[^\n]*\n {}
++^\.(EQ|in|sp|ne|rt|pn|ds|de|if|ig|el|ft|hy|ie|ll|ps|rm|ta|ti|na|ad|te|hw|nh|pl)[^\n]*\n { }
+ ^\.(NH|DT|EE)[^\n]* {}
+ ^"\\(bu\n" {}
+-^".nf"  {out.write("<pre>"); }
+-^".fi"  {out.write("</pre>"); }
+-\\\*\(Tm { out.write(" TM "); }
+-\\\*\R { out.write(" (R) "); }
++^".nf"  {closePara(); out.write("<pre>"); }
++^".fi"  {cleanup(); out.write("</pre>"); }
++\\\*\(Tm { out.write("<sup>TM</sup> "); }
++\\\*\R { out.write("&reg; "); }
+ \\\((l|r)q { out.write('"'); }
+ \\\(mi { out.write('-'); }
+ 
+-^\.TS   {yybegin(TBL);out.write("<table border=\"1\" cellpadding=\"2\" rules=\"all\" bgcolor=\"#ddddcc\"><tr><td>");}
++^\.TS   { cleanup(); yybegin(TBL);out.write("<table rules=\"all\"><tr><td>");}
+ <TBL> {
+ tab\(.\) { char tab = yycharat(4); }
+ \.$    { yybegin(TBLL); }
+ .    {}
+ }
+ <TBLL> {
+-\007    { out.write("</td><td>"); }
++\007    { cleanup(); out.write("</td><td>"); }
+ ^[\_\=]\n    {}
+ T[\{\}] {}
+-^\.TE   { yybegin(YYINITIAL); out.write("</td></tr></table>"); }
+-{EOL}       { out.write("</td></tr><tr><td>"); yyline++;}
++^\.TE   { yybegin(YYINITIAL); cleanup(); out.write("</td></tr></table>"); }
++{EOL}       { cleanup(); out.write("</td></tr><tr><td>"); yyline++;}
+ }
+ 
+ {FNameChar}+ "@" {FNameChar}+ "." {FNameChar}+
+@@ -145,6 +212,7 @@
+ "\\ "   { out.write(' '); }
+ "<"     {out.write( "&lt;");}
+ ">"     {out.write( "&gt;");}
++"&"		{out.write( "&amp;");}
+ {EOL}   { out.write("\n"); yyline++;}
+ {WhiteSpace}+   { out.write(' '); }
+ [!-~]   { out.write(yycharat(0)); }
+diff -r 09f0768a7ec1 src/org/opensolaris/opengrok/analysis/executables/ELFAnalyzer.java
+--- a/src/org/opensolaris/opengrok/analysis/executables/ELFAnalyzer.java	Fri May 06 21:41:59 2011 +0200
++++ b/src/org/opensolaris/opengrok/analysis/executables/ELFAnalyzer.java	Sat May 07 06:37:00 2011 +0200
+@@ -52,8 +52,7 @@
+  */
+ public class ELFAnalyzer extends FileAnalyzer {
+ 
+-    private String content;
+-    private int len=0;
++    private StringBuilder content;
+     PlainFullTokenizer plainfull;
+     StringReader dummy = new StringReader("");
+ 
+@@ -63,7 +62,7 @@
+      */
+     protected ELFAnalyzer(FileAnalyzerFactory factory) {
+         super(factory);
+-        content = "";
++        content = new StringBuilder();
+         plainfull = new PlainFullTokenizer(dummy);
+     }
+ 
+@@ -71,7 +70,7 @@
+     public void analyze(Document doc, InputStream in) throws IOException {
+         if (in instanceof FileInputStream) {
+             parseELF((FileInputStream) in);
+-            if (len > 0) {
++            if (content.length() > 0) {
+                 doc.add(new Field("full", " ", Field.Store.YES, Field.Index.ANALYZED));
+             }
+         } else {
+@@ -79,7 +78,7 @@
+             final FileInputStream fin = new FileInputStream(fullpath);
+             try {
+                 parseELF(fin);
+-                if (len > 0) {
++                if (content.length() > 0) {
+                     doc.add(new Field("full", " ", Field.Store.YES, Field.Index.ANALYZED));
+                 }
+             } finally {
+@@ -147,9 +146,8 @@
+             }
+             sb.append('\n');
+         }
+-        content = sb.toString();
+-        len = content.length();
+-
++        sb.trimToSize();
++        content = sb;
+     }
+     
+     private boolean isReadable(int c) {
+@@ -175,7 +173,9 @@
+     @Override
+     public TokenStream tokenStream(String fieldName, Reader reader) {
+         if ("full".equals(fieldName)) {
+-            plainfull.reInit(content.toCharArray(), content.length());
++        	char[] cs = new char[content.length()];
++        	content.getChars(0, cs.length, cs, 0);
++            plainfull.reInit(cs, cs.length);
+             return plainfull;
+         }
+         return super.tokenStream(fieldName, reader);
+@@ -188,7 +188,8 @@
+     @Override
+     public void writeXref(Writer out) throws IOException {
+         out.write("</pre>");
+-        Util.htmlize(content, out);
++        String html = Util.htmlize(content);
++        out.write(html);
+         out.write("<pre>");
+     }
+ 
+@@ -202,7 +203,8 @@
+ 
+         public EI_Class ei_class;
+         public EI_Data ei_data;
+-        public int ei_version;
++        @SuppressWarnings("unused")
++		public int ei_version;
+         public E_Type e_type;
+         public E_Machine e_machine;
+         public E_Version e_version;
+@@ -338,7 +340,7 @@
+         public int value() {
+             return this.value;
+         }
+-    };
++    }
+ 
+     private static enum EI_Class {
+         ELFCLASSNONE(0),
+@@ -373,7 +375,7 @@
+         public String toString() {
+             return textual[value];
+         }
+-    };
++    }
+ 
+     private static enum EI_Data {
+         ELFDATANONE(0),
+@@ -399,7 +401,7 @@
+         public int value() {
+             return this.value;
+         }
+-    };
++    }
+ 
+     private static enum E_Type {
+         ET_NONE(0),
+@@ -442,7 +444,7 @@
+             }
+             return textual[value];
+         }
+-    };
++    }
+ 
+     private static enum E_Machine {
+         EM_NONE(0),
+@@ -493,7 +495,7 @@
+             }
+             return textual[value];
+         }
+-    };
++    }
+ 
+     private static enum E_Version {
+         EV_NONE(0),
+@@ -526,5 +528,5 @@
+         public String toString() {
+             return textual[value];
+         }
+-    };
++    }
+ }
+diff -r 09f0768a7ec1 src/org/opensolaris/opengrok/analysis/plain/PlainAnalyzer.java
+--- a/src/org/opensolaris/opengrok/analysis/plain/PlainAnalyzer.java	Fri May 06 21:41:59 2011 +0200
++++ b/src/org/opensolaris/opengrok/analysis/plain/PlainAnalyzer.java	Sat May 07 06:37:00 2011 +0200
+@@ -71,7 +71,7 @@
+         len = 0;
+         do {
+             int rbytes = inReader.read(content, len, content.length - len);
+-            if (rbytes > 0) {
++            if (rbytes >= 0) {
+                 if (rbytes == (content.length - len)) {
+                     char[] content2 = new char[content.length * 2];
+                     System.arraycopy(content, 0, content2, 0, content.length);
+diff -r 09f0768a7ec1 src/org/opensolaris/opengrok/analysis/sh/ShAnalyzerFactory.java
+--- a/src/org/opensolaris/opengrok/analysis/sh/ShAnalyzerFactory.java	Fri May 06 21:41:59 2011 +0200
++++ b/src/org/opensolaris/opengrok/analysis/sh/ShAnalyzerFactory.java	Sat May 07 06:37:00 2011 +0200
+@@ -40,6 +40,7 @@
+     private static final String[] SUFFIXES = {
+         "SH",
+         "KSH",
++        "KSHLIB",	// RFE #17849
+         "CSH",
+         "BASH",        
+         "RUBY",        
+diff -r 09f0768a7ec1 src/org/opensolaris/opengrok/analysis/sh/ShXref.lex
+--- a/src/org/opensolaris/opengrok/analysis/sh/ShXref.lex	Fri May 06 21:41:59 2011 +0200
++++ b/src/org/opensolaris/opengrok/analysis/sh/ShXref.lex	Sat May 07 06:37:00 2011 +0200
+@@ -171,7 +171,7 @@
+  // Recognize here-documents. At least a subset of them.
+  "<<" "-"? {WhiteSpace}* {Identifier} {WhiteSpace}* {
+    String text = yytext();
+-   Util.htmlize(text, out);
++   out.write(Util.htmlize(text));
+ 
+    heredocStripLeadingTabs = (text.charAt(2) == '-');
+    heredocStopWord = text.substring(heredocStripLeadingTabs ? 3 : 2).trim();
+@@ -181,7 +181,7 @@
+  // Any sequence of more than two < characters should not start HEREDOC. Use
+  // this rule to catch them before the HEREDOC rule.
+  "<<" "<" + {
+-   Util.htmlize(yytext(), out);
++   out.write(Util.htmlize(yytext()));
+  }
+ 
+ }
+@@ -237,7 +237,7 @@
+     if (isHeredocStopWord(line)) {
+       popstate();
+     }
+-    Util.htmlize(line, out);
++    out.write(Util.htmlize(line));
+   }
+ 
+   {EOL} { startNewLine(); }
+diff -r 09f0768a7ec1 src/org/opensolaris/opengrok/search/QueryBuilder.java
+--- a/src/org/opensolaris/opengrok/search/QueryBuilder.java	Fri May 06 21:41:59 2011 +0200
++++ b/src/org/opensolaris/opengrok/search/QueryBuilder.java	Sat May 07 06:37:00 2011 +0200
+@@ -16,12 +16,12 @@
+  *
+  * CDDL HEADER END
+  */
+-
+ /*
+  * Copyright 2010 Sun Micosystems.  All rights reserved.
+  * Use is subject to license terms.
++ * 
++ * Portions Copyright 2011 Jens Elkner.
+  */
+-
+ package org.opensolaris.opengrok.search;
+ 
+ import java.util.ArrayList;
+@@ -35,180 +35,239 @@
+ import org.apache.lucene.search.Query;
+ 
+ /**
+- * Helper class that builds a Lucene query based on provided search terms
+- * for the different fields.
++ * Helper class that builds a Lucene query based on provided search terms for
++ * the different fields.
+  */
+ public class QueryBuilder {
+-    final static String FULL = "full";
+-    final static String DEFS = "defs";
+-    final static String REFS = "refs";
+-    final static String PATH = "path";
+-    final static String HIST = "hist";
++	final static String FULL = "full";
++	final static String DEFS = "defs";
++	final static String REFS = "refs";
++	final static String PATH = "path";
++	final static String HIST = "hist";
++	/**
++	 * A map containing the query text for each field. (We use a sorted map here
++	 * only because we have tests that check the generated query string. If we
++	 * had used a hash map, the order of the terms could have varied between
++	 * platforms and it would be harder to test.)
++	 */
++	private final Map<String, String> queries = new TreeMap<String, String>();
+ 
+-    /**
+-     * A map containing the query text for each field. (We use a sorted map
+-     * here only because we have tests that check the generated query string.
+-     * If we had used a hash map, the order of the terms could have varied
+-     * between platforms and it would be harder to test.)
+-     */
+-    private final Map<String, String> queries = new TreeMap<String, String>();
++	/**
++	 * Set search string for the "full" field.
++	 * @param freetext query string to set
++	 * @return this instance
++	 */
++	public QueryBuilder setFreetext(String freetext) {
++		return addQueryText(FULL, freetext);
++	}
++	/**
++	 * Get search string for the "full" field.
++	 * @return {@code null} if not set, the query string otherwise.
++	 */
++	public String getFreetext() {
++		return getQueryText(FULL);
++	}
+ 
+-    /** Set search string for the "full" field. */
+-    public QueryBuilder setFreetext(String freetext) {
+-        return addQueryText(FULL, freetext);
+-    }
++	/**
++	 * Set search string for the "defs" field. 
++	 * @param defs query string to set
++	 * @return this instance
++	 */
++	public QueryBuilder setDefs(String defs) {
++		return addQueryText(DEFS, defs);
++	}
++	/**
++	 * Get search string for the "full" field.
++	 * @return {@code null} if not set, the query string otherwise.
++	 */
++	public String getDefs() {
++		return getQueryText(DEFS);
++	}
+ 
+-    /** Set search string for the "defs" field. */
+-    public QueryBuilder setDefs(String defs) {
+-        return addQueryText(DEFS, defs);
+-    }
++	/**
++	 * Set search string for the "refs" field. 
++	 * @param refs query string to set
++	 * @return this instance
++	 */
++	public QueryBuilder setRefs(String refs) {
++		return addQueryText(REFS, refs);
++	}
++	/**
++	 * Get search string for the "refs" field.
++	 * @return {@code null} if not set, the query string otherwise.
++	 */
++	public String getRefs() {
++		return getQueryText(REFS);
++	}
+ 
+-    /** Set search string for the "refs" field. */
+-    public QueryBuilder setRefs(String refs) {
+-        return addQueryText(REFS, refs);
+-    }
++	/** Set search string for the "path" field. 
++	 * @param path query string to set
++	 * @return this instance
++	 */
++	public QueryBuilder setPath(String path) {
++		return addQueryText(PATH, path);
++	}
++	/**
++	 * Get search string for the "path" field.
++	 * @return {@code null} if not set, the query string otherwise.
++	 */
++	public String getPath() {
++		return getQueryText(PATH);
++	}
+ 
+-    /** Set search string for the "path" field. */
+-    public QueryBuilder setPath(String path) {
+-        return addQueryText(PATH, path);
+-    }
++	/**
++	 * Set search string for the "hist" field.
++	 * @param hist query string to set
++	 * @return this instance
++	 */
++	public QueryBuilder setHist(String hist) {
++		return addQueryText(HIST, hist);
++	}
++	/**
++	 * Get search string for the "hist" field.
++	 * @return {@code null} if not set, the query string otherwise.
++	 */
++	public String getHist() {
++		return getQueryText(HIST);
++	}
+ 
+-    /** Set search string for the "hist" field. */
+-    public QueryBuilder setHist(String hist) {
+-        return addQueryText(HIST, hist);
+-    }
++	/**
++	 * Get a map containing the query text for each of the fields that have 
++	 * been set.
++	 * @return a possible empty map.
++	 */
++	public Map<String, String> getQueries() {
++		return Collections.unmodifiableMap(queries);
++	}
++	
++	/**
++	 * Get the number of query fields set.
++	 * @return the current number of fields with a none-empty query string.
++	 */
++	public int getSize() {
++		return queries.size();
++	}
+ 
+-    /**
+-     * Get a map containing the query text for each of the fields that have
+-     * been set.
+-     */
+-    public Map<String, String> getQueries() {
+-        return Collections.unmodifiableMap(queries);
+-    }
++	/**
++	 * Build a new query based on the query text that has been passed in to this
++	 * builder.
++	 * 
++	 * @return a query, or {@code null} if no query text is available.
++	 * @throws ParseException  if the query text cannot be parsed
++	 */
++	public Query build() throws ParseException {
++		if (queries.isEmpty()) {
++			// We don't have any text to parse
++			return null;
++		}
++		// Parse each of the query texts separately
++		ArrayList<Query> queryList = new ArrayList<Query>(queries.size());
++		for (Map.Entry<String, String> entry : queries.entrySet()) {
++			String field = entry.getKey();
++			String queryText = entry.getValue();
++			queryList.add(buildQuery(field, escapeQueryString(field, queryText)));
++		}
++		// If we only have one sub-query, return it directly
++		if (queryList.size() == 1) {
++			return queryList.get(0);
++		}
++		// We have multiple subqueries, so let's combine them into a
++		// BooleanQuery.
++		//
++		// If the subquery is a BooleanQuery, we pull out each clause and
++		// add it to the outer BooleanQuery so that any negations work on
++		// the query as a whole. One exception to this rule: If the query
++		// contains one or more Occur.SHOULD clauses and no Occur.MUST
++		// clauses, we keep it in a subquery so that the requirement that
++		// at least one of the Occur.SHOULD clauses must match (pulling them
++		// out would make all of them optional).
++		//
++		// All other types of subqueries are added directly to the outer
++		// query with Occur.MUST.
++		BooleanQuery combinedQuery = new BooleanQuery();
++		for (Query query : queryList) {
++			if (query instanceof BooleanQuery) {
++				BooleanQuery boolQuery = (BooleanQuery) query;
++				if (hasClause(boolQuery, Occur.SHOULD)
++					&& !hasClause(boolQuery, Occur.MUST))
++				{
++					combinedQuery.add(query, Occur.MUST);
++				} else {
++					for (BooleanClause clause : boolQuery) {
++						combinedQuery.add(clause);
++					}
++				}
++			} else {
++				combinedQuery.add(query, Occur.MUST);
++			}
++		}
++		return combinedQuery;
++	}
+ 
+-    /**
+-     * Build a query based on the query text that has been passed in to this
+-     * builder.
+-     *
+-     * @return a query, or {@code null} if no query text has been set
+-     * @throws ParseException if the query text cannot be parsed
+-     */
+-    public Query build() throws ParseException {
+-        if (queries.isEmpty()) {
+-            // We don't have any text to parse
+-            return null;
+-        }
++	/**
++	 * Add query text for the specified field.
++	 * 
++	 * @param field the field to add query text for
++	 * @param query the query text to set
++	 * @return this object
++	 */
++	private QueryBuilder addQueryText(String field, String query) {
++		if (query == null || query.isEmpty()) {
++			queries.remove(field);
++		} else {
++			queries.put(field, query);
++		}
++		return this;
++	}
+ 
+-        // Parse each of the query texts separately
+-        ArrayList<Query> queryList = new ArrayList<Query>(queries.size());
+-        for (Map.Entry<String, String> entry : queries.entrySet()) {
+-            String field = entry.getKey();
+-            String queryText = entry.getValue();
+-            queryList.add(buildQuery(
+-                    field, escapeQueryString(field, queryText)));
+-        }
++	private String getQueryText(String field) {
++		return queries.get(field);
++	}
+ 
+-        // If we only have one sub-query, return it directly
+-        if (queryList.size() == 1) {
+-            return queryList.get(0);
+-        }
++	/**
++	 * Escape special characters in a query string.
++	 * 
++	 * @param field	the field for which the query string is provided
++	 * @param query	the query string to escape
++	 * @return the escaped query string
++	 */
++	private String escapeQueryString(String field, String query) {
++		return FULL.equals(field)
++			// The free text field may contain terms qualified with other
++			// field names, so we don't escape single colons.
++			? query.replace("::", "\\:\\:")
++			// Other fields shouldn't use qualified terms, so escape colons
++			// so that we can search for them.
++			: query.replace(":", "\\:");
++	}
+ 
+-        // We have multiple subqueries, so let's combine them into a
+-        // BooleanQuery.
+-        //
+-        // If the subquery is a BooleanQuery, we pull out each clause and
+-        // add it to the outer BooleanQuery so that any negations work on
+-        // the query as a whole. One exception to this rule: If the query
+-        // contains one or more Occur.SHOULD clauses and no Occur.MUST
+-        // clauses, we keep it in a subquery so that the requirement that
+-        // at least one of the Occur.SHOULD clauses must match (pulling them
+-        // out would make all of them optional).
+-        //
+-        // All other types of subqueries are added directly to the outer
+-        // query with Occur.MUST.
++	/**
++	 * Build a subquery against one of the fields.
++	 * 
++	 * @param field	the field to build the query against
++	 * @param queryText	the query text
++	 * @return a parsed query
++	 * @throws ParseException	if the query text cannot be parsed
++	 */
++	private Query buildQuery(String field, String queryText)
++		throws ParseException
++	{
++		return new CustomQueryParser(field).parse(queryText);
++	}
+ 
+-        BooleanQuery combinedQuery = new BooleanQuery();
+-
+-        for (Query query : queryList) {
+-            if (query instanceof BooleanQuery) {
+-                BooleanQuery boolQuery = (BooleanQuery) query;
+-                if (hasClause(boolQuery, Occur.SHOULD) &&
+-                        !hasClause(boolQuery, Occur.MUST)) {
+-                    combinedQuery.add(query, Occur.MUST);
+-                } else {
+-                    for (BooleanClause clause : boolQuery) {
+-                        combinedQuery.add(clause);
+-                    }
+-                }
+-            } else {
+-                combinedQuery.add(query, Occur.MUST);
+-            }
+-        }
+-
+-        return combinedQuery;
+-    }
+-
+-    /**
+-     * Add query text for the specified field.
+-     *
+-     * @param field the field to add query text for
+-     * @param query the query text
+-     * @return this object
+-     */
+-    private QueryBuilder addQueryText(String field, String query) {
+-        if (query == null || query.isEmpty()) {
+-            queries.remove(field);
+-        } else {
+-            queries.put(field, query);
+-        }
+-        return this;
+-    }
+-
+-    /**
+-     * Escape special characters in a query string.
+-     *
+-     * @param field the field for which the query string is provided
+-     * @param query the query string
+-     * @return the escaped query string
+-     */
+-    private String escapeQueryString(String field, String query) {
+-        if (FULL.equals(field)) {
+-            // The free text field may contain terms qualified with other
+-            // field names, so we don't escape single colons.
+-            return query.replace("::", "\\:\\:");
+-        } else {
+-            // Other fields shouldn't use qualified terms, so escape colons
+-            // so that we can search for them.
+-            return query.replace(":", "\\:");
+-        }
+-    }
+-
+-    /**
+-     * Build a subquery against one of the fields.
+-     *
+-     * @param field the field to build the query against
+-     * @param queryText the query text
+-     * @return a parsed query
+-     * @throws ParseException if the query text cannot be parsed
+-     */
+-    private Query buildQuery(String field, String queryText)
+-            throws ParseException {
+-        return new CustomQueryParser(field).parse(queryText);
+-    }
+-
+-    /**
+-     * Check if a BooleanQuery contains a clause of a given occur type.
+-     *
+-     * @param query the query to check
+-     * @param occur the occur type to check for
+-     * @return whether or not the query contains a clause of the specified type
+-     */
+-    private boolean hasClause(BooleanQuery query, Occur occur) {
+-        for (BooleanClause clause : query) {
+-            if (clause.getOccur().equals(occur)) {
+-                return true;
+-            }
+-        }
+-        return false;
+-    }
++	/**
++	 * Check if a BooleanQuery contains a clause of a given occur type.
++	 * 
++	 * @param query	the query to check
++	 * @param occur	the occur type to check for
++	 * @return whether or not the query contains a clause of the specified type
++	 */
++	private boolean hasClause(BooleanQuery query, Occur occur) {
++		for (BooleanClause clause : query) {
++			if (clause.getOccur().equals(occur)) {
++				return true;
++			}
++		}
++		return false;
++	}
+ }
+diff -r 09f0768a7ec1 src/org/opensolaris/opengrok/search/Results.java
+--- a/src/org/opensolaris/opengrok/search/Results.java	Fri May 06 21:41:59 2011 +0200
++++ b/src/org/opensolaris/opengrok/search/Results.java	Sat May 07 06:37:00 2011 +0200
+@@ -16,14 +16,15 @@
+  *
+  * CDDL HEADER END
+  */
+-
+ /*
+  * Copyright (c) 2005, 2010, Oracle and/or its affiliates. All rights reserved.
++ * 
++ * Portions Copyright 2011 Jens Elkner.
+  */
+-
+ package org.opensolaris.opengrok.search;
+ 
+ import java.io.BufferedReader;
++import java.io.File;
+ import java.io.FileInputStream;
+ import java.io.FileReader;
+ import java.io.IOException;
+@@ -35,137 +36,210 @@
+ import java.util.Map;
+ import java.util.logging.Level;
+ import java.util.zip.GZIPInputStream;
++
+ import org.apache.lucene.document.Document;
+ import org.apache.lucene.document.Fieldable;
++import org.apache.lucene.index.CorruptIndexException;
+ import org.apache.lucene.search.ScoreDoc;
+ import org.apache.lucene.search.Searcher;
+ import org.opensolaris.opengrok.OpenGrokLogger;
+ import org.opensolaris.opengrok.analysis.Definitions;
++import org.opensolaris.opengrok.analysis.FileAnalyzer.Genre;
+ import org.opensolaris.opengrok.analysis.TagFilter;
+-import org.opensolaris.opengrok.configuration.RuntimeEnvironment;
+ import org.opensolaris.opengrok.history.HistoryException;
+-import org.opensolaris.opengrok.search.context.Context;
+-import org.opensolaris.opengrok.search.context.HistoryContext;
+-import org.opensolaris.opengrok.web.Constants;
+-import org.opensolaris.opengrok.web.EftarFileReader;
++import org.opensolaris.opengrok.web.Prefix;
++import org.opensolaris.opengrok.web.SearchHelper;
+ import org.opensolaris.opengrok.web.Util;
+ 
+ /**
+- *
+- * @author Chandan
+- * slightly rewritten by Lubos Kosco
++ * @author Chandan slightly rewritten by Lubos Kosco
+  */
+ public final class Results {
+-    
+-    private Results() {
+-        // Util class, should not be constructed
+-    }
+-    
+-    /**
+-     * Prints out results in html form
+-     * @param searcher
+-     * @param hits
+-     * @param start
+-     * @param end
+-     * @param out
+-     * @param sourceContext
+-     * @param historyContext
+-     * @param summer
+-     * @param context url context (webapp link/name)
+-     * @param srcRoot
+-     * @param dataRoot
+-     * @param desc
+-     * @throws HistoryException
+-     * @throws IOException
+-     * @throws ClassNotFoundException
+-     */
+-    public static void prettyPrintHTML(Searcher searcher,ScoreDoc[] hits, int start, int end, Writer out,
+-            Context sourceContext, HistoryContext historyContext,
+-            Summarizer summer, String context,
+-            String srcRoot,
+-            String dataRoot,
+-            EftarFileReader desc)
+-            throws HistoryException, IOException, ClassNotFoundException
+-    {
+-        char[] content = new char[1024*8];
+-        String xrefPrefix=context+Constants.xrefP;
+-        String morePrefix=context+Constants.moreP;
+-        LinkedHashMap<String, ArrayList<Document>> dirHash = new LinkedHashMap<String, ArrayList<Document>>();
+-        for (int i = start; i < end; i++) {
+-            int docId = hits[i].doc;            
+-            Document doc = searcher.doc(docId);
+-            String rpath = doc.get("path");
+-            String parent = rpath.substring(0,rpath.lastIndexOf('/'));
+-            ArrayList<Document> dirDocs = dirHash.get(parent);
+-            if(dirDocs == null) {
+-                dirDocs = new ArrayList<Document>();
+-                dirHash.put(parent, dirDocs);
+-            }
+-            dirDocs.add(doc);
+-        }
+-        
+-        for (Map.Entry<String, ArrayList<Document>> entry: dirHash.entrySet()) {
+-            String parent = entry.getKey();
+-            String tag = (desc == null) ? "" : " - <i>" + desc.get(parent) + "</i>";
++	private Results() {
++		// Util class, should not be constructed
++	}
+ 
+-            out.write("<tr class=\"dir\"><td colspan=\"3\">&nbsp;&nbsp;<a href=\"");
+-            out.write(Util.URIEncodePath(xrefPrefix + parent));
+-            out.write("/\">" + parent + "/</a>" + tag + "</td></tr>");
++	/**
++	 * Create a has map keyed by the directory of the document found.
++	 * @param searcher	searcher to use.
++	 * @param hits		hits produced by the given searcher's search
++	 * @param startIdx	the index of the first hit to check
++	 * @param stopIdx	the index of the last hit to check
++	 * @return a (directory, hitDocument) hashmap
++	 * @throws CorruptIndexException
++	 * @throws IOException
++	 */
++	private static LinkedHashMap<String, ArrayList<Document>> 
++		createMap(Searcher searcher, ScoreDoc[] hits, int startIdx, int stopIdx) 
++	throws CorruptIndexException, IOException 
++	{
++		LinkedHashMap<String, ArrayList<Document>> dirHash = 
++			new LinkedHashMap<String, ArrayList<Document>>();
++		for (int i = startIdx; i < stopIdx; i++ ) {
++			int docId = hits[i].doc;
++			Document doc = searcher.doc(docId);
++			String rpath = doc.get("path");
++			String parent = rpath.substring(0, rpath.lastIndexOf('/'));
++			ArrayList<Document> dirDocs = dirHash.get(parent);
++			if (dirDocs == null) {
++				dirDocs = new ArrayList<Document>();
++				dirHash.put(parent, dirDocs);
++			}
++			dirDocs.add(doc);
++		}
++		return dirHash;
++	}
++	
++	private static String getTags(File basedir, String path, boolean compressed) {
++		char[] content = new char[1024 * 8];
++		FileInputStream fis = null;
++		GZIPInputStream gis = null;
++		FileReader fr = null;
++		Reader r = null;
++		// Grrrrrrrrrrrrr - TagFilter takes Readers, only!!!!
++		// Why? Is it CS sensible?
++		try {
++			if (compressed) {
++				fis = new FileInputStream(new File(basedir, path + ".gz"));
++				gis = new GZIPInputStream(fis);
++				r = new TagFilter(new BufferedReader(new InputStreamReader(gis)));
++			} else {
++				fr = new FileReader(new File(basedir, path));
++				r = new TagFilter(new BufferedReader(fr));
++			}
++			int len = r.read(content);
++			return new String(content, 0, len);
++		} catch (Exception e) {
++			OpenGrokLogger.getLogger().log(
++				Level.WARNING, "An error reading tags from " + basedir + path
++					+ (compressed ? ".gz" : ""), e);
++		} finally {
++			if (r != null) {
++				try {
++					r.close();
++					gis = null;
++					fis = null;
++					fr = null;
++				} catch (Exception x) { /* ignore */ }
++			}
++			if (compressed) {
++				if (gis != null) {
++					try { gis.close(); fis = null; } catch (Exception e) { /** ignore */ }
++				}
++				if (fis != null) {
++					try { fis.close(); } catch (Exception e) { /** ignore */ }
++				}
++			} else if (fr != null) {
++				try { fr .close(); } catch (Exception e) { /** ignore */ }
++			}
++			
++		}
++		return "";
++	}
+ 
+-            boolean alt = false;
+-            for (Document doc: entry.getValue()) {
+-                String rpath = doc.get("path");
+-                String self = rpath.substring(rpath.lastIndexOf('/')+1, rpath.length());
+-                String selfUrl = Util.URIEncodePath(xrefPrefix + rpath);
+-                out.write("<tr ");
+-                if(alt) {
+-                    out.write(" class=\"alt\"");
+-                }
+-                alt ^= true;
+-                out.write(">");
+-                out.write("<td class=\"q\"><a href=\""+context+Constants.histL+rpath+"\" title=\"History\">H</a> <a href=\""+context+Constants.xrefP+rpath+"?a=true\" title=\"Annotate\">A</a> <a href=\""+context+Constants.rawP+rpath+"\" title=\"Download\">D</a>");
+-                out.write("</td>");
+-                out.write("<td class=\"f\"><a href=\"" +
+-                        selfUrl + "\">"+self+"</a>&nbsp;</td><td><tt class=\"con\">");
+-                if (sourceContext != null) {
+-                    String genre = doc.get("t");
+-                    Definitions tags = null;
+-                    Fieldable tagsField = doc.getFieldable("tags");
+-                    if (tagsField != null) {
+-                        tags = Definitions.deserialize(tagsField.getBinaryValue());
+-                    }
+-                    try {
+-                        if ("p".equals(genre) && srcRoot != null) {
+-                            sourceContext.getContext(new FileReader(srcRoot + rpath), out, xrefPrefix, morePrefix, rpath,
+-                                    tags, true, null);
+-                        } else if("x".equals(genre) && dataRoot != null && summer != null){
+-                            Reader r = null;
+-                            if ( RuntimeEnvironment.getInstance().isCompressXref() ) {
+-                                    r = new TagFilter(new BufferedReader(new InputStreamReader(new GZIPInputStream(new FileInputStream(dataRoot + Constants.xrefP + rpath+".gz"))))); }
+-                            else {
+-                                    r = new TagFilter(new BufferedReader(new FileReader(dataRoot + Constants.xrefP + rpath))); }
+-                            int len = r.read(content);
+-                            //FIXME use Highlighter from lucene contrib here, instead of summarizer, we'd also get rid of apache lucene in whole source ...
+-                            out.write(summer.getSummary(new String(content, 0, len)).toString());
+-                            r.close();
+-                        } else if("h".equals(genre) && srcRoot != null && summer != null){
+-                            Reader r = new TagFilter(new BufferedReader(new FileReader(srcRoot + rpath)));
+-                            int len = r.read(content);
+-                            out.write(summer.getSummary(new String(content, 0, len)).toString());
+-                            r.close();
+-                        } else {
+-                            sourceContext.getContext(null, out, xrefPrefix, morePrefix, rpath, tags, true, null);
+-                        }
+-                    } catch (IOException e) {
+-                        OpenGrokLogger.getLogger().log(Level.WARNING, "An error occured while creating summary of "+rpath, e);
+-                    }
+-                    //out.write("Genre = " + genre);
+-                }
+-                if(historyContext != null) {
+-                    historyContext.getContext(srcRoot + parent, self, rpath, out,context);
+-                }
+-                out.write("</tt></td></tr>\n");
+-            }
+-        }
+-    }
++	/**
++	 * Prints out results in html form. The following search helper fields are
++	 * required to be properly initialized:
++	 * <ul>
++	 * <li>{@link SearchHelper#dataRoot}</li>
++	 * <li>{@link SearchHelper#contextPath}</li>
++	 * <li>{@link SearchHelper#searcher}</li>
++	 * <li>{@link SearchHelper#hits}</li>
++	 * <li>{@link SearchHelper#historyContext} (ignored if {@code null})</li>
++	 * <li>{@link SearchHelper#sourceContext} (ignored if {@code null})</li>
++	 * <li>{@link SearchHelper#summerizer} (if sourceContext is not {@code null})</li>
++	 * <li>{@link SearchHelper#compressed} (if sourceContext is not {@code null})</li>
++	 * <li>{@link SearchHelper#sourceRoot} (if sourceContext or historyContext 
++	 * 	is not {@code null})</li>
++	 * </ul>
++	 * 
++	 * @param out write destination
++	 * @param sh search helper which has all required fields set
++	 * @param start index of the first hit to print
++	 * @param end index of the last hit to print
++	 * @throws HistoryException 
++	 * @throws IOException 
++	 * @throws ClassNotFoundException 
++	 */
++	public static void prettyPrint(Writer out, SearchHelper sh, int start, 
++		int end)
++	throws HistoryException, IOException, ClassNotFoundException
++	{
++		String ctxE = Util.URIEncodePath(sh.contextPath);
++		String xrefPrefix = sh.contextPath + Prefix.XREF_P;
++		String morePrefix = sh.contextPath + Prefix.MORE_P;
++		String xrefPrefixE = ctxE + Prefix.XREF_P;
++		String histPrefixE = ctxE + Prefix.HIST_L;
++		String rawPrefixE = ctxE + Prefix.RAW_P;
++		File xrefDataDir = new File(sh.dataRoot, Prefix.XREF_P.toString());
++
++		LinkedHashMap<String, ArrayList<Document>> dirHash = 
++			createMap(sh.searcher, sh.hits, start, end);
++		for (Map.Entry<String, ArrayList<Document>> entry : dirHash.entrySet()) 
++		{
++			String parent = entry.getKey();
++			out.write("<tr class=\"dir\"><td colspan=\"3\"><a href=\"");
++			out.write(xrefPrefixE);
++			out.write(Util.URIEncodePath(parent));
++			out.write("/\">");
++			out.write(parent); // htmlize ???
++			out.write("/</a>");
++			if (sh.desc != null) {
++				out.write(" - <i>");
++				out.write(sh.desc.get(parent)); // htmlize ???
++				out.write("</i>");
++			}
++			out.write("</td></tr>");
++			for (Document doc : entry.getValue()) {
++				String rpath = doc.get("path");
++				String rpathE = Util.URIEncodePath(rpath);
++				out.write("<tr><td class=\"q\"><a href=\"");
++				out.write(histPrefixE);
++				out.write(rpathE);
++				out.write("\" title=\"History\">H</a> <a href=\"");
++				out.write(xrefPrefixE);
++				out.write(rpathE);
++				out.write("?a=true\" title=\"Annotate\">A</a> <a href=\"");
++				out.write(rawPrefixE);
++				out.write(rpathE);
++				out.write("\" title=\"Download\">D</a>");
++				out.write("</td>");
++				out.write("<td class=\"f\"><a href=\"");
++				out.write(xrefPrefixE);
++				out.write(rpathE);
++				out.write("\">");
++				out.write(rpath.substring(rpath.lastIndexOf('/') + 1));	// htmlize ???
++				out.write("</a></td><td><tt class=\"con\">");
++				if (sh.sourceContext != null) {
++					Genre genre = Genre.get(doc.get("t"));
++					Definitions tags = null;
++					Fieldable tagsField = doc.getFieldable("tags");
++					if (tagsField != null) {
++						tags = Definitions.deserialize(tagsField.getBinaryValue());
++					}
++					if (Genre.XREFABLE == genre && sh.summerizer != null) {
++						String xtags = getTags(xrefDataDir, rpath, sh.compressed);
++						// FIXME use Highlighter from lucene contrib here,
++						// instead of summarizer, we'd also get rid of
++						// apache lucene in whole source ...
++						out.write(sh.summerizer.getSummary(xtags).toString());
++					} else if (Genre.HTML == genre && sh.summerizer != null) {
++						String htags = getTags(sh.sourceRoot, rpath, false);
++						out.write(sh.summerizer.getSummary(htags).toString());
++					} else {
++						FileReader r = genre == Genre.PLAIN 
++							? new FileReader(new File(sh.sourceRoot, rpath))
++							: null; 
++						sh.sourceContext.getContext(r, out, xrefPrefix, 
++							morePrefix, rpath, tags, true, null);
++					}
++				}
++				if (sh.historyContext != null) {
++					sh.historyContext.getContext(new File(sh.sourceRoot, rpath), 
++						rpath, out, sh.contextPath);
++				}
++				out.write("</tt></td></tr>\n");
++			}
++		}
++	}
+ }
+diff -r 09f0768a7ec1 src/org/opensolaris/opengrok/search/context/Context.java
+--- a/src/org/opensolaris/opengrok/search/context/Context.java	Fri May 06 21:41:59 2011 +0200
++++ b/src/org/opensolaris/opengrok/search/context/Context.java	Sat May 07 06:37:00 2011 +0200
+@@ -19,6 +19,8 @@
+ 
+ /*
+  * Copyright (c) 2005, 2010, Oracle and/or its affiliates. All rights reserved.
++ * 
++ * Portions Copyright 2011 Jens Elkner.
+  */
+ 
+ /**
+@@ -58,9 +60,9 @@
+     private static final Map<String, Boolean> tokenFields =
+             new HashMap<String, Boolean>();
+     static {
+-        tokenFields.put("full", true);
+-        tokenFields.put("refs", false);
+-        tokenFields.put("defs", false);
++        tokenFields.put("full", Boolean.TRUE);
++        tokenFields.put("refs", Boolean.FALSE);
++        tokenFields.put("defs", Boolean.FALSE);
+     }
+ 
+     /**
+@@ -90,24 +92,30 @@
+      * @param subqueries a map containing the query text for each field
+      */
+     private void buildQueryAsURI(Map<String, String> subqueries) {
+-        boolean first = true;
++    	if (subqueries.isEmpty()) {
++    		queryAsURI = "";
++    		return;
++    	}
+         StringBuilder sb = new StringBuilder();
+         for (Map.Entry<String, String> entry : subqueries.entrySet()) {
+             String field = entry.getKey();
+             String queryText = entry.getValue();
+-            if (!first) {
+-                sb.append('&');
++            if (field.equals("full")) {
++            	field = "q"; // bah - search query params should be consistent!
+             }
+-            sb.append(field).append("=").append(Util.URIEncode(queryText));
+-            first = false;
++            sb.append(field).append("=").append(Util.URIEncode(queryText))
++            	.append('&');
+         }
++        sb.setLength(sb.length()-1);
+         queryAsURI = sb.toString();
+     }
+ 
+     private boolean alt = true;
+ 
+     /**
+-     *
++     * ???.
++     * Closes the given <var>in</var> reader on return.
++     * 
+      * @param in File to be matched
+      * @param out to write the context
+      * @param morePrefix to link to more... page
+@@ -121,20 +129,25 @@
+             boolean limit, List<Hit> hits) {
+         alt = !alt;
+         if (m == null) {
++        	if (in != null) {
++				try { in.close(); } catch (Exception x) { /* ignore */ }
++			}
+             return false;
+         }
+         boolean anything = false;
+         TreeMap<Integer, String[]> matchingTags = null;
++        String urlPrefixE = Util.URIEncodePath(urlPrefix);
++        String pathE = Util.URIEncodePath(path);
+         if (tags != null) {
+             matchingTags = new TreeMap<Integer, String[]>();
+             try {
+                 for (Definitions.Tag tag : tags.getTags()) {
+                     for (int i = 0; i < m.length; i++) {
+                         if (m[i].match(tag.symbol) == LineMatcher.MATCHED) {
+-                            /*
++                            /* desc[0] is matched symbol
+                              * desc[1] is line number
+                              * desc[2] is type
+-                             * desc[3] is  matching line;
++                             * desc[3] is matching line;
+                              */
+                             String[] desc = {
+                                 tag.symbol,
+@@ -151,8 +164,8 @@
+                                     anything = true;
+                                 } else {
+                                     out.write("<a class=\"s\" href=\"");
+-                                    out.write(Util.URIEncodePath(urlPrefix));
+-                                    out.write(Util.URIEncodePath(path));
++                                    out.write(urlPrefixE);
++                                    out.write(pathE);
+                                     out.write("#");
+                                     out.write(desc[1]);
+                                     out.write("\"><span class=\"l\">");
+@@ -160,9 +173,9 @@
+                                     out.write("</span> ");
+                                     out.write(Util.htmlize(desc[3]).replaceAll(
+                                             desc[0], "<b>" + desc[0] + "</b>"));
+-                                    out.write("</a> <i> ");
++                                    out.write("</a> <i>");
+                                     out.write(desc[2]);
+-                                    out.write(" </i><br/>");
++                                    out.write("</i><br/>");
+                                     anything = true;
+                                 }
+                             } else {
+@@ -172,7 +185,7 @@
+                         }
+                     }
+                 }
+-            } catch (IOException e) {
++            } catch (Exception e) {
+                 if (hits != null) {
+                     // @todo verify why we ignore all exceptions?
+                     OpenGrokLogger.getLogger().log(Level.WARNING, "Could not get context for " + path, e);
+@@ -218,9 +231,9 @@
+                 return anything;
+             }
+ 
+-            tokens.reInit(buffer, charsRead, out, Util.URIEncodePath(urlPrefix + path) + "#", matchingTags);
++            tokens.reInit(buffer, charsRead, out, urlPrefixE + pathE + "#", matchingTags);
+         } else {
+-            tokens.reInit(in, out, Util.URIEncodePath(urlPrefix + path) + "#", matchingTags);
++            tokens.reInit(in, out, urlPrefixE + pathE + "#", matchingTags);
+         }
+ 
+         if (hits != null) {
+@@ -251,23 +264,21 @@
+             anything = matchedLines > 0;
+             tokens.dumpRest();
+             if (lim && (truncated || matchedLines == 10) && out != null) {
+-                out.write("&nbsp; &nbsp; [<a href=\"" + Util.URIEncodePath(morePrefix + path) + "?" + queryAsURI + "\">all</a>...]");
++                out.write("<a href=\"" + Util.URIEncodePath(morePrefix) + pathE + "?" + queryAsURI + "\">[all...]</a>");
+             }
+         } catch (IOException e) {
+             OpenGrokLogger.getLogger().log(Level.WARNING, "Could not get context for " + path, e);
+         } finally {
+-            if (in != null) {
+-                try {
+-                    in.close();
+-                } catch (IOException e) {
+-                    OpenGrokLogger.getLogger().log(Level.WARNING, "An error occured while closing stream", e);
+-                }
++            try {
++                in.close();
++            } catch (IOException e) {
++                // ignore
+             }
+             if (out != null) {
+                 try {
+                     out.flush();
+                 } catch (IOException e) {
+-                    OpenGrokLogger.getLogger().log(Level.WARNING, "An error occured while flushing stream", e);
++                	// ignore
+                 }
+             }
+         }
+diff -r 09f0768a7ec1 src/org/opensolaris/opengrok/web/DirectoryListing.java
+--- a/src/org/opensolaris/opengrok/web/DirectoryListing.java	Fri May 06 21:41:59 2011 +0200
++++ b/src/org/opensolaris/opengrok/web/DirectoryListing.java	Sat May 07 06:37:00 2011 +0200
+@@ -20,6 +20,8 @@
+ /*
+  * Copyright 2007 Sun Microsystems, Inc.  All rights reserved.
+  * Use is subject to license terms.
++ * 
++ * Portions Copyright 2011 Jens Elkner.
+  */
+ package org.opensolaris.opengrok.web;
+ 
+@@ -54,80 +56,98 @@
+         now = System.currentTimeMillis();
+     }
+ 
+-    public void listTo(File dir, Writer out) throws IOException {
+-        String[] files = dir.list();
+-        if (files != null) {
+-            listTo(dir, out, dir.getPath(), files);
+-        }
+-    }
+-
+     /**
+-     * Write a listing of "dir" to "out"
++     * Write a htmlized listing of the given directory to the given destination.
+      *
+-     * @param dir to be Listed
+-     * @param out writer to write
+-     * @param path Virtual Path of the directory
+-     * @param files childred of dir
+-     * @return a list of READMEs
++     * @param dir the directory to list
++     * @param out write destination
++     * @param path virtual path of the directory (usually the path name of 
++     * 	<var>dir</var> with the opengrok source directory stripped off). 
++     * @param files basenames of potential children of the directory to list. 
++     * 	Gets filtered by {@link IgnoredNames}.
++     * @return a possible empty list of README files included in the written 
++     * 	listing.
++     * 
+      * @throws java.io.IOException
+-     *
++     * @throws NullPointerException if a parameter except <var>files</var>
++     * 	is {@code null}
+      */
+     public List<String> listTo(File dir, Writer out, String path, String[] files) throws IOException {
++    	// TODO this belongs to a jsp, not here
++        ArrayList<String> readMes = new ArrayList<String>();
++        int offset = -1;
++        if (files == null) {
++        	files = new String[0];
++        }
+         Arrays.sort(files, String.CASE_INSENSITIVE_ORDER);
+-        boolean alt = true;
+         Format dateFormatter = new SimpleDateFormat("dd-MMM-yyyy", Locale.getDefault());
+-        out.write("<table cellspacing=\"0\" border=\"0\" id=\"dirlist\">");
++        if (path.length() != 0) {
++            out.write("<p><a href=\"..\"><i>Up to higher level directory</i></a></p>");
++        }
+         EftarFileReader.FNode parentFNode = null;
+-        if (!"".equals(path)) {
+-            out.write("<tr><td colspan=\"4\"><a href=\"..\"><i>Up to higher level directory</i></a></td></tr>");
+-        }
+         if (desc != null) {
+             parentFNode = desc.getNode(path);
++            if (parentFNode != null) {
++            	offset = parentFNode.childOffset;
++            }
+         }
+-        out.write("<tr class=\"thead\"><th><tt>Name</tt></th><th><tt>Date</tt></th><th><tt>Size</tt></th>");
+-
+-        if (parentFNode != null && parentFNode.childOffset > 0) {
++        out.write("<table id=\"dirlist\">");
++        out.write("<thead><tr><th/><th>Name</th><th>Date</th><th>Size</th>");
++        if (offset > 0) {
+             out.write("<th><tt>Description</tt></th>");
+         }
+-        out.write("</tr>");
+-        ArrayList<String> readMes = new ArrayList<String>();
++        out.write("</tr></thead><tbody>");
+         IgnoredNames ignoredNames = RuntimeEnvironment.getInstance().getIgnoredNames();
+ 
+         for (String file : files) {
+-            if (!ignoredNames.ignore(file)) {
+-                File child = new File(dir, file);
+-                if (file.startsWith("README") || file.endsWith("README") || file.startsWith("readme")) {
+-                    readMes.add(file);
++            if (ignoredNames.ignore(file)) {
++            	continue;
++            }
++            File child = new File(dir, file);
++            if (file.startsWith("README") || file.endsWith("README") 
++            	|| file.startsWith("readme"))
++            {
++                readMes.add(file);
++            }
++            boolean isDir = child.isDirectory();
++            out.write("<tr><td><p class=\"");
++            out.write(isDir ? 'r' : 'p');
++            out.write("\"/></td><td><a href=\"");
++            out.write(Util.URIEncodePath(file));
++            if (isDir) {
++                out.write("/\"><b>");
++                out.write(file);
++                out.write("</b></a>/");
++            } else {
++                out.write("\">");
++                out.write(file);
++                out.write("</a>");
++            }
++            Date lastm = new Date(child.lastModified());
++            out.write("</td><td>");
++            if (now - lastm.getTime() < 86400000) {
++            	out.write("Today");
++            } else {
++            	out.write(dateFormatter.format(lastm));
++            }
++            out.write("</td><td>");
++            // if (isDir) {
++            	out.write(Util.readableSize(child.length()));
++            // }
++        	out.write("</td>");
++            if (offset > 0) {
++                String briefDesc = desc.getChildTag(parentFNode, file);
++                if (briefDesc == null) {
++                    out.write("<td/>");
++                } else {
++                    out.write("<td>");
++                    out.write(briefDesc);
++                    out.write("</td>");
+                 }
+-                alt = !alt;
+-                out.write("<tr align=\"right\"");
+-                out.write(alt ? " class=\"alt\"" : "");
+-
+-                boolean isDir = child.isDirectory();
+-                out.write("><td align=\"left\"><tt><a href=\"" + Util.URIEncodePath(file) + (isDir ? "/\" class=\"r\"" : "\" class=\"p\"") + ">");
+-                if (isDir) {
+-                    out.write("<b>" + file + "</b></a>/");
+-                } else {
+-                    out.write(file + "</a>");
+-                }
+-                Date lastm = new Date(child.lastModified());
+-                out.write("</tt></td><td>" + ((now - lastm.getTime()) < 86400000 ? "Today" : dateFormatter.format(lastm)) + "</td>");
+-                out.write("<td><tt>" + (isDir ? "" : Util.redableSize(child.length())) + "</tt></td>");
+-
+-                if (parentFNode != null && parentFNode.childOffset > 0) {
+-                    String briefDesc = desc.getChildTag(parentFNode, file);
+-                    if (briefDesc == null) {
+-                        out.write("<td></td>");
+-                    } else {
+-                        out.write("<td align=\"left\">");
+-                        out.write(briefDesc);
+-                        out.write("</td>");
+-                    }
+-                }
+-                out.write("</tr>");
+             }
++            out.write("</tr>");
+         }
+-        out.write("</table>");
++        out.write("</tbody></table>");
+         return readMes;
+     }
+ }
+diff -r 09f0768a7ec1 src/org/opensolaris/opengrok/web/EftarFileReader.java
+--- a/src/org/opensolaris/opengrok/web/EftarFileReader.java	Fri May 06 21:41:59 2011 +0200
++++ b/src/org/opensolaris/opengrok/web/EftarFileReader.java	Sat May 07 06:37:00 2011 +0200
+@@ -40,6 +40,7 @@
+ public class EftarFileReader {
+ 
+     private final RandomAccessFile f;
++    private boolean isOpen;
+ 
+     class FNode {
+ 
+@@ -102,7 +103,7 @@
+             if (tagOffset == 0) {
+                 return null;
+             }
+-            f.seek(offset + (long) tagOffset);
++            f.seek(offset + tagOffset);
+             byte[] tagString;
+             if (childOffset == 0) {
+                 tagString = new byte[numChildren];
+@@ -122,7 +123,7 @@
+             try {
+                 tagString = getTag();
+             } catch (IOException e) {
+-                tagString = null;
++                // ignore;
+             }
+             return "H[" + hash + "] num = " + numChildren + " tag = " + tagString;
+         }
+@@ -130,6 +131,7 @@
+ 
+     public EftarFileReader(String file) throws FileNotFoundException {
+         f = new RandomAccessFile(file, "r");
++        isOpen = true;
+     }
+ 
+     public FNode getNode(String path) throws IOException {
+@@ -197,9 +199,22 @@
+         return "";
+     }
+ 
++    /**
++     * Check, whether this instance has been already closed.
++     * @return {@code true} if closed.
++     */
++    public boolean isClosed() {
++    	return !isOpen;
++    }
++
+     public void close() throws IOException {
+-        if (f != null) {
+-            f.close();
++        if (f != null && isOpen) {
++			try { 
++				f.close(); 
++				isOpen = false;
++			} catch (Exception e) { 
++				/** ignore */ 
++			}
+         }
+     }
+ }
+diff -r 09f0768a7ec1 src/org/opensolaris/opengrok/web/Util.java
+--- a/src/org/opensolaris/opengrok/web/Util.java	Fri May 06 21:41:59 2011 +0200
++++ b/src/org/opensolaris/opengrok/web/Util.java	Sat May 07 06:37:00 2011 +0200
+@@ -16,13 +16,18 @@
+  *
+  * CDDL HEADER END
+  */
+-
+ /*
+  * Copyright (c) 2005, 2010, Oracle and/or its affiliates. All rights reserved.
++ * Portions Copyright 2011 Jens Elkner.
+  */
+ package org.opensolaris.opengrok.web;
+ 
++import java.io.File;
++import java.io.FileInputStream;
++import java.io.FileReader;
+ import java.io.IOException;
++import java.io.InputStreamReader;
++import java.io.Reader;
+ import java.io.UnsupportedEncodingException;
+ import java.io.Writer;
+ import java.net.URI;
+@@ -30,9 +35,12 @@
+ import java.net.URLEncoder;
+ import java.text.DecimalFormat;
+ import java.text.NumberFormat;
+-import java.util.ArrayList;
+ import java.util.Collection;
++import java.util.LinkedList;
+ import java.util.logging.Level;
++import java.util.zip.GZIPInputStream;
++
++import org.opensolaris.opengrok.Info;
+ import org.opensolaris.opengrok.OpenGrokLogger;
+ import org.opensolaris.opengrok.configuration.RuntimeEnvironment;
+ import org.opensolaris.opengrok.history.Annotation;
+@@ -40,573 +48,830 @@
+ import org.opensolaris.opengrok.history.HistoryGuru;
+ 
+ /**
+- * File for useful functions
++ * Class for useful functions.
+  */
+ public final class Util {
+-    /**
+-     * Return a string which represents a <code>CharSequence</code> in HTML.
+-     *
+-     * @param q a character sequence
+-     * @return a string representing the character sequence in HTML
+-     */
++	private Util() {
++		// singleton
++	}
+ 
+-    private Util() {
+-        // Util class, should not be constructed
+-    }
+-    
+-    public static String htmlize(CharSequence q) {
+-        StringBuilder sb = new StringBuilder(q.length() * 2);
+-        htmlize(q, sb);
+-        return sb.toString();
+-    }
++	/**
++	 * Return a string which represents a <code>CharSequence</code> in HTML.
++	 * 
++	 * @param q
++	 *            a character sequence
++	 * @return a string representing the character sequence in HTML
++	 */
++	public static String htmlize(CharSequence q) {
++		StringBuilder sb = new StringBuilder(q.length() * 2);
++		htmlize(q, sb);
++		return sb.toString();
++	}
+ 
+-    /**
+-     * Append a character sequence to an <code>Appendable</code> object. Escape
+-     * special characters for HTML.
+-     *
+-     * @param q a character sequence
+-     * @param out the object to append the character sequence to
+-     * @exception IOException if an I/O error occurs
+-     */
+-    public static void htmlize(CharSequence q, Appendable out)
+-            throws IOException {
+-        for (int i = 0; i < q.length(); i++) {
+-            htmlize(q.charAt(i), out);
+-        }
+-    }
++	/**
++	 * Append a character sequence to the given destination whereby
++	 * special characters for HTML are escaped accordingly.
++	 * 
++	 * @param q		a character sequence to esacpe
++	 * @param dest	where to append the character sequence to
++	 */
++	public static void htmlize(CharSequence q, StringBuilder dest) {
++		for (int i = 0; i < q.length(); i++ ) {
++			htmlize(q.charAt(i), dest);
++		}
++	}
+ 
+-    /**
+-     * Append a character sequence to a <code>StringBuilder</code>
+-     * object. Escape special characters for HTML. This method is identical to
+-     * <code>htmlize(CharSequence,Appendable)</code>, except that it is
+-     * guaranteed not to throw <code>IOException</code> because it uses a
+-     * <code>StringBuilder</code>.
+-     *
+-     * @param q a character sequence
+-     * @param out the object to append the character sequence to
+-     * @see #htmlize(CharSequence, Appendable)
+-     */
+-    @SuppressWarnings("PMD.AvoidThrowingRawExceptionTypes")
+-    public static void htmlize(CharSequence q, StringBuilder out) {
+-        try {
+-            htmlize(q, (Appendable) out);
+-        } catch (IOException ioe) {
+-            // StringBuilder's append methods are not declared to throw
+-            // IOException, so this should never happen.
+-            throw new RuntimeException("StringBuilder should not throw IOException", ioe);
+-        }
+-    }
++	/**
++	 * Append a character array to the given destination whereby
++	 * special characters for HTML are escaped accordingly.
++	 * 
++	 * @param cs	characters to esacpe
++	 * @param length max. number of characters to append, starting from index 0.
++	 * @param dest	where to append the character sequence to
++	 */
++	public static void htmlize(char[] cs, int length, StringBuilder dest) {
++		if (cs.length < length) {
++			length = cs.length;
++		}
++		for (int i = 0; i < length; i++ ) {
++			htmlize(cs[i], dest);
++		}
++	}
+ 
+-    public static void htmlize(char[] cs, int length, Appendable out)
+-            throws IOException {
+-        for (int i = 0; i < length && i < cs.length; i++) {
+-            htmlize(cs[i], out);
+-        }
+-    }
++	/**
++	 * Append a character to the given destination whereby special characters 
++	 * special for HTML are escaped accordingly.
++	 * 
++	 * @param c the character to append
++	 * @param dest where to append the character to
++	 */
++	private static final void htmlize(char c, StringBuilder dest) {
++		switch (c) {
++			case '&':
++				dest.append("&amp;");
++				break;
++			case '>':
++				dest.append("&gt;");
++				break;
++			case '<':
++				dest.append("&lt;");
++				break;
++			case '\n':
++				dest.append("<br/>");
++				break;
++			default:
++				dest.append(c);
++		}
++	}
+ 
+-    /**
+-     * Append a character to a an <code>Appendable</code> object. If the
+-     * character has special meaning in HTML, append a sequence of characters
+-     * representing the special character.
+-     *
+-     * @param c the character to append
+-     * @param out the object to append the character to
+-     * @exception IOException if an I/O error occurs
+-     */
+-    private static void htmlize(char c, Appendable out) throws IOException {
+-        switch (c) {
+-            case '&':
+-                out.append("&amp;");
+-                break;
+-            case '>':
+-                out.append("&gt;");
+-                break;
+-            case '<':
+-                out.append("&lt;");
+-                break;
+-            case '\n':
+-                out.append("<br/>");
+-                break;
+-            default:
+-                out.append(c);
+-        }
+-    }
++	private static String versionP = htmlize(Info.getRevision());
+ 
+-    private static String versionP=htmlize(org.opensolaris.opengrok.Info.getRevision());
+-    /**
+-     * used by BUI - CSS needs this parameter for proper cache refresh (per changeset) in client browser
+-     * @return html escaped version (hg changeset)
+-     */
+-    public static String versionParameter() {
+-        return versionP;
+-    }
++	/**
++	 * used by BUI - CSS needs this parameter for proper cache refresh (per
++	 * changeset) in client browser jel: but useless, since the page cached
++	 * anyway.
++	 * 
++	 * @return html escaped version (hg changeset)
++	 */
++	public static String versionParameter() {
++		return versionP;
++	}
+ 
+-    /**
+-     * Same as {@code breadcrumbPath(urlPrefix, l, '/')}.
+-     * @see #breadcrumbPath(String, String, char)
+-     */
+-    public static String breadcrumbPath(String urlPrefix, String l) {
+-        return breadcrumbPath(urlPrefix, l, '/');
+-    }
++	/**
++	 * Convinience method for {@code breadcrumbPath(urlPrefix, path, '/')}.
++	 * @param urlPrefix prefix to add to each url
++	 * @param path path to crack
++	 * @return HTML markup fro the breadcrumb or the path itself.
++	 * 
++	 * @see #breadcrumbPath(String, String, char)
++	 */
++	public static String breadcrumbPath(String urlPrefix, String path) {
++		return breadcrumbPath(urlPrefix, path, '/');
++	}
+ 
+-    private static final String anchorLinkStart = "<a href=\"";
+-    private static final String anchorClassStart = "<a class=\"";
+-    private static final String anchorEnd = "</a>";
+-    private static final String closeQuotedTag = "\">";
++	private static final String anchorLinkStart = "<a href=\"";
++	private static final String anchorClassStart = "<a class=\"";
++	private static final String anchorEnd = "</a>";
++	private static final String closeQuotedTag = "\">";
+ 
+-    /**
+-     * Same as {@code breadcrumbPath(urlPrefix, l, sep, "", false)}.
+-     * @see #breadcrumbPath(String, String, char, String, boolean)
+-     */
+-    public static String breadcrumbPath(String urlPrefix, String l, char sep) {
+-        return breadcrumbPath(urlPrefix, l, sep, "", false);
+-    }
++	/**
++	 * Convinience method for 
++	 * {@code breadcrumbPath(urlPrefix, path, sep, "", false)}.
++	 * 
++	 * @param urlPrefix prefix to add to each url
++	 * @param path path to crack
++	 * @param sep separator to use to crack the given path
++	 * 
++	 * @return HTML markup fro the breadcrumb or the path itself.
++	 * @see #breadcrumbPath(String, String, char, String, boolean, boolean)
++	 */
++	public static String breadcrumbPath(String urlPrefix, String path, char sep)
++	{
++		return breadcrumbPath(urlPrefix, path, sep, "", false);
++	}
+ 
+-    /**
+-     * Create a breadcrumb path to allow navigation to each element of a path.
+-     *
+-     * @param urlPrefix what comes before the path in the URL
+-     * @param l the full path from which the breadcrumb path is built
+-     * @param sep the character that separates the path elements in {@code l}
+-     * @param urlPostfix what comes after the path in the URL
+-     * @param compact if {@code true}, remove {@code ..} and empty path
+-     * elements from the path in the links
+-     * @return HTML markup for the breadcrumb path
+-     */
+-    public static String breadcrumbPath(
+-            String urlPrefix, String l, char sep, String urlPostfix,
+-            boolean compact) {
+-        if (l == null || l.length() <= 1) {
+-            return l;
+-        }
+-        StringBuilder hyperl = new StringBuilder(20);
+-        String[] path = l.split(escapeForRegex(sep), -1);
+-        for (int i = 0; i < path.length; i++) {
+-            leaveBreadcrumb(
+-                    urlPrefix, sep, urlPostfix, compact, hyperl, path, i);
+-        }
+-        return hyperl.toString();
+-    }
++	/**
++	 * Convinience method for 
++	 * {@code breadcrumbPath(urlPrefix, path, sep, "", false, path.endsWith(sep)}.
++	 * 
++	 * @param urlPrefix prefix to add to each url
++	 * @param path path to crack
++	 * @param sep separator to use to crack the given path
++	 * @param urlPostfix suffix to add to each url
++	 * @param compact if {@code true} the given path gets transformed into
++	 * 	its canonical form (.i.e. all '.' and '..' and double separators 
++	 * 	removed, but not always resolves to an absolute path) before processing 
++	 *  starts.
++	 * @return HTML markup fro the breadcrumb or the path itself.
++	 * @see #breadcrumbPath(String, String, char, String, boolean, boolean)
++	 * @see #getCanonicalPath(String, char)
++	 */
++	public static String breadcrumbPath(String urlPrefix, String path,
++		char sep, String urlPostfix, boolean compact)
++	{
++		if (path == null || path.length() == 0) {
++			return path;
++		}
++		return breadcrumbPath(urlPrefix, path, sep, urlPostfix, compact,
++			path.charAt(path.length() - 1) == sep);
++	}
+ 
+-    /**
+-     * Leave a breadcrumb to allow navigation to one of the parent directories.
+-     * Write a hyperlink to the specified {@code StringBuilder}.
+-     *
+-     * @param urlPrefix what comes before the path in the URL
+-     * @param sep the character that separates path elements
+-     * @param urlPostfix what comes after the path in the URL
+-     * @param compact if {@code true}, remove {@code ..} and empty path
+-     * elements from the path in the link
+-     * @param hyperl a string builder to which the hyperlink is written
+-     * @param path all the elements of the full path
+-     * @param index which path element to create a link to
+-     */
+-    private static void leaveBreadcrumb(
+-            String urlPrefix, char sep, String urlPostfix, boolean compact,
+-            StringBuilder hyperl, String[] path, int index) {
+-        // Only generate the link if the path element is non-empty. Empty
+-        // path elements could occur if the path contains two consecutive
+-        // separator characters, or if the path begins or ends with a path
+-        // separator.
+-        if (path[index].length() > 0) {
+-            hyperl.append(anchorLinkStart).append(urlPrefix);
+-            appendPath(path, index, hyperl, compact);
+-            hyperl.append(urlPostfix).append(closeQuotedTag).
+-                    append(path[index]).append(anchorEnd);
+-        }
+-        // Add a separator between each path element, but not after the last
+-        // one. If the original path ended with a separator, the last element
+-        // of the path array is an empty string, which means that the final
+-        // separator will be printed.
+-        if (index < path.length - 1) {
+-            hyperl.append(sep);
+-        }
+-    }
++	/**
++	 * Create a breadcrumb path to allow navigation to each element of a path.
++	 * Consecutive separators (<var>sep</var>) in the given <var>path</var> are
++	 * always collapsed into a single separator automatically. If
++	 * <var>compact</var> is {@code true} path gets translated into a canonical
++	 * path similar to {@link File#getCanonicalPath()}, however the current
++	 * working directory is assumed to be "/" and no checks are done (e.g.
++	 * neither whether the path [component] exists nor which type it is).
++	 * 
++	 * @param urlPrefix
++	 *            what should be prepend to the constructed URL
++	 * @param path
++	 *            the full path from which the breadcrumb path is built.
++	 * @param sep
++	 *            the character that separates the path components in
++	 *            <var>path</var>
++	 * @param urlPostfix
++	 *            what should be append to the constructed URL
++	 * @param compact
++	 *            if {@code true}, a canonical path gets constructed before
++	 *            processing.
++	 * @param isDir
++	 *            if {@code true} a "/" gets append to the last path component's
++	 *            link and <var>sep</var> to its name
++	 * @return <var>path</var> if it resolves to an empty or "/" or 
++	 * 		{@code null} path, the HTML markup for the breadcrumb path otherwise.
++	 */
++	public static String breadcrumbPath(String urlPrefix, String path,
++		char sep, String urlPostfix, boolean compact, boolean isDir)
++	{
++		if (path == null || path.length() == 0) {
++			return path;
++		}
++		String[] pnames = normalize(path.split(escapeForRegex(sep)), compact);
++		if (pnames.length == 0) {
++			return path;
++		}
++		if (urlPrefix == null) {
++			urlPrefix = "";
++		}
++		if (urlPostfix == null) {
++			urlPostfix = "";
++		}
++		StringBuilder pwd = new StringBuilder(path.length() + pnames.length);
++		StringBuilder markup =
++			new StringBuilder( (pnames.length + 3 >> 1) * path.length()
++				+ pnames.length
++				* (17 + urlPrefix.length() + urlPostfix.length()));
++		int k = path.indexOf(pnames[0]);
++		if (path.lastIndexOf(sep, k) != -1) {
++			pwd.append('/');
++			markup.append(sep);
++		}
++		for (int i = 0; i < pnames.length; i++ ) {
++			pwd.append(URIEncodePath(pnames[i]));
++			if (isDir || i < pnames.length - 1) {
++				pwd.append('/');
++			}
++			markup.append(anchorLinkStart).append(urlPrefix).append(pwd)
++				.append(urlPostfix).append(closeQuotedTag).append(pnames[i])
++				.append(anchorEnd);
++			if (isDir || i < pnames.length - 1) {
++				markup.append(sep);
++			}
++		}
++		return markup.toString();
++	}
+ 
+-    /**
+-     * Append parts of a file path to a {@code StringBuilder}. Separate each
+-     * element in the path with "/". The path elements from index 0 up to
+-     * index {@code lastIndex} (inclusive) are used.
+-     *
+-     * @param path array of path elements
+-     * @param lastIndex the index of the last path element to use
+-     * @param out the {@code StringBuilder} to which the path is appended
+-     * @param compact if {@code true}, remove {@code ..} and empty path
+-     * elements from the path in the link
+-     */
+-    private static void appendPath(
+-            String[] path, int lastIndex, StringBuilder out, boolean compact) {
+-        final ArrayList<String> elements = new ArrayList<String>(lastIndex + 1);
++	/**
++	 * Normalize the given <var>path</var> to its canonical form. I.e. all 
++	 * separators (<var>sep</var>) are replaced with a slash ('/'), all 
++	 * double slashes are replaced by a single slash, all single dot path
++	 * components (".") of the formed path are removed and all double dot path 
++	 * components (".." ) of the formed path are replaced with its parent or 
++	 * '/' if there is no parent.
++	 * <p>
++	 * So the difference to {@link File#getCanonicalPath()} is, that this method
++	 * does not hit the disk (just string manipulation), resolves <var>path</var>
++	 * always against '/' and thus always returns an absolute path, which may 
++	 * actually not exist, and which has a single trailing '/' if the given 
++	 * <var>path</var> ends with the given <var>sep</var>. 
++	 * 
++	 * @param path	path to mangle. If not absolute or {@code null}, the 
++	 * 		current working directory is assumed to be '/'.
++	 * @param sep	file separator to use to crack <var>path</var> into path
++	 * 		components
++	 * @return always a canonical path which starts with a '/'.
++	 */
++	public static String getCanonicalPath(String path, char sep) {
++		if (path == null || path.length() == 0) {
++			return "/";
++		}
++		String[] pnames = normalize(path.split(escapeForRegex(sep)), true);
++		if (pnames.length == 0) {
++			return "/";
++		}
++		StringBuilder buf = new StringBuilder(path.length());
++		buf.append('/');
++		for (int i=0; i < pnames.length; i++) {
++			buf.append(pnames[i]).append('/');
++		}
++		if (path.charAt(path.length()-1) != sep) {
++			// since is not a general purpose method. So we waive to handle 
++			// cases like:
++			// || path.endsWith("/..") || path.endsWith("/.")
++			buf.setLength(buf.length()-1);
++		}
++		return buf.toString();
++	}
+ 
+-        // Copy the relevant part of the path. If compact is false, just
+-        // copy the lastIndex first elements. If compact is true, remove empty
+-        // path elements, and follow .. up to the parent directory. Occurrences
+-        // of .. at the beginning of the path will be removed.
+-        for (int i = 0; i <= lastIndex; i++) {
+-            if (compact) {
+-                if ("..".equals(path[i])) {
+-                    if (!elements.isEmpty()) {
+-                        elements.remove(elements.size() - 1);
+-                    }
+-                } else if (!"".equals(path[i])) {
+-                    elements.add(URIEncodePath(path[i]));
+-                }
+-            } else {
+-                elements.add(URIEncodePath(path[i]));
+-            }
+-        }
++	/**
++	 * Remove all empty and {@code null} string elements from the given
++	 * <var>names</var> and optionally all redundant information like "." and
++	 * "..".
++	 * 
++	 * @param names
++	 *            names to check
++	 * @param canonical
++	 *            if {@code true}, remove redundant elements as well.
++	 * @return a possible empty array of names all with a length &gt; 0.
++	 */
++	private static String[] normalize(String[] names, boolean canonical) {
++		LinkedList<String> res = new LinkedList<String>();
++		if (names == null || names.length == 0) {
++			return new String[0];
++		}
++		for (int i = 0; i < names.length; i++ ) {
++			if (names[i] == null || names[i].length() == 0) {
++				continue;
++			}
++			if (canonical) {
++				if (names[i].equals("..")) {
++					if (res.size() > 0) {
++						res.removeLast();
++					}
++				} else if (names[i].equals(".")) {
++					continue;
++				} else {
++					res.add(names[i]);
++				}
++			} else {
++				res.add(names[i]);
++			}
++		}
++		return res.size() == names.length ? names : res.toArray(new String[res
++			.size()]);
++	}
+ 
+-        // Print the path with / between each element. No separator before
+-        // the first element or after the last element.
+-        for (int i = 0; i < elements.size(); i++) {
+-            out.append(elements.get(i));
+-            if (i < elements.size() - 1) {
+-                out.append("/");
+-            }
+-        }
+-    }
++	/**
++	 * Generate a regex that matches the specified character. Escape it in case
++	 * it is a character that has a special meaning in a regex.
++	 * 
++	 * @param c
++	 *            the character that the regex should match
++	 * @return a six-character string on the form <tt>&#92;u</tt><i>hhhh</i>
++	 */
++	private static String escapeForRegex(char c) {
++		StringBuilder sb = new StringBuilder(6);
++		sb.append("\\u");
++		String hex = Integer.toHexString(c);
++		for (int i = 0; i < 4 - hex.length(); i++ ) {
++			sb.append('0');
++		}
++		sb.append(hex);
++		return sb.toString();
++	}
+ 
+-    /**
+-     * Generate a regex that matches the specified character. Escape it in
+-     * case it is a character that has a special meaning in a regex.
+-     *
+-     * @param c the character that the regex should match
+-     * @return a six-character string on the form <tt>&#92;u</tt><i>hhhh</i>
+-     */
+-    private static String escapeForRegex(char c) {
+-        StringBuilder sb = new StringBuilder(6);
+-        sb.append("\\u");
+-        String hex = Integer.toHexString((int) c);
+-        for (int i = 0; i < 4 - hex.length(); i++) {
+-            sb.append('0');
+-        }
+-        sb.append(hex);
+-        return sb.toString();
+-    }
++	static NumberFormat FORMATTER = new DecimalFormat("#,###,###,###.#");
+ 
+-    public static String redableSize(long num) {
+-        float l = (float) num;
+-        NumberFormat formatter = new DecimalFormat("#,###,###,###.#");
+-        if (l < 1024) {
+-            return formatter.format(l);
+-        } else if (l < 1048576) {
+-            return (formatter.format(l / 1024) + "K");
+-        } else {
+-            return ("<b>" + formatter.format(l / 1048576) + "M</b>");
+-        }
+-    }
++	/**
++	 * Convert the given size into a human readable string.
++	 * @param num	size to convert.
++	 * @return a readable string
++	 */
++	public static String readableSize(long num) {
++		float l = num;
++		NumberFormat formatter = (NumberFormat) FORMATTER.clone();
++		if (l < 1024) {
++			return formatter.format(l) + ' '; // for none-dirs append 'B'? ...
++		} else if (l < 1048576) {
++			return (formatter.format(l / 1024) + " KiB");
++		} else {
++			return ("<b>" + formatter.format(l / 1048576) + " MiB</b>");
++		}
++	}
+ 
+-    /**
+-     * Converts different html special characters into their encodings used in html
+-     * currently used only for tooltips of annotation revision number view
+-     * @param s input text
+-     * @return encoded text for use in <a title=""> tag
+-     */
+-    public static String encode(String s) {
+-        StringBuffer sb = new StringBuffer();
+-        for (int i = 0; i < s.length(); i++) {
+-            char c = s.charAt(i);
++	/**
++	 * Converts different html special characters into their encodings used in
++	 * html. Currently used only for tooltips of annotation revision number view
++	 * 
++	 * @param s
++	 *            input text
++	 * @return encoded text for use in <a title=""> tag
++	 */
++	public static String encode(String s) {
++		StringBuffer sb = new StringBuffer();
++		for (int i = 0; i < s.length(); i++ ) {
++			char c = s.charAt(i);
++			switch (c) {
++				case '"':
++					sb.append('\'');
++					break; // \\\"
++				case '&':
++					sb.append("&amp;");
++					break;
++				case '>':
++					sb.append("&gt;");
++					break;
++				case '<':
++					sb.append("&lt;");
++					break;
++				case ' ':
++					sb.append("&nbsp;");
++					break;
++				case '\t':
++					sb.append("&nbsp;&nbsp;&nbsp;&nbsp;");
++					break;
++				case '\n':
++					sb.append("&lt;br/&gt;");
++					break;
++				case '\r':
++					break;
++				default:
++					sb.append(c);
++					break;
++			}
++		}
++		return sb.toString();
++	}
+ 
+-            switch (c) {
+-                case '"':
+-                    sb.append('\'');
+-                    break; // \\\"
+-                case '&':
+-                    sb.append("&amp;");
+-                    break;
+-                case '>':
+-                    sb.append("&gt;");
+-                    break;
+-                case '<':
+-                    sb.append("&lt;");
+-                    break;
+-                case ' ':
+-                    sb.append("&nbsp;");
+-                    break;
+-                case '\t':
+-                    sb.append("&nbsp;&nbsp;&nbsp;&nbsp;");
+-                    break;
+-                case '\n':
+-                    sb.append("<br/>");
+-                    break;
+-                case '\r':
+-                    break;
+-                default:
+-                    sb.append(c);
+-                    break;
+-            }
+-        }
++	/**
++	 * Write out line information wrt. to the given annotation in the format: 
++	 * {@code Linenumber Blame Author} incl. appropriate links.
++	 * 
++	 * @param num	linenumber to print
++	 * @param out	print destination
++	 * @param annotation	annotation to use. If {@code null} only the 
++	 * 	linenumber gets printed.
++	 * @param userPageLink see {@link RuntimeEnvironment#getUserPage()}
++	 * @param userPageSuffix see {@link RuntimeEnvironment#getUserPageSuffix()}
++	 * @throws IOException depends on the destination (<var>out</var>).
++	 */
++	public static void readableLine(int num, Writer out, Annotation annotation,
++		String userPageLink, String userPageSuffix)
++	throws IOException
++	{
++		// this method should go to JFlexXref
++		String snum = String.valueOf(num);
++		if (num > 1) {
++			out.write("\n");
++		}
++		out.write(anchorClassStart);
++		out.write( (num % 10 == 0 ? "hl" : "l"));
++		out.write("\" name=\"");
++		out.write(snum);
++		out.write("\" href=\"#");
++		out.write(snum);
++		out.write(closeQuotedTag);
++		out.write(snum);
++		out.write(anchorEnd);
++		if (annotation != null) {
++			String r = annotation.getRevision(num);
++			boolean enabled = annotation.isEnabled(num);
++			out.write("<span class=\"blame\">");
++			if (enabled) {
++				out.write(anchorClassStart);
++				out.write("r\" href=\"" );
++				out.write(URIEncode(annotation.getFilename()));
++				out.write("?a=true&amp;r=");
++				out.write(URIEncode(r));
++				String msg = annotation.getDesc(r);
++				if (msg != null) {
++					out.write("\" title=\"");
++					out.write(msg);
++				}
++				out.write(closeQuotedTag);
++			}
++			StringBuilder buf = new StringBuilder();
++			htmlize(r, buf);
++			out.write(buf.toString());
++			buf.setLength(0);
++			if (enabled) {
++				out.write(anchorEnd);
++			}
++			String a = annotation.getAuthor(num);
++			if (userPageLink != null) {
++				out.write(anchorClassStart);
++				out.write("a\" href=\"");
++				out.write(userPageLink);
++				out.write(URIEncode(a));
++				if (userPageSuffix != null) {
++					out.write(userPageSuffix);
++				}
++				out.write(closeQuotedTag);
++				htmlize(a, buf);
++				out.write(buf.toString());
++				buf.setLength(0);
++				out.write(anchorEnd);
++			} else {
++				out.write("<span class=\"a\">");
++				htmlize(a, buf);
++				out.write(buf.toString());
++				out.write("</span>");
++				buf.setLength(0);
++			}
++			out.write("</span>");
++		}
++	}
+ 
+-        return sb.toString();
+-    }
++	/**
++	 * Generate a string from the given path and date in a way that allows
++	 * stable lexicographic sorting (i.e. gives always the same results) as a 
++	 * walk of the file hierarchy. Thus null character (\u0000) is used both 
++	 * to separate directory components and to separate the path from the date.
++	 * @param path path to mangle.
++	 * @param date date string to use.
++	 * @return the mangled path.
++	 */
++	public static String path2uid(String path, String date) {
++		return path.replace('/', '\u0000') + "\u0000" + date;
++	}
+ 
+-    public static void readableLine(int num, Writer out, Annotation annotation)
+-            throws IOException {
+-        String snum = String.valueOf(num);
+-        if (num > 1) {
+-            out.write("\n");
+-        }
+-        out.write(anchorClassStart);
+-        out.write((num % 10 == 0 ? "hl" : "l"));
+-        out.write("\" name=\"");
+-        out.write(snum);
+-        out.write("\" href=\"#");
+-        out.write(snum);
+-        out.write(closeQuotedTag);
+-        out.write((num > 999 ? "&nbsp;&nbsp;&nbsp;" : (num > 99 ? "&nbsp;&nbsp;&nbsp;&nbsp;" : (num > 9 ? "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" : "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"))));
+-        out.write(snum);
+-        out.write("&nbsp;");
+-        out.write(anchorEnd);
+-        if (annotation != null) {
+-            String r = annotation.getRevision(num);
+-            boolean enabled = annotation.isEnabled(num);
++	/**
++	 * The reverse operation for {@link #path2uid(String, String)} - re-creates 
++	 * the unmangled path from the given uid.
++	 * @param uid	uid to unmangle.
++	 * @return the original path.
++	 */
++	public static String uid2url(String uid) {
++		String url = uid.replace('\u0000', '/');
++		return url.substring(0, url.lastIndexOf('/')); // remove date from end
++	}
+ 
+-            out.write("<span class=\"blame\"><span class=\"l\"> ");
+-            for (int i = r.length(); i < annotation.getWidestRevision(); i++) {
+-                out.write(" ");
+-            }
++	/**
++	 * wrapper arround UTF-8 URL encoding of a string
++	 * 
++	 * @param q		query to be encoded. If {@code null}, an empty string will
++	 * 	be used instead.
++	 * @return null if fail, otherwise the encoded string
++	 * @see URLEncoder#encode(String, String)
++	 */
++	public static String URIEncode(String q) {
++		try {
++			return q == null ? "" : URLEncoder.encode(q, "UTF-8");
++		} catch (UnsupportedEncodingException e) {
++			// Should not happen. UTF-8 must be supported by JVMs.
++		}
++		return null;
++	}
+ 
+-            if (enabled) {
+-                out.write(anchorLinkStart);
+-                out.write(URIEncode(annotation.getFilename()));
+-                out.write("?a=true&amp;r=");
+-                out.write(URIEncode(r));
+-                String msg=annotation.getDesc(r);
+-                if (msg!=null) {
+-                 out.write("\" name=\"r\" title=\""+msg+"\"");
+-                }
+-                out.write(closeQuotedTag);
+-            }
++	/**
++	 * Append '&amp;name=value" to the given buffer. If the given <var>value</var>
++	 * is {@code null}, this method does nothing.
++	 * 
++	 * @param buf	where to append the query string
++	 * @param key	the name of the parameter to add. Append as is!
++	 * @param value	the value for the given parameter. Gets automatically UTF-8
++	 * 	URL encoded.
++	 * @throws NullPointerException if the given buffer is {@code null}.
++	 * @see #URIEncode(String)
++	 */
++	public static final void appendQuery(StringBuilder buf, String key, 
++		String value) 
++	{
++		if (value != null) {
++			buf.append("&amp;").append(key).append('=').append(URIEncode(value));
++		}
++	}
++	
++	/**
++	 * URI encode the given path.
++	 * @param path	path to encode.
++	 * @return the encoded path.
++	 * @see URI#getRawPath()
++	 * @throws NullPointerException if a parameter is {@code null}
++	 */
++	public static String URIEncodePath(String path) {
++		try {
++			URI uri = new URI(null, null, path, null);
++			return uri.getRawPath();
++		} catch (URISyntaxException ex) {
++			OpenGrokLogger.getLogger().log(Level.WARNING,
++				"Could not encode path " + path, ex);
++		}
++		return "";
++	}
+ 
+-            htmlize(r, out);
++	/**
++	 * Replace all quote characters (ASCI 0x22) with the corresponding html
++	 * entity (&amp;quot;).  
++	 * @param q	string to escape.
++	 * @return an empty string if a parameter is {@code null}, the mangled 
++	 * 	string otherwise.
++	 */
++	public static String formQuoteEscape(String q) {
++		if (q == null || q.isEmpty()) {
++			return "";
++		}
++		StringBuilder sb = new StringBuilder();
++		char c;
++		for (int i = 0; i < q.length(); i++ ) {
++			c = q.charAt(i);
++			if (c == '"') {
++				sb.append("&quot;");
++			} else {
++				sb.append(c);
++			}
++		}
++		return sb.toString();
++	}
+ 
+-            if (enabled) {
+-                out.write(anchorEnd);
+-            }
++	private static final String SPAN_D = "<span class=\"d\">";
++	private static final String SPAN_A = "<span class=\"a\">";
++	private static final String SPAN_E = "</span>";
++	private static final int SPAN_LEN = SPAN_D.length() + SPAN_E.length();
++	
++	/**
++	 * Tag changes in the given <var>line1</var> and <var>line2</var>
++	 * for highlighting. Removed parts are tagged with CSS class {@code d},
++	 * new parts are tagged with CSS class {@code a} using a {@code span}
++	 * element.
++	 * 
++	 * @param line1	line of the original file
++	 * @param line2	line of the changed/new file
++	 * @return the tagged lines (field[0] ~= line1, field[1] ~= line2).
++	 * @throws NullPointerException if one of the given parameters is {@code null}. 
++	 */
++	public static String[] diffline(StringBuilder line1, StringBuilder line2) {
++		int m = line1.length();
++		int n = line2.length();
++		if (n == 0 || m == 0) {
++			return new String[] { line1.toString(), line2.toString() };
++		}
+ 
+-            out.write(" </span>");
++		int s = 0;
++		char[] csl1 = new char[m + SPAN_LEN];
++		line1.getChars(0, m--, csl1, 0);
++		char[] csl2 = new char[n + SPAN_LEN];
++		line2.getChars(0, n--, csl2, 0);
++		while (s <= m && s <= n && csl1[s] == csl2[s]) {
++			s++ ;
++		}
++		while (s <= m && s <= n && csl1[m] == csl2[n]) {
++			m-- ;
++			n-- ;
++		}
+ 
+-            String a = annotation.getAuthor(num);
+-            out.write("<span class=\"l\"> ");
+-            for (int i = a.length(); i < annotation.getWidestAuthor(); i++) {
+-                out.write(" ");
+-            }
+-            String link = RuntimeEnvironment.getInstance().getUserPage();
+-            String suffix = RuntimeEnvironment.getInstance().getUserPageSuffix();
+-            if (link != null && link.length() > 0) {
+-                out.write(anchorLinkStart);
+-                out.write(link);
+-                out.write(URIEncode(a));
+-                if (suffix != null && 0 < suffix.length()) {
+-                    out.write(suffix);
+-                }
+-                out.write(closeQuotedTag);
+-                htmlize(a, out);
+-                out.write(anchorEnd);
+-            } else {
+-                htmlize(a, out);
+-            }
+-            out.write(" </span></span>");
+-        }
+-    }
++		String[] ret = new String[2];
++		// deleted
++		if (s <= m) {
++			m++;
++			System.arraycopy(csl1, m, csl1, m + SPAN_LEN, line1.length() - m);
++			System.arraycopy(csl1, s, csl1, s + SPAN_D.length(), m - s);
++			SPAN_E.getChars(0, SPAN_E.length(), csl1, m + SPAN_D.length());
++			SPAN_D.getChars(0, SPAN_D.length(), csl1, s);
++			ret[0] = new String(csl1);
++		} else {
++			ret[0] = line1.toString();
++		}
++		// added
++		if (s <= n) {
++			n++;
++			System.arraycopy(csl2, n, csl2, n + SPAN_LEN, line2.length() - n);
++			System.arraycopy(csl2, s, csl2, s + SPAN_A.length(), n - s);
++			SPAN_E.getChars(0, SPAN_E.length(), csl2, n + SPAN_A.length());
++			SPAN_A.getChars(0, SPAN_A.length(), csl2, s);
++			ret[1] = new String(csl2);
++		} else {
++			ret[1] = line2.toString();
++		}
++		return ret;
++	}
+ 
+-    /**
+-     * Append path and date into a string in such a way that lexicographic
+-     * sorting gives the same results as a walk of the file hierarchy.  Thus
+-     * null (\u0000) is used both to separate directory components and to
+-     * separate the path from the date.
+-     */
+-    public static String uid(String path, String date) {
+-        return path.replace('/', '\u0000') + "\u0000" + date;
+-    }
++	/**
++	 * Dump the configuration as an HTML table.
++	 * 
++	 * @param out
++	 *            destination for the HTML output
++	 * @throws IOException
++	 *             if an error happens while writing to {@code out}
++	 * @throws HistoryException
++	 *             if the history guru cannot be accesses
++	 */
++	@SuppressWarnings("boxing")
++	public static void dumpConfiguration(Appendable out) throws IOException,
++		HistoryException
++	{
++		out.append("<table border=\"1\" width=\"100%\">");
++		out.append("<tr><th>Variable</th><th>Value</th></tr>");
++		RuntimeEnvironment env = RuntimeEnvironment.getInstance();
++		printTableRow(out, "Source root", env.getSourceRootPath());
++		printTableRow(out, "Data root", env.getDataRootPath());
++		printTableRow(out, "CTags", env.getCtags());
++		printTableRow(out, "Bug page", env.getBugPage());
++		printTableRow(out, "Bug pattern", env.getBugPattern());
++		printTableRow(out, "User page", env.getUserPage());
++		printTableRow(out, "Review page", env.getReviewPage());
++		printTableRow(out, "Review pattern", env.getReviewPattern());
++		printTableRow(out, "Using projects", env.hasProjects());
++		out.append("<tr><td>Ignored files</td><td>");
++		printUnorderedList(out, env.getIgnoredNames().getItems());
++		out.append("</td></tr>");
++		printTableRow(out, "Index word limit", env.getIndexWordLimit());
++		printTableRow(out, "Allow leading wildcard in search",
++			env.isAllowLeadingWildcard());
++		printTableRow(out, "History cache", HistoryGuru.getInstance()
++			.getCacheInfo());
++		out.append("</table>");
++	}
+ 
+-    public static String uid2url(String uid) {
+-        String url = uid.replace('\u0000', '/'); // replace nulls with slashes
+-        return url.substring(0, url.lastIndexOf('/')); // remove date from end
+-    }
++	/**
++	 * Just read the given source and dump as is to the given destionation.
++	 * Does nothing, if one or more of the parameters is {@code null}. 
++	 * @param out	write destination
++	 * @param in	source to read
++	 * @throws IOException as defined by the given reader/writer
++	 * @throws NullPointerException if a parameter is {@code null}.
++	 */
++	public static final void dump(Writer out, Reader in) throws IOException {
++		if (in == null || out == null) {
++			return;
++		}
++		char[] buf = new char[8192];
++		int len = 0;
++		while ((len = in.read(buf)) >= 0) {
++			out.write(buf, 0, len);
++		}
++	}
++	
++	/**
++	 * Silently dump a file to the given destionation. All {@link IOException}s 
++	 * gets caught and logged, but not re-thrown.
++	 * 
++	 * @param out	dump destination
++	 * @param dir	directory, which should contains the file.
++	 * @param filename	the basename of the file to dump.
++	 * @param compressed if {@code true} the denoted file is assumed to be
++	 * 	gzipped. 
++	 * @return {@code true} on success (everything read and written).
++	 * @throws NullPointerException if a parameter is {@code null}.
++	 */
++	public static boolean dump(Writer out, File dir, String filename, 
++		boolean compressed) 
++	{
++		return dump(out, new File(dir, filename), compressed);
++	}
+ 
+-    /**
+-     * wrapper arround UTF-8 URL encoding of a string
+-     * @param q query to be encoded
+-     * @return null if fail, otherwise the encoded string
+-     */
+-    public static String URIEncode(String q) {
+-        try {           
+-            return URLEncoder.encode(q, "UTF-8");
+-        } catch (UnsupportedEncodingException e) {
+-            // Should not happen. UTF-8 must be supported by JVMs.
+-            return null;
+-        }
+-    }
++	/**
++	 * Silently dump a file to the given destionation. All {@link IOException}s 
++	 * gets caught and logged, but not re-thrown.
++	 * 
++	 * @param out	dump destination
++	 * @param file	file to dump.
++	 * @param compressed if {@code true} the denoted file is assumed to be
++	 * 	gzipped. 
++	 * @return {@code true} on success (everything read and written).
++	 * @throws NullPointerException if a parameter is {@code null}.
++	 */
++	public static boolean dump(Writer out, File file, boolean compressed) {
++		if (!file.exists()) {
++			return false;
++		}
++		FileInputStream fis = null;
++		GZIPInputStream gis = null;
++		Reader in = null;
++		try {
++			if (compressed) {
++				fis = new FileInputStream(file);
++				gis = new GZIPInputStream(fis);
++				in = new InputStreamReader(gis);
++			} else {
++				in = new FileReader(file);
++			}
++			dump(out, in);
++			return true;
++		} catch(IOException e) {
++			OpenGrokLogger.getLogger().log(Level.WARNING,
++				"An error occured while piping file " + file + ": ", e);
++		} finally {
++			if (in != null) {
++				try { in.close(); gis = null; fis = null; } 
++				catch (Exception e) { /**/ }
++			}
++			if (gis != null) {
++				try { gis.close(); fis = null; }
++				catch (Exception e) { /**/ }
++			}
++			if (fis != null) {
++				try { fis.close();}
++				catch (Exception e) { /**/ }
++			}
++		}
++		return false;
++	}
+ 
+-    public static String URIEncodePath(String path) {
+-        try {
+-           URI uri = new URI(null, null, path, null);
+-           return uri.getRawPath();
+-        } catch (URISyntaxException ex) {
+-            OpenGrokLogger.getLogger().log(Level.WARNING, "Could not encode path " + path, ex);
+-            return "";
+-        }
+-    }
++	/**
++	 * Print a row in an HTML table.
++	 * 
++	 * @param out
++	 *            destination for the HTML output
++	 * @param cells
++	 *            the values to print in the cells of the row
++	 * @throws IOException
++	 *             if an error happens while writing to {@code out}
++	 */
++	private static void printTableRow(Appendable out, Object... cells)
++		throws IOException
++	{
++		out.append("<tr>");
++		StringBuilder buf = new StringBuilder(256);
++		for (Object cell : cells) {
++			out.append("<td>");
++			String str = (cell == null) ? "null" : cell.toString();
++			htmlize(str, buf);
++			out.append(str);
++			buf.setLength(0);
++			out.append("</td>");
++		}
++		out.append("</tr>");
++	}
+ 
+-    public static String formQuoteEscape(String q) {
+-        if (q == null) {
+-            return "";
+-        }
+-        StringBuilder sb = new StringBuilder();
+-        char c;
+-        for (int i = 0; i < q.length(); i++) {
+-            c = q.charAt(i);
+-            if (c == '"') {
+-                sb.append("&quot;");
+-            } else {
+-                sb.append(c);
+-            }
+-        }
+-        return sb.toString();
+-    }
++	/**
++	 * Print an unordered list (HTML).
++	 * 
++	 * @param out
++	 *            destination for the HTML output
++	 * @param items
++	 *            the list items
++	 * @throws IOException
++	 *             if an error happens while writing to {@code out}
++	 */
++	private static void printUnorderedList(Appendable out,
++		Collection<String> items) throws IOException
++	{
++		out.append("<ul>");
++		StringBuilder buf = new StringBuilder(256);
++		for (String item : items) {
++			out.append("<li>");
++			htmlize(item, buf);
++			out.append(buf);
++			buf.setLength(0);
++			out.append("</li>");
++		}
++		out.append("</ul>");
++	}
+ 
+-    /**
+-     * Highlight the diffs between line1 and line2
+-     * @param line1
+-     * @param line2
+-     * @return new strings with html tags highlighting the diffs
+-     */
+-    public static String[] diffline(String line1, String line2) {
+-    String[] ret = new String[2];
+-    int s=0;
+-    int m=line1.length()-1;
+-    int n=line2.length()-1;
+-    while (s <= m && s <= n && (line1.charAt(s) == line2.charAt(s)))
+-       { s++; }
+-
+-    while (s <= m && s <= n && (line1.charAt(m) == line2.charAt(n)))
+-        { m--;n--; }
+-
+-    StringBuilder sb = new StringBuilder(line1);
+-    String spand="<span class=\"d\">";
+-    if(s <= m) {
+-        sb.insert(s, spand);
+-        sb.insert(spand.length()+m+1, "</span>");
+-        ret[0] = sb.toString();
+-    } else {
+-        ret[0] = line1;
+-    }
+-    String spana="<span class=\"a\">";
+-    if(s <= n) {
+-        sb = new StringBuilder(line2);
+-        sb.insert(s, spana);
+-        sb.insert(spana.length()+n+1, "</span>");
+-        ret[1] = sb.toString();
+-    } else {
+-        ret[1] = line2;
+-    }
+-    return ret;
+-
+-    }
+-
+-    /**
+-     * Dump the configuration as an HTML table.
+-     *
+-     * @param out destination for the HTML output
+-     * @throws IOException if an error happens while writing to {@code out}
+-     * @throws HistoryException if the history guru cannot be accesses
+-     */
+-    public static void dumpConfiguration(Appendable out)
+-            throws IOException, HistoryException {
+-        out.append("<table border=\"1\" width=\"100%\">");
+-        out.append("<tr><th>Variable</th><th>Value</th></tr>");
+-
+-        RuntimeEnvironment env = RuntimeEnvironment.getInstance();
+-
+-        printTableRow(out, "Source root", env.getSourceRootPath());
+-        printTableRow(out, "Data root", env.getDataRootPath());
+-        printTableRow(out, "CTags", env.getCtags());
+-        printTableRow(out, "Bug page", env.getBugPage());
+-        printTableRow(out, "Bug pattern", env.getBugPattern());
+-        printTableRow(out, "User page", env.getUserPage());
+-        printTableRow(out, "Review page", env.getReviewPage());
+-        printTableRow(out, "Review pattern", env.getReviewPattern());
+-        printTableRow(out, "Using projects", env.hasProjects());
+-
+-        out.append("<tr><td>Ignored files</td><td>");
+-        printUnorderedList(out, env.getIgnoredNames().getItems());
+-        out.append("</td></tr>");
+-
+-        printTableRow(out, "Index word limit", env.getIndexWordLimit());
+-        printTableRow(out, "Allow leading wildcard in search",
+-                      env.isAllowLeadingWildcard());
+-        printTableRow(out, "History cache",
+-                      HistoryGuru.getInstance().getCacheInfo());
+-
+-        out.append("</table>");
+-    }
+-
+-    /**
+-     * Print a row in an HTML table.
+-     *
+-     * @param out destination for the HTML output
+-     * @param cells the values to print in the cells of the row
+-     * @throws IOException if an error happens while writing to {@code out}
+-     */
+-    private static void printTableRow(Appendable out, Object... cells)
+-            throws IOException {
+-        out.append("<tr>");
+-        for (Object cell : cells) {
+-            out.append("<td>");
+-            String str = (cell == null) ? "null" : cell.toString();
+-            htmlize(str, out);
+-            out.append("</td>");
+-        }
+-        out.append("</tr>");
+-    }
+-
+-    /**
+-     * Print an unordered list (HTML).
+-     *
+-     * @param out destination for the HTML output
+-     * @param items the list items
+-     * @throws IOException if an error happens while writing to {@code out}
+-     */
+-    private static void printUnorderedList(
+-            Appendable out, Collection<String> items) throws IOException {
+-        out.append("<ul>");
+-        for (String item : items) {
+-            out.append("<li>");
+-            htmlize(item, out);
+-            out.append("</li>");
+-        }
+-        out.append("</ul>");
+-    }
+-
+-    /**
+-     * Create a string literal for use in JavaScript functions.
+-     * @param str the string to be represented by the literal
+-     * @return a JavaScript string literal
+-     */
+-    public static String jsStringLiteral(String str) {
+-        StringBuilder sb = new StringBuilder();
+-        sb.append('"');
+-        for (int i = 0; i < str.length(); i++) {
+-            char c = str.charAt(i);
+-            switch (c) {
+-                case '"':
+-                    sb.append("\\\"");
+-                    break;
+-                case '\\':
+-                    sb.append("\\\\");
+-                    break;
+-                case '\n':
+-                    sb.append("\\n");
+-                    break;
+-                case '\r':
+-                    sb.append("\\r");
+-                    break;
+-                default:
+-                    sb.append(c);
+-            }
+-        }
+-        sb.append('"');
+-        return sb.toString();
+-    }
++	/**
++	 * Create a string literal for use in JavaScript functions.
++	 * 
++	 * @param str
++	 *            the string to be represented by the literal
++	 * @return a JavaScript string literal
++	 */
++	public static String jsStringLiteral(String str) {
++		StringBuilder sb = new StringBuilder();
++		sb.append('"');
++		for (int i = 0; i < str.length(); i++ ) {
++			char c = str.charAt(i);
++			switch (c) {
++				case '"':
++					sb.append("\\\"");
++					break;
++				case '\\':
++					sb.append("\\\\");
++					break;
++				case '\n':
++					sb.append("\\n");
++					break;
++				case '\r':
++					sb.append("\\r");
++					break;
++				default:
++					sb.append(c);
++			}
++		}
++		sb.append('"');
++		return sb.toString();
++	}
+ }
+diff -r 09f0768a7ec1 test/org/opensolaris/opengrok/analysis/JFlexXrefTest.java
+--- a/test/org/opensolaris/opengrok/analysis/JFlexXrefTest.java	Fri May 06 21:41:59 2011 +0200
++++ b/test/org/opensolaris/opengrok/analysis/JFlexXrefTest.java	Sat May 07 06:37:00 2011 +0200
+@@ -63,8 +63,7 @@
+      * returned by an xref.
+      */
+     private static final String FIRST_LINE_PREAMBLE =
+-                "<a class=\"l\" name=\"1\" href=\"#1\">" +
+-                "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1&nbsp;</a>";
++                "<a class=\"l\" name=\"1\" href=\"#1\">1</a>";
+ 
+     @BeforeClass
+     public static void setUpClass() throws Exception {
+@@ -264,9 +263,9 @@
+     private void testCXrefInclude(Class<? extends JFlexXref> klass) throws Exception {
+         String[][] testData = {
+             { "#include <abc.h>", "#<b>include</b> &lt;<a href=\"/source/s?path=abc.h\">abc.h</a>&gt;" },
+-            { "#include <abc/def.h>", "#<b>include</b> &lt;<a href=\"/source/s?path=abc\">abc</a>/<a href=\"/source/s?path=abc/def.h\">def.h</a>&gt;" },
++            { "#include <abc/def.h>", "#<b>include</b> &lt;<a href=\"/source/s?path=abc/\">abc</a>/<a href=\"/source/s?path=abc/def.h\">def.h</a>&gt;" },
+             { "#include \"abc.h\"", "#<b>include</b> <span class=\"s\">\"<a href=\"/source/s?path=abc.h\">abc.h</a>\"</span>" },
+-            { "#include \"abc/def.h\"", "#<b>include</b> <span class=\"s\">\"<a href=\"/source/s?path=abc\">abc</a>/<a href=\"/source/s?path=abc/def.h\">def.h</a>\"</span>" },
++            { "#include \"abc/def.h\"", "#<b>include</b> <span class=\"s\">\"<a href=\"/source/s?path=abc/\">abc</a>/<a href=\"/source/s?path=abc/def.h\">def.h</a>\"</span>" },
+             { "#include <vector>", "#<b>include</b> &lt;<a href=\"/source/s?path=vector\">vector</a>&gt;" },
+         };
+ 
+diff -r 09f0768a7ec1 test/org/opensolaris/opengrok/configuration/RuntimeEnvironmentTest.java
+--- a/test/org/opensolaris/opengrok/configuration/RuntimeEnvironmentTest.java	Fri May 06 21:41:59 2011 +0200
++++ b/test/org/opensolaris/opengrok/configuration/RuntimeEnvironmentTest.java	Sat May 07 06:37:00 2011 +0200
+@@ -423,8 +423,7 @@
+             address.replace("@", " (at) ") : address;
+ 
+         String expectedOutput =
+-                "<a class=\"l\" name=\"1\" href=\"#1\">"
+-                + "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1&nbsp;</a>"
++                "<a class=\"l\" name=\"1\" href=\"#1\">1</a>"
+                 + expectedAddress;
+ 
+         assertEquals(expectedOutput, out.toString());
+diff -r 09f0768a7ec1 test/org/opensolaris/opengrok/search/context/ContextTest.java
+--- a/test/org/opensolaris/opengrok/search/context/ContextTest.java	Fri May 06 21:41:59 2011 +0200
++++ b/test/org/opensolaris/opengrok/search/context/ContextTest.java	Sat May 07 06:37:00 2011 +0200
+@@ -186,7 +186,7 @@
+         expectedOutput = hitList ?
+             "text" :
+             "<a class=\"s\" href=\"#1\"><span class=\"l\">1</span> " +
+-                     "text</a> <i> type </i><br/>";
++                     "text</a> <i>type</i><br/>";
+         actualOutput = hitList ? hits.get(0).getLine() : out.toString();
+         assertEquals(expectedOutput, actualOutput);
+ 
+@@ -267,7 +267,7 @@
+                 c.getContext(in, out, "", "", "", null, true, null);
+         assertTrue("No match found", match);
+         String s = out.toString();
+-        assertTrue("No [all...] link", s.contains(">all</a>...]"));
++        assertTrue("No [all...] link", s.contains(">[all...]</a>"));
+     }
+ 
+     /**
+diff -r 09f0768a7ec1 test/org/opensolaris/opengrok/web/DirectoryListingTest.java
+--- a/test/org/opensolaris/opengrok/web/DirectoryListingTest.java	Fri May 06 21:41:59 2011 +0200
++++ b/test/org/opensolaris/opengrok/web/DirectoryListingTest.java	Sat May 07 06:37:00 2011 +0200
+@@ -93,9 +93,8 @@
+ 
+                 // @todo verify all attributes!
+                 return name.compareTo(fe.name);
+-            } else {
+-                return -1;
+             }
++            return -1;
+         }
+     }
+ 
+@@ -152,10 +151,7 @@
+      * @throws java.lang.Exception
+      */
+     private String getFilename(Node item) throws Exception {
+-        Node node = item.getFirstChild(); // tt
+-        assertNotNull(node);
+-        assertEquals(Node.ELEMENT_NODE, node.getNodeType());
+-        node = node.getFirstChild(); // a
++        Node node = item.getFirstChild(); // a
+         assertNotNull(node);
+         assertEquals(Node.ELEMENT_NODE, node.getNodeType());
+         node = node.getFirstChild();
+@@ -177,11 +173,9 @@
+         assertEquals(Node.TEXT_NODE, val.getNodeType());
+ 
+         String value = val.getNodeValue();
+-        if (value.equalsIgnoreCase("Today")) {
+-            return Long.MAX_VALUE;
+-        } else {
+-            return dateFormatter.parse(value).getTime();
+-        }
++        return value.equalsIgnoreCase("Today")
++        	? Long.MAX_VALUE
++        	: dateFormatter.parse(value).getTime();
+     }
+ 
+     /**
+@@ -191,12 +185,10 @@
+      * @throws java.lang.Exception if an error occurs
+      */
+     private int getSize(Node item) throws Exception {
+-        Node child = item.getFirstChild();
+-        assertNotNull(child);
+-        Node val = child.getFirstChild();
++        Node val = item.getFirstChild();
+         assertNotNull(val);
+         assertEquals(Node.TEXT_NODE, val.getNodeType());
+-        return Integer.parseInt(val.getNodeValue());
++        return Integer.parseInt(val.getNodeValue().trim());
+     }
+ 
+     /**
+@@ -208,14 +200,15 @@
+         FileEntry entry = new FileEntry();
+         NodeList nl = element.getElementsByTagName("td");
+         int len = nl.getLength();
+-        if (len < 3) {
++        if (len < 4) {
+             return;
+         }
+-        assertEquals(3, len);
++        assertEquals(4, len);
+ 
+-        entry.name = getFilename(nl.item(0));
+-        entry.lastModified = getLastModified(nl.item(1));
+-        entry.size = getSize(nl.item(2));
++        // item(0) is a decoration placeholder, i.e. no content
++        entry.name = getFilename(nl.item(1));
++        entry.lastModified = getLastModified(nl.item(2));
++        entry.size = getSize(nl.item(3));
+ 
+         // Try to look it up in the list of files
+         for (int ii = 0; ii < entries.length; ++ii) {
+@@ -236,10 +229,10 @@
+     @Test
+     public void directoryListing() throws Exception {
+         StringWriter out = new StringWriter();
+-        out.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
++        out.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<start>\n");
+ 
+         DirectoryListing instance = new DirectoryListing();
+-        instance.listTo(directory, out);
++        instance.listTo(directory, out, directory.getPath(), directory.list());
+ 
+         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+         assertNotNull("DocumentBuilderFactory is null", factory);
+@@ -247,14 +240,16 @@
+         DocumentBuilder builder = factory.newDocumentBuilder();
+         assertNotNull("DocumentBuilder is null", out);
+ 
++        out.append("</start>\n");
+         String str = out.toString();
++        System.out.println(str);
+         Document document = builder.parse(new ByteArrayInputStream(str.getBytes()));
+ 
+         NodeList nl = document.getElementsByTagName("tr");
+         int len = nl.getLength();
+-        assertEquals(entries.length + 2, len);
+-        // Skip the .. entry and the header
+-        for (int i = 2; i < len; ++i) {
++        assertEquals(entries.length + 1, len);
++        // Skip the the header
++        for (int i = 1; i < len; ++i) {
+             validateEntry((Element) nl.item(i));
+         }
+     }
+diff -r 09f0768a7ec1 test/org/opensolaris/opengrok/web/UtilTest.java
+--- a/test/org/opensolaris/opengrok/web/UtilTest.java	Fri May 06 21:41:59 2011 +0200
++++ b/test/org/opensolaris/opengrok/web/UtilTest.java	Sat May 07 06:37:00 2011 +0200
+@@ -74,77 +74,78 @@
+     public void breadcrumbPath() {
+         assertEquals(null, Util.breadcrumbPath("/root/", null));
+ 
+-        // Are these two correct? Why don't we create links?
+         assertEquals("", Util.breadcrumbPath("/root/", ""));
+-        assertEquals("x", Util.breadcrumbPath("/root/", "x"));
+ 
++        assertEquals("<a href=\"/root/x\">x</a>", 
++        	Util.breadcrumbPath("/root/", "x"));
+         assertEquals("<a href=\"/root/xx\">xx</a>",
+                 Util.breadcrumbPath("/root/", "xx"));
+ 
+-        assertEquals("<a href=\"/r/a\">a</a>/<a href=\"/r/a/b\">b</a>",
++        // parent directories have a trailing slash in href
++        assertEquals("<a href=\"/r/a/\">a</a>/<a href=\"/r/a/b\">b</a>",
+                 Util.breadcrumbPath("/r/", "a/b"));
+-
+-        assertEquals("<a href=\"/r/a\">a</a>/<a href=\"/r/a/b\">b</a>/",
++        // if basename is a dir (ends with file seperator), href link also
++        // ends with a '/'
++        assertEquals("<a href=\"/r/a/\">a</a>/<a href=\"/r/a/b/\">b</a>/",
+                 Util.breadcrumbPath("/r/", "a/b/"));
+-
+-        assertEquals("<a href=\"/r/java\">java</a>." +
+-                "<a href=\"/r/java/lang\">lang</a>." +
++        // should work the same way with a '.' as file separator
++        assertEquals("<a href=\"/r/java/\">java</a>." +
++                "<a href=\"/r/java/lang/\">lang</a>." +
+                 "<a href=\"/r/java/lang/String\">String</a>",
+                 Util.breadcrumbPath("/r/", "java.lang.String", '.'));
+-
++        // suffix added to the link?
+         assertEquals("<a href=\"/root/xx&project=y\">xx</a>",
+                 Util.breadcrumbPath("/root/", "xx", '/', "&project=y", false));
+-
+-        assertEquals("<a href=\"/root/xx&project=y\">xx</a>",
+-                Util.breadcrumbPath("/root/", "xx", '/', "&project=y", true));
+-
+-        assertEquals("<a href=\"/r/\">..</a>/" +
+-                "<a href=\"/r/a\">a</a>/" +
+-                "<a href=\"/r/a/b\">b</a>/" +
+-                "<a href=\"/r/a\">..</a>/" +
+-                "<a href=\"/r/a/c\">c</a>/" +
+-                "/" +
+-                "<a href=\"/r/a/c/d\">d</a>",
++        // compact: path needs to be resolved to /xx and no link is added
++        // for the virtual root directory (parent) but emitted as plain text.
++        // Prefix gets just prefixed as is and not mangled wrt. path -> "//"
++        assertEquals("/<a href=\"/root//xx&project=y\">xx</a>",
++                Util.breadcrumbPath("/root/", "../xx", '/', "&project=y", true));
++        // relative pathes are resolved wrt. / , so path resolves to /a/c/d 
++        assertEquals("/<a href=\"/r//a/\">a</a>/" +
++                "<a href=\"/r//a/c/\">c</a>/" +
++                "<a href=\"/r//a/c/d\">d</a>",
+                 Util.breadcrumbPath("/r/", "../a/b/../c//d", '/', "", true));
+     }
+ 
+     @Test
+     public void redableSize() {
+-        assertEquals("0", Util.redableSize(0));
+-        assertEquals("1", Util.redableSize(1));
+-        assertEquals("-1", Util.redableSize(-1));
+-        assertEquals("1,000", Util.redableSize(1000));
+-        assertEquals("1K", Util.redableSize(1024));
+-        assertEquals("2.4K", Util.redableSize(2500));
+-        assertEquals("<b>1.4M</b>", Util.redableSize(1474560));
+-        assertEquals("<b>3,584.4M</b>", Util.redableSize(3758489600L));
+-        assertEquals("<b>8,796,093,022,208M</b>",
+-                     Util.redableSize(Long.MAX_VALUE));
++        assertEquals("0 ", Util.readableSize(0));
++        assertEquals("1 ", Util.readableSize(1));
++        assertEquals("-1 ", Util.readableSize(-1));
++        assertEquals("1,000 ", Util.readableSize(1000));
++        assertEquals("1 KiB", Util.readableSize(1024));
++        assertEquals("2.4 KiB", Util.readableSize(2500));
++        assertEquals("<b>1.4 MiB</b>", Util.readableSize(1474560));
++        assertEquals("<b>3,584.4 MiB</b>", Util.readableSize(3758489600L));
++        assertEquals("<b>8,796,093,022,208 MiB</b>",
++                     Util.readableSize(Long.MAX_VALUE));
+     }
+ 
+     @Test
+     public void readableLine() throws Exception {
+         StringWriter out = new StringWriter();
+-        Util.readableLine(42, out, null);
+-        assertEquals("\n<a class=\"l\" name=\"42\" href=\"#42\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;42&nbsp;</a>",
++        // hmmm - where do meaningful test start?
++        Util.readableLine(42, out, null, null, null);
++        assertEquals("\n<a class=\"l\" name=\"42\" href=\"#42\">42</a>",
+                      out.toString());
+ 
+         out.getBuffer().setLength(0); // clear buffer
+-        Util.readableLine(110, out, null);
+-        assertEquals("\n<a class=\"hl\" name=\"110\" href=\"#110\">&nbsp;&nbsp;&nbsp;&nbsp;110&nbsp;</a>",
++        Util.readableLine(110, out, null, null, null);
++        assertEquals("\n<a class=\"hl\" name=\"110\" href=\"#110\">110</a>",
+                      out.toString());
+     }
+ 
+     @Test
+-    public void uid() {
++    public void path2uid() {
+         assertEquals("\u0000etc\u0000passwd\u0000date",
+-                     Util.uid("/etc/passwd", "date"));
++                     Util.path2uid("/etc/passwd", "date"));
+     }
+ 
+     @Test
+     public void uid2url() {
+         assertEquals("/etc/passwd", Util.uid2url(
+-                Util.uid("/etc/passwd", "date")));
++                Util.path2uid("/etc/passwd", "date")));
+     }
+ 
+     @Test
+@@ -176,18 +177,46 @@
+ 
+     @Test
+     public void diffline() {
+-        String[] strings=Util.diffline("\"(ses_id, mer_id, pass_id, \" + refCol +\" , mer_ref, amnt, cur, ps_id, ret_url, d_req_time, d_req_mil, h_resp_time, h_resp_mil) \"","\"(ses_id, mer_id, pass_id, \" + refCol +\" , mer_ref, amnt, cur, ps_id, ret_url, exp_url, d_req_time, d_req_mil, h_resp_time, h_resp_mil) \"");        
+-        assertEquals(strings[0],"\"(ses_id, mer_id, pass_id, \" + refCol +\" , mer_ref, amnt, cur, ps_id, ret_url, d_req_time, d_req_mil, h_resp_time, h_resp_mil) \"");
+-        assertEquals(strings[1],"\"(ses_id, mer_id, pass_id, \" + refCol +\" , mer_ref, amnt, cur, ps_id, ret_url, <span class=\"a\">exp_url, </span>d_req_time, d_req_mil, h_resp_time, h_resp_mil) \"");
+-        strings=Util.diffline("\"VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)\", values);","\"VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)\", values);");
+-        assertEquals(strings[0],"\"VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)\", values);");
+-        assertEquals(strings[1],"\"VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?<span class=\"a\">, ?</span>)\", values);");
+-        strings=Util.diffline("char    *config_list = NULL;","char    **config_list = NULL;");
+-        assertEquals(strings[0],"char    *config_list = NULL;");
+-        assertEquals(strings[1],"char    *<span class=\"a\">*</span>config_list = NULL;");
+-        strings=Util.diffline("* An error occured or there is non-numeric stuff at the end","* An error occurred or there is non-numeric stuff at the end");
+-        assertEquals(strings[0],"* An error occured or there is non-numeric stuff at the end");
+-        assertEquals(strings[1],"* An error occur<span class=\"a\">r</span>ed or there is non-numeric stuff at the end");
++    	String[][] tests = {
++    		{
++    			"\"(ses_id, mer_id, pass_id, \" + refCol +\" , mer_ref, amnt, "
++    			+ "cur, ps_id, ret_url, d_req_time, d_req_mil, h_resp_time, "
++    			+ "h_resp_mil) \"",
++    			"\"(ses_id, mer_id, pass_id, \" + refCol +\" , mer_ref, amnt, "
++    			+ "cur, ps_id, ret_url, exp_url, d_req_time, d_req_mil, "
++    			+ "h_resp_time, h_resp_mil) \"",
++
++    			"\"(ses_id, mer_id, pass_id, \" + refCol +\" , mer_ref, amnt, "
++    			+ "cur, ps_id, ret_url, <span class=\"a\">exp_url, "
++    			+ "</span>d_req_time, d_req_mil, h_resp_time, h_resp_mil) \""
++    		},
++    		{	
++    			"\"VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)\", values);",
++    			"\"VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)\", values);",
++    			
++    			"\"VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?<span "
++    			+ "class=\"a\">, ?</span>)\", values);"
++    		},
++    		{
++    			"char    *config_list = NULL;",
++    			"char    **config_list = NULL;",
++    			
++    			"char    *<span class=\"a\">*</span>config_list = NULL;"
++    		},
++    		{
++    			"* An error occured or there is non-numeric stuff at the end",
++    			"* An error occurred or there is non-numeric stuff at the end",
++    			
++    			"* An error occur<span class=\"a\">r</span>ed or there is "
++    			+ "non-numeric stuff at the end"
++    		}
++    	};
++    	for (int i=0; i < tests.length; i++) {
++    		String[] strings=Util.diffline(new StringBuilder(tests[i][0]),
++    			new StringBuilder(tests[i][1]));
++            assertEquals(""+ i + "," + 0, strings[0], tests[i][0]);
++            assertEquals(""+ i + "," + 1, strings[1], tests[i][2]);
++    	}
+     }
+ 
+     @Test

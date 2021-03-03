@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>2575</bug_id>
+          
+          <creation_ts>2008-07-17 09:09:00 +0000</creation_ts>
+          <short_desc>RFE: add option to index only versioned files</short_desc>
+          <delta_ts>2008-08-26 14:48:48 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>indexer</component>
+          <version>unspecified</version>
+          <rep_platform>Other</rep_platform>
+          <op_sys>Solaris</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXED</resolution>
+          
+          
+          
+          
+          
+          <priority>P2</priority>
+          <bug_severity>enhancement</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="vita">vitezslav.batrla</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>9082</commentid>
+            <who name="vita">vitezslav.batrla</who>
+            <bug_when>2008-07-17 09:09:35 +0000</bug_when>
+            <thetext>In teamware worskpace opengrok by default indexes all files it finds. If one runs build, opengrok will index all .o and other garbage. It would be nice if we could specify to index only files, which have corresponding SCCS/s. file.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>9699</commentid>
+            <who name="Trond Norbye">trond.norbye</who>
+            <bug_when>2008-08-01 05:59:26 +0000</bug_when>
+            <thetext>The normal deployment of OpenGrok is done on a clean checked-out copy from your source repository, so you should probably not have any object-files or garbage there (unless you commit them into your SCM). If you would like to ignore object files, you could just add -i *.o to add all files ending with .o to the list of files to ignore.
+
+If you would like to create a patch that implements your RFE, you could look in AnalyzerGuru.getDocument(). I would guess that you could return null if you cannot get a HistoryReader for the file.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>11161</commentid>
+            <who name="Trond Norbye">trond.norbye</who>
+            <bug_when>2008-08-26 14:48:48 +0000</bug_when>
+            <thetext>Fixed in changeset:   480:b42bea94a1ac</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

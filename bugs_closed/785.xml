@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>785</bug_id>
+          
+          <creation_ts>2008-03-17 14:10:00 +0000</creation_ts>
+          <short_desc>Indexer don&apos;t use the value specified with -m</short_desc>
+          <delta_ts>2008-03-17 14:11:59 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>indexer</component>
+          <version>unspecified</version>
+          <rep_platform>Other</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXED</resolution>
+          
+          
+          
+          
+          
+          <priority>P4</priority>
+          <bug_severity>minor</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Trond Norbye">trond.norbye</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>2620</commentid>
+            <who name="Trond Norbye">trond.norbye</who>
+            <bug_when>2008-03-17 14:10:06 +0000</bug_when>
+            <thetext>With the rewrite to use multiple index databases the value specified with the -m option got lost.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>2622</commentid>
+            <who name="Trond Norbye">trond.norbye</who>
+            <bug_when>2008-03-17 14:11:59 +0000</bug_when>
+            <thetext>Fixed in changeset 255:80bda0df32d8</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

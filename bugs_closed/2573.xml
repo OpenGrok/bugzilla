@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>2573</bug_id>
+          
+          <creation_ts>2008-07-17 07:43:00 +0000</creation_ts>
+          <short_desc>definition search displays comment lines</short_desc>
+          <delta_ts>2008-08-01 11:52:51 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>webapp</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>Solaris</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>WONTFIX</resolution>
+          
+          
+          
+          
+          
+          <priority>P4</priority>
+          <bug_severity>enhancement</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Vijay">vijaysom</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>9078</commentid>
+            <who name="Vijay">vijaysom</who>
+            <bug_when>2008-07-17 07:43:03 +0000</bug_when>
+            <thetext>Definition search in opengrok displays the matching comment lines of the source file also. It should only display definition.
+e.g. In case of c/c++ files, it shows the matching lines which are in between /* ....*/.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>9724</commentid>
+            <who name="Trond Norbye">trond.norbye</who>
+            <bug_when>2008-08-01 11:52:51 +0000</bug_when>
+            <thetext>This is not a bug, but a feature. OpenGrok will just search for files containing the definition, but it will list all occurrences of the symbol in the files that contain the definition. If you look in the search result it will print &quot;function&quot; behind the mach for the actual definition in the file.
+
+If you dislike this behavior, please reopen the issue and create a patch that removes the other results :-)</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

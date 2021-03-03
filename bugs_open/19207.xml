@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>19207</bug_id>
+          
+          <creation_ts>2012-04-25 13:09:00 +0000</creation_ts>
+          <short_desc>man page garbled</short_desc>
+          <delta_ts>2012-04-26 11:37:14 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>doc</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>NEW</bug_status>
+          
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>enhancement</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Vladimir Kotal">vladimir.kotal</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          <cc>jel+osbugs</cc>
+    
+    <cc>Lubos.Kosco</cc>
+    
+    <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>86416</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2012-04-25 13:09:35 +0000</bug_when>
+            <thetext>I just downloaded 0.11.1 binary archive and the man page supplied in man/man1/opengrok.1 is just unreadable, it seems to contain garbage XML tags:
+
+$ nroff -man man/man1/opengrok.1 | head 
+&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt; &lt;!DOCTYPE REFENTRY  PUBLIC
+&quot;-//Sun   Microsystems//DTD  DocBook  V3.0-Based  SolBook  Subset
+V2.0//EN&quot;&gt;  &lt;?Pub  Inc&gt;  &lt;refentry   id=&quot;opengrok-1&quot;&gt;   &lt;refmeta&gt;
+&lt;refentrytitle&gt;opengrok&lt;/refentrytitle&gt;  &lt;manvolnum&gt;1&lt;/manvolnum&gt;
+&lt;refmiscinfo class=&quot;date&quot;&gt;Mar 30,  2012&lt;/refmiscinfo&gt;  &lt;/refmeta&gt;
+&lt;refnamediv&gt;   &lt;refname&gt;opengrok&lt;/refname&gt;  &lt;refpurpose&gt;a  wicked
+fast source browser&lt;/refpurpose&gt;  &lt;/refnamediv&gt;  &lt;refsynopsisdiv&gt;
+&lt;cmdsynopsis&gt;         &lt;command&gt;opengrok        &lt;optional&gt;&lt;option&gt;
+?&lt;/option&gt;&lt;/optional&gt;            &lt;optional&gt;&lt;option&gt;             A
+&lt;replaceable&gt;ext:analyzer&lt;/replaceable&gt;&lt;/option&gt;&lt;/optional&gt;</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86417</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2012-04-25 13:15:41 +0000</bug_when>
+            <thetext>I don&apos;t think this is a bug
+the opengrok man page is in xml and Solaris man subsystem knows how to handle it
+(docbook is used afaik)
+
+I don&apos;t think nroff can read this man page ...
+
+so I&apos;d close this as not a bug , or document that this man page is docbook in readmes ... hmm ?</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86419</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2012-04-25 13:50:05 +0000</bug_when>
+            <thetext>(In reply to comment #1)
+&gt; I don&apos;t think this is a bug
+&gt; the opengrok man page is in xml and Solaris man subsystem knows how to handle
+&gt; it
+&gt; (docbook is used afaik)
+
+Not sure about that capability of man(1).
+ 
+&gt; I don&apos;t think nroff can read this man page ...
+&gt; 
+&gt; so I&apos;d close this as not a bug , or document that this man page is docbook in
+&gt; readmes ... hmm ?
+
+I just tried this on Solaris 11 box with OSLLopengrok 0.11.1 package installed:
+
+MANPATH=$MANPATH:/usr/opengrok/man
+man opengrok
+
+and the man command displayed empty output. So, something is definitely broken.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86420</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2012-04-25 14:19:40 +0000</bug_when>
+            <thetext>hmm, used to work on S11 and S10 (maybe 2 years ago when I last time checked :( )
+
+[lkosco@helius]:pts/1:2371  Jobs:0  Today: Wed Apr 25, 16:18
+ ~/Projects/opengrok/dist&gt;% man -M /home/lkosco/Projects/opengrok/dist -f ./opengrok.1 ; echo $?
+0
+
+so it&apos;s broken now ...
+
+anyone a docbook expert ? :)</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86422</commentid>
+            <who name="Trond Norbye">trond.norbye</who>
+            <bug_when>2012-04-25 15:49:21 +0000</bug_when>
+            <thetext>Just to verify here.. you are using the correct man binary and not some gnu-ified thing?</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86423</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2012-04-25 16:01:44 +0000</bug_when>
+            <thetext>I think so
+
+the binary has the /usr/lib/sgml/sgml2roff string in it, when I did
+/usr/lib/sgml/sgml2roff opengrok.1
+I got proper output
+
+and 
+
+/usr/lib/sgml/sgml2roff opengrok.1 | nroff -man
+
+works as designed 
+
+could be a man bug ... I build the package on S11u1 internal build
+and I am also using S11u1 internal ... Vlada, can you ask someone on man and any bugs on it?</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86424</commentid>
+            <who name="Jens Elkner">jel+osbugs</who>
+            <bug_when>2012-04-25 16:36:33 +0000</bug_when>
+            <thetext>(In reply to comment #5)
+
+&gt; /usr/lib/sgml/sgml2roff opengrok.1 | nroff -man
+&gt; 
+&gt; works as designed 
+
+I&apos;m not really convinced. Just add a &apos;|less&apos; optional with an -R ...
+Still looks odd.
+
+IMHO it should be adjusted to use properly the common docbook XML format instead of the proprietary outdated SolBook one. Than everybody can x-form it to man, html or whatever using docbook xslt on all platforms with an xslt processor, don&apos;t need the solaris internal sgml tool chain ...</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86425</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2012-04-26 06:39:29 +0000</bug_when>
+            <thetext>(In reply to comment #6)
+&gt; (In reply to comment #5)
+&gt; 
+&gt; &gt; /usr/lib/sgml/sgml2roff opengrok.1 | nroff -man
+&gt; &gt; 
+&gt; &gt; works as designed 
+&gt; 
+&gt; I&apos;m not really convinced. Just add a &apos;|less&apos; optional with an -R ...
+&gt; Still looks odd.
+&gt; 
+&gt; IMHO it should be adjusted to use properly the common docbook XML format
+&gt; instead of the proprietary outdated SolBook one. Than everybody can x-form it
+&gt; to man, html or whatever using docbook xslt on all platforms with an xslt
+&gt; processor, don&apos;t need the solaris internal sgml tool chain ...
+
+So
+since I have no clue how to do it, nor time to figure it out atm
+I&apos;d rather leave this to someone who has the knowledge- e.g. Trond, or you if you dare
+
+I would gladly accept a patch (just for this issue ;) )
+since we&apos;d like to use this man page on other systems (and e.g. I am aware on debian the man page didn&apos;t work), too
+(and this is a prerequisite to create debian/ubuntu packages so it would be really nice to have)
+
+I also have no clue how to use man with docbook on a linux system, but basic man -M showed garbled xml stuff so it&apos;s definitely not converting by default like solaris
+( cd dist &amp;&amp; mkdir man1 &amp;&amp; cp opengrok.1 man1/ &amp;&amp; man -M `pwd`/ opengrok just works on Solaris, but not on linux)
+
+hmm?
+L</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86426</commentid>
+            <who name="Jens Elkner">jel+osbugs</who>
+            <bug_when>2012-04-26 07:21:55 +0000</bug_when>
+            <thetext>Maybe I get some time in the next semester break.
+
+However, it shouldn&apos;t be that hard, since both formats are pretty close and most distros have a docbook xml,xslt package. An example, how to process it is here:
+http://iws.cs.uni-magdeburg.de/~elkner/pkg/saslauthd.dbk
+Since there isn&apos;t really OS dep stuff, one can even skip the profile stuff/step ...</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86427</commentid>
+            <who name="Trond Norbye">trond.norbye</who>
+            <bug_when>2012-04-26 11:37:14 +0000</bug_when>
+            <thetext>I just looked at the man page on the following systems and it looks as expected:
+SunOS v210 5.10 Generic_142909-17 sun4u sparc SUNW,Sun-Fire-V210
+SunOS storm 5.11 oi_151a2 i86pc i386 i86pc
+SunOS s10u9 5.10 Generic_Virtual i86pc i386 i86pc
+
+THis makes me think that there is something &quot;wrong&quot; with the man binary in Solaris11... I don&apos;t have a solaris 11 box to verify with..
+
+(this also means that this is no longer an opengrok bug, but a man bug. We can always rewrite this to nroff if anyone feels the call to do so and then support more limited man systems ;)</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

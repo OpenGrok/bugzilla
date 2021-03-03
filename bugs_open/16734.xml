@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>16734</bug_id>
+          
+          <creation_ts>2010-08-05 20:47:00 +0000</creation_ts>
+          <short_desc>opengrok indexer needs to message properly when it can&apos;t fork</short_desc>
+          <delta_ts>2010-08-05 20:47:13 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>analyzer</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>OpenSolaris</op_sys>
+          <bug_status>NEW</bug_status>
+          
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>normal</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Dan Price">daniel.price</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>76259</commentid>
+            <who name="Dan Price">daniel.price</who>
+            <bug_when>2010-08-05 20:47:13 +0000</bug_when>
+            <thetext>I did a stupid thing and set my opengrok data directory to be in /tmp, 
+and then attempted to do a very large indexing run.
+
+This in turn filled up my /tmp, which deprived the JVM of
+enough swap backing space to be able to fork in order to
+execute the ctags program.  I believe that the net result
+of this was that opengrok was claiming that various files
+were not analyzable, but I am not certain the two messages
+are related.
+
+It seems to me that if opengrok fails to fork in order to exec
+ctags, that should result in a very clear message to the user...
+
+Sadly I lost the log files for this, but it should be easy to
+reproduce, at least on Solaris.  I&apos;m not sure how other OS&apos;s
+VM systems handle this case, but on Solaris at least, you need
+sufficient swap space reservation free in order to be able to
+fork.  In other words, a 2GB JVM needs 2GB of swap to be
+reservable (in case the process decides to go COW fault all
+of those pages).  When you run low on swap, you tend to see
+large processes start to fail to fork.  You can see this with
+truss, which will show fork failing with ENOMEM (which I did
+see in this case).</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

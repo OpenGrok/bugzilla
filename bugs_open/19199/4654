@@ -1,0 +1,469 @@
+# HG changeset patch
+# User jel+opengrok@cs.uni-magdeburg.de
+# Date 1334531546 -7200
+# Node ID 2c9931a8cd154bc7b488ac738ced965297f0b98c
+# Parent  b846dcfdb87127826c9e7a3b7ebc67e6f0067a14
+remove unused web/Constants and use Prefix.* everywhere
+
+diff -r b846dcfdb871 -r 2c9931a8cd15 src/org/opensolaris/opengrok/configuration/Configuration.java
+--- a/src/org/opensolaris/opengrok/configuration/Configuration.java	Sun Apr 15 06:44:23 2012 +0200
++++ b/src/org/opensolaris/opengrok/configuration/Configuration.java	Mon Apr 16 01:12:26 2012 +0200
+@@ -51,6 +51,7 @@
+ import org.opensolaris.opengrok.index.Filter;
+ import org.opensolaris.opengrok.index.IgnoredNames;
+ import org.opensolaris.opengrok.util.IOUtils;
++import org.opensolaris.opengrok.web.Prefix;
+ 
+ /**
+  * Placeholder class for all configuration variables. Due to the multithreaded
+@@ -159,8 +160,9 @@
+         setHistoryCacheInDB(false);
+         setProjects(new ArrayList<Project>());
+         setRepositories(new ArrayList<RepositoryInfo>());
+-        setUrlPrefix("/source/s?");
+-        //setUrlPrefix("../s?"); // TODO generate relative search paths, get rid of -w <webapp> option to indexer !
++        setUrlPrefix("/source" + Prefix.SEARCH_R + '?');
++        // TODO generate relative search paths, get rid of -w <webapp> option to indexer !
++        // setUrlPrefix(".." + Prefix.SEARCH_R + '?');
+         setCtags(System.getProperty(CTAGS_CMD_PROPERTY_KEY, CTAGS_CMD_FALLBACK));
+         //below can cause an outofmemory error, since it is defaulting to NO LIMIT
+         setIndexWordLimit(Integer.MAX_VALUE);
+diff -r b846dcfdb871 -r 2c9931a8cd15 src/org/opensolaris/opengrok/index/Indexer.java
+--- a/src/org/opensolaris/opengrok/index/Indexer.java	Sun Apr 15 06:44:23 2012 +0200
++++ b/src/org/opensolaris/opengrok/index/Indexer.java	Mon Apr 16 01:12:26 2012 +0200
+@@ -56,6 +56,7 @@
+ import org.opensolaris.opengrok.history.RepositoryInfo;
+ import org.opensolaris.opengrok.util.Executor;
+ import org.opensolaris.opengrok.util.Getopt;
++import org.opensolaris.opengrok.web.Prefix;
+ 
+ /**
+  * Creates and updates an inverted source index
+@@ -168,10 +169,9 @@
+                                     webapp = "/" + webapp;
+                                 }
+                                 if (webapp.endsWith("/")) {
+-                                    cfg.setUrlPrefix(webapp + "s?");
+-                                } else {
+-                                    cfg.setUrlPrefix(webapp + "/s?");
++                                    webapp = webapp.substring(0, webapp.length()-1);
+                                 }
++                                cfg.setUrlPrefix(webapp + Prefix.SEARCH_R + '?');
+                             }
+                             break;
+                         case 'W':
+diff -r b846dcfdb871 -r 2c9931a8cd15 src/org/opensolaris/opengrok/search/SearchEngine.java
+--- a/src/org/opensolaris/opengrok/search/SearchEngine.java	Sun Apr 15 06:44:23 2012 +0200
++++ b/src/org/opensolaris/opengrok/search/SearchEngine.java	Mon Apr 16 01:12:26 2012 +0200
+@@ -59,6 +59,7 @@
+ import org.opensolaris.opengrok.search.context.Context;
+ import org.opensolaris.opengrok.search.context.HistoryContext;
+ import org.opensolaris.opengrok.util.IOUtils;
++import org.opensolaris.opengrok.web.Prefix;
+ 
+ /**
+  * This is an encapsulation of the details on how to seach in the index
+@@ -360,7 +361,7 @@
+                                     tags, nhits > 100, ret);
+                         } else if (Genre.XREFABLE == genre && data != null && summarizer != null){
+                             int l = 0;
+-                            File file = new File(data + "/xref" + filename);
++                            File file = new File(data + Prefix.XREF_P + filename);
+                             Reader r = new TagFilter(new XrefReader(file));
+                             try {
+                                 l = r.read(content);
+diff -r b846dcfdb871 -r 2c9931a8cd15 src/org/opensolaris/opengrok/search/context/HistoryContext.java
+--- a/src/org/opensolaris/opengrok/search/context/HistoryContext.java	Sun Apr 15 06:44:23 2012 +0200
++++ b/src/org/opensolaris/opengrok/search/context/HistoryContext.java	Mon Apr 16 01:12:26 2012 +0200
+@@ -39,7 +39,7 @@
+ import org.opensolaris.opengrok.history.HistoryException;
+ import org.opensolaris.opengrok.history.HistoryGuru;
+ import org.opensolaris.opengrok.search.Hit;
+-import org.opensolaris.opengrok.web.Constants;
++import org.opensolaris.opengrok.web.Prefix;
+ 
+ /**
+  * it is supposed to get the matching lines from history log files.
+@@ -209,7 +209,9 @@
+ 
+         if (wcontext!=null && nrev!=null && !wcontext.isEmpty() ) {
+             //does below need to be encoded? see bug 16985
+-            out.append("<a href="+wcontext+Constants.diffP+path+"?r2="+path+"@"+rev+"&r1="+path+"@"+nrev+" title=\"diff to previous version\">diff</a> ");
++            out.append("<a href='" + wcontext + Prefix.DIFF_P + path 
++                + "?r2=" + path + "@" + rev + "&r1=" + path + "@" + nrev 
++                + "' title=\"diff to previous version\">diff</a> ");
+         }
+ 
+         printHTML(out, prefix, flatten);
+diff -r b846dcfdb871 -r 2c9931a8cd15 src/org/opensolaris/opengrok/web/Constants.java
+--- a/src/org/opensolaris/opengrok/web/Constants.java	Sun Apr 15 06:44:23 2012 +0200
++++ /dev/null	Thu Jan 01 00:00:00 1970 +0000
+@@ -1,50 +0,0 @@
+-/*
+- * CDDL HEADER START
+- *
+- * The contents of this file are subject to the terms of the
+- * Common Development and Distribution License (the "License").
+- * You may not use this file except in compliance with the License.
+- *
+- * See LICENSE.txt included in this distribution for the specific
+- * language governing permissions and limitations under the License.
+- *
+- * When distributing Covered Code, include this CDDL HEADER in each
+- * file and include the License file at LICENSE.txt.
+- * If applicable, add the following below this CDDL HEADER, with the
+- * fields enclosed by brackets "[]" replaced with your own identifying
+- * information: Portions Copyright [yyyy] [name of copyright owner]
+- *
+- * CDDL HEADER END
+- */
+-
+-/*
+- * Copyright (c) 2010, Oracle and/or its affiliates. All rights reserved.
+- */
+-
+-package org.opensolaris.opengrok.web;
+-
+-/**
+- * web specific constants (web.xml has the only dup of this)
+- * + some of the constants of data root
+- * @author Lubos Kosco
+- */
+-public final class Constants {
+-
+-    //full name of cross reference prefix
+-    public static final String xrefP="/xref";
+-    //short cut for easier recognition of servlets in jsp pages, TODO redesign to be more intuitive
+-    public static final String xrefS="/xr";
+-    public static final String moreP="/more";
+-    public static final String moreS="/mo";
+-    public static final String diffP="/diff";
+-    public static final String diffS="/di";
+-    public static final String histP="/hist";
+-    public static final String histL="/history";
+-    public static final String histS="/hi";
+-    public static final String rssP="/rss";
+-    public static final String rawP="/raw";
+-    //full blown search from main page or top bar
+-    public static final String searchP="/search";
+-    //search from cross reference, can lead to direct match(which opens directly)
+-    public static final String searchR="/s";
+-}
+diff -r b846dcfdb871 -r 2c9931a8cd15 src/org/opensolaris/opengrok/web/Prefix.java
+--- a/src/org/opensolaris/opengrok/web/Prefix.java	Sun Apr 15 06:44:23 2012 +0200
++++ b/src/org/opensolaris/opengrok/web/Prefix.java	Mon Apr 16 01:12:26 2012 +0200
+@@ -37,24 +37,13 @@
+     UNKNOWN(""),
+     /** a cross reference */
+     XREF_P("/xref"),
+-    /** a show cross reference, i.e. add Line and Navigation toggle button in
+-     * the menu bar */
+-    XREF_S("/xr"),
+     /** show more lines. If a search result set for a file matches more lines
+      * than a given limit (default: 10), only the first <i>limit</i> lines gets
+-     * shown as an "[all ...]" link, which can be used to show all matching
+-     * lines. The servlet path of this link starts with this prefix. */
++     * shown as well as an "[all ...]" link, which can be used to show all 
++     * matching lines. The servlet path of this link starts with this prefix. */
+     MORE_P("/more"),
+-    /** reserved (not used) */
+-    MORE_S("/mo"),
+     /** diff to previous version (link prefix) */
+     DIFF_P("/diff"),
+-    /** reserved (not used) */
+-    DIFF_S("/di"),
+-    /** reserved (not used) */
+-    HIST_P("/hist"),
+-    /** reserved (not used) */
+-    HIST_S("/hi"),
+     /** show the history for a file (link prefix) */
+     HIST_L("/history"),
+     /** RSS XML Feed of latest changes (link prefix) */
+@@ -71,7 +60,9 @@
+     /** related source file or directory not found/unavailable/ignored */
+     NOT_FOUND("/enoent"),
+     /** misc error occurred */
+-    ERROR("/error")
++    ERROR("/error"),
++    /** fetch annotations for the request path */
++    JSON_A("/json/annotate")
+     ;
+     private String prefix;
+     private Prefix(String prefix) {
+diff -r b846dcfdb871 -r 2c9931a8cd15 test/org/opensolaris/opengrok/analysis/JFlexXrefTest.java
+--- a/test/org/opensolaris/opengrok/analysis/JFlexXrefTest.java	Sun Apr 15 06:44:23 2012 +0200
++++ b/test/org/opensolaris/opengrok/analysis/JFlexXrefTest.java	Mon Apr 16 01:12:26 2012 +0200
+@@ -51,6 +51,7 @@
+ import org.opensolaris.opengrok.analysis.tcl.TclXref;
+ import org.opensolaris.opengrok.configuration.RuntimeEnvironment;
+ import org.opensolaris.opengrok.util.TestRepository;
++import org.opensolaris.opengrok.web.Prefix;
+ 
+ /**
+  * Unit tests for JFlexXref.
+@@ -267,11 +268,18 @@
+ 
+     private void testCXrefInclude(Class<? extends JFlexXref> klass) throws Exception {
+         String[][] testData = {
+-            {"#include <abc.h>", "#<b>include</b> &lt;<a href=\"/source/s?path=abc.h\">abc.h</a>&gt;"},
+-            {"#include <abc/def.h>", "#<b>include</b> &lt;<a href=\"/source/s?path=abc/\">abc</a>/<a href=\"/source/s?path=abc/def.h\">def.h</a>&gt;"},
+-            {"#include \"abc.h\"", "#<b>include</b> <span class=\"s\">\"<a href=\"/source/s?path=abc.h\">abc.h</a>\"</span>"},
+-            {"#include \"abc/def.h\"", "#<b>include</b> <span class=\"s\">\"<a href=\"/source/s?path=abc/\">abc</a>/<a href=\"/source/s?path=abc/def.h\">def.h</a>\"</span>"},
+-            {"#include <vector>", "#<b>include</b> &lt;<a href=\"/source/s?path=vector\">vector</a>&gt;"},
++            {"#include <abc.h>", "#<b>include</b> &lt;<a href=\"/source"
++                + Prefix.SEARCH_R + "?path=abc.h\">abc.h</a>&gt;"},
++            {"#include <abc/def.h>", "#<b>include</b> &lt;<a href=\"/source"
++                    + Prefix.SEARCH_R + "?path=abc/\">abc</a>/<a href=\"/source"
++                    + Prefix.SEARCH_R + "?path=abc/def.h\">def.h</a>&gt;"},
++            {"#include \"abc.h\"", "#<b>include</b> <span class=\"s\">\"<a href=\"/source"
++                + Prefix.SEARCH_R + "?path=abc.h\">abc.h</a>\"</span>"},
++            {"#include \"abc/def.h\"", "#<b>include</b> <span class=\"s\">\"<a href=\"/source"
++                + Prefix.SEARCH_R + "?path=abc/\">abc</a>/<a href=\"/source"
++                + Prefix.SEARCH_R + "?path=abc/def.h\">def.h</a>\"</span>"},
++            {"#include <vector>", "#<b>include</b> &lt;<a href=\"/source"
++                + Prefix.SEARCH_R + "?path=vector\">vector</a>&gt;"},
+         };
+ 
+         for (String[] s : testData) {
+diff -r b846dcfdb871 -r 2c9931a8cd15 test/org/opensolaris/opengrok/configuration/RuntimeEnvironmentTest.java
+--- a/test/org/opensolaris/opengrok/configuration/RuntimeEnvironmentTest.java	Sun Apr 15 06:44:23 2012 +0200
++++ b/test/org/opensolaris/opengrok/configuration/RuntimeEnvironmentTest.java	Mon Apr 16 01:12:26 2012 +0200
+@@ -48,6 +48,7 @@
+ import org.opensolaris.opengrok.analysis.XrefWriter;
+ import org.opensolaris.opengrok.analysis.plain.PlainXref;
+ import org.opensolaris.opengrok.history.RepositoryInfo;
++import org.opensolaris.opengrok.web.Prefix;
+ 
+ /**
+  * Test the RuntimeEnvironment class
+@@ -159,8 +160,8 @@
+     @Test
+     public void testUrlPrefix() {
+         RuntimeEnvironment instance = RuntimeEnvironment.getInstance();
+-        assertEquals("/source/s?", instance.getUrlPrefix());
+-        String prefix = "/opengrok/s?";
++        assertEquals("/source" + Prefix.SEARCH_R + '?', instance.getUrlPrefix());
++        String prefix = "/opengrok" + Prefix.SEARCH_R + '?';
+         instance.setUrlPrefix(prefix);
+         assertEquals(prefix, instance.getUrlPrefix());
+     }
+diff -r b846dcfdb871 -r 2c9931a8cd15 test/org/opensolaris/opengrok/web/PageConfigTest.java
+--- a/test/org/opensolaris/opengrok/web/PageConfigTest.java	Sun Apr 15 06:44:23 2012 +0200
++++ b/test/org/opensolaris/opengrok/web/PageConfigTest.java	Mon Apr 16 01:12:26 2012 +0200
+@@ -55,26 +55,26 @@
+     public void canProcess() {
+         // Expect no redirection (that is, empty string is returned) for a
+         // file that exists.
+-        assertCanProcess("", "/source", "/xref", "/mercurial/main.c");
+-        assertCanProcess("", "/source", "/history", "/mercurial/main.c");
++        assertCanProcess("", "/source", Prefix.XREF_P, "/mercurial/main.c");
++        assertCanProcess("", "/source", Prefix.HIST_L, "/mercurial/main.c");
+ 
+         // Expect directories without trailing slash to get a trailing slash
+         // appended.
+-        assertCanProcess("/source/xref/mercurial/",
+-                         "/source", "/xref", "/mercurial");
+-        assertCanProcess("/source/history/mercurial/",
+-                         "/source", "/history", "/mercurial");
++        assertCanProcess("/source" + Prefix.XREF_P + "/mercurial/",
++                         "/source", Prefix.XREF_P, "/mercurial");
++        assertCanProcess("/source" + Prefix.HIST_L + "/mercurial/",
++                         "/source", Prefix.HIST_L, "/mercurial");
+ 
+         // Expect no redirection (that is, empty string is returned) if the
+         // directories already have a trailing slash.
+-        assertCanProcess("", "/source", "/xref", "/mercurial/");
+-        assertCanProcess("", "/source", "/history", "/mercurial/");
++        assertCanProcess("", "/source", Prefix.XREF_P, "/mercurial/");
++        assertCanProcess("", "/source", Prefix.HIST_L, "/mercurial/");
+ 
+         // Expect null if the file or directory doesn't exist.
+-        assertCanProcess(null, "/source", "/xref", "/mercurial/xyz");
+-        assertCanProcess(null, "/source", "/history", "/mercurial/xyz");
+-        assertCanProcess(null, "/source", "/xref", "/mercurial/xyz/");
+-        assertCanProcess(null, "/source", "/history", "/mercurial/xyz/");
++        assertCanProcess(null, "/source", Prefix.XREF_P, "/mercurial/xyz");
++        assertCanProcess(null, "/source", Prefix.HIST_L, "/mercurial/xyz");
++        assertCanProcess(null, "/source", Prefix.XREF_P, "/mercurial/xyz/");
++        assertCanProcess(null, "/source", Prefix.HIST_L, "/mercurial/xyz/");
+     }
+ 
+     /**
+@@ -87,9 +87,9 @@
+      * @param pathInfo the path info
+      */
+     private void assertCanProcess(
+-            String expected, String context, String servlet, String pathInfo) {
++            String expected, String context, Prefix servlet, String pathInfo) {
+         PageConfig config =
+-                PageConfig.get(createRequest(context, servlet, pathInfo));
++                PageConfig.get(createRequest(context, servlet.toString(), pathInfo));
+         assertEquals(expected, config.canProcess());
+     }
+ 
+diff -r b846dcfdb871 -r 2c9931a8cd15 web/WEB-INF/web.xml
+--- a/web/WEB-INF/web.xml	Sun Apr 15 06:44:23 2012 +0200
++++ b/web/WEB-INF/web.xml	Mon Apr 16 01:12:26 2012 +0200
+@@ -108,7 +108,7 @@
+ 	</servlet>
+ 	<servlet-mapping>
+ 		<servlet-name>Annotation Servlet</servlet-name>
+-		<url-pattern>/json/annotate/*</url-pattern>
++		<url-pattern>/json/annotate/*</url-pattern>	<!-- JSON_A -->
+ 	</servlet-mapping>
+   <servlet-mapping>
+     <servlet-name>search</servlet-name>
+diff -r b846dcfdb871 -r 2c9931a8cd15 web/foot.jspf
+--- a/web/foot.jspf	Sun Apr 15 06:44:23 2012 +0200
++++ b/web/foot.jspf	Mon Apr 16 01:12:26 2012 +0200
+@@ -28,9 +28,7 @@
+ %><%!
+ /* ---------------------- foot.jspf members start --------------------- */
+     private static EnumSet<Prefix> needAddDiv = EnumSet.of(
+-        Prefix.HIST_L, Prefix.XREF_P, Prefix.DIFF_P, Prefix.MORE_P,
+-        // could NOT find any mapping/reference to those ones:
+-        Prefix.HIST_S, Prefix.XREF_S, Prefix.DIFF_S, Prefix.MORE_S);
++        Prefix.HIST_L, Prefix.XREF_P, Prefix.DIFF_P, Prefix.MORE_P);
+ /* ---------------------- foot.jspf members end --------------------- */
+ %><%
+ /* ---------------------- foot.jspf start --------------------- */
+diff -r b846dcfdb871 -r 2c9931a8cd15 web/help.jsp
+--- a/web/help.jsp	Sun Apr 15 06:44:23 2012 +0200
++++ b/web/help.jsp	Mon Apr 16 01:12:26 2012 +0200
+@@ -34,6 +34,7 @@
+         return;
+     }
+     response.setDateHeader("Last-Modified", lmdate);
++    String prefix = request.getContextPath() + Prefix.SEARCH_P + '?';
+ %><%@
+ 
+ include file="httpheader.jspf"
+@@ -150,30 +151,30 @@
+ <pre class="hlpexample">
+ 
+ To find where setResourceMonitors is defined: <a
+-href="search?q=&amp;defs=setResourceMonitors">defs:setResourceMonitors</a>
++href="<%= prefix %>q=&amp;defs=setResourceMonitors">defs:setResourceMonitors</a>
+ 
+ To find files that use sprintf in usr/src/cmd/cmd-inet/usr.sbin/:
+-<a href="search?refs=sprintf&amp;path=usr%2Fsrc%2Fcmd%2Fcmd-inet%2Fusr.sbin%2F"
++<a href="<%= prefix %>refs=sprintf&amp;path=usr%2Fsrc%2Fcmd%2Fcmd-inet%2Fusr.sbin%2F"
+ >refs:sprintf path:usr/src/cmd/cmd-inet/usr.sbin</a>
+ 
+ To find assignments to variable Asign:
+-<a href="search?q=%22asign+%3D+%22">"Asign="</a>
++<a href="<%= prefix %>q=%22asign+%3D+%22">"Asign="</a>
+ 
+ To find Makefiles where pstack binary is being built:
+-<a href="search?q=pstack&amp;path=Makefile">pstack path:Makefile</a>
++<a href="<%= prefix %>q=pstack&amp;path=Makefile">pstack path:Makefile</a>
+ 
+ to search for phrase "Bill Joy":
+-<a href="search?q=%22Bill+Joy%22">"Bill Joy"</a>
++<a href="<%= prefix %>q=%22Bill+Joy%22">"Bill Joy"</a>
+ 
+ To find perl files that do not use /usr/bin/perl but something else:
+-<a href="search?q=-%22%2Fusr%2Fbin%2Fperl%22+%2B%22%2Fbin%2Fperl%22"
++<a href="<%= prefix %>q=-%22%2Fusr%2Fbin%2Fperl%22+%2B%22%2Fbin%2Fperl%22"
+ >-"/usr/bin/perl" +"/bin/perl"</a>
+ 
+ To find all strings begining with foo use the wildcard:
+-<a href="search?q=foo*">foo*</a>
++<a href="<%= prefix %>q=foo*">foo*</a>
+ 
+ To find all files which have . c in their name(dot is a token!):
+-<a href="search?path=%22. c%22">". c"</a>
++<a href="<%= prefix %>path=%22. c%22">". c"</a>
+ 
+ </pre>
+ 
+diff -r b846dcfdb871 -r 2c9931a8cd15 web/httpheader.jspf
+--- a/web/httpheader.jspf	Sun Apr 15 06:44:23 2012 +0200
++++ b/web/httpheader.jspf	Mon Apr 16 01:12:26 2012 +0200
+@@ -36,6 +36,7 @@
+ --%><%@page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" import="
+ org.opensolaris.opengrok.Info,
+ org.opensolaris.opengrok.web.PageConfig,
++org.opensolaris.opengrok.web.Prefix,
+ org.opensolaris.opengrok.web.WebappListener"
+ %><%@
+ 
+@@ -72,7 +73,7 @@
+ <link rel="alternate stylesheet" type="text/css" media="all"
+     title="Paper White" href="<%= pstyle %>" />
+ <link rel="stylesheet" type="text/css" href="<%= pstyle %>" media="print" />
+-<link rel="search" href="<%=ctxPath%>/opensearch"
++<link rel="search" href="<%= ctxPath + Prefix.SEARCH_O %>"
+     type="application/opensearchdescription+xml"
+     title="OpenGrok Search for current project(s)" />
+ <script type="text/javascript" src="<%=ctxPath%>/static/yui-<%=
+diff -r b846dcfdb871 -r 2c9931a8cd15 web/menu.jspf
+--- a/web/menu.jspf	Sun Apr 15 06:44:23 2012 +0200
++++ b/web/menu.jspf	Mon Apr 16 01:12:26 2012 +0200
+@@ -63,7 +63,7 @@
+ </script><%
+     }
+ %>
+-<form action="search" id="sbox">
++<form action="<%= request.getContextPath() + Prefix.SEARCH_P %>" id="sbox">
+ 
+ <div id="qtbl">
+ <table>
+diff -r b846dcfdb871 -r 2c9931a8cd15 web/search.jsp
+--- a/web/search.jsp	Sun Apr 15 06:44:23 2012 +0200
++++ b/web/search.jsp	Mon Apr 16 01:12:26 2012 +0200
+@@ -35,7 +35,7 @@
+         StringBuilder url = new StringBuilder(64);
+         QueryBuilder qb = sh.builder;
+         if (menu) {
+-            url.append("search?");
++            url.append(sh.contextPath).append(Prefix.SEARCH_P).append('?');
+         } else {
+             Util.appendQuery(url, "sort", sh.order.toString());
+         }
+@@ -130,16 +130,17 @@
+         %><p>No hits</p><%
+     } else if (searchHelper.hits.length == 0) {
+         List<Suggestion> hints = searchHelper.getSuggestions();
++        String prefix = searchHelper.contextPath + Prefix.SEARCH_P + '?';
+         for (Suggestion hint : hints) {
+         %><p><font color="#cc0000">Did you mean (for <%= hint.name %>)</font>:<%
+             for (String word : hint.freetext) {
+-            %> <a href=search?q=<%= word %>><%= word %></a> &nbsp;  <%
++            %> <a href="<%= prefix + "q=" + word %>"><%= word %></a> &nbsp;  <%
+             }
+             for (String word : hint.refs) {
+-            %> <a href=search?refs=<%= word %>><%= word %></a> &nbsp;  <%
++            %> <a href="<%= prefix + "refs=" + word %>"><%= word %></a> &nbsp;  <%
+             }
+             for (String word : hint.defs) {
+-            %> <a href=search?defs=<%= word %>><%= word %></a> &nbsp;  <%
++            %> <a href="<%= prefix + "defs=" + word %>"><%= word %></a> &nbsp;  <%
+             }
+         %></p><%
+         }
+@@ -174,11 +175,12 @@
+             }
+             int label = labelStart;
+             int labelEnd = label + 11;
++            String prefix = searchHelper.contextPath + Prefix.SEARCH_R + "?n=";
+             for (int i = sstart; i < totalHits && label <= labelEnd; i+= max) {
+                 if (i <= start && start < i + max) {
+                     buf.append("<span class=\"rsps\">").append(label).append("</span>");
+                 } else {
+-                    buf.append("<a class=\"rspn\" href=\"s?n=").append(max)
++                    buf.append("<a class=\"rspn\" href=\"").append(prefix).append(max)
+                         .append("&amp;start=").append(i).append(urlp).append("\">");
+                     if (label == labelStart && label != 1) {
+                         buf.append("&lt;&lt");
+diff -r b846dcfdb871 -r 2c9931a8cd15 web/static/opengrok.js
+--- a/web/static/opengrok.js	Sun Apr 15 06:44:23 2012 +0200
++++ b/web/static/opengrok.js	Mon Apr 16 01:12:26 2012 +0200
+@@ -233,6 +233,7 @@
+ 	}
+ 	Y.use('io-base','json-parse', 'tooltip', function(Y) {
+ 		O.fetchingA = true;
++		// Prefix.XREF_P, Prefix.JSON_A
+ 		var uri = O.linkXref.replace("/xref/","/json/annotate/");
+ 		if (Y.Lang.isValue(O.rev)) { // via diff.jspf, mast.jsp
+ 			uri += '?' + O.rev;

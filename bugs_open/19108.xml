@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>19108</bug_id>
+          
+          <creation_ts>2011-12-15 13:33:00 +0000</creation_ts>
+          <short_desc>&lt;&lt;- sections break highlighting when non-default tab size is used</short_desc>
+          <delta_ts>2012-01-17 21:47:26 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>analyzer</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>CAUSEKNOWN</bug_status>
+          
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>critical</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Zdenek Kotala">zdenek.kotala</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          <cc>jel+osbugs</cc>
+    
+    <cc>knut.hatlen</cc>
+    
+    <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>85943</commentid>
+            <who name="Zdenek Kotala">zdenek.kotala</who>
+            <bug_when>2011-12-15 13:33:44 +0000</bug_when>
+            <thetext>The following code breaks shell script rendering:
+
+cat &lt;&lt;-EOF
+doesn&apos;t match
+EOF</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>85947</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2011-12-16 10:39:45 +0000</bug_when>
+            <thetext>The problem here is that the minus in &lt;&lt;-EOF means that leading tabs should be stripped away. ShXref knows that it should strip away leading tabs in this case, so even if the line with the last EOF has leading tabs, it knows that it&apos;s the stop word. However, if the project is configured with a tabSize setting, we&apos;ll expand tabs to spaces before generating the xref. Since leading spaces before the stop word should not be stripped out, ShXref doesn&apos;t recognize the stop word, and the rest of the script will be rendered as if it was part of the heredoc.
+
+In the default project configuration, this should not be an issue, because no custom tab size should be set. In 0.11rc this has changed though. Unintentionally, I guess. Now Configuration&apos;s constructor calls:
+
+        setTabSize(4);
+
+The immediate fix for this problem is to remove that call from the constructor so that the default tab size is reverted to unspecified.
+
+Even with that fix, the problem will still be seen in projects that have explicitly set a custom tab size. It would be better if we could preserve the tabs and instead make the style sheets take care of rendering them correctly. I don&apos;t think HTML/CSS has a good solution for this currently (looks like tab-size is planned for CSS 3: http://www.w3.org/TR/2011/WD-css3-text-20110901/#tab-size).</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>85949</commentid>
+            <who name="Jens Elkner">jel+osbugs</who>
+            <bug_when>2011-12-16 19:54:13 +0000</bug_when>
+            <thetext>(In reply to comment #1)
+...
+&gt; In the default project configuration, this should not be an issue, because no
+&gt; custom tab size should be set. In 0.11rc this has changed though.
+&gt; Unintentionally, I guess. Now Configuration&apos;s constructor calls:
+&gt; 
+&gt;         setTabSize(4);
+
+No, intentionally. Actually in 0.10 there was no way to specify the tab size (and IIRC it wasn&apos;t even honored) and if one forced programatically to use tabs, the result was unacceptable, because \t got always replaced with 8 spaces ... I also checked the CSS3 tab-size property (I actually what I would prefer in the 1st place), but at this point no browser supported it. So I made tabsize settings work and set it to 4 per default - not 8 because in the browser it does not really matter because of nowrap, but with 4 spaces it is still readable, compact wrt. line width and blows the content size less (bandwith).   
+
+&gt; The immediate fix for this problem is to remove that call from the constructor
+&gt; so that the default tab size is reverted to unspecified.
+
+Or simply use -t 0 when calling the Indexer.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>85952</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2011-12-19 13:47:02 +0000</bug_when>
+            <thetext>(In reply to comment #2)
+&gt; No, intentionally. Actually in 0.10 there was no way to specify the tab size
+&gt; (and IIRC it wasn&apos;t even honored) and if one forced programatically to use
+&gt; tabs, the result was unacceptable, because \t got always replaced with 8 spaces
+
+I&apos;ve used it in some of my projects, and it did get honored in 0.10. But it used to be a bit tricky to use, since you&apos;d need to add it to the configuration file manually, so having the -t option in the indexer is good (would be even better if the option was per project).
+
+&gt; ... I also checked the CSS3 tab-size property (I actually what I would prefer
+&gt; in the 1st place), but at this point no browser supported it. So I made tabsize
+&gt; settings work and set it to 4 per default - not 8 because in the browser it
+&gt; does not really matter because of nowrap,
+
+Well, it does matter if the project expects tabs to be 8 characters wide. Then code that uses a mix of tabs and spaces doesn&apos;t line up.
+
+&gt; &gt; The immediate fix for this problem is to remove that call from the constructor
+&gt; &gt; so that the default tab size is reverted to unspecified.
+&gt; 
+&gt; Or simply use -t 0 when calling the Indexer.
+
+Except none of those workarounds worked satisfactory in my environment. The stop token got recognized alright, and the highlighting was fixed. But because of some other changes after 0.10, the initial tab on each line was just two characters wide.
+
+I&apos;ve logged bug #19110 to get the default tab handling right.
+
+Let&apos;s keep this bug open to track the problem with broken syntax highlighting if tab size is set to a non-default value.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>85953</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2011-12-19 13:55:20 +0000</bug_when>
+            <thetext>I&apos;ve updated the bug summary to reflect that it&apos;s not the quote character that breaks the highlighting. It used to break the highlighting in 0.10, but that was fixed in bug #18198.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86076</commentid>
+            <who name="Jens Elkner">jel+osbugs</who>
+            <bug_when>2012-01-17 21:47:26 +0000</bug_when>
+            <thetext>(In reply to comment #3)
+&gt; (In reply to comment #2)
+...
+&gt; I&apos;ve used it in some of my projects, and it did get honored in 0.10. But it
+&gt; used to be a bit tricky to use, since you&apos;d need to add it to the configuration
+&gt; file manually, so having the -t option in the indexer is good (would be even
+&gt; better if the option was per project).
+
+Not sure about 0.10, anyway, should work on a per project base as well.
+
+...
+&gt; Well, it does matter if the project expects tabs to be 8 characters wide. Then
+&gt; code that uses a mix of tabs and spaces doesn&apos;t line up.
+
+Oh yes, forgot, that some ancient stuff still uses strange, i.e. mixed tab/space indenting. 
+
+&gt; Except none of those workarounds worked satisfactory in my environment. The
+&gt; stop token got recognized alright, and the highlighting was fixed. But because
+&gt; of some other changes after 0.10, the initial tab on each line was just two
+&gt; characters wide.
+
+OK, so adding 2ex to the line column width should fix it.
+
+&gt; I&apos;ve logged bug #19110 to get the default tab handling right.
+&gt; 
+&gt; Let&apos;s keep this bug open to track the problem with broken syntax highlighting
+&gt; if tab size is set to a non-default value.
+
+OK.</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

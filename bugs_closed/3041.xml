@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>3041</bug_id>
+          
+          <creation_ts>2008-08-25 01:16:00 +0000</creation_ts>
+          <short_desc>Require -V version option for Opengrok</short_desc>
+          <delta_ts>2008-08-25 01:44:12 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>indexer</component>
+          <version>unspecified</version>
+          <rep_platform>Other</rep_platform>
+          <op_sys>Solaris</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXED</resolution>
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>minor</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="pradhap">pradhap.devarajan</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>10940</commentid>
+            <who name="pradhap">pradhap.devarajan</who>
+            <bug_when>2008-08-25 01:16:36 +0000</bug_when>
+            <thetext>Its good to have &apos;-V&apos; option to indicate which version of opengrok.jar is currently running. 
+
+Or atleast it when your run &quot;java -jar opengrok.jar&quot; it should indicate which version is it currenlty running.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>10943</commentid>
+            <who name="Trond Norbye">trond.norbye</who>
+            <bug_when>2008-08-25 01:44:12 +0000</bug_when>
+            <thetext>Fixed in changeset:   467:6f14caeaae65</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

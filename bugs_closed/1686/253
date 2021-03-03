@@ -1,0 +1,39 @@
+@echo off
+@setlocal
+set EXUB_CTAGS_PATH=D:\temp\opengrok\ctags57
+REM don't edit the below
+set PATH=%PATH%;%EXUB_CTAGS_PATH%
+set PROGDIR=%~dp0
+set SRC_ROOT=%PROGDIR%SRC_ROOT
+set DATA_ROOT=%PROGDIR%DATA_ROOT
+set OPENGROK_JAR=%PROGDIR%opengrok.jar
+
+@echo demonstrating corrupted behavior:
+rmdir /s/q "%DATA_ROOT%" > nul 2>&1
+mkdir "%DATA_ROOT%"
+rmdir /s/q "%SRC_ROOT%" > nul 2>&1
+mkdir "%SRC_ROOT%"
+echo.> "%SRC_ROOT%\a.cpp"
+echo.> "%SRC_ROOT%\b.cpp"
+echo first execution: expected new files a.cpp and b.cpp are added to the index
+call java -jar "%OPENGROK_JAR%" -v -s "%SRC_ROOT%" -d "%DATA_ROOT%"
+echo ---------------------------------------------------------
+echo second execution: as expected no files are added to the index
+call java -jar "%OPENGROK_JAR%" -v -s "%SRC_ROOT%" -d "%DATA_ROOT%"
+echo ---------------------------------------------------------
+
+@echo demonstrating broken  scenario:
+rmdir /s/q "%DATA_ROOT%" > nul 2>&1
+mkdir "%DATA_ROOT%"
+rmdir /s/q "%SRC_ROOT%" > nul 2>&1
+mkdir "%SRC_ROOT%"
+echo.> "%SRC_ROOT%\a.cpp"
+echo.> "%SRC_ROOT%\B.cpp"
+echo first execution: expected new files a.cpp and B.cpp are added to the index
+call java -jar "%OPENGROK_JAR%" -v -s "%SRC_ROOT%" -d "%DATA_ROOT%"
+echo ---------------------------------------------------------
+echo second execution: expected no files are added to the index BUT N.cpp and j.cpp are indexed again!
+call java -jar "%OPENGROK_JAR%" -v -s "%SRC_ROOT%" -d "%DATA_ROOT%"
+
+@endlocal
+

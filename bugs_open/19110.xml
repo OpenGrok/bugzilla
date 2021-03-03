@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>19110</bug_id>
+          
+          <creation_ts>2011-12-19 13:26:00 +0000</creation_ts>
+          <short_desc>Tab expansion problems in 0.11-rc</short_desc>
+          <delta_ts>2012-01-17 21:30:10 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>analyzer</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>NEW</bug_status>
+          
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>major</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Knut Anders Hatlen">knut.hatlen</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          <cc>jel+osbugs</cc>
+    
+    <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>85951</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2011-12-19 13:26:15 +0000</bug_when>
+            <thetext>The default for tab expansion changed between 0.10 and 0.11-rc. Previously, the default was not to expand tabs to spaces. In 0.11-rc, the default is to expand tabs to spaces with tab stops at every four characters.
+
+This change might be confusing to users who expect the old behaviour. Also, since the tab expansion happens before the source is analyzed, it might cause problems for the analyzers that distinguish between tabs and spaces (example: bug #19108), so it shouldn&apos;t be enabled by default for now.
+
+Disabling it (either by not setting it in Configuration&apos;s constructor, or by running the indexer with -t 0) is not enough to get the exact same behaviour back, as the width of the line# column has also changed in 0.11-rc.
+
+Before, it used to be 8 characters wide, padded with &amp;nbsp; characters. This typically made that column fill the space up to (or slightly past - varying between the browsers) the first tab stop, so that the first tab on the line was close to the right width (sometimes exactly, sometimes one character too short).
+
+Now, the line# column is somewhat narrower and not padded (I think its width is determined by the style sheets). Since it&apos;s narrower, it sometimes doesn&apos;t fill the space up to the first tab stop, so the first tab on a line might be very narrow too (like two characters wide, but it varies between the different layouts since the various style sheets don&apos;t agree on the width of the line# column).</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86075</commentid>
+            <who name="Jens Elkner">jel+osbugs</who>
+            <bug_when>2012-01-17 21:30:10 +0000</bug_when>
+            <thetext>(In reply to comment #0)
+&gt; The default for tab expansion changed between 0.10 and 0.11-rc. Previously, the
+&gt; default was not to expand tabs to spaces. In 0.11-rc, the default is to expand
+&gt; tabs to spaces with tab stops at every four characters.
+
+Yes, this was necessary since many projects don&apos;t use the obsolete tab=8 space convention anymore. Actually some projects use different settings depending on the file type, e.g. 2 space for *.xml and 4 spaces for &quot;real&quot; source. So the final goal should be to make it customizable on a per file type base, however, for now &quot;one for all&quot; is the closest thing we can do. 
+
+&gt; This change might be confusing to users who expect the old behaviour. Also,
+&gt; since the tab expansion happens before the source is analyzed, it might cause
+&gt; problems for the analyzers that distinguish between tabs and spaces (example:
+&gt; bug #19108), so it shouldn&apos;t be enabled by default for now.
+
+That sounds like the parser/workflow should be fixed (i.e. anaylze before expanding). Probably not that easy to fix it ad hoc...
+However, if the main wish is to have not tabs expanded, setting TabSize to 0 shouldn&apos;t be a problem. Since the implementation follows the Bean contract, it is even possible to set it on a project base using appropriate xml config files. 
+
+&gt; Disabling it (either by not setting it in Configuration&apos;s constructor, or by
+&gt; running the indexer with -t 0) is not enough to get the exact same behaviour
+&gt; back, as the width of the line# column has also changed in 0.11-rc.
+&gt;
+&gt; Before, it used to be 8 characters wide, padded with &amp;nbsp; characters. This
+&gt; typically made that column fill the space up to (or slightly past - varying
+&gt; between the browsers) the first tab stop, so that the first tab on the line was
+&gt; close to the right width (sometimes exactly, sometimes one character too
+&gt; short).
+&gt; 
+&gt; Now, the line# column is somewhat narrower and not padded (I think its width is
+&gt; determined by the style sheets). Since it&apos;s narrower, it sometimes doesn&apos;t fill
+&gt; the space up to the first tab stop, so the first tab on a line might be very
+&gt; narrow too (like two characters wide, but it varies between the different
+&gt; layouts since the various style sheets don&apos;t agree on the width of the line#
+&gt; column).
+
+I&apos;ll need to look into it. Right now the line number column width is set to 8ex (6ex for numbers + 1ex padding on the left and right) to avoid the huge overhead of whitespace data (see style.css:~490). Not sure, how the browsers calculate the tabstop positions and how the alignment is implemented, however, if the issue is &quot;make the column that big, that  n tabs &lt; col size &lt; n+1 tabs, than setting the width to 7 or 8 ex acomplishes the same as the &amp;nbsp; overhead (or better said, it is the same lottery). Actually the column has a right margin of 0.5 ex (=&gt; 8.5ex total column width), and since the used font is monospace IMHO a correct implementation should already do that. But this is probably browser dependend and thus cumbersome to find a perfect solution [even with full CSS3 support)...
+
+Need an example to further investigate that issue.</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

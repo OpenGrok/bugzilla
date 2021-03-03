@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>17902</bug_id>
+          
+          <creation_ts>2011-02-16 16:14:00 +0000</creation_ts>
+          <short_desc>Source files more then one page result into empty screens in IE</short_desc>
+          <delta_ts>2011-10-10 19:35:32 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>webapp</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>ACCEPTED</bug_status>
+          
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>major</bug_severity>
+          <target_milestone>0.11</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter>rvdn</reporter>
+          <assigned_to name="Lubos Kosco">Lubos.Kosco</assigned_to>
+          <cc>opengrok-dev</cc>
+    
+    <cc>seadog1234567890</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>81191</commentid>
+            <who name="">rvdn</who>
+            <bug_when>2011-02-16 16:14:31 +0000</bug_when>
+            <thetext>(enviroment Windows XP SP3 and IE8)
+- Search for a keyword
+- Select the source file and click on it
+- When the source file is more then one page an empty page appears. (screenshot 1)
+- Then resize the IE8 and the complete page appears. (screenshot2)
+
+It looks like the scroll bar has something to do with this.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>81192</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2011-02-16 16:23:46 +0000</bug_when>
+            <thetext>a workaround is to resize the window
+or use the IE window maximized
+
+this only happens when you have the window smaller than max viewport
+I am not even sure if this is our bug or IEs ... (if you got some relationship with M$ then please ask them, I am myself curious)
+
+so far chrome and safari are the best browsers to view grok (because of webkit, has less bugs than IE)
+also we develop on firefox so it should work mostly on firefox, though we hit some bugs there too, unfortunately I don&apos;t see them fixed in ff4 :(
+
+I&apos;ll try to do some re-design in 0.11 , or eventually will get rid of the css frames
+
+thanks for reporting
+Lubos</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>83802</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2011-06-22 14:27:07 +0000</bug_when>
+            <thetext>a small note on focus jumping in IE
+- http://stackoverflow.com/questions/934865/window-location-hash-issue-in-ie7</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>83805</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2011-06-22 14:29:24 +0000</bug_when>
+            <thetext>I will eventually get rid of static top menu (make it optional and disabled by default)
+
+so next release will not have it (unless I will figure out a way how to do it 100% working - and with proper anchor jumping)</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

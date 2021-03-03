@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>5700</bug_id>
+          
+          <creation_ts>2008-12-08 09:33:00 +0000</creation_ts>
+          <short_desc>RFE: advanced search with extended file specifications</short_desc>
+          <delta_ts>2009-09-04 15:23:35 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>webapp</component>
+          <version>unspecified</version>
+          <rep_platform>Other</rep_platform>
+          <op_sys>Solaris</op_sys>
+          <bug_status>NEW</bug_status>
+          
+          
+          
+          
+          
+          
+          <priority>P4</priority>
+          <bug_severity>enhancement</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Vladimir Kotal">vladimir.kotal</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          <cc>garen</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>22984</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2008-12-08 09:33:33 +0000</bug_when>
+            <thetext>Sometimes it is handy to enter the queries like this:
+  - list all files which are longer than 75KB and named ip*.c
+  - list all files having more than 50 changesets/deltas/revisions [*]
+    in directory usr/src/common/
+  etc.
+
+In other words, extended file search.
+
+[*] this RFE should be SCM agnostic</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>48972</commentid>
+            <who name="Garen">garen</who>
+            <bug_when>2009-09-04 15:23:35 +0000</bug_when>
+            <thetext>I&apos;d like to search for specific languages:
+
+foo_str lang:C</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

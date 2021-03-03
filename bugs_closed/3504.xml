@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>3504</bug_id>
+          
+          <creation_ts>2008-09-19 16:20:00 +0000</creation_ts>
+          <short_desc>XML: some valid file paths do not get found in File Path search</short_desc>
+          <delta_ts>2008-09-30 11:54:55 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>analyzer</component>
+          <version>unspecified</version>
+          <rep_platform>Other</rep_platform>
+          <op_sys>Linux</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXED</resolution>
+          
+          
+          
+          
+          
+          <priority>P4</priority>
+          <bug_severity>minor</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Zach Carter">z.carter</reporter>
+          <assigned_to name="Knut Anders Hatlen">knut.hatlen</assigned_to>
+          
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>12806</commentid>
+            <who name="Zach Carter">z.carter</who>
+            <bug_when>2008-09-19 16:20:20 +0000</bug_when>
+            <thetext>In an xml file, references to other files should be parsed down to the individual filename level, much like they are in other types of files.
+
+For example, parsing this:
+
+&lt;mainmenu description=&quot;Description&quot; icon=&quot;../a/b/c/icon.png&quot;&gt;
+
+Produces a search link like this:
+
+http://grokserver:8080/source/s?path=../a/b/c/icon.png
+
+Instead, it should produce a link like this:
+
+http://grokserver:8080/source/s?path=icon.png
+
+Additionally, there should be seperate links for a, b and c as well.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>13490</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2008-09-30 11:54:55 +0000</bug_when>
+            <thetext>This should be fixed by the following changesets:
+
+604:526bb1a6d0be
+605:b7f75c0fb5a3
+606:4878532182ce
+
+The links created are a little different from what the reporter suggested, but they follow the same pattern we use other places in the code (breadcrumb paths).
+
+So for the example with &lt;... icon=&quot;../a/b/c/icon.png&quot;/&gt;, we will create the following links for a, b, c and icon.png, respectively:
+
+  ...?path=a
+  ...?path=a/b
+  ...?path=a/b/c
+  ...?path=a/b/c/icon.png
+
+We should now also handle /../ in the middle of the path correctly.</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

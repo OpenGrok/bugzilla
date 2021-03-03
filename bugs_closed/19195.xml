@@ -1,0 +1,508 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>19195</bug_id>
+          
+          <creation_ts>2012-03-20 10:18:00 +0000</creation_ts>
+          <short_desc>it should be possible to supply extra command line options to ctags</short_desc>
+          <delta_ts>2012-06-14 05:52:08 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>indexer</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXINSOURCE</resolution>
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>enhancement</bug_severity>
+          <target_milestone>next</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Vladimir Kotal">vladimir.kotal</reporter>
+          <assigned_to name="Vladimir Kotal">vladimir.kotal</assigned_to>
+          <cc>Lubos.Kosco</cc>
+    
+    <cc>opengrok-dev</cc>
+    
+    <cc>zxiao</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>86346</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2012-03-20 10:18:53 +0000</bug_when>
+            <thetext>I just realized most of the assembler function definitions in a code base we are indexing are not detected by OpenGrok because of the macros used to define these functions.
+
+They look like this (including the whitespace):
+
+        ENTRY_NP(foo)
+
+    /* some assembly code */
+
+        SET_SIZE(foo)
+
+There is also a problem with the whitespace at the beginning of the lines since ctags will not pick up the individual instructions in the function but I am more after the function definitions now.
+
+There seems to be easy remedy in ctags with:
+
+/opt/ctags\-5.8/ctags --language-force=asm --language-force=asm --regex-asm=&apos;/(ENTRY_NP|ENTRY)+\(([^ ]*)\)/\2/f/&apos; ./test\-whitespace.c
+
+which will produce the types correctly:
+
+$ cat tags
+!_TAG_FILE_FORMAT       2       /extended format; --format=1 will not append ;&quot; to lines/
+!_TAG_FILE_SORTED       1       /0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR    Darren Hiebert  /dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME      Exuberant Ctags //
+!_TAG_PROGRAM_URL       http://ctags.sourceforge.net    /official site/
+!_TAG_PROGRAM_VERSION   5.8     //
+foo     ./test-whitespace.c     /^      ENTRY_NP(foo)$/;&quot;       f
+
+After some poking around I found that OpenGrok already does some of it in src/org/opensolaris/opengrok/analysis/Ctags.java:
+
+82            command.add(&quot;--regex-Asm=/^[ \\t]*(ENTRY|ENTRY2|ALTENTRY)[ \\t]*\\(([a-zA-Z0-9_]+)/\\2/f,function/&quot;);  // for assmebly definitions
+
+However, this is not extensible and the option above probably applies only to some code bases (Solaris). Moreover, it is not correct (ENTRY2 defines 2 function names which is not captured in the regular expression).
+
+There should be a way how to pass extra arguments (not just one but many) via the OpenGrok shell script to OpenGrok indexer which would allow to tweak ctags command line arguments. Arguably the hardcoded --regex-Asm entry already present in the code should be removed in the process.
+
+Also, with this change bugs like bug 17849 can be easily solved by adding local configuration option.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86347</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2012-03-20 14:55:50 +0000</bug_when>
+            <thetext>The specification of extra command line options will be settable globally, not per project.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86348</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2012-03-20 15:58:42 +0000</bug_when>
+            <thetext>This can be easily done by using this ctags option:
+
+−−options=file
+
+Read additional options from file. The file should contain one option per line. As a special case, if −−options=NONE is specified as the first option on the command line, it will disable the automatic reading of any configuration options from either a file or the environment (see FILES).</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86352</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2012-03-20 20:14:45 +0000</bug_when>
+            <thetext>(In reply to comment #2)
+&gt; This can be easily done by using this ctags option:
+&gt; 
+&gt; −−options=file
+&gt; 
+&gt; Read additional options from file. The file should contain one option per line.
+&gt; As a special case, if −−options=NONE is specified as the first option on the
+&gt; command line, it will disable the automatic reading of any configuration
+&gt; options from either a file or the environment (see FILES).
+
+This works for me (see attached files):
+
+/opt/ctags-5.8/ctags --options=ctags.config test-whitespace.s</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86353</commentid>
+              <attachid>4637</attachid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2012-03-20 20:15:51 +0000</bug_when>
+            <thetext>Created attachment 4637
+sample ctags configuration for assembler files</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86354</commentid>
+              <attachid>4638</attachid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2012-03-20 20:16:15 +0000</bug_when>
+            <thetext>Created attachment 4638
+sample assembler source code file</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86355</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2012-03-20 21:06:15 +0000</bug_when>
+            <thetext>let&apos;s add it as a config file in a similar way as do for header include files
+indexer would then either use it if it will exist, or go with defaults which are inside the ctags.java
+
+hmm?
+
+indexing is fairly good covered by junit, so once you test with such config in place you will see if it will cause some generic probs
+also check open bugs Knut opened against ctags ( http://hub.opensolaris.org/bin/view/Project+opengrok/Issues )</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86356</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2012-03-20 21:07:10 +0000</bug_when>
+            <thetext>(In reply to comment #6)
+&gt; let&apos;s add it as a config file in a similar way as do for header include files
+&gt; indexer would then either use it if it will exist, or go with defaults which
+
+obviously I ment &quot;AND&quot; here - so use defaults and append the config file if present
+
+&gt; are inside the ctags.java
+&gt; 
+&gt; hmm?
+&gt; 
+&gt; indexing is fairly good covered by junit, so once you test with such config in
+&gt; place you will see if it will cause some generic probs
+&gt; also check open bugs Knut opened against ctags (
+&gt; http://hub.opensolaris.org/bin/view/Project+opengrok/Issues )</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86357</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2012-03-20 21:15:31 +0000</bug_when>
+            <thetext>(In reply to comment #7)
+&gt; (In reply to comment #6)
+&gt; &gt; let&apos;s add it as a config file in a similar way as do for header include files
+&gt; &gt; indexer would then either use it if it will exist, or go with defaults which
+&gt; 
+&gt; obviously I ment &quot;AND&quot; here - so use defaults and append the config file if
+&gt; present
+
+Yes, that&apos;s the way how my proof of concept works now.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86358</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2012-03-20 21:18:46 +0000</bug_when>
+            <thetext>(In reply to comment #8)
+&gt; (In reply to comment #7)
+&gt; &gt; (In reply to comment #6)
+&gt; &gt; &gt; let&apos;s add it as a config file in a similar way as do for header include files
+&gt; &gt; &gt; indexer would then either use it if it will exist, or go with defaults which
+&gt; &gt; 
+&gt; &gt; obviously I ment &quot;AND&quot; here - so use defaults and append the config file if
+&gt; &gt; present
+&gt; 
+&gt; Yes, that&apos;s the way how my proof of concept works now.
+
+Actually, right now this is done with new option in opengrok.jar and OpenGrok shell script since I think this is cleaner way to pass the options (and also the shell script already has EXUBERANT_CTAGS environment variable so I added another one).</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86359</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2012-03-20 21:37:51 +0000</bug_when>
+            <thetext>This is how it looks like when used:
+
+webservd@virtual4:~$ OPENGROK_CTAGS_OPTIONS_FILE=/tmp/ctags.config EXUBERANT_CTAGS=/opt/ctags\-5.8/ctags /usr/opengrok/bin/OpenGrok index
+Loading the default instance configuration ...
+DEBUG: file with extra  options for ctags: /tmp/ctags.config
+...
+
+
+and in next window:
+
+              28016 su - webservd
+                28017 -su
+                  29289 /bin/sh /usr/opengrok/bin/OpenGrok index
+                    29311 /usr/jdk/latest/bin/java -Xmx2048m -Dorg.opensolaris.
+                      29616 /opt/ctags-5.8/ctags --c-kinds=+l --sql-kinds=+l --
+                      29617 /opt/ctags-5.8/ctags --c-kinds=+l --sql-kinds=+l --
+                      29618 /opt/ctags-5.8/ctags --c-kinds=+l --sql-kinds=+l --
+
+and another window:
+
+root@virtual4:~# pargs 29618
+29618:	/opt/ctags-5.8/ctags --c-kinds=+l --sql-kinds=+l --Fortran-kinds=+L --C++-kinds
+argv[0]: /opt/ctags-5.8/ctags
+argv[1]: --c-kinds=+l
+argv[2]: --sql-kinds=+l
+argv[3]: --Fortran-kinds=+L
+argv[4]: --C++-kinds=+l
+argv[5]: --file-scope=yes
+argv[6]: -u
+argv[7]: --filter=yes
+argv[8]: --filter-terminator=__ctags_done_with_file__\n
+argv[9]: --fields=-anf+iKnS
+argv[10]: --excmd=pattern
+argv[11]: --langmap=sh:+.kshlib
+argv[12]: --options=/tmp/ctags.config
+root@virtual4:~#</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86360</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2012-03-21 14:11:16 +0000</bug_when>
+            <thetext>Fixed with the following changeset. Reviewed by Lubos Kosco and Ivo Raisr.
+
+
+changeset:   1347:26f287c034dc
+tag:         tip
+user:        Vladimir Kotal &lt;Vladimir.Kotal@oracle.com&gt;
+date:        Wed Mar 21 15:05:14 2012 +0100
+
+description:
+	Bug 19195 - it should be possible to supply extra command line options to ctags
+
+modified:
+   OpenGrok
+   README.txt
+   platform/solaris/ips/create.sh
+   platform/solaris/pkgdef/prototype
+   src/org/opensolaris/opengrok/analysis/Ctags.java
+   src/org/opensolaris/opengrok/configuration/Configuration.java
+   src/org/opensolaris/opengrok/configuration/RuntimeEnvironment.java
+   src/org/opensolaris/opengrok/index/CommandLineOptions.java
+   src/org/opensolaris/opengrok/index/IndexDatabase.java
+   src/org/opensolaris/opengrok/index/Indexer.java
+   test/org/opensolaris/opengrok/analysis/CtagsTest.java
+added:
+   doc/ctags.config
+   testdata/sources/bug19195/ctags.config
+   testdata/sources/bug19195/test.s</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86466</commentid>
+            <who name="Ze Lin Xiao">zxiao</who>
+            <bug_when>2012-06-13 22:00:15 +0000</bug_when>
+            <thetext>Is this change meant to be available in the latest binary distribution of opengrok, opengrok-0.11.1? If not, when do you think it&apos;ll be available? :)
+
+I just downloaded it opengrok-0.11.1 and expect to see the –o like I see in this link, but I don&apos;t: http://src.opensolaris.org/source/xref/opengrok/trunk/src/org/opensolaris/opengrok/index/CommandLineOptions.java#69
+
+[opengrok@grok-exp ~]$ java -jar opengrok-0.11.1/lib/opengrok.jar 
+Usage: opengrok.jar [options]
+-?
+	Help
+
+Thanks in advance,
+
+Ze
+
+(In reply to comment #11)
+&gt; Fixed with the following changeset. Reviewed by Lubos Kosco and Ivo Raisr.
+&gt; 
+&gt; 
+&gt; changeset:   1347:26f287c034dc
+&gt; tag:         tip
+&gt; user:        Vladimir Kotal &lt;Vladimir.Kotal@oracle.com&gt;
+&gt; date:        Wed Mar 21 15:05:14 2012 +0100
+&gt; 
+&gt; description:
+&gt;     Bug 19195 - it should be possible to supply extra command line options to
+&gt; ctags
+&gt; 
+&gt; modified:
+&gt;    OpenGrok
+&gt;    README.txt
+&gt;    platform/solaris/ips/create.sh
+&gt;    platform/solaris/pkgdef/prototype
+&gt;    src/org/opensolaris/opengrok/analysis/Ctags.java
+&gt;    src/org/opensolaris/opengrok/configuration/Configuration.java
+&gt;    src/org/opensolaris/opengrok/configuration/RuntimeEnvironment.java
+&gt;    src/org/opensolaris/opengrok/index/CommandLineOptions.java
+&gt;    src/org/opensolaris/opengrok/index/IndexDatabase.java
+&gt;    src/org/opensolaris/opengrok/index/Indexer.java
+&gt;    test/org/opensolaris/opengrok/analysis/CtagsTest.java
+&gt; added:
+&gt;    doc/ctags.config
+&gt;    testdata/sources/bug19195/ctags.config
+&gt;    testdata/sources/bug19195/test.s
+(In reply to comment #11)
+&gt; Fixed with the following changeset. Reviewed by Lubos Kosco and Ivo Raisr.
+&gt; 
+&gt; 
+&gt; changeset:   1347:26f287c034dc
+&gt; tag:         tip
+&gt; user:        Vladimir Kotal &lt;Vladimir.Kotal@oracle.com&gt;
+&gt; date:        Wed Mar 21 15:05:14 2012 +0100
+&gt; 
+&gt; description:
+&gt;     Bug 19195 - it should be possible to supply extra command line options to
+&gt; ctags
+&gt; 
+&gt; modified:
+&gt;    OpenGrok
+&gt;    README.txt
+&gt;    platform/solaris/ips/create.sh
+&gt;    platform/solaris/pkgdef/prototype
+&gt;    src/org/opensolaris/opengrok/analysis/Ctags.java
+&gt;    src/org/opensolaris/opengrok/configuration/Configuration.java
+&gt;    src/org/opensolaris/opengrok/configuration/RuntimeEnvironment.java
+&gt;    src/org/opensolaris/opengrok/index/CommandLineOptions.java
+&gt;    src/org/opensolaris/opengrok/index/IndexDatabase.java
+&gt;    src/org/opensolaris/opengrok/index/Indexer.java
+&gt;    test/org/opensolaris/opengrok/analysis/CtagsTest.java
+&gt; added:
+&gt;    doc/ctags.config
+&gt;    testdata/sources/bug19195/ctags.config
+&gt;    testdata/sources/bug19195/test.s</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86467</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2012-06-14 05:52:08 +0000</bug_when>
+            <thetext>
+This is in current development build - &quot;next&quot;
+which is likely to be 0.12
+
+I&apos;ll adjust the milestone ...
+
+for 0.12 I&apos;d like to see some more stabilizations on UI layer and also in lucene (which moved to 3.6 to support jdk1.7) - so my rough estimate is like 6 months minimum till official release
+(feel free to use a nightly build, they are more or less stable, but can have minor bugs)
+
+hth
+L
+
+(In reply to comment #12)
+&gt; Is this change meant to be available in the latest binary distribution of
+&gt; opengrok, opengrok-0.11.1? If not, when do you think it&apos;ll be available? :)
+&gt; 
+&gt; I just downloaded it opengrok-0.11.1 and expect to see the –o like I see in
+&gt; this link, but I don&apos;t:
+&gt; http://src.opensolaris.org/source/xref/opengrok/trunk/src/org/opensolaris/opengrok/index/CommandLineOptions.java#69
+&gt; 
+&gt; [opengrok@grok-exp ~]$ java -jar opengrok-0.11.1/lib/opengrok.jar 
+&gt; Usage: opengrok.jar [options]
+&gt; -?
+&gt;     Help
+&gt; 
+&gt; Thanks in advance,
+&gt; 
+&gt; Ze
+&gt; 
+&gt; (In reply to comment #11)
+&gt; &gt; Fixed with the following changeset. Reviewed by Lubos Kosco and Ivo Raisr.
+&gt; &gt; 
+&gt; &gt; 
+&gt; &gt; changeset:   1347:26f287c034dc
+&gt; &gt; tag:         tip
+&gt; &gt; user:        Vladimir Kotal &lt;Vladimir.Kotal@oracle.com&gt;
+&gt; &gt; date:        Wed Mar 21 15:05:14 2012 +0100
+&gt; &gt; 
+&gt; &gt; description:
+&gt; &gt;     Bug 19195 - it should be possible to supply extra command line options to
+&gt; &gt; ctags
+&gt; &gt; 
+&gt; &gt; modified:
+&gt; &gt;    OpenGrok
+&gt; &gt;    README.txt
+&gt; &gt;    platform/solaris/ips/create.sh
+&gt; &gt;    platform/solaris/pkgdef/prototype
+&gt; &gt;    src/org/opensolaris/opengrok/analysis/Ctags.java
+&gt; &gt;    src/org/opensolaris/opengrok/configuration/Configuration.java
+&gt; &gt;    src/org/opensolaris/opengrok/configuration/RuntimeEnvironment.java
+&gt; &gt;    src/org/opensolaris/opengrok/index/CommandLineOptions.java
+&gt; &gt;    src/org/opensolaris/opengrok/index/IndexDatabase.java
+&gt; &gt;    src/org/opensolaris/opengrok/index/Indexer.java
+&gt; &gt;    test/org/opensolaris/opengrok/analysis/CtagsTest.java
+&gt; &gt; added:
+&gt; &gt;    doc/ctags.config
+&gt; &gt;    testdata/sources/bug19195/ctags.config
+&gt; &gt;    testdata/sources/bug19195/test.s
+&gt; (In reply to comment #11)
+&gt; &gt; Fixed with the following changeset. Reviewed by Lubos Kosco and Ivo Raisr.
+&gt; &gt; 
+&gt; &gt; 
+&gt; &gt; changeset:   1347:26f287c034dc
+&gt; &gt; tag:         tip
+&gt; &gt; user:        Vladimir Kotal &lt;Vladimir.Kotal@oracle.com&gt;
+&gt; &gt; date:        Wed Mar 21 15:05:14 2012 +0100
+&gt; &gt; 
+&gt; &gt; description:
+&gt; &gt;     Bug 19195 - it should be possible to supply extra command line options to
+&gt; &gt; ctags
+&gt; &gt; 
+&gt; &gt; modified:
+&gt; &gt;    OpenGrok
+&gt; &gt;    README.txt
+&gt; &gt;    platform/solaris/ips/create.sh
+&gt; &gt;    platform/solaris/pkgdef/prototype
+&gt; &gt;    src/org/opensolaris/opengrok/analysis/Ctags.java
+&gt; &gt;    src/org/opensolaris/opengrok/configuration/Configuration.java
+&gt; &gt;    src/org/opensolaris/opengrok/configuration/RuntimeEnvironment.java
+&gt; &gt;    src/org/opensolaris/opengrok/index/CommandLineOptions.java
+&gt; &gt;    src/org/opensolaris/opengrok/index/IndexDatabase.java
+&gt; &gt;    src/org/opensolaris/opengrok/index/Indexer.java
+&gt; &gt;    test/org/opensolaris/opengrok/analysis/CtagsTest.java
+&gt; &gt; added:
+&gt; &gt;    doc/ctags.config
+&gt; &gt;    testdata/sources/bug19195/ctags.config
+&gt; &gt;    testdata/sources/bug19195/test.s</thetext>
+          </long_desc>
+      
+          <attachment
+              isobsolete="0"
+              ispatch="0"
+              isprivate="0"
+              isurl="0"
+          >
+            <attachid>4637</attachid>
+            <date>2012-03-20 20:15:00 +0000</date>
+            <delta_ts>2012-03-20 20:15:51 +0000</delta_ts>
+            <desc>sample ctags configuration for assembler files</desc>
+            <filename>ctags.config</filename>
+            <type>application/octet-stream</type>
+            <size>250</size>
+            <attacher>vladimir.kotal</attacher>
+            
+              <data encoding="base64">LS1yZWdleC1hc209LyhFTlRSWV9OUHxFTlRSWXxSVEVOVFJZKStcKChbXiBdKilcKS9cMi9mLwot
+LXJlZ2V4LWFzbT0vRU5UUlkyXCgoW14gXSopLChbXiBdKilcKS9cMS9mLwotLXJlZ2V4LWFzbT0v
+RU5UUlkyXCgoW14gXSopLChbXiBdKilcKS9cMi9mLwotLXJlZ2V4LWFzbT0vRU5UUllfTlAyXCgo
+W14gXSopLFsgXSooW14gXSopXCkvXDEvZi8KLS1yZWdleC1hc209L0VOVFJZX05QMlwoKFteIF0q
+KSxbIF0qKFteIF0qKVwpL1wyL2YvCg==
+</data>
+
+          </attachment>
+          <attachment
+              isobsolete="0"
+              ispatch="0"
+              isprivate="0"
+              isurl="0"
+          >
+            <attachid>4638</attachid>
+            <date>2012-03-20 20:16:00 +0000</date>
+            <delta_ts>2012-03-20 20:16:15 +0000</delta_ts>
+            <desc>sample assembler source code file</desc>
+            <filename>test-whitespace.s</filename>
+            <type>application/octet-stream</type>
+            <size>757</size>
+            <attacher>vladimir.kotal</attacher>
+            
+              <data encoding="base64">CUVOVFJZX05QKGRlYnVnX2ZsdXNoX3dpbmRvd3MpCglzZXQJbndpbmRvd3MsICVnMQoJbGQJWyVn
+MV0sICVnMQoJbW92CSVnMSwgJWcyCgkKMToKCXNhdmUJJXNwLCAtV0lORE9XU0laRSwgJXNwCgli
+cm56CSVnMiwgMWIKCWRlYwklZzIKCQoJbW92CSVnMSwgJWcyCjI6CglyZXN0b3JlCglicm56CSVn
+MiwgMmIKCWRlYwklZzIKCQoJcmV0bAoJbm9wCgkKCVNFVF9TSVpFKGRlYnVnX2ZsdXNoX3dpbmRv
+d3MpCgoKLyogYW5vdGhlciBmdW5jdGlvbiAqLwoKCUVOVFJZKGZsdXNoX3VzZXJfd2luZG93cykK
+CXJkcHIJJW90aGVyd2luLCAlZzEKCWJyegklZzEsIDNmCgljbHIJJWcyCjE6CglzYXZlCSVzcCwg
+LVdJTkRPV1NJWkUsICVzcAoJcmRwcgklb3RoZXJ3aW4sICVnMQoJYnJuegklZzEsIDFiCglhZGQJ
+JWcyLCAxLCAlZzIKMjoKCXN1YgklZzIsIDEsICVnMgkJISByZXN0b3JlIGJhY2sgdG8gb3JpZyB3
+aW5kb3cKCWJybnoJJWcyLCAyYgoJcmVzdG9yZQozOgoJcmV0bAoJbm9wCglTRVRfU0laRShmbHVz
+aF91c2VyX3dpbmRvd3MpCgovKiAyIGRlZmluaXRpb25zICovCgoJRU5UUlkyKF9jZXJyb3IsX19j
+ZXJyb3IpCgljbXAJJW8wLCBFUkVTVEFSVAoJYmUsYQkxZgoJbW92CUVJTlRSLCAlbzAKMToKCXNh
+dmUJJXNwLCAtU0EoTUlORlJBTUUpLCAlc3AKCWNhbGwJX19fZXJybm8KCW5vcAoJc3QJJWkwLCBb
+JW8wXQoJcmVzdG9yZQoJcmV0bAoJbW92CS0xLCAlbzAKCglTRVRfU0laRShfY2Vycm9yKQoJU0VU
+X1NJWkUoX19jZXJyb3IpCg==
+</data>
+
+          </attachment>
+      
+
+    </bug>
+
+</bugzilla>

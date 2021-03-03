@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>17688</bug_id>
+          
+          <creation_ts>2011-01-05 18:22:00 +0000</creation_ts>
+          <short_desc>File handles leaked in JSPs</short_desc>
+          <delta_ts>2011-01-06 10:12:27 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>webapp</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXINSOURCE</resolution>
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>normal</bug_severity>
+          <target_milestone>0.11</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Chris Eldredge">chris.eldredge</reporter>
+          <assigned_to name="Lubos Kosco">Lubos.Kosco</assigned_to>
+          <cc>knut.hatlen</cc>
+    
+    <cc>Lubos.Kosco</cc>
+    
+    <cc>opengrok-dev</cc>
+    
+    <cc>trond.norbye</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>80295</commentid>
+              <attachid>4443</attachid>
+            <who name="Chris Eldredge">chris.eldredge</who>
+            <bug_when>2011-01-05 18:22:28 +0000</bug_when>
+            <thetext>Created attachment 4443
+patch against rev e8d7dc250c14
+
+diff.jsp, list.jsp and raw.jsp do not close InputStreams or in places where they do they are not wrapped in finally blocks to ensure the stream is closed when an exception occurs.
+
+This results in files on disk staying locked in Windows platforms until the InputStream is garbage collected.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>80307</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2011-01-05 21:54:13 +0000</bug_when>
+            <thetext>thanks Chris
+a pity this didn&apos;t came yesterday, we did a release today
+I&apos;ll push it into trunk, maybe we can schedule 0.10.1 soonish
+
+cheers
+L</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>80309</commentid>
+            <who name="Trond Norbye">trond.norbye</who>
+            <bug_when>2011-01-05 22:03:34 +0000</bug_when>
+            <thetext>Hmm.. Is this a regression? I though we fixed this bug going from 0.9?</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>80310</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2011-01-05 22:57:00 +0000</bug_when>
+            <thetext>(In reply to comment #2)
+&gt; Hmm.. Is this a regression? I though we fixed this bug going from 0.9?
+
+The bug we fixed was with some Lucene objects that weren&apos;t closed. The patch seems to work on InputStreams and Readers, so it looks like a different bug. Although I don&apos;t think we were that thorough and actually put the closing of the Lucene objects in finally blocks, so we should probably do something similar there.
+
+When we started running FindBugs regularly against the code, we smoked out many similar occurrences where streams might not get closed if we got an exception. Unfortunately, FindBugs doesn&apos;t analyze the Java code in the JSP files. Maybe we should consider moving more code out of the JSP files into separate Java classes? That would make it easier both to run code analysis tools and to write tests for the code.
+
+But that&apos;s more of a long term goal. The patch looks like a good cleanup for now. Thanks, Chris!</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>80325</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2011-01-06 10:12:27 +0000</bug_when>
+            <thetext>changeset:   1156:5a8f3db0ac6e
+
+with minor modification - I kept the o.flush() in raw.jsp
+
+obviously the unclosed streams are a problem and we need findbugs/pmd to check web/*
+or some other method to check jsps
+the other option is to get rid of java code from jsps - which is preffered one and we have some backend services prototyped, the jsps just need to be refactored ... but this is another bug</thetext>
+          </long_desc>
+      
+          <attachment
+              isobsolete="0"
+              ispatch="1"
+              isprivate="0"
+              isurl="0"
+          >
+            <attachid>4443</attachid>
+            <date>2011-01-05 18:22:00 +0000</date>
+            <delta_ts>2011-01-05 18:22:53 +0000</delta_ts>
+            <desc>patch against rev e8d7dc250c14</desc>
+            <filename>close-input-streams.patch</filename>
+            <type>text/plain</type>
+            <size>5056</size>
+            <attacher>chris.eldredge</attacher>
+            
+              <data encoding="base64">ZGlmZiAtciBlOGQ3ZGMyNTBjMTQgLXIgNjU2MTEwNTZlZWU1IHdlYi9kaWZmLmpzcAotLS0gYS93
+ZWIvZGlmZi5qc3AJV2VkIEphbiAwNSAxNToyMjoxNiAyMDExICswMTAwCisrKyBiL3dlYi9kaWZm
+LmpzcAlXZWQgSmFuIDA1IDEyOjA2OjQ2IDIwMTEgLTA1MDAKQEAgLTQzMywxMSArNDMzLDE4IEBA
+CiAgICAgICAgICAgICAgICAgfQogICAgICAgICAgICAgfSBjYXRjaCAoRmlsZU5vdEZvdW5kRXhj
+ZXB0aW9uIGUpIHsKIAkJICU+PGRpdiBjbGFzcz0ic3JjIj48aDMgY2xhc3M9ImVycm9yIj5FcnJv
+ciBPcGVuaW5nIGZpbGVzISA8JT1VdGlsLmh0bWxpemUoZS5nZXRNZXNzYWdlKCkpJT48L2gzPjwv
+ZGl2PjwlCisgICAgICAgICAgICB9IGZpbmFsbHkgeworICAgICAgICAgICAgICAgIGlmKGluMSAh
+PSBudWxsKQorICAgICAgICAgICAgICAgICAgICB0cnkgeworICAgICAgICAgICAgICAgICAgICAg
+ICAgaW4xLmNsb3NlKCk7CisgICAgICAgICAgICAgICAgICAgIH0gY2F0Y2ggKElPRXhjZXB0aW9u
+IGlnbm9yZSkgeworICAgICAgICAgICAgICAgICAgICB9CisgICAgICAgICAgICAgICAgaWYoaW4y
+ICE9IG51bGwpCisgICAgICAgICAgICAgICAgICAgIHRyeSB7CisgICAgICAgICAgICAgICAgICAg
+ICAgICBpbjIuY2xvc2UoKTsKKyAgICAgICAgICAgICAgICAgICAgfSBjYXRjaCAoSU9FeGNlcHRp
+b24gaWdub3JlKSB7CisgICAgICAgICAgICAgICAgfQogICAgICAgICAgICAgfQotICAgICAgICAg
+ICAgaWYoaW4xICE9IG51bGwpCi0gICAgICAgICAgICAgICAgaW4xLmNsb3NlKCk7Ci0gICAgICAg
+ICAgICBpZihpbjIgIT0gbnVsbCkKLSAgICAgICAgICAgICAgICBpbjIuY2xvc2UoKTsKICAgICAg
+ICAgfSBlbHNlIGlmIChnID09IEdlbnJlLklNQUdFKSB7CiAJCQkJJT4gPGRpdiBjbGFzcz0ic3Jj
+Ij4KIAkJCQk8dGFibGUgcnVsZXM9ImNvbHMiIGNlbGxwYWRkaW5nPSI1Ij48dHI+PHRoPjwlPWJh
+c2VuYW1lJT4gKHJldmlzaW9uIDwlPXIxJT4pPC90aD48dGg+PCU9YmFzZW5hbWUlPiAocmV2aXNp
+b24gPCU9cjIlPik8L3RoPjwvdHI+CmRpZmYgLXIgZThkN2RjMjUwYzE0IC1yIDY1NjExMDU2ZWVl
+NSB3ZWIvbGlzdC5qc3AKLS0tIGEvd2ViL2xpc3QuanNwCVdlZCBKYW4gMDUgMTU6MjI6MTYgMjAx
+MSArMDEwMAorKysgYi93ZWIvbGlzdC5qc3AJV2VkIEphbiAwNSAxMjowNjo0NiAyMDExIC0wNTAw
+CkBAIC0zNzUsOSArMzc1LDExIEBACiAgICAgICAgICAgICAgICAgICAgICAgICB9CiAgICAgICAg
+ICAgICAgICAgICAgIH0gY2F0Y2ggKElPRXhjZXB0aW9uIGUpIHsKICAgICAgICAgICAgICAgICAg
+ICAgICAgICU+IDxoMyBjbGFzcz0iZXJyb3IiPklPIEVycm9yPC9oMz4gPHA+IDwlPWUuZ2V0TWVz
+c2FnZSgpICU+IDwvcD4gPCUKKyAgICAgICAgICAgICAgICAgICAgfSBmaW5hbGx5IHsKKyAgICAg
+ICAgICAgICAgICAgICAgCWluLmNsb3NlKCk7CiAgICAgICAgICAgICAgICAgICAgIH0KICAgICAg
+ICAgICAgICAgICAgICAgJT48L3ByZT48L2Rpdj48JQotICAgICAgICAgICAgICAgICAgICBpbi5j
+bG9zZSgpOworICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICB9IGVsc2Ugewog
+ICAgIAkgICAgICAgICAgICAlPiA8aDMgY2xhc3M9ImVycm9yIj5FcnJvciByZWFkaW5nIGZpbGU8
+L2gzPiA8JQogICAgICAgICAgICAgICAgIH0KQEAgLTQxNiwzMiArNDE4LDM2IEBACiAgICAgICAg
+ICAgICBici5jbG9zZSgpOwogICAgICAgICB9IGVsc2UgewogICAgICAgICAgICAgQnVmZmVyZWRJ
+bnB1dFN0cmVhbSBiaW4gPSBuZXcgQnVmZmVyZWRJbnB1dFN0cmVhbShuZXcgRmlsZUlucHV0U3Ry
+ZWFtKHJlc291cmNlRmlsZSkpOwotICAgICAgICAgICAgRmlsZUFuYWx5emVyRmFjdG9yeSBhID0g
+QW5hbHl6ZXJHdXJ1LmZpbmQoYmFzZW5hbWUpOwotICAgICAgICAgICAgR2VucmUgZyA9IEFuYWx5
+emVyR3VydS5nZXRHZW5yZShhKTsKLSAgICAgICAgICAgIGlmKGcgPT0gbnVsbCkgewotICAgICAg
+ICAgICAgICAgIGEgPSBBbmFseXplckd1cnUuZmluZChiaW4pOwotICAgICAgICAgICAgICAgIGcg
+PSBBbmFseXplckd1cnUuZ2V0R2VucmUoYSk7Ci0gICAgICAgICAgICB9Ci0gICAgICAgICAgICBp
+ZiAoZyA9PSBHZW5yZS5JTUFHRSkgeworICAgICAgICAgICAgdHJ5IHsKKwkgICAgICAgICAgICBG
+aWxlQW5hbHl6ZXJGYWN0b3J5IGEgPSBBbmFseXplckd1cnUuZmluZChiYXNlbmFtZSk7CisJICAg
+ICAgICAgICAgR2VucmUgZyA9IEFuYWx5emVyR3VydS5nZXRHZW5yZShhKTsKKwkgICAgICAgICAg
+ICBpZihnID09IG51bGwpIHsKKwkgICAgICAgICAgICAgICAgYSA9IEFuYWx5emVyR3VydS5maW5k
+KGJpbik7CisJICAgICAgICAgICAgICAgIGcgPSBBbmFseXplckd1cnUuZ2V0R2VucmUoYSk7CisJ
+ICAgICAgICAgICAgfQorCSAgICAgICAgICAgIGlmIChnID09IEdlbnJlLklNQUdFKSB7CiAgICAg
+ICAgIAklPjxkaXYgaWQ9InNyYyI+PGltZyBzcmM9IjwlPWNvbnRleHQrQ29uc3RhbnRzLnJhd1Ar
+cGF0aCU+Ii8+PC9kaXY+PCUKLSAgICAgICAgICAgIH0gZWxzZSBpZiggZyA9PSBHZW5yZS5IVE1M
+KSB7Ci0gICAgICAgICAgICAgICAgY2hhcltdIGJ1ZiA9IG5ldyBjaGFyWzgxOTJdOwotICAgICAg
+ICAgICAgICAgIFJlYWRlciBiciA9IG5ldyBJbnB1dFN0cmVhbVJlYWRlcihiaW4pOwotICAgICAg
+ICAgICAgICAgIGludCBsZW4gPSAwOwotICAgICAgICAgICAgICAgIHdoaWxlKChsZW4gPSBici5y
+ZWFkKGJ1ZikpID4gMCkgewotICAgICAgICAgICAgICAgICAgICBvdXQud3JpdGUoYnVmLCAwLCBs
+ZW4pOwotICAgICAgICAgICAgICAgIH0KLSAgICAgICAgICAgIH0gZWxzZSBpZihnID09IEdlbnJl
+LlBMQUlOKSB7Ci0gICAgICAgICAgICAgICAgJT48ZGl2IGlkPSJzcmMiPjxwcmU+PCUKKwkgICAg
+ICAgICAgICB9IGVsc2UgaWYoIGcgPT0gR2VucmUuSFRNTCkgeworCSAgICAgICAgICAgICAgICBj
+aGFyW10gYnVmID0gbmV3IGNoYXJbODE5Ml07CisJICAgICAgICAgICAgICAgIFJlYWRlciBiciA9
+IG5ldyBJbnB1dFN0cmVhbVJlYWRlcihiaW4pOworCSAgICAgICAgICAgICAgICBpbnQgbGVuID0g
+MDsKKwkgICAgICAgICAgICAgICAgd2hpbGUoKGxlbiA9IGJyLnJlYWQoYnVmKSkgPiAwKSB7CisJ
+ICAgICAgICAgICAgICAgICAgICBvdXQud3JpdGUoYnVmLCAwLCBsZW4pOworCSAgICAgICAgICAg
+ICAgICB9CisJICAgICAgICAgICAgfSBlbHNlIGlmKGcgPT0gR2VucmUuUExBSU4pIHsKKwkgICAg
+ICAgICAgICAgICAgJT48ZGl2IGlkPSJzcmMiPjxwcmU+PCUKICAgICAgICAgICAgICAgICAvLyBX
+ZSdyZSBnZW5lcmF0aW5nIHhyZWYgZm9yIHRoZSBsYXRlc3QgcmV2aXNpb24sIHNvIHdlIGNhbgog
+ICAgICAgICAgICAgICAgIC8vIGZpbmQgdGhlIGRlZmluaXRpb25zIGluIHRoZSBpbmRleC4KICAg
+ICAgICAgICAgICAgICBEZWZpbml0aW9ucyBkZWZzID0gSW5kZXhEYXRhYmFzZS5nZXREZWZpbml0
+aW9ucyhyZXNvdXJjZUZpbGUpOwogICAgICAgICAgICAgICAgIEFubm90YXRpb24gYW5ub3RhdGlv
+biA9IGFubm90YXRlID8gSGlzdG9yeUd1cnUuZ2V0SW5zdGFuY2UoKS5hbm5vdGF0ZShyZXNvdXJj
+ZUZpbGUsIHJldikgOiBudWxsOyAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICBSZWFk
+ZXIgciA9IG5ldyBJbnB1dFN0cmVhbVJlYWRlcihiaW4pOwogICAgICAgICAgICAgICAgIEFuYWx5
+emVyR3VydS53cml0ZVhyZWYoYSwgciwgb3V0LCBkZWZzLCBhbm5vdGF0aW9uLCBQcm9qZWN0Lmdl
+dFByb2plY3QocmVzb3VyY2VGaWxlKSk7Ci0gICAgICAgICAgICAgICAgJT48L3ByZT48L2Rpdj48
+JQotICAgICAgICAgICAgfSBlbHNlIHsKKwkgICAgICAgICAgICAgICAgJT48L3ByZT48L2Rpdj48
+JQorCSAgICAgICAgICAgIH0gZWxzZSB7CiAJICAgICAgICAlPiBDbGljayA8YSBocmVmPSI8JT1j
+b250ZXh0K0NvbnN0YW50cy5yYXdQK3BhdGglPiI+ZG93bmxvYWQgPCU9YmFzZW5hbWUlPjwvYT48
+JQorCSAgICAgICAgICAgIH0KKyAgICAgICAgICAgIH0gZmluYWxseSB7CisgICAgICAgICAgICAJ
+YmluLmNsb3NlKCk7CiAgICAgICAgICAgICB9CiAgICAgICAgIH0KICAgICB9CmRpZmYgLXIgZThk
+N2RjMjUwYzE0IC1yIDY1NjExMDU2ZWVlNSB3ZWIvcmF3LmpzcAotLS0gYS93ZWIvcmF3LmpzcAlX
+ZWQgSmFuIDA1IDE1OjIyOjE2IDIwMTEgKzAxMDAKKysrIGIvd2ViL3Jhdy5qc3AJV2VkIEphbiAw
+NSAxMjowNjo0NiAyMDExIC0wNTAwCkBAIC02NCwxOCArNjQsMjIgQEAKICAgICByZXR1cm4gOwog
+ICB9CiB9IGVsc2UgewotICBpbiA9IG5ldyBGaWxlSW5wdXRTdHJlYW0oZmlsZSk7CiAgIHJlc3Bv
+bnNlLnNldENvbnRlbnRMZW5ndGgoKGludClmaWxlLmxlbmd0aCgpKTsKICAgcmVzcG9uc2Uuc2V0
+RGF0ZUhlYWRlcigiTGFzdC1Nb2RpZmllZCIsIGZpbGUubGFzdE1vZGlmaWVkKCkpOworICBpbiA9
+IG5ldyBGaWxlSW5wdXRTdHJlYW0oZmlsZSk7CiB9Ci1yZXNwb25zZS5zZXRIZWFkZXIoImNvbnRl
+bnQtZGlzcG9zaXRpb24iLCAiYXR0YWNobWVudDsgZmlsZW5hbWU9IiArIGZpbGUuZ2V0TmFtZSgp
+KTsKIAotT3V0cHV0U3RyZWFtIG8gPSByZXNwb25zZS5nZXRPdXRwdXRTdHJlYW0oKTsKLWJ5dGVb
+XSBidWZmZXIgPSBuZXcgYnl0ZVs4MTkyXTsKLWludCBucjsKLXdoaWxlICgobnIgPSBpbi5yZWFk
+KGJ1ZmZlcikpID4gMCkgewotICBvLndyaXRlKGJ1ZmZlciwgMCwgbnIpOwordHJ5IHsKKyAgcmVz
+cG9uc2Uuc2V0SGVhZGVyKCJjb250ZW50LWRpc3Bvc2l0aW9uIiwgImF0dGFjaG1lbnQ7IGZpbGVu
+YW1lPSIgKyBmaWxlLmdldE5hbWUoKSk7CisKKyAgT3V0cHV0U3RyZWFtIG8gPSByZXNwb25zZS5n
+ZXRPdXRwdXRTdHJlYW0oKTsKKyAgYnl0ZVtdIGJ1ZmZlciA9IG5ldyBieXRlWzgxOTJdOworICBp
+bnQgbnI7CisgIHdoaWxlICgobnIgPSBpbi5yZWFkKGJ1ZmZlcikpID4gMCkgeworICAgIG8ud3Jp
+dGUoYnVmZmVyLCAwLCBucik7CisgIH0KKyAgby5jbG9zZSgpOworfSBmaW5hbGx5IHsKKyAgaW4u
+Y2xvc2UoKTsKIH0KLW8uZmx1c2goKTsKLW8uY2xvc2UoKTsKICU+Cg==
+</data>
+
+          </attachment>
+      
+
+    </bug>
+
+</bugzilla>

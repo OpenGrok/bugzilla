@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>19204</bug_id>
+          
+          <creation_ts>2012-04-16 06:53:00 +0000</creation_ts>
+          <short_desc>MercurialRepository/HistoryParser produces garbage wrt. files</short_desc>
+          <delta_ts>2012-04-16 06:53:20 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>indexer</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>NEW</bug_status>
+          
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>major</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Jens Elkner">jel+osbugs</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>86410</commentid>
+            <who name="Jens Elkner">jel+osbugs</who>
+            <bug_when>2012-04-16 06:53:20 +0000</bug_when>
+            <thetext>MercurialRepository uses the --template=&apos;files: {files}{file_copies}\n&apos; to get the list of changed files, MercurialHistoryParser splits the list using a single space char.
+
+First problem:
+-        + &quot;files: {files}{file_copies}\\n&quot;;
++        + &quot;files: {files} {file_copies}\\n&quot;;
+
+Second problem:
+{file_copies} emits entries like &quot;copiedFile (removedFile)&quot;, which produces hand-in-hand with the 1st problem a lot of garbage within the FILES and DIRECTORIES history tables (and in turn on /history/* pages).
+
+Not sure, what the intention of {file_copies} was, but as far as I can see, file moves are not tracked within opengrok anyway, so I would remove it entirely since {files} = {file_adds} + {file_dels} + {file_mods}.
+
+Any opinions?
+
+PS: Example: http://src.iws.cs.ovgu.de/source/history/opengrok-jel/
+    - show modified files
+    - scroll down to 1357:7e59b0ba201 and see below</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

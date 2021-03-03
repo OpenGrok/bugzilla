@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>200</bug_id>
+          
+          <creation_ts>2007-11-10 16:24:00 +0000</creation_ts>
+          <short_desc>OpenGrok&apos;s syntax highlighting has problems with POSIX shell syntax</short_desc>
+          <delta_ts>2008-01-29 16:51:48 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>webapp</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXED</resolution>
+          
+          
+          <bug_file_loc>http://www.opengroup.org/onlinepubs/000095399/utilities/xcu_chap02.html</bug_file_loc>
+          
+          
+          <priority>P4</priority>
+          <bug_severity>minor</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          <blocked>430</blocked>
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Roland Mainz">roland.mainz</reporter>
+          <assigned_to name="Knut Anders Hatlen">knut.hatlen</assigned_to>
+          <cc>roland.mainz</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>518</commentid>
+            <who name="Roland Mainz">roland.mainz</who>
+            <bug_when>2007-11-10 16:24:58 +0000</bug_when>
+            <thetext>OpenGrok seems to have problems with POSIX shell syntax.
+
+Some examples:
+1. the usage of $ x=&quot;$(ls)&quot; # (assign the output of &quot;ls&quot; to variable &quot;x&quot;) will result in wrong syntax highlighting. See http://src.opensolaris.org/source/xref/onnv/onnv-gate/usr/src/lib/libshell/common/fun/gnaw?r=4887 lines 88-113 
+
+2. The parser highlights some words like &quot;function&quot; or &quot;float&quot; but does not handle other keywords of the shell language.
+AFAIK the following keywords should be highlighed for shell scripts (the following list covers both ksh88/ksh93 and bash), AFAIK this stuff needs to be added to http://src.opensolaris.org/source/xref/opengrok/trunk/src/org/opensolaris/opengrok/analysis/sh/Consts.java
+- Datatypes (they should all be handled equally):
+  -- snip --
+  typeset
+  float  [ksh93 only]
+  function
+  integer
+  complex [ksh93 only]
+  nameref [ksh93 only]
+  local [bash only]
+  -- snip --
+- Special builtins (per POSIX shell standard (plus ksh93+bash extensions)):
+  -- snip --
+  break
+  &apos;:&apos;
+   continue
+  &apos;.&apos;
+  source
+  eval
+  exec
+  redirect
+  exit
+  export
+  readonly
+  return
+  set
+  shift
+  times
+  trap
+  unset
+  builtin
+  autoload
+  command
+  -- snip --
+
+AFAIK that&apos;s all... I can post complex sample scripts on demand...</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>519</commentid>
+            <who name="Roland Mainz">roland.mainz</who>
+            <bug_when>2007-11-10 16:34:34 +0000</bug_when>
+            <thetext>I found another problem:
+http://src.opensolaris.org/source/xref/onnv/onnv-gate/usr/src/lib/libshell/common/fun/rssread?r=4887 line 392:
+ksh93 and bash allow a &apos;$&apos; before a string literal which means this string should be looked-up via the l10n message catalog system.
+IMO it would be good to treat the &apos;$&apos; as part of the liteal itself, e.g. $&quot;foo&quot; should be rendered &quot;all green&quot; (currently the &apos;$&apos; has a different color).
+
+Similar case applies to $&apos;foo&apos; which is another style of string literals in ksh93/bash.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>562</commentid>
+            <who name="Trond Norbye">trond.norbye</who>
+            <bug_when>2007-11-13 03:19:25 +0000</bug_when>
+            <thetext>First of all: Please don&apos;t report multiple issues in the same report, since this makes it harder to:
+a) close the issue (since all issues must be addressed)
+b) have multiple people work on the different issues
+
+We should add the requested keywords to the list of known keywords, but I don&apos;t think it is worth the effort to try to distinguish the different shells from each other (please file an RFE if you think otherwise).
+
+The parser should be updated to render $ properly</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>625</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2007-11-17 13:24:05 +0000</bug_when>
+            <thetext>Checked in a partial fix in changeset 165:abb03d1fd1b6. We now recognize all the keywords listed in shell_builtins(1), and those listed in the bug description.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>723</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2007-11-25 12:23:39 +0000</bug_when>
+            <thetext>The remaining issues have been fixed in changeset 167:48668ce543aa. The fix seems to work for all the scripts under /usr/demo/ksh/fun on Nevada.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>1252</commentid>
+            <who name="Roland Mainz">roland.mainz</who>
+            <bug_when>2008-01-29 16:32:42 +0000</bug_when>
+            <thetext>(In reply to comment #4)
+&gt; The remaining issues have been fixed in changeset 167:48668ce543aa. The fix
+&gt; seems to work for all the scripts under /usr/demo/ksh/fun on Nevada.
+
+I don&apos;t see the change in http://src.opensolaris.org/source/xref/onnv/onnv-gate/usr/src/lib/libshell/common/fun/gnaw but I guess this only means the OpenGrok version of http://src.opensolaris.org/ needs to be updated (which leads to the next RFE that OpenGrok should include a HTML HEAD &quot;GENERATOR&quot; tag to define which OpenGrok version created the HTML code).</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

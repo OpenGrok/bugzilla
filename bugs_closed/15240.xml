@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>15240</bug_id>
+          
+          <creation_ts>2010-03-18 10:12:00 +0000</creation_ts>
+          <short_desc>radio buttons in history could behave like e.g. on wikipedia</short_desc>
+          <delta_ts>2010-03-24 17:09:30 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>webapp</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXINSOURCE</resolution>
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>enhancement</bug_severity>
+          <target_milestone>0.9</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Lubos Kosco">Lubos.Kosco</reporter>
+          <assigned_to name="Lubos Kosco">Lubos.Kosco</assigned_to>
+          <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>69566</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2010-03-18 10:12:17 +0000</bug_when>
+            <thetext>check e.g. http://en.wikipedia.org/w/index.php?title=OpenGrok&amp;action=history
+
+radio buttons just show relative to what is selected
+also this way reverse diffs are not possible so people are not confused and diffs always show as they should</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>70051</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2010-03-24 17:09:18 +0000</bug_when>
+            <thetext>changeset:   962:01a8b532c190</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

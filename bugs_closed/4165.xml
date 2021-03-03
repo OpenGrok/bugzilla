@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>4165</bug_id>
+          
+          <creation_ts>2008-10-22 10:51:00 +0000</creation_ts>
+          <short_desc>ClearCaseRepository throws IOException trying to diff</short_desc>
+          <delta_ts>2010-02-17 12:57:56 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>webapp</component>
+          <version>unspecified</version>
+          <rep_platform>SPARC/sun4v</rep_platform>
+          <op_sys>Solaris</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXED</resolution>
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>normal</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Scott Rankin">scott.rankin</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          <cc>jaustvik</cc>
+    
+    <cc>knut.hatlen</cc>
+    
+    <cc>scott.rankin</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>15654</commentid>
+            <who name="Scott Rankin">scott.rankin</who>
+            <bug_when>2008-10-22 10:51:42 +0000</bug_when>
+            <thetext>When trying to execute a diff against 2 versions of a file in ClearCase, I get the exception below. 
+
+This is with opengrok-0.7 on Solaris 10, jdk 1.5.0_12.  
+
+
+Oct 22, 2008 1:44:21 PM org.opensolaris.opengrok.history.ClearCaseRepository getHistoryGet
+SEVERE: Failed to get history: class java.io.IOException
+java.io.IOException: Illegal seek
+	at java.io.FileInputStream.skip(Native Method)
+	at java.lang.UNIXProcess$DeferredCloseInputStream.skip(UNIXProcess.java:236)
+	at java.io.BufferedInputStream.skip(BufferedInputStream.java:344)
+	at org.opensolaris.opengrok.history.ClearCaseRepository.drainStream(ClearCaseRepository.java:152)
+	at org.opensolaris.opengrok.history.ClearCaseRepository.getHistoryGet(ClearCaseRepository.java:110)
+	at org.opensolaris.opengrok.history.HistoryGuru.getRevision(HistoryGuru.java:161)
+	at org.apache.jsp.diff_jsp._jspService(diff_jsp.java:482)
+	at org.apache.jasper.runtime.HttpJspBase.service(HttpJspBase.java:98)
+	at javax.servlet.http.HttpServlet.service(HttpServlet.java:803)
+	at org.apache.jasper.servlet.JspServletWrapper.service(JspServletWrapper.java:331)
+	at org.apache.jasper.servlet.JspServlet.serviceJspFile(JspServlet.java:329)
+	at org.apache.jasper.servlet.JspServlet.service(JspServlet.java:265)
+	at javax.servlet.http.HttpServlet.service(HttpServlet.java:803)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:269)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:188)
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:213)
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:174)
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:127)
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:117)
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:108)
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:174)
+	at org.apache.coyote.http11.Http11Processor.process(Http11Processor.java:874)
+	at org.apache.coyote.http11.Http11BaseProtocol$Http11ConnectionHandler.processConnection(Http11BaseProtocol.java:665)
+	at org.apache.tomcat.util.net.PoolTcpEndpoint.processSocket(PoolTcpEndpoint.java:528)
+	at org.apache.tomcat.util.net.LeaderFollowerWorkerThread.runIt(LeaderFollowerWorkerThread.java:81)
+	at org.apache.tomcat.util.threads.ThreadPool$ControlRunnable.run(ThreadPool.java:689)
+	at java.lang.Thread.run(Thread.java:595)</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>15659</commentid>
+            <who name="Scott Rankin">scott.rankin</who>
+            <bug_when>2008-10-22 11:24:57 +0000</bug_when>
+            <thetext>I tested locally, and adding a catch block for the IOException in ClearCaseRepository.drainStream fixed it. 
+
+/**
+     * Drain all data from a stream and close it.
+     * @param in the stream to drain
+     * @throws IOException if an I/O error occurs
+     */
+    private static void drainStream(InputStream in) throws IOException {
+        while (true) {
+            long skipped = 0;
+            try
+            {
+                skipped = in.skip(32768L);
+            }
+            catch (IOException e)
+            {
+                // Not a problem, just means stream isn&apos;t seekable
+            }
+            
+            if (skipped == 0 &amp;&amp; in.read() == -1) {
+                // No bytes skipped, checked that we&apos;ve reached EOF with read()
+                break;
+            }
+        }
+        in.close();
+    }</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>17603</commentid>
+            <who name="Jørgen Austvik">jaustvik</who>
+            <bug_when>2008-11-05 12:20:38 +0000</bug_when>
+            <thetext>Committed fix along the lines you suggested.
+
+changeset:   662:6d2616b0ff82
+tag:         tip
+user:        Jorgen Austvik &lt;jorgen.austvik@sun.com&gt;
+date:        Wed Nov 05 20:19:45 2008 +0100
+summary:     bug 4165: Ignore not seekable streams</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

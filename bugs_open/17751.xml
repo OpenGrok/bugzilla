@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>17751</bug_id>
+          
+          <creation_ts>2011-01-20 10:12:00 +0000</creation_ts>
+          <short_desc>wanted: PDF analyzer</short_desc>
+          <delta_ts>2011-03-15 07:29:16 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>analyzer</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>ACCEPTED</bug_status>
+          
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>enhancement</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Vladimir Kotal">vladimir.kotal</reporter>
+          <assigned_to name="Lubos Kosco">Lubos.Kosco</assigned_to>
+          <cc>Lubos.Kosco</cc>
+    
+    <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>80588</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2011-01-20 10:12:05 +0000</bug_when>
+            <thetext>PDF analyzer would be beneficial to have, e.g. in order to search design documents together with source code (by selecting a project with the source code and a &quot;project&quot; with design documents).</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>81160</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2011-02-15 13:54:44 +0000</bug_when>
+            <thetext>we could reuse http://pdfbox.apache.org/
+
+after all old opengrok - arcs - still used for psarcs had it like that ...
+
+forwardport? :-D</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>81161</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2011-02-15 13:59:43 +0000</bug_when>
+            <thetext>alternatively is to use pdfbox underneath tika and grant a myriad of supported formats for lucene:
+
+http://tika.apache.org/0.8/formats.html
+
+(pdf, (open)office, mbox, rtf, audio/video metadata alt. java class and jar parser,  it also has a compressed files parser, which can be used to satisfy bug 343 )
+
+I have a feeling this might be one of the major features for next version! :)</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>81758</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2011-03-15 07:29:16 +0000</bug_when>
+            <thetext>for odf formats we also have:
+http://odftoolkit.org/</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

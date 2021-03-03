@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>4580</bug_id>
+          
+          <creation_ts>2008-11-06 04:45:00 +0000</creation_ts>
+          <short_desc>The agent tries to create the repositories on the client side</short_desc>
+          <delta_ts>2008-11-06 04:53:44 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>agent</component>
+          <version>unspecified</version>
+          <rep_platform>Other</rep_platform>
+          <op_sys>Solaris</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXED</resolution>
+          
+          
+          
+          
+          
+          <priority>P4</priority>
+          <bug_severity>minor</bug_severity>
+          <target_milestone>0.8</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Trond Norbye">trond.norbye</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>17697</commentid>
+            <who name="Trond Norbye">trond.norbye</who>
+            <bug_when>2008-11-06 04:45:35 +0000</bug_when>
+            <thetext>The repository objects is created and inserted into the hashmap during loading of the XML file, and the objects contains logic to ensure that all dependencies are installed on the computer. THis logic should not executed on the clients. 
+
+The meta-data part of the repository should be moved into a new object, and only this part should be stored in the configuration file.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>17698</commentid>
+            <who name="Trond Norbye">trond.norbye</who>
+            <bug_when>2008-11-06 04:53:44 +0000</bug_when>
+            <thetext>I have refactored the code to use a RepositoryInfo object in the configuration, and let the HistoryGuru be the only one that actually use the real Repositories.
+
+This commit will create an incompatible configuration file, so you need to run:
+
+java -jar opengrok.jar -R &lt;old configfile&gt; -S -W &lt;new configfile&gt;
+
+To convert your configuration file to the new format.
+
+Fixed in changeset:   664:09961c6a8aaa</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

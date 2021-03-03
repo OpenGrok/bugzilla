@@ -1,0 +1,24 @@
+# HG changeset patch
+# User jel+opengrok@cs.uni-magdeburg.de
+# Date 1334542681 -7200
+# Node ID 60c133df7e1113c5fbfc0e0b6bac3c713b4e164a
+# Parent  500c50a51dca748b9a301c266adab4b2ad9d2a7f
+#19186: Failed to create EftarFileReader
+
+diff -r 500c50a51dca -r 60c133df7e11 src/org/opensolaris/opengrok/configuration/Configuration.java
+--- a/src/org/opensolaris/opengrok/configuration/Configuration.java	Mon Apr 16 01:59:34 2012 +0200
++++ b/src/org/opensolaris/opengrok/configuration/Configuration.java	Mon Apr 16 04:18:01 2012 +0200
+@@ -666,7 +666,12 @@
+         if (dtagsEftar == null) {
+             File tmp = new File(getDataRoot() + "/" + EFTAR_DTAGS_FILE);
+             if (tmp.canRead()) {
+-                dtagsEftar = tmp.getName();
++                try {
++                    dtagsEftar = tmp.getAbsolutePath();
++                } catch (SecurityException e) {
++                    logger.warning(e.getLocalizedMessage());
++                    dtagsEftar = "";
++                }
+             } else {
+                 dtagsEftar = "";
+             }

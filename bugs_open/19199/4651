@@ -1,0 +1,190 @@
+# HG changeset patch
+# User jel+opengrok@cs.uni-magdeburg.de
+# Date 1334462486 -7200
+# Node ID cf20244419bdb7d024610b3603368f8208336918
+# Parent  b8e4140829f16bb50ebf4a1bd6753965ffd9f1bf
+fix ctags options option (code conventions, better naming, performance)
+
+diff -r b8e4140829f1 -r cf20244419bd src/org/opensolaris/opengrok/analysis/Ctags.java
+--- a/src/org/opensolaris/opengrok/analysis/Ctags.java	Sun Apr 15 04:48:29 2012 +0200
++++ b/src/org/opensolaris/opengrok/analysis/Ctags.java	Sun Apr 15 06:01:26 2012 +0200
+@@ -47,15 +47,21 @@
+     private static final String CTAGS_FILTER_TERMINATOR = "__ctags_done_with_file__";
+     //default: setCtags(System.getProperty("org.opensolaris.opengrok.analysis.Ctags", "ctags"));
+     private String binary;
+-    private String CTagsExtraOptionsFile = null;
++    private String optionsFile = null;
+     private ProcessBuilder processBuilder;
+ 
+     public void setBinary(String binary) {
+         this.binary = binary;
+     }
+ 
+-    public void setCTagsExtraOptionsFile(String CTagsExtraOptionsFile) {
+-        this.CTagsExtraOptionsFile = CTagsExtraOptionsFile;
++    /**
++     * Set the filename, which should be passed to ctag's --options=... switch.
++     * @param filename  filename to use. If {@code null}, ctags gets called
++     *  without the --options switch, but with the old --regex-Asm=... instead
++     *  for backward compatibility.
++     */
++    public void setOptionsFile(String filename) {
++        optionsFile = filename;
+     }
+ 
+     public void close() {
+@@ -68,7 +74,6 @@
+     private void initialize() throws IOException {
+         if (processBuilder == null) {
+             List<String> command = new ArrayList<String>();
+-            String commandStr = "";
+ 
+             command.add(binary);
+             command.add("--c-kinds=+l");
+@@ -86,18 +91,22 @@
+             command.add("--fields=-anf+iKnS");
+             command.add("--excmd=pattern");
+             command.add("--langmap=sh:+.kshlib"); // RFE #17849
+-
+-            /* Add extra command line options for ctags. */
+-            if (CTagsExtraOptionsFile != null) {
+-                log.log(Level.WARNING, "Adding extra options to ctags");
+-                command.add("--options=" + CTagsExtraOptionsFile);
++            if (optionsFile != null) {
++                command.add("--options=" + optionsFile);
++            } else {
++                // assmebly definitions for backward compat
++                command.add("--regex-Asm=/^[ \\t]*(ENTRY|ENTRY2|ALTENTRY)[ \\t]*\\(([a-zA-Z0-9_]+)/\\2/f,function/");
+             }
+-
+-            for (String s : command) {
+-                commandStr += s + " ";
++            if (log.isLoggable(Level.FINE)) {
++                StringBuilder cmd = new StringBuilder(128);
++                cmd.append("Executing ctags command [");
++                for (String s : command) {
++                    cmd.append(s).append(" ");
++                }
++                cmd.setLength(cmd.length()-1);
++                cmd.append(']');
++                log.log(Level.FINE, cmd.toString());
+             }
+-            log.log(Level.FINE, "Executing ctags command [" + commandStr + "]");
+-
+             processBuilder = new ProcessBuilder(command);
+         }
+ 
+diff -r b8e4140829f1 -r cf20244419bd src/org/opensolaris/opengrok/configuration/Configuration.java
+--- a/src/org/opensolaris/opengrok/configuration/Configuration.java	Sun Apr 15 04:48:29 2012 +0200
++++ b/src/org/opensolaris/opengrok/configuration/Configuration.java	Sun Apr 15 06:01:26 2012 +0200
+@@ -112,7 +112,7 @@
+     private int cachePages;
+     private String databaseDriver;
+     private String databaseUrl;
+-    private String CTagsExtraOptionsFile;
++    private String ctagsOptionsFile;
+     private int scanningDepth;
+     private Set<String> allowedSymlinks;
+     private boolean obfuscatingEMailAddresses;
+@@ -688,12 +688,12 @@
+         this.databaseUrl = databaseUrl;
+     }
+ 
+-    public String getCTagsExtraOptionsFile() {
+-        return CTagsExtraOptionsFile;
++    public String getCtagsOptionsFile() {
++        return ctagsOptionsFile;
+     }
+ 
+-    public void setCTagsExtraOptionsFile(String filename) {
+-        this.CTagsExtraOptionsFile = filename;
++    public void setCtagsOptionsFile(String filename) {
++        this.ctagsOptionsFile = filename;
+     }
+ 
+     public Set<String> getAllowedSymlinks() {
+diff -r b8e4140829f1 -r cf20244419bd src/org/opensolaris/opengrok/configuration/RuntimeEnvironment.java
+--- a/src/org/opensolaris/opengrok/configuration/RuntimeEnvironment.java	Sun Apr 15 04:48:29 2012 +0200
++++ b/src/org/opensolaris/opengrok/configuration/RuntimeEnvironment.java	Sun Apr 15 06:01:26 2012 +0200
+@@ -690,12 +690,12 @@
+         threadConfig.get().setDatabaseUrl(databaseUrl);
+     }
+ 
+-    public String getCTagsExtraOptionsFile() {
+-        return threadConfig.get().getCTagsExtraOptionsFile();
++    public String getCtagsOptionsFile() {
++        return threadConfig.get().getCtagsOptionsFile();
+     }
+ 
+-    public void setCTagsExtraOptionsFile(String filename) {
+-        threadConfig.get().setCTagsExtraOptionsFile(filename);
++    public void setCtagsOptionsFile(String filename) {
++        threadConfig.get().setCtagsOptionsFile(filename);
+     }
+ 
+     public Set<String> getAllowedSymlinks() {
+diff -r b8e4140829f1 -r cf20244419bd src/org/opensolaris/opengrok/index/IndexDatabase.java
+--- a/src/org/opensolaris/opengrok/index/IndexDatabase.java	Sun Apr 15 04:48:29 2012 +0200
++++ b/src/org/opensolaris/opengrok/index/IndexDatabase.java	Sun Apr 15 06:01:26 2012 +0200
+@@ -319,18 +319,13 @@
+         if (ctgs != null) {
+             ctags = new Ctags();
+             ctags.setBinary(ctgs);
++            ctags.setOptionsFile(RuntimeEnvironment.getInstance()
++                .getCtagsOptionsFile());
+         }
+         if (ctags == null) {
+             logger.warning("Unable to run ctags! Searching definitions will not work!");
+         }
+ 
+-        if (ctags != null) {
+-            String filename = RuntimeEnvironment.getInstance().getCTagsExtraOptionsFile();
+-            if (filename != null) {
+-                ctags.setCTagsExtraOptionsFile(filename);
+-            }
+-        }
+-
+         try {
+             //TODO we might need to add writer.commit after certain phases of index generation, right now it will only happen in the end
+             Analyzer analyzer = AnalyzerGuru.getAnalyzer();
+diff -r b8e4140829f1 -r cf20244419bd src/org/opensolaris/opengrok/index/Indexer.java
+--- a/src/org/opensolaris/opengrok/index/Indexer.java	Sun Apr 15 04:48:29 2012 +0200
++++ b/src/org/opensolaris/opengrok/index/Indexer.java	Sun Apr 15 06:01:26 2012 +0200
+@@ -226,17 +226,14 @@
+                             }
+                             break;
+                         case 'o':
+-                            String CTagsExtraOptionsFile = getopt.getOptarg();
+-                            File CTagsFile = new File(CTagsExtraOptionsFile);
+-                            if (!(CTagsFile.isFile() && CTagsFile.canRead())) {
+-                                System.err.println("ERROR: File '" +
+-                                    CTagsExtraOptionsFile +
+-                                    "' not found for the -o option");
++                            File ctagsOptions = new File(getopt.getOptarg());
++                            if (!(ctagsOptions.isFile() && ctagsOptions.canRead())) 
++                            {
++                                System.err.println("ERROR: File '" + ctagsOptions 
++                                    + "' not found for the -o option");
+                                 System.exit(1);
+                             }
+-                            System.err.println("INFO: file with extra " +
+-                               "options for ctags: " + CTagsExtraOptionsFile);
+-                            cfg.setCTagsExtraOptionsFile(CTagsExtraOptionsFile);
++                            cfg.setCtagsOptionsFile(ctagsOptions.getPath());
+                             break;
+                         case 'O':
+                              {
+diff -r b8e4140829f1 -r cf20244419bd test/org/opensolaris/opengrok/analysis/CtagsTest.java
+--- a/test/org/opensolaris/opengrok/analysis/CtagsTest.java	Sun Apr 15 04:48:29 2012 +0200
++++ b/test/org/opensolaris/opengrok/analysis/CtagsTest.java	Sun Apr 15 06:01:26 2012 +0200
+@@ -56,8 +56,8 @@
+          * The config file contains assembly specific settings so it should
+          * not be harmful to other test cases.
+          */
+-        String extraOptionsFile = "testdata/sources/bug19195/ctags.config";
+-        ctags.setCTagsExtraOptionsFile(extraOptionsFile);
++        String optionsFile = "testdata/sources/bug19195/ctags.config";
++        ctags.setOptionsFile(optionsFile);
+ 
+         assertTrue("No point in running ctags tests without valid ctags",
+                 RuntimeEnvironment.getInstance().validateExuberantCtags());

@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>10758</bug_id>
+          
+          <creation_ts>2009-08-19 05:26:00 +0000</creation_ts>
+          <short_desc>OpenGrok 0.7 does not allow searching across &apos;All&apos; projects</short_desc>
+          <delta_ts>2009-08-24 11:36:06 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>indexer</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>DUPLICATE</resolution>
+          <dup_id>341</dup_id>
+          
+          
+          
+          
+          <priority>P2</priority>
+          <bug_severity>major</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Harshit">guntasg</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          <cc>Lubos.Kosco</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>47068</commentid>
+            <who name="Harshit">guntasg</who>
+            <bug_when>2009-08-19 05:26:13 +0000</bug_when>
+            <thetext>Hi,
+
+As of OpenGrok 0.7 we need to select a Project before we can search in OpenGrok. But the main use case for which we use OpenGrok is to search for a term across &apos;All&apos; projects.
+
+Could you please help me know when this feature will be supported? Is it expected to come in the next release and when is the next release?
+
+Thanks in advance.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>47074</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2009-08-19 06:44:21 +0000</bug_when>
+            <thetext>I&apos;d like to close this as duplicate of http://defect.opensolaris.org/bz/show_bug.cgi?id=341 if you don&apos;t mind ...
+
+we plan above bug in 0.8 , I checked newer lucene and it seems it has a support for this directly in its code, so I&apos;d like to get lucene updated and then add a search through all the projects.
+Eventually I&apos;d like to change the selector box in the way, that you can pick several projects and search only through them ...</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>47079</commentid>
+            <who name="Harshit">guntasg</who>
+            <bug_when>2009-08-19 07:36:23 +0000</bug_when>
+            <thetext>(In reply to comment #1)
+&gt; I&apos;d like to close this as duplicate of
+&gt; http://defect.opensolaris.org/bz/show_bug.cgi?id=341 if you don&apos;t mind ...
+&gt; 
+&gt; we plan above bug in 0.8 , I checked newer lucene and it seems it has a support
+&gt; for this directly in its code, so I&apos;d like to get lucene updated and then add a
+&gt; search through all the projects.
+&gt; Eventually I&apos;d like to change the selector box in the way, that you can pick
+&gt; several projects and search only through them ...
+
+Thanks Lubos..
+
+Could you please help me know when you are planning to upgrade the Lucene? And when the OpenGrok 0.8 will be available? Knowing the dates will help us to plan. If this is going to be very far then we would like to move back to 0.6. Please help us know so that we can plan it accordingly.
+
+Thanks for all the help.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>47198</commentid>
+            <who name="Harshit">guntasg</who>
+            <bug_when>2009-08-20 05:18:45 +0000</bug_when>
+            <thetext>(In reply to comment #1)
+
+&gt; we plan above bug in 0.8 , I checked newer lucene and it seems it has a support
+&gt; for this directly in its code, so I&apos;d like to get lucene updated and then add a
+&gt; search through all the projects.
+
+Hi Lubos/Trond, could you please help me know when you are planning to roll out OpenGrok 0.8 with upgraded Lucene?
+
+&gt; Eventually I&apos;d like to change the selector box in the way, that you can pick
+&gt; several projects and search only through them ...
+
+A &apos;All&apos; field in the selector would also be required along with the multi select selector box.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>47367</commentid>
+            <who name="Harshit">guntasg</who>
+            <bug_when>2009-08-21 09:19:12 +0000</bug_when>
+            <thetext>(In reply to comment #3)
+&gt; (In reply to comment #1)
+&gt; 
+&gt; &gt; we plan above bug in 0.8 , I checked newer lucene and it seems it has a support
+&gt; &gt; for this directly in its code, so I&apos;d like to get lucene updated and then add a
+&gt; &gt; search through all the projects.
+&gt; 
+&gt; Hi Lubos/Trond, could you please help me know when you are planning to roll out
+&gt; OpenGrok 0.8 with upgraded Lucene?
+&gt; 
+&gt; &gt; Eventually I&apos;d like to change the selector box in the way, that you can pick
+&gt; &gt; several projects and search only through them ...
+&gt; 
+&gt; A &apos;All&apos; field in the selector would also be required along with the multi
+&gt; select selector box.
+
+Could you please reply to comment #2 and comment #3 ?
+
+Thanks.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>47423</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2009-08-21 15:16:30 +0000</bug_when>
+            <thetext>(In reply to comment #3)
+&gt; (In reply to comment #1)
+&gt; 
+&gt; &gt; we plan above bug in 0.8 , I checked newer lucene and it seems it has a support
+&gt; &gt; for this directly in its code, so I&apos;d like to get lucene updated and then add a
+&gt; &gt; search through all the projects.
+&gt; 
+&gt; Hi Lubos/Trond, could you please help me know when you are planning to roll out
+&gt; OpenGrok 0.8 with upgraded Lucene?
+
+opengrok 0.8 will be out once db cache is ready + this bug is integrated
+I would be expecting (like) this to happen this autumn.
+
+&gt; 
+&gt; &gt; Eventually I&apos;d like to change the selector box in the way, that you can pick
+&gt; &gt; several projects and search only through them ...
+&gt; 
+&gt; A &apos;All&apos; field in the selector would also be required along with the multi
+&gt; select selector box.
+
+*** This bug has been marked as a duplicate of bug 341 ***</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>47541</commentid>
+            <who name="Harshit">guntasg</who>
+            <bug_when>2009-08-24 05:50:48 +0000</bug_when>
+            <thetext>&gt; opengrok 0.8 will be out once db cache is ready + this bug is integrated
+&gt; I would be expecting (like) this to happen this autumn.
+&gt; 
+
+Hi Trond/Lubos,
+
+Could you please help me know what all components need to be changed in the opengrok code? Just wanted to analyze the change required. If its simple and comprehendable, we might consider doing this.
+
+Thanks.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>47557</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2009-08-24 08:49:08 +0000</bug_when>
+            <thetext>(In reply to comment #6)
+&gt; &gt; opengrok 0.8 will be out once db cache is ready + this bug is integrated
+&gt; &gt; I would be expecting (like) this to happen this autumn.
+&gt; &gt; 
+&gt; 
+&gt; Hi Trond/Lubos,
+&gt; 
+&gt; Could you please help me know what all components need to be changed in the
+&gt; opengrok code? Just wanted to analyze the change required. If its simple and
+
+I am updating lucene code to latest this week, then we will have (besides 20% faster search):
+http://lucene.apache.org/java/2_4_1/api/org/apache/lucene/search/MultiSearcher.html
+and
+Parallel search available
+
+the only change to code base then will be improving the jsp pages so they can pass on more projects (change to multiselect combobox) or a ticker for all projects, which will call above method ... quite simple, isn&apos;t it ? :)
+I hope I can do it within 2 weeks after lucene upgrade
+
+the db cache is on Knuth and is the biggest priority currently, I haven&apos;t done any testing yet, so not sure how stable it is, but we need to sort out some details still.
+
+&gt; comprehendable, we might consider doing this.
+
+well, if you know jsp/html, I&apos;d be happy if someone can design the change to multiselect combobox in search and add a select all ticker
+I think a good idea is to put the project selector to the right side and add a ticker somewhere next to it ...
+
+&gt; 
+&gt; Thanks.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>47576</commentid>
+            <who name="Harshit">guntasg</who>
+            <bug_when>2009-08-24 11:08:56 +0000</bug_when>
+            <thetext>Thanks Lubos for the update.
+
+Downgraded to 0.6 assuming that atleast it won&apos;t have the Projects selector. But it also has! Now moving down to 0.5 :(
+
+Just a small question, is there any way, in 0.5, by which the configuration can be sent to webapp (the way we used to do in 0.7). I could not find where we are specifying the config url. Earlier it used to be a context-param in web.xml.
+
+Could you please help me in this?
+
+Thanks.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>47579</commentid>
+            <who name="Trond Norbye">trond.norbye</who>
+            <bug_when>2009-08-24 11:36:06 +0000</bug_when>
+            <thetext>See EXAMPLE.txt :-)
+
+ &lt;context-param&gt;
+   &lt;param-name&gt;ConfigAddress&lt;/param-name&gt;
+   &lt;param-value&gt;localhost:2424&lt;/param-value&gt;
+ &lt;/context-param&gt;</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

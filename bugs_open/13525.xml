@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>13525</bug_id>
+          
+          <creation_ts>2009-12-21 13:48:00 +0000</creation_ts>
+          <short_desc>if Indexer reaches the Maximum Indexed Words Per File limit it should issue a warning</short_desc>
+          <delta_ts>2009-12-21 13:48:17 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>indexer</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>NEW</bug_status>
+          
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>minor</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Vladimir Kotal">vladimir.kotal</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>60527</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2009-12-21 13:48:17 +0000</bug_when>
+            <thetext>Subject says it all.
+
+Currently (0.8.1) both OpenGrok app and the /usr/opengrok/bin/OpenGrok script should be unlimited w.r.t. maximum indexed words (MAX_INDEXED_WORDS variable in the script) but in case someone sets the limit and indexer reaches it, it should inform the user that his index is going to be incomplete.
+
+Big fat warning, please.</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

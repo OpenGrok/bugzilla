@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>3028</bug_id>
+          
+          <creation_ts>2008-08-22 09:39:00 +0000</creation_ts>
+          <short_desc>make possible to jump through changes in &apos;full diff&apos; view</short_desc>
+          <delta_ts>2008-08-22 11:37:20 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>webapp</component>
+          <version>unspecified</version>
+          <rep_platform>Other</rep_platform>
+          <op_sys>Solaris</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>DUPLICATE</resolution>
+          <dup_id>2629</dup_id>
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>enhancement</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Vladimir Kotal">vladimir.kotal</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>10838</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2008-08-22 09:39:32 +0000</bug_when>
+            <thetext>It&apos;d be very cool to have the ability to iterate through the changes in full diff view. It could be done in similar way as in &apos;frames view&apos; in webrev [1] - &apos;next diff&apos; and &apos;prev diff&apos; buttons (+ optionally keyboard shortcuts).
+
+This will be especially handy for long files such as usr/src/uts/common/inet/ip/ip.c in ONNV where the context is necessary (and &apos;compact&apos; diff view is not sufficient).
+
+[1] http://src.opensolaris.org/source/xref/onnv/onnv-gate/usr/src/tools/scripts/webrev.sh</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>10855</commentid>
+            <who name="Trond Norbye">trond.norbye</who>
+            <bug_when>2008-08-22 11:37:20 +0000</bug_when>
+            <thetext>
+
+*** This bug has been marked as a duplicate of bug 2629 ***</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

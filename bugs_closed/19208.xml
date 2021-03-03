@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>19208</bug_id>
+          
+          <creation_ts>2012-05-03 11:12:00 +0000</creation_ts>
+          <short_desc>Need support for Oracle PLSQL in opengrok</short_desc>
+          <delta_ts>2012-06-05 08:28:47 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>analyzer</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXINSOURCE</resolution>
+          
+          
+          
+          
+          
+          <priority>P2</priority>
+          <bug_severity>normal</bug_severity>
+          <target_milestone>next</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Rajalingam">Rajalingam.Ramasamy</reporter>
+          <assigned_to name="Lubos Kosco">Lubos.Kosco</assigned_to>
+          <cc>Lubos.Kosco</cc>
+    
+    <cc>opengrok-dev</cc>
+    
+    <cc>Rajalingam.Ramasamy</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>86429</commentid>
+            <who name="Rajalingam">Rajalingam.Ramasamy</who>
+            <bug_when>2012-05-03 11:12:50 +0000</bug_when>
+            <thetext>This enhancement request is in continuation with the mail communication we had with &quot;Luboš&quot;, &quot;vladimir&quot; and &quot;Michal&quot;.
+
+We are using the opengrok for our product code. Almost 50% of our code is in plsql. We badly need support for plsql in opengrok. Can you please review and do the needful.
+
+The plsql constructs are explained well in the following links.
+
+http://docs.oracle.com/cd/E11882_01/appdev.112/e25519/sqlstatements.htm#CIHBEABD. 
+This oracle document explains the constructs used in a typical stored plsql units. Most of the time we will be using the &quot;CREATE [OR REPLACE]&quot; Statements. We do not use the ALTER and DROP statements.
+
+
+http://docs.oracle.com/cd/E11882_01/appdev.112/e25519/toc.htm. 
+This document explains the plsql fundamentals. &quot;PL/SQL Data Types&quot;, &quot;PL/SQL Control Statements&quot;, &quot;PL/SQL Subprograms&quot;, &quot;PL/SQL Triggers&quot;, &quot;PL/SQL Language Elements&quot; and &quot;PL/SQL Name Resolution&quot; are some important sections.
+
+Checked in google and found some more links.
+http://www.antlr.org/grammar/list. ANTLR seem to hosting set of grammers for different languages.
+https://github.com/porcelli/plsql-parser. This link provides the plsql grammer as per &quot;ANTLR&quot;.
+The link http://www.ibrezina.net/OracleSQL.tgz seem to have the latest grammer for SQL
+
+Having plsql support will help us in leveraging this tool to a great extend. Please review the links and let me know if you need any more details.
+
+Thanks, Raja</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86453</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2012-06-05 08:28:47 +0000</bug_when>
+            <thetext>changeset:   1375:ce0b759dcd28</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

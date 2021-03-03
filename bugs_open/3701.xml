@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>3701</bug_id>
+          
+          <creation_ts>2008-10-03 05:46:00 +0000</creation_ts>
+          <short_desc>Annotate displays wrong links to authors</short_desc>
+          <delta_ts>2008-10-03 05:46:33 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>webapp</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>Solaris</op_sys>
+          <bug_status>NEW</bug_status>
+          
+          
+          
+          
+          
+          
+          <priority>P4</priority>
+          <bug_severity>minor</bug_severity>
+          <target_milestone>0.8</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Vladimir Kotal">vladimir.kotal</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>13683</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2008-10-03 05:46:33 +0000</bug_when>
+            <thetext>With OpenGrok 0.6 in the History view and Mercurial repository I get the Author listed as e-mail address (john.levon@sun.com). In my case this links to http://namefinder/NameFinder?nfquery=john.levon@sun.com
+
+In annotate view of the same file I get just the first name in the third column and it links to http://namefinder/NameFinder?nfquery=john which is obviously unwanted.
+
+The Annotate view should still display short names but should link to long names.</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

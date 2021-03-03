@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>17936</bug_id>
+          
+          <creation_ts>2011-02-24 17:42:00 +0000</creation_ts>
+          <short_desc>ArrayIndexOutOfBoundsException when using n=50 as URL query parameter</short_desc>
+          <delta_ts>2011-02-26 18:29:37 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>webapp</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXED</resolution>
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>minor</bug_severity>
+          <target_milestone>0.11</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="James Abbatiello">abbeyj</reporter>
+          <assigned_to name="Knut Anders Hatlen">knut.hatlen</assigned_to>
+          <cc>knut.hatlen</cc>
+    
+    <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>81383</commentid>
+            <who name="James Abbatiello">abbeyj</who>
+            <bug_when>2011-02-24 17:42:24 +0000</bug_when>
+            <thetext>When using n=50 as a query parameter the third page of results will throw an ArrayIndexOutOfBoundsException.  For a live example, go to http://src.opensolaris.org/source/s?n=50&amp;start=0&amp;q=String&amp;sort=relevancy&amp;project=opengrok, and click on page 3.  This can also happen with other values of n, for instance http://src.opensolaris.org/source/s?n=10&amp;start=0&amp;q=String&amp;sort=relevancy&amp;project=opengrok, page 13.
+
+I believe this happens because the code caches (cachePages * hitsPerPage) hits which by default is (5 * 25) = 125.  When using n=50 (or n=10) the results run out right in the middle of the page.
+
+The above testcases used to produce more information indicating the that the index was 125 and a stack trace blaming Results.java:70.  I believe the line in question is http://www.norbye.org/hg/opengrok/trunk/index.cgi/file/9b89f82c1910/src/org/opensolaris/opengrok/search/Results.java#l70 .
+Right now this information is missing and only &quot;null&quot; is printed.  This may be a separate bug.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>81423</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2011-02-26 00:21:16 +0000</bug_when>
+            <thetext>When I try to reproduce this using the latest sources from the Mercurial repository, I do see the full stack trace of the ArrayIndexOutOfBoundsException. Don&apos;t know why that doesn&apos;t show up on src.opensolaris.org, but I think they&apos;ve made some customizations to the instance running there. In any case, I agree that it would be a separate bug.
+
+The cache limit on 5 * 25 hits does look like the root of the problem. Thanks for analyzing the bug!</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>81447</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2011-02-26 18:29:37 +0000</bug_when>
+            <thetext>I&apos;m no Lucene expert, but... This code looks unnecessarily complex, and I haven&apos;t found anything in the Lucene docs suggesting that the complexity gives any benefits. In fact, the Lucene FAQ recommends implementing paging in a much simpler fashion: just re-execute the search and ignore the hits you don&apos;t want to show. I changed the code to do just that, and the ArrayIndexOutOfBoundsException was fixed as a side effect of the simplification.
+
+Fixed in changeset 1164:bfe828cbcc84.</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

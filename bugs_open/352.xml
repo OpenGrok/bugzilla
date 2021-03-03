@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>352</bug_id>
+          
+          <creation_ts>2008-01-10 14:45:00 +0000</creation_ts>
+          <short_desc>history.jsp should include anchor targets for revisions</short_desc>
+          <delta_ts>2010-11-30 14:06:29 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>webapp</component>
+          <version>unspecified</version>
+          <rep_platform>Other</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>CAUSEKNOWN</bug_status>
+          
+          
+          
+          
+          
+          
+          <priority>P4</priority>
+          <bug_severity>enhancement</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          <blocked>353</blocked>
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Stephen Lau">stevel</reporter>
+          <assigned_to name="Stephen Lau">stevel</assigned_to>
+          <cc>trond.norbye</cc>
+    
+    <cc>vladimir.kotal</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>980</commentid>
+            <who name="Stephen Lau">stevel</who>
+            <bug_when>2008-01-10 14:45:43 +0000</bug_when>
+            <thetext>Currently history.jsp prints out revision information in the form of a log.
+It should contain &lt;a name=&quot;#revXXXX&quot;&gt; targets so that direct links to the revision information for a specific revision can be linked to.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>1015</commentid>
+            <who name="Trond Norbye">trond.norbye</who>
+            <bug_when>2008-01-15 12:22:59 +0000</bug_when>
+            <thetext>It is fairly easy to add the anchor in the table, but it seems that some browsers have problems positioning the page at the anchor.
+
+Please see http://htmlhelp.com/faq/html/tables.html#table-problems for more information.
+
+Please let me know if you still want the anchors added, or if the RFE should be closed.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>79605</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2010-11-30 14:06:29 +0000</bug_when>
+            <thetext>Yes, we do :)</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

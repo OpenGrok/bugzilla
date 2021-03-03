@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>2015</bug_id>
+          
+          <creation_ts>2008-05-22 00:49:00 +0000</creation_ts>
+          <short_desc>Repository with symlinks causes warnings in &quot;quiet&quot; mode</short_desc>
+          <delta_ts>2008-08-26 13:09:44 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>indexer</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>Solaris</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXED</resolution>
+          
+          
+          
+          
+          
+          <priority>P4</priority>
+          <bug_severity>normal</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Peter Bray">pdb_ml</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>7212</commentid>
+            <who name="Peter Bray">pdb_ml</who>
+            <bug_when>2008-05-22 00:49:02 +0000</bug_when>
+            <thetext>My mercurial repositories have several checked-in symbolic links (symlinks), these are usually to wrapper scripts in the same directory (ie one wrapper script implements several commands).
+
+The following code fragment from IndexDatabase.java, highlights line 447 which unconditionally prints a warning when encountering a symlink which it doesn&apos;t like (ie most of them). 
+
+
+    private boolean accept(File file) { 
+      // Deleted code 
+           if (!file.getAbsolutePath().equals(file.getCanonicalPath())) {
+                System.err.println(&quot;Warning: ignored link &quot; + file.getAbsolutePath() +
+                        &quot; -&gt; &quot; + file.getCanonicalPath());
+                return false;
+            }
+      // Deleted code 
+    }
+
+This code should possibly use isVerbose() if it has access to it (unverified). I noted that verbose and quiet are paired (ie quiet = ! verbose) compared with other projects which have multi-level debugging/error-logging infrastructures.
+
+My problem (is it is) is that in cron I&apos;d like to run &quot;run-quiet.sh&quot; or an equalivant using the &quot;-q&quot; option, and it not complain about symlinks that are part of the repository being indexed. I could filter the output and remove lines matching this warning, but it seems like something that should be looked at.
+
+Looking at the project, it is probably worth having even simple logging framework, to remove all the direct usage of System.err.*() and allow more control over logging levels. A simple static interface like Log.Debug(), Log.Info(), Log.Notice(), *|* Log.Warning(), Log.Error(), Log.FatalError()
+or the like (with the current -v | -q divide suggested by the *|*) would probably not take long to implement, and allow more standardised reporting that is amenable to future enhancement.
+
+Also there maybe better ways to handle symlinks that are part of repositories, especially those to other files (or directories) within the repository ((ie internal symlinks)).
+
+Thoughts/Comments Welcomed</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>7330</commentid>
+            <who name="Trond Norbye">trond.norbye</who>
+            <bug_when>2008-05-27 02:23:52 +0000</bug_when>
+            <thetext>The intention of the -q flag is to get rid of the normal progress output, but this is a warning message and should not be removed by the -q flag.
+
+We should probably add a configuration variable if links are allowed or not.
+
+Jan Ståle Berg have a patch queued that replace the printing to stdout/err with a logging framework, so you can expect that to be fixed in the nearby future.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>11140</commentid>
+            <who name="Trond Norbye">trond.norbye</who>
+            <bug_when>2008-08-26 13:09:44 +0000</bug_when>
+            <thetext>Fixed in changeset:   320:3bb0455186c3</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

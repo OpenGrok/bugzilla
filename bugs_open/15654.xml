@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>15654</bug_id>
+          
+          <creation_ts>2010-04-16 09:28:00 +0000</creation_ts>
+          <short_desc>ips/create.sh fails on release candidates</short_desc>
+          <delta_ts>2010-04-16 09:28:41 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>build</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>NEW</bug_status>
+          
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>minor</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Knut Anders Hatlen">knut.hatlen</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>71510</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2010-04-16 09:28:41 +0000</bug_when>
+            <thetext>When running create.sh on a release candidate, I see this error:
+
+$ ./platform/solaris/ips/create.sh
+pkgsend: &apos;open&apos; failed for transaction ID &apos;None&apos;; status &apos;400&apos;:
+Illegal FMRI &apos;OSOLopengrok@0.9-rc1-0.135&apos;: Bad Version: rc1-0.135
+
+I think the problem is that it doesn&apos;t remove the &apos;rc1&apos; part of the version string. IPS does not allow letters in version names.</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

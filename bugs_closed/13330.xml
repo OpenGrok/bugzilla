@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>13330</bug_id>
+          
+          <creation_ts>2009-12-14 18:43:00 +0000</creation_ts>
+          <short_desc>Wrong URL when search for camel-case identifier has only one match</short_desc>
+          <delta_ts>2009-12-22 13:08:54 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>webapp</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXED</resolution>
+          
+          
+          
+          
+          
+          <priority>P4</priority>
+          <bug_severity>minor</bug_severity>
+          <target_milestone>0.9</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Knut Anders Hatlen">knut.hatlen</reporter>
+          <assigned_to name="Lubos Kosco">Lubos.Kosco</assigned_to>
+          <cc>Lubos.Kosco</cc>
+    
+    <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>59633</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2009-12-14 18:43:14 +0000</bug_when>
+            <thetext>When I search for a camel-case symbol in the OpenSearch box, and that symbol only occurs once in the source, I&apos;m forwarded directly to the file which contains the match. However, the anchor name appended to the URL uses the lower-case version of the symbol, so the web browser is not automatically positioned on the match.
+
+Example: I&apos;ve indexed the Apache Derby source code. If I type testNullabilityInLeftOrRightOuterJoin in the OpenSearch box and press enter, I&apos;m forwarded to a page with this URL:
+
+http://localhost:8080/source/xref/derby/java/testing/org/apache/derbyTesting/functionTests/tests/lang/JoinTest.java#testnullabilityinleftorrightouterjoin
+
+Whereas it should have been:
+
+http://localhost:8080/source/xref/derby/java/testing/org/apache/derbyTesting/functionTests/tests/lang/JoinTest.java#testNullabilityInLeftOrRightOuterJoin
+
+(notice the case difference after the # symbol in the URL)</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>59744</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2009-12-15 10:22:47 +0000</bug_when>
+            <thetext>this will be fixed in a way, that the URL will be corrected
+and also this is a kind of misbehaviour, since it should give you the search page with results and not jump directly to the result
+(btw. this camel-case problem doesn&apos;t exist in IE8 , so it might be a problem of FF too ;) )
+
+anyhow the fix will be a cleanup of opensearch URL + changing the servlet that is used from /s? to /search? , which will give results as designed
+
+I will also look at keeping the /s? and giving you the option to jump to only result directly, but this messes up with stats - we use /search servlet for searches made by humans, whether /s is used for refs or defs, so opensearch should definitely use /search ...</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>60642</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2009-12-22 13:08:54 +0000</bug_when>
+            <thetext>changeset:   926:5d67b8bd85af</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

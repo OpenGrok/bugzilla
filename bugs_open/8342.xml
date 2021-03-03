@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>8342</bug_id>
+          
+          <creation_ts>2009-04-22 12:31:00 +0000</creation_ts>
+          <short_desc>Matching substrings aren&apos;t considered matches</short_desc>
+          <delta_ts>2009-10-25 20:00:28 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>webapp</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>NEW</bug_status>
+          
+          
+          
+          
+          
+          
+          <priority>P2</priority>
+          <bug_severity>major</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Curt Cox">curtcox</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          <cc>knut.hatlen</cc>
+    
+    <cc>Lubos.Kosco</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>36342</commentid>
+            <who name="Curt Cox">curtcox</who>
+            <bug_when>2009-04-22 12:31:03 +0000</bug_when>
+            <thetext>Searching for football, a novice would expect football_scores to be in the matching results, but it isn&apos;t.  Instead, the user has to search on football* to get the desired results.  There is some help available on help.jsp, but since this is probably a common mistake, why not add a few search syntax notes to the ample free space on the search page?  Another option would be to use the space to show search feedback messages like:
+
+   Showing matches for &quot;football&quot;.  To also show matches for &quot;football_scores&quot;, and &quot;football_matches&quot;, use &quot;football*&quot;.   
+
+The quoted texts above would all be links.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>50363</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2009-09-21 13:18:08 +0000</bug_when>
+            <thetext>hi
+I just pushed an example to help page for your use case
+see trunk
+changeset 849	b53ca0b26638
+
+I am not sure on those suggestions.
+Current ones show suggestions for spell checking only. We don&apos;t have any other logic (besides enclosing special chars into &quot;&quot; ).
+
+I cannot quite imagine under what circumstances opengrok should show the sample &quot;blah*&quot; ... it doesn&apos;t know you want to search for substrings.
+The other thing is, that wildcard is by default only on for right. To have the left wildcard working you need to have a special index created with option -a ...
+
+If you got ideas how opengrok can guess the intent for searching for substrings, then share them, otherwise above help message should be enough, hmm ?
+
+--
+L</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>54105</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2009-10-25 20:00:28 +0000</bug_when>
+            <thetext>I&apos;m not sure it would make sense for symbol search, but at least for full text search we could make the tokenizer add the tokens &quot;football&quot;, &quot;scores&quot; and &quot;football_scores&quot; when it encounters &quot;football_scores&quot;. We&apos;d just have to define a set of separator characters (perhaps any non-alphanumeric char?). Of course, this wouldn&apos;t allow you to search for &quot;foot&quot; and expect it to return &quot;football&quot;.</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

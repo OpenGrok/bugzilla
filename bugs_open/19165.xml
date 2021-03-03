@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>19165</bug_id>
+          
+          <creation_ts>2012-02-09 16:23:00 +0000</creation_ts>
+          <short_desc>indexer reports null directories</short_desc>
+          <delta_ts>2012-02-13 06:03:44 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>indexer</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>NEW</bug_status>
+          
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>minor</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Vladimir Kotal">vladimir.kotal</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          <cc>jel+osbugs</cc>
+    
+    <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>86172</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2012-02-09 16:23:16 +0000</bug_when>
+            <thetext>Running 0.11 indexer for the first time in my source repository. Lots of messages about &apos;null&apos; directory:
+
+2012-02-09 16:44:43.965+0100 FINE t10 Executor.registerErrorHandler: Installing default uncaught exception handler
+2012-02-09 16:44:44.795+0100 FINE t10 Executor.exec: Executing command [/usr/bin/exctags, --version] in directory null
+2012-02-09 16:44:44.822+0100 INFO t10 Indexer.prepareIndexer: Scanning for repositories...
+2012-02-09 16:44:44.831+0100 FINE t10 Executor.exec: Executing command [cleartool, ?version] in directory null
+2012-02-09 16:44:44.847+0100 FINE t10 Executor.exec: Executing command [p4, help] in directory null
+2012-02-09 16:44:44.868+0100 FINE t10 Executor.exec: Executing command [/usr/bin/sccs, help, help] in directory null
+2012-02-09 16:44:44.906+0100 CONFIG t10 HistoryGuru.addRepositories: Adding &lt;org.opensolaris.opengrok.history.SCCSRepository&gt; repository: &lt;/ws-local/foo&gt;
+2012-02-09 16:44:44.908+0100 FINE t10 Executor.exec: Executing command [/usr/bin/git, --help] in directory null
+2012-02-09 16:44:44.954+0100 CONFIG t10 HistoryGuru.addRepositories: Adding &lt;org.opensolaris.opengrok.history.GitRepository&gt; repository: &lt;/ws-local/bar&gt;
+2012-02-09 16:44:44.955+0100 FINE t10 Executor.exec: Executing command [/usr/bin/hg] in directory null
+
+
+The commands must be run in some concrete directory so the &apos;null&apos; value is confusing.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86177</commentid>
+            <who name="Jens Elkner">jel+osbugs</who>
+            <bug_when>2012-02-13 06:03:44 +0000</bug_when>
+            <thetext>Messages with a severity &lt;= CONFIG are primary targeting developers/troubleshooters and thus do not need to be perfect for several reasons. So just set your log level to INFO/WARNING and don&apos;t care ;-)</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

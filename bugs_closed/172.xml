@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>172</bug_id>
+          
+          <creation_ts>2007-11-07 08:58:00 +0000</creation_ts>
+          <short_desc>&quot;There was an error!&quot; seen during search with projects enabled.</short_desc>
+          <delta_ts>2007-11-08 06:19:17 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>webapp</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXED</resolution>
+          
+          
+          
+          
+          
+          <priority>P4</priority>
+          <bug_severity>minor</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Jason Leonard">jason</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          <cc>Lubos.Kosco</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>442</commentid>
+            <who name="Jason Leonard">jason</who>
+            <bug_when>2007-11-07 08:58:45 +0000</bug_when>
+            <thetext>Webapp shows &quot;There was an error!&quot; under the following circumstances
+
+1. Projects are enabled.
+2. No Default project has been set in the configuration
+3. No Cookie has been set yet for favourite project in the browser
+4. A search is performed.
+
+It&apos;s actually a NullPointerException in Menu.jspf caused by &apos;project&apos; being null on the following line:
+    for (String proj : project.split(&quot; &quot;)) {
+
+&apos;project&apos; is set to &quot;&quot; in projects.jspf but then reset to null by the following line in search.jsp
+    if (project != null &amp;&amp; project.equals(&quot;&quot;)) project = null;</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>472</commentid>
+            <who name="Trond Norbye">trond.norbye</who>
+            <bug_when>2007-11-08 06:19:17 +0000</bug_when>
+            <thetext>Verify that project is != null before trying to make an item selected</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>475</commentid>
+            <who name="Trond Norbye">trond.norbye</who>
+            <bug_when>2007-11-08 06:24:53 +0000</bug_when>
+            <thetext>*** Bug 107 has been marked as a duplicate of this bug. ***</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

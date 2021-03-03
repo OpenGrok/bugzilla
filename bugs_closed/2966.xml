@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>2966</bug_id>
+          
+          <creation_ts>2008-08-20 02:55:00 +0000</creation_ts>
+          <short_desc>display complete commit comment in History view for Mercurial repos</short_desc>
+          <delta_ts>2010-04-22 15:25:43 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>indexer</component>
+          <version>unspecified</version>
+          <rep_platform>Other</rep_platform>
+          <op_sys>Solaris</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXED</resolution>
+          
+          
+          
+          
+          
+          <priority>P2</priority>
+          <bug_severity>enhancement</bug_severity>
+          <target_milestone>---</target_milestone>
+          <dependson>15721</dependson>
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Vladimir Kotal">vladimir.kotal</reporter>
+          <assigned_to name="vita">vitezslav.batrla</assigned_to>
+          <cc>Lubos.Kosco</cc>
+    
+    <cc>vitezslav.batrla</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>10519</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2008-08-20 02:55:17 +0000</bug_when>
+            <thetext>Currently, OpenGrok displays just the first line of commit comments for Mercurial repositories. In changesets which deliver multiple bug fixes this makes impossible to see all the CRs but also to search for a specific CR in the &apos;History&apos; field search. Hence, OpenGrok should index all log contents.
+
+This is not only bad for multiple-CRs-per-commit but also for PSARC cases
+since every PSARC case has at least one placeholder CR, e.g. changeset
+6878:360e73ea6b0c in ONNV:
+
+PSARC 2008/302 DTrace IP Provider
+6640019 DTrace IP Provider
+6655707 sdt arguments are off-by-one past the 5th
+6667364 /usr/demo/dtrace/index.html: URLs to dtrace guide chapters wrong
+
+Also, maybe the long (hg log -v) view in History view should be made optional (and on by default).</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>10744</commentid>
+            <who name="vita">vitezslav.batrla</who>
+            <bug_when>2008-08-21 06:04:54 +0000</bug_when>
+            <thetext>Using log -v for common files will have performance impact (includes files section).
+
+Perhaps we could hardcode --template option, to force mercurial to print the output in the format we expect and are able to parse. This solution may also prevent problems caused by customized ~/.hgrc file (e.g. different date format, etc...).</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>11104</commentid>
+            <who name="vita">vitezslav.batrla</who>
+            <bug_when>2008-08-26 05:05:47 +0000</bug_when>
+            <thetext>changeset:   462:a19cdc5f8fc9
+user:        Trond Norbye &lt;trond.norbye@sun.com&gt;
+date:        Sat Aug 23 08:10:24 2008 +0200
+summary:     Added the missing files keyword in the output from Mercurial
+
+changeset:   461:93fccdcf2639
+user:        vitezslav batrla - Sun Microsystems - Prague Czech Republic &lt;Vitezs
+lav.Batrla@Sun.COM&gt;
+date:        Sat Aug 23 07:10:39 2008 +0200
+summary:     Bug #2966 display complete commit comment in History view for Mercu
+rial repos</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

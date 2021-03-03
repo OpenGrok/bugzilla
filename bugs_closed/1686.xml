@@ -1,0 +1,300 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>1686</bug_id>
+          
+          <creation_ts>2008-04-28 15:46:00 +0000</creation_ts>
+          <short_desc>Some files are always re-indexed.</short_desc>
+          <delta_ts>2008-05-04 08:28:28 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>indexer</component>
+          <version>unspecified</version>
+          <rep_platform>i86pc/i386</rep_platform>
+          <op_sys>Windows</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXED</resolution>
+          
+          
+          
+          
+          
+          <priority>P1</priority>
+          <bug_severity>normal</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Moisei">moisei</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          <cc>Lubos.Kosco</cc>
+    
+    <cc>moisei</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>5862</commentid>
+              <attachid>253</attachid>
+            <who name="Moisei">moisei</who>
+            <bug_when>2008-04-28 15:46:59 +0000</bug_when>
+            <thetext>Created attachment 253
+batch to reproduce the broken behavior
+
+Hi, I&apos;ve just found that some files are always re-indexed,
+even they are not modified. Actually, on my platform most 
+of the files are re-indexed: we have about 1000 files changed 
+every day but reindex is performed 
+for about 100.000 (one hundred thousand) files.
+
+I tried to minimize the problem, 
+checking whether it depends on the content of the files,
+and surprisingly, I&apos;ve found it depends only the names of the files!
+
+I prepared the batch file that demonstrates the issue.
+it could be trivial to rewrite it in your favorite shell
+
+Somehow, it depends on the case of the file names:
+The bug is reproduced fot he folder with just two files: a.cpp and B.cpp
+Note the capital B! It does not reproduce for a.cpp and b.cpp
+
+Attached reproduce-reindex-issue.bat batch demonstrates the proper 
+and the broken scenarios.
+
+Thanks,
+Moisei.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>5864</commentid>
+            <who name="Moisei">moisei</who>
+            <bug_when>2008-04-28 15:52:06 +0000</bug_when>
+            <thetext>How to run the batch:
+copy the file to the folder where opengrok.jar is located.
+If your ctags.exe is not in the system path, 
+then modify the line 
+set EXUB_CTAGS_PATH=D:\temp\opengrok\ctags57
+to your real path to ctags
+
+Run the batch and enjoy. On my platform I always have the output:
+
+&gt;reproduce-reindex-issue.bat
+demonstrating corrupted behavior:
+first execution: expected new files a.cpp and b.cpp are added to the index
+Adding: /a.cpp (CAnalyzer)
+Adding: /b.cpp (CAnalyzer)
+Optimizing the index ... done
+Generating spelling suggestion index ... done
+---------------------------------------------------------
+second execution: as expected no files are added to the index
+---------------------------------------------------------
+demonstrating broken  scenario:
+first execution: expected new files a.cpp and B.cpp are added to the index
+Adding: /a.cpp (CAnalyzer)
+Adding: /B.cpp (CAnalyzer)
+Optimizing the index ... done
+Generating spelling suggestion index ... done
+---------------------------------------------------------
+second execution: expected no files are added to the index BUT N.cpp and j.cpp are indexed again!
+Remove stale file: /B.cpp
+Adding: /B.cpp (CAnalyzer)
+Optimizing the index ... done
+Generating spelling suggestion index ... done
+&gt;Exit code: 0</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>6247</commentid>
+            <who name="Trond Norbye">trond.norbye</who>
+            <bug_when>2008-05-02 10:21:28 +0000</bug_when>
+            <thetext>I don&apos;t have (easy) access to a Windows machine so I cannot verify this, but I guess this is because we use Arrays.sort() to sort the files. In a Unix environment this will sort the files alphabetical and case significant, but on Windows it will not do this case significant (see: http://java.sun.com/j2se/1.5.0/docs/api/java/io/File.html#compareTo(java.io.File) ) 
+
+This bug will cause OpenGrok to compare one case sensitive sorted list with one just alphabetically sorted list. (==&gt; &quot;B,C,a,d&quot; with &quot;a,B,C,d&quot; )
+
+Could someone with access to a Windows computer try to add the following patch:
+
+diff -r 1ef54322547a src/org/opensolaris/opengrok/index/IndexDatabase.java
+--- a/src/org/opensolaris/opengrok/index/IndexDatabase.java	Fri Apr 11 11:18:24 2008 +0200
++++ b/src/org/opensolaris/opengrok/index/IndexDatabase.java	Fri May 02 10:16:27 2008 -0700
+@@ -31,6 +31,7 @@ import java.io.InputStream;
+ import java.io.InputStream;
+ import java.util.ArrayList;
+ import java.util.Arrays;
++import java.util.Comparator;
+ import java.util.List;
+ import java.util.concurrent.ExecutorService;
+ import org.apache.lucene.document.DateTools;
+@@ -474,7 +475,21 @@ public class IndexDatabase {
+             System.err.println(&quot;Failed to get file listing for: &quot; + dir.getAbsolutePath());
+             return;
+         }
+-        Arrays.sort(files);
++        Arrays.sort(files, new Comparator&lt;File&gt;() {
++
++                public int compare(File p1, File p2) {
++                    String s1 = p1.getName();
++                    String s2 = p2.getName();
++
++                    int ret;
++                    if (s1 == null) {
++                        ret = (s2 == null) ? 0 : 1;
++                    } else {
++                        ret = s1.compareTo(s2);
++                    }
++                    return ret;
++                }
++            });
+ 
+         for (File file : files) {
+             if (accept(file)) {</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>6249</commentid>
+            <who name="Trond Norbye">trond.norbye</who>
+            <bug_when>2008-05-02 10:28:09 +0000</bug_when>
+            <thetext>Set the severity of the bug to Normal. It is an annoying bug (since it may re-index a lot of extra files), but it will add all of the files back to the repository so you do not have any kind of data loss...</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>6294</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2008-05-03 00:43:06 +0000</bug_when>
+            <thetext>:) Seems the OpenSolaris summit was really boring Trond ...
+
+anyways you were correct on the compare stuff
+
+I would have suggest to rather then reimplement the comparator make the &lt;u&gt; field sorted as we add the documents, but explicit this approach works too (alas not so clean ;)  ... I guess your approach takes MORE memory and cycles, but ... it was quick ;) )
+
+I tested your fix on Vista + NTFS and it works
+(I guess it will be the same on FAT, since it&apos;s all about JVM and not the underlaying FS)</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>6295</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2008-05-03 01:39:57 +0000</bug_when>
+            <thetext>Oh yeah ... I tested the result and listing of added files
+and compared to index (I used http://www.getopt.org/luke/ )
+
+I also tested the second run to show only changed files being added, so root cause  is definitely OK, Tronds fix too, but not sure on it&apos;s efficiency.
+
+Also I am quite confused about indexing and how it&apos;s explained in http://www.opensolaris.org/os/project/opengrok/manual/internals 
+(did it change so much since then ? )</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>6296</commentid>
+            <who name="Trond Norbye">trond.norbye</who>
+            <bug_when>2008-05-03 08:08:28 +0000</bug_when>
+            <thetext>Hehe.. I created the patch before I went down to the OpenSolaris summit, and as the geek I am I always check my email before breakfast ;-)
+
+The index generation has not changed that much, but I have removed one of the traversal of the file structures. We are now using a single pass through the source tree and remove and add files as we go along...
+
+I don&apos;t see a huge benefit of trying to fix this in Lucene instead of just using a textual sort of the filenames (we do need the filenames created anyway, so I don&apos;t think we use more memory...), but if you can fix this in Lucene without adding extra complexity I am not going to object :-)   
+
+Due to the defined return-values from File.getName(), we can rewrite it to:
+
+diff -r b2918f61cf98 src/org/opensolaris/opengrok/index/IndexDatabase.java
+--- a/src/org/opensolaris/opengrok/index/IndexDatabase.java	Thu Apr 17 17:19:21 2008 +0200
++++ b/src/org/opensolaris/opengrok/index/IndexDatabase.java	Sat May 03 07:58:25 2008 -0700
+@@ -31,6 +31,7 @@ import java.io.InputStream;
+ import java.io.InputStream;
+ import java.util.ArrayList;
+ import java.util.Arrays;
++import java.util.Comparator;
+ import java.util.List;
+ import java.util.concurrent.ExecutorService;
+ import org.apache.lucene.document.DateTools;
+@@ -474,7 +475,12 @@ public class IndexDatabase {
+             System.err.println(&quot;Failed to get file listing for: &quot; + dir.getAbsolutePath());
+             return;
+         }
+-        Arrays.sort(files);
++        Arrays.sort(files, new Comparator&lt;File&gt;() {
++
++                public int compare(File p1, File p2) {
++                    return p1.getName().compareTo(p2.getName());
++                }
++            });
+ 
+         for (File file : files) {
+             if (accept(file)) {
+
+
+I am adding this patch now to fix the problem, but please feel free to come up with a better solution :)
+
+Fixed in changeset:  282:df83b84ca664</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>6321</commentid>
+            <who name="Moisei">moisei</who>
+            <bug_when>2008-05-04 08:28:28 +0000</bug_when>
+            <thetext>I applied the fix and I would like to confirm it is fixed on my env.
+For those who call it &quot;just annoying&quot;: 
+it takes now about 15 min instead of about 6 hours
+i.e 24 times faster.
+
+Thanks a lot :)!</thetext>
+          </long_desc>
+      
+          <attachment
+              isobsolete="0"
+              ispatch="0"
+              isprivate="0"
+              isurl="0"
+          >
+            <attachid>253</attachid>
+            <date>2008-04-28 15:46:00 +0000</date>
+            <delta_ts>2008-04-28 15:46:59 +0000</delta_ts>
+            <desc>batch to reproduce the broken behavior</desc>
+            <filename>reproduce-reindex-issue.bat</filename>
+            <type>text/plain</type>
+            <size>1491</size>
+            <attacher>moisei</attacher>
+            
+              <data encoding="base64">QGVjaG8gb2ZmDQpAc2V0bG9jYWwNCnNldCBFWFVCX0NUQUdTX1BBVEg9RDpcdGVtcFxvcGVuZ3Jv
+a1xjdGFnczU3DQpSRU0gZG9uJ3QgZWRpdCB0aGUgYmVsb3cNCnNldCBQQVRIPSVQQVRIJTslRVhV
+Ql9DVEFHU19QQVRIJQ0Kc2V0IFBST0dESVI9JX5kcDANCnNldCBTUkNfUk9PVD0lUFJPR0RJUiVT
+UkNfUk9PVA0Kc2V0IERBVEFfUk9PVD0lUFJPR0RJUiVEQVRBX1JPT1QNCnNldCBPUEVOR1JPS19K
+QVI9JVBST0dESVIlb3Blbmdyb2suamFyDQoNCkBlY2hvIGRlbW9uc3RyYXRpbmcgY29ycnVwdGVk
+IGJlaGF2aW9yOg0Kcm1kaXIgL3MvcSAiJURBVEFfUk9PVCUiID4gbnVsIDI+JjENCm1rZGlyICIl
+REFUQV9ST09UJSINCnJtZGlyIC9zL3EgIiVTUkNfUk9PVCUiID4gbnVsIDI+JjENCm1rZGlyICIl
+U1JDX1JPT1QlIg0KZWNoby4+ICIlU1JDX1JPT1QlXGEuY3BwIg0KZWNoby4+ICIlU1JDX1JPT1Ql
+XGIuY3BwIg0KZWNobyBmaXJzdCBleGVjdXRpb246IGV4cGVjdGVkIG5ldyBmaWxlcyBhLmNwcCBh
+bmQgYi5jcHAgYXJlIGFkZGVkIHRvIHRoZSBpbmRleA0KY2FsbCBqYXZhIC1qYXIgIiVPUEVOR1JP
+S19KQVIlIiAtdiAtcyAiJVNSQ19ST09UJSIgLWQgIiVEQVRBX1JPT1QlIg0KZWNobyAtLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0NCmVjaG8g
+c2Vjb25kIGV4ZWN1dGlvbjogYXMgZXhwZWN0ZWQgbm8gZmlsZXMgYXJlIGFkZGVkIHRvIHRoZSBp
+bmRleA0KY2FsbCBqYXZhIC1qYXIgIiVPUEVOR1JPS19KQVIlIiAtdiAtcyAiJVNSQ19ST09UJSIg
+LWQgIiVEQVRBX1JPT1QlIg0KZWNobyAtLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0NCg0KQGVjaG8gZGVtb25zdHJhdGluZyBicm9rZW4gIHNj
+ZW5hcmlvOg0Kcm1kaXIgL3MvcSAiJURBVEFfUk9PVCUiID4gbnVsIDI+JjENCm1rZGlyICIlREFU
+QV9ST09UJSINCnJtZGlyIC9zL3EgIiVTUkNfUk9PVCUiID4gbnVsIDI+JjENCm1rZGlyICIlU1JD
+X1JPT1QlIg0KZWNoby4+ICIlU1JDX1JPT1QlXGEuY3BwIg0KZWNoby4+ICIlU1JDX1JPT1QlXEIu
+Y3BwIg0KZWNobyBmaXJzdCBleGVjdXRpb246IGV4cGVjdGVkIG5ldyBmaWxlcyBhLmNwcCBhbmQg
+Qi5jcHAgYXJlIGFkZGVkIHRvIHRoZSBpbmRleA0KY2FsbCBqYXZhIC1qYXIgIiVPUEVOR1JPS19K
+QVIlIiAtdiAtcyAiJVNSQ19ST09UJSIgLWQgIiVEQVRBX1JPT1QlIg0KZWNobyAtLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0NCmVjaG8gc2Vj
+b25kIGV4ZWN1dGlvbjogZXhwZWN0ZWQgbm8gZmlsZXMgYXJlIGFkZGVkIHRvIHRoZSBpbmRleCBC
+VVQgTi5jcHAgYW5kIGouY3BwIGFyZSBpbmRleGVkIGFnYWluIQ0KY2FsbCBqYXZhIC1qYXIgIiVP
+UEVOR1JPS19KQVIlIiAtdiAtcyAiJVNSQ19ST09UJSIgLWQgIiVEQVRBX1JPT1QlIg0KDQpAZW5k
+bG9jYWwNCg0K
+</data>
+
+          </attachment>
+      
+
+    </bug>
+
+</bugzilla>

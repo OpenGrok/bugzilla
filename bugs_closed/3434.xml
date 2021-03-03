@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>3434</bug_id>
+          
+          <creation_ts>2008-09-15 06:06:00 +0000</creation_ts>
+          <short_desc>C analyzer recognizes C++ keywords</short_desc>
+          <delta_ts>2008-11-07 06:00:09 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>analyzer</component>
+          <version>unspecified</version>
+          <rep_platform>Other</rep_platform>
+          <op_sys>Solaris</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXED</resolution>
+          
+          
+          
+          
+          <keywords>bite-size</keywords>
+          <priority>P3</priority>
+          <bug_severity>minor</bug_severity>
+          <target_milestone>0.8</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="vita">vitezslav.batrla</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>12499</commentid>
+            <who name="vita">vitezslav.batrla</who>
+            <bug_when>2008-09-15 06:06:03 +0000</bug_when>
+            <thetext>In the following C snippet, variable &quot;new&quot; is not indexed and has the same color as other keywords. It looks like C and C++ analysis is done altogether, while we should distinguish between C and C++:
+
+   2008 x86pte_t
+   2009 x86pte_set(htable_t *ht, uint_t entry, x86pte_t new, void *ptr)
+   2010 {
+   2011 	x86pte_t	old;
+   2012 	x86pte_t	prev;
+   2013 	x86pte_t	*ptep;
+
+See link:
+http://src.opensolaris.org/source/xref/onnv/onnv-gate/usr/src/uts/i86pc/vm/htable.c#2009</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>12556</commentid>
+            <who name="Trond Norbye">trond.norbye</who>
+            <bug_when>2008-09-16 01:49:34 +0000</bug_when>
+            <thetext>C and C++ use the same parser... We need to use a separate parser for C++ (we could add more definitions to the parser when parsing C++ code...)</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>17876</commentid>
+            <who name="Trond Norbye">trond.norbye</who>
+            <bug_when>2008-11-07 06:00:09 +0000</bug_when>
+            <thetext>Created a Cxx Analyzer to handle C++ files
+
+Fixed in changeset:   670:16ba3617eee5</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

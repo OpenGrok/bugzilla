@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>19163</bug_id>
+          
+          <creation_ts>2012-02-05 19:09:00 +0000</creation_ts>
+          <short_desc>If a git repository does not have a valid HEAD indexing breaks</short_desc>
+          <delta_ts>2012-02-06 09:43:10 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>scm</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>NEW</bug_status>
+          
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>minor</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Johan">jbjoerk</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          <cc>Lubos.Kosco</cc>
+    
+    <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>86168</commentid>
+            <who name="Johan">jbjoerk</who>
+            <bug_when>2012-02-05 19:09:36 +0000</bug_when>
+            <thetext>phb@opengrok:/var/lib/opengrok/src/opstools-misc$ git log
+fatal: bad default revision &apos;HEAD&apos;
+
+
+java.lang.RuntimeException: Failed to acquire random test lock; please verify filesystem for lock directory &apos;/var/opengrok/data/spellIndex/opstools-misc&apos; supports locking
+	at org.apache.lucene.store.NativeFSLockFactory.acquireTestLock(NativeFSLockFactory.java:103)
+	at org.apache.lucene.store.NativeFSLockFactory.makeLock(NativeFSLockFactory.java:142)
+	at org.apache.lucene.store.Directory.makeLock(Directory.java:106)
+	at org.apache.lucene.index.IndexWriter.init(IndexWriter.java:1058)
+	at org.apache.lucene.index.IndexWriter.&lt;init&gt;(IndexWriter.java:882)
+	at org.apache.lucene.search.spell.SpellChecker.setSpellIndex(SpellChecker.java:142)
+	at org.apache.lucene.search.spell.SpellChecker.&lt;init&gt;(SpellChecker.java:110)
+	at org.apache.lucene.search.spell.SpellChecker.&lt;init&gt;(SpellChecker.java:124)
+	at org.apache.jsp.search_jsp._jspService(search_jsp.java:689)
+	at org.apache.jasper.runtime.HttpJspBase.service(HttpJspBase.java:70)
+	at javax.servlet.http.HttpServlet.service(HttpServlet.java:717)
+	at org.apache.jasper.servlet.JspServletWrapper.service(JspServletWrapper.java:377)
+	at org.apache.jasper.servlet.JspServlet.serviceJspFile(JspServlet.java:313)
+	at org.apache.jasper.servlet.JspServlet.service(JspServlet.java:260)
+	at javax.servlet.http.HttpServlet.service(HttpServlet.java:717)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:290)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:206)
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:233)
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:191)
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:127)
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:102)
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:109)
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:298)
+	at org.apache.coyote.http11.Http11Processor.process(Http11Processor.java:857)
+	at org.apache.coyote.http11.Http11Protocol$Http11ConnectionHandler.process(Http11Protocol.java:588)
+	at org.apache.tomcat.util.net.JIoEndpoint$Worker.run(JIoEndpoint.java:489)
+	at java.lang.Thread.run(Thread.java:662)
+Caused by: org.apache.lucene.store.LockReleaseFailedException: Cannot forcefully unlock a NativeFSLock which is held by another indexer component: /var/opengrok/data/spellIndex/opstools-misc/lucene-....--3y5zar-test.lock
+	at org.apache.lucene.store.NativeFSLock.release(NativeFSLockFactory.java:329)
+	at org.apache.lucene.store.NativeFSLockFactory.acquireTestLock(NativeFSLockFactory.java:95)
+	... 26 more
+
+phb@opengrok:~$ ls -al /var/opengrok/data/spellIndex/opstools-misc
+total 24
+drwxr-xr-x   2 opengrok opengrok  4096 Jan 31 02:33 .
+drwxr-xr-x 548 opengrok opengrok 20480 Feb  4 02:34 ..
+
+Workaround is simple, ensure no repositories like that exist in the directory that is being indexed. (We use git show-ref -q --verify refs/remotes/origin/master )</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86169</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2012-02-06 08:28:43 +0000</bug_when>
+            <thetext>this is a bit weird
+I think it shouldn&apos;t happen with latest binaries
+
+afaik our executors have a timeout on forked commands
+
+below stack shows this: an indexer is stuck indexing &quot;opstools-misc&quot;
+and another indexer was started in between (within maybe the timeout of above)
+
+so basically you have 2 indexers running on the same box and they seem to clash, check ps axf (or ptree) and let us know
+
++ locking on lucene is supposed to be automatic, I removed forced options on lock clean ups because of that (and no one complained, so you&apos;re the first one)
+
+the other Q can be, whether you use latest opengrok ;)
+
+hmm?
+L
+
+note that current 0.11rc and 0.10 didn&apos;t have big changes in this area, so the locking should be the same, however older opengrok versions had old locking, which was problematic sometimes</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86170</commentid>
+            <who name="Johan">jbjoerk</who>
+            <bug_when>2012-02-06 09:43:10 +0000</bug_when>
+            <thetext>
+(In reply to comment #1)
+&gt; this is a bit weird
+&gt; I think it shouldn&apos;t happen with latest binaries
+&gt; 
+It is using opengrok 0.11, or at the very least 0.10 if I failed the upgrade somehow (There seems to be no UI-visible version # to verify?)
+
+&gt; afaik our executors have a timeout on forked commands
+&gt; 
+&gt; below stack shows this: an indexer is stuck indexing &quot;opstools-misc&quot;
+&gt; and another indexer was started in between (within maybe the timeout of above)
+&gt; 
+&gt; so basically you have 2 indexers running on the same box and they seem to
+&gt; clash, check ps axf (or ptree) and let us know
+&gt; 
+No indexers running at all. It happened for us on 5 repositories, all exhibiting the above problem, so I&apos;m really suspecting something w.r.t the git scm history.
+
+All the other directories under /var/opengrok/data/spellIndex has a couple of files (
+672 -rw-r--r--   1 opengrok opengrok 684629 Nov 28 23:07 _0.cfs
+128 -rw-r--r--   1 opengrok opengrok 130345 Nov 28 23:07 _0.cfx
+  4 -rw-r--r--   1 opengrok opengrok     20 Nov 28 23:07 segments.gen
+  4 -rw-r--r--   1 opengrok opengrok    246 Nov 28 23:07 segment)
+&gt; + locking on lucene is supposed to be automatic, I removed forced options on
+&gt; lock clean ups because of that (and no one complained, so you&apos;re the first one)
+&gt; 
+&gt; the other Q can be, whether you use latest opengrok ;)
+Well, most probably 0.11rc2 unless my installation failed and then it would be running 0.10.
+
+&gt; 
+&gt; hmm?
+&gt; L
+&gt; 
+&gt; note that current 0.11rc and 0.10 didn&apos;t have big changes in this area, so the
+&gt; locking should be the same, however older opengrok versions had old locking,
+&gt; which was problematic sometimes</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

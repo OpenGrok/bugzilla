@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>19214</bug_id>
+          
+          <creation_ts>2012-06-03 11:45:00 +0000</creation_ts>
+          <short_desc>CVS history completely broken</short_desc>
+          <delta_ts>2012-06-03 19:57:41 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>indexer</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>INVALID</resolution>
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>blocker</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Stanislav Kozina">skozina</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          <cc>Lubos.Kosco</cc>
+    
+    <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>86442</commentid>
+            <who name="Stanislav Kozina">skozina</who>
+            <bug_when>2012-06-03 11:45:47 +0000</bug_when>
+            <thetext>In latest release of opengrok:
+
+$ java -jar ../lib/opengrok.jar -V
+OpenGrok v0.11.1 rev 2b48ae40ea1b
+
+as well as in own build based on bits branched from:
+
+changeset:   1374:ccc849159329
+user:        Lubos Kosco &lt;Lubos.Kosco@Oracle.COM&gt;
+date:        Wed May 09 11:28:52 2012 +0200
+files:       README.txt build.xml tools/pmd_ruleset.xml
+description:
+update to pmd 5.0.0
+
+the CVS history is completely unusable. The only message printed on the web page is:
+
+&quot;Problem
+
+Failed to get history for: &quot;/home/ersin/opengrok/src/cvs_test&quot; Exit code: 1&quot;
+
+All other VCSs work fine. The indexer finishes successfully, CVSHistoryParser.parse() returns no error, and the history looks fine during indexing phase.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86443</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2012-06-03 16:02:30 +0000</bug_when>
+            <thetext>
+Cau Stando
+
+can you please check logs in the web server (e.g. catalina.out)
+and try to run (as user running web server) the command(which failed) printed in the log ?
+
+most probably this is about permissions, internally we run 0.11.1 with cvs without any probs(afaik)
+
+d~
+L
+
+(In reply to comment #0)
+&gt; In latest release of opengrok:
+&gt; 
+&gt; $ java -jar ../lib/opengrok.jar -V
+&gt; OpenGrok v0.11.1 rev 2b48ae40ea1b
+&gt; 
+&gt; as well as in own build based on bits branched from:
+&gt; 
+&gt; changeset:   1374:ccc849159329
+&gt; user:        Lubos Kosco &lt;Lubos.Kosco@Oracle.COM&gt;
+&gt; date:        Wed May 09 11:28:52 2012 +0200
+&gt; files:       README.txt build.xml tools/pmd_ruleset.xml
+&gt; description:
+&gt; update to pmd 5.0.0
+&gt; 
+&gt; the CVS history is completely unusable. The only message printed on the web
+&gt; page is:
+&gt; 
+&gt; &quot;Problem
+&gt; 
+&gt; Failed to get history for: &quot;/home/ersin/opengrok/src/cvs_test&quot; Exit code: 1&quot;
+&gt; 
+&gt; All other VCSs work fine. The indexer finishes successfully,
+&gt; CVSHistoryParser.parse() returns no error, and the history looks fine during
+&gt; indexing phase.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86444</commentid>
+            <who name="Stanislav Kozina">skozina</who>
+            <bug_when>2012-06-03 19:57:41 +0000</bug_when>
+            <thetext>&gt; Cau Stando
+&gt; 
+&gt; can you please check logs in the web server (e.g. catalina.out)
+&gt; and try to run (as user running web server) the command(which failed) printed
+&gt; in the log ?
+&gt; 
+&gt; most probably this is about permissions, internally we run 0.11.1 with cvs
+&gt; without any probs(afaik)
+
+Yes, exactly, this looks like a problem (in /var/log/tomcat6/catalina.out):
+
+WARNING: Non-zero exit status 1 from command [/usr/bin/cvs, log, -N] in directory /home/ersin/opengrok/src/cvs_test: cvs log: Logging .
+cvs log: failed to create lock directory for `/home/ersin/opengrok/cvs_root/cvs_test&apos; (/home/ersin/opengrok/cvs_root/cvs_test/#cvs.lock): Permission denied
+cvs log: failed to obtain dir lock in repository `/home/ersin/opengrok/cvs_root/cvs_test&apos;
+cvs [log aborted]: read lock failed - giving up
+
+Thanks a lot, fixed, works now;-)
+Closing bug.
+
+Regards,
+-S</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

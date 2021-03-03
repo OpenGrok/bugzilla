@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>19201</bug_id>
+          
+          <creation_ts>2012-04-05 09:55:00 +0000</creation_ts>
+          <short_desc>OpenGrok shell script should load custom config before setting the defaults</short_desc>
+          <delta_ts>2012-08-10 16:30:47 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>misc</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXINSOURCE</resolution>
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>normal</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Vladimir Kotal">vladimir.kotal</reporter>
+          <assigned_to name="Vladimir Kotal">vladimir.kotal</assigned_to>
+          <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>86390</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2012-04-05 09:55:35 +0000</bug_when>
+            <thetext>After bug 19175 was fixed the variables from configuration file given by the OPENGROK_CONFIGURATION environment variable passed to OpenGrok shell script are directly read-in by the script.
+
+On one hand this is good since it allows users to modify various internal variables but on the other hand it forces the users to use internal variables which can change from release to release.
+
+For instance, in order to enable JavaDB the supported way is to set the OPENGROK_DERBY environment variable to non-empty string. But, when OPENGROK_CONFIGURATION is used to supply all configuration to OpenGrok shell script, one has to set the internal variable DERBY_HISTORY_CACHE to &quot;-D&quot; in the configuration file.
+
+Ideally, the script should set the defaults in the DefaultInstanceConfiguration() and then read the OPENGROK_CONFIGURATION file in and do the same. That way, the users will be able to consistently use only the public environment variables of the OpenGrok script both on command line and in the configuration file as well.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86576</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2012-08-10 15:53:41 +0000</bug_when>
+            <thetext>The way how to fix this would be to reverse the order in which the default and custom configuration files are loaded. By loading the custom first and default after that will make sure that only &quot;public&quot; variables are used and that the custom configuration does not have to specify all the internal variables.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86577</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2012-08-10 16:30:47 +0000</bug_when>
+            <thetext>fixed with:
+
+changeset:   1410:27f21cd37cef
+tag:         tip
+user:        Vladimir Kotal &lt;Vladimir.Kotal@oracle.com&gt;
+date:        Fri Aug 10 18:06:11 2012 +0200
+
+description:
+	Bug 19201 - OpenGrok shell script should load custom config before setting the defaults
+
+
+reviewed by Lubos Kosco.</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

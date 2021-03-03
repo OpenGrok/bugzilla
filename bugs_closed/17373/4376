@@ -1,0 +1,65 @@
+# HG changeset patch
+# Parent f2944a37c7ef5373def854cd7b1642a1b5783525
+
+This patch fixes a couple of problems I was having with breadcrumb paths
+displayed in mast.jsp.  The first problem was that the breadcrumb path itself
+was not percent encoded, so directories named 'C#' would fail to go to the right
+place generating a 404.  The second problem was when the breadcrumb path with
+the correctly encoded directory was actually clicked on, another 404 would
+happen.  This is because in mast.jsp a redirect was happening with the decoded
+path.  For these redirects, the URI encoded path needed to be used.
+
+ldavis@fonix.com
+SCA OS0110
+
+diff -r f2944a37c7ef src/org/opensolaris/opengrok/web/Util.java
+--- a/src/org/opensolaris/opengrok/web/Util.java	Thu Nov 04 10:14:14 2010 +0100
++++ b/src/org/opensolaris/opengrok/web/Util.java	Mon Nov 08 18:01:20 2010 -0700
+@@ -247,10 +247,10 @@
+                         elements.remove(elements.size() - 1);
+                     }
+                 } else if (!"".equals(path[i])) {
+-                    elements.add(path[i]);
++                    elements.add(URIEncodePath(path[i]));
+                 }
+             } else {
+-                elements.add(path[i]);
++                elements.add(URIEncodePath(path[i]));
+             }
+         }
+ 
+diff -r f2944a37c7ef web/mast.jsp
+--- a/web/mast.jsp	Thu Nov 04 10:14:14 2010 +0100
++++ b/web/mast.jsp	Mon Nov 08 18:01:20 2010 -0700
+@@ -66,9 +66,9 @@
+     File newFile = new File(newPath);
+     if(newFile.canRead()) {
+         if(newFile.isDirectory() && servlet.startsWith(Constants.xrefP) && !path.endsWith("/")) {
+-            response.sendRedirect(context + servlet + "/on" + path + "/");
++            response.sendRedirect(context + servlet + "/on" + uriEncodedName + "/");
+         } else {
+-            response.sendRedirect(context + servlet + "/on" + path);
++            response.sendRedirect(context + servlet + "/on" + uriEncodedName);
+         }
+     }
+     valid = false;
+@@ -83,15 +83,16 @@
+     if (File.separatorChar == '\\') {
+         path = path.replace('\\','/');
+     }
++    uriEncodedName = Util.URIEncodePath(path);
+     isDir = resourceFile.isDirectory();
+     if (isDir && !servlet.startsWith(Constants.xrefP) && !servlet.startsWith(Constants.histP)) {	//if it is an existing directory perhaps people wanted directory xref
+         if(!reqURI.endsWith("/")) {
+-            response.sendRedirect(context + Constants.xrefP + path + "/");
++            response.sendRedirect(context + Constants.xrefP + uriEncodedName + "/");
+         } else {
+-            response.sendRedirect(context + Constants.xrefP + path);
++            response.sendRedirect(context + Constants.xrefP + uriEncodedName);
+         }
+     } if (isDir && !reqURI.endsWith("/")) {
+-        response.sendRedirect(context + servlet + path +"/");
++        response.sendRedirect(context + servlet + uriEncodedName +"/");
+     } else {
+         
+         long flast = resourceFile.lastModified();

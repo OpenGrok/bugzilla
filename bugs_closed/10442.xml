@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>10442</bug_id>
+          
+          <creation_ts>2009-08-04 05:10:00 +0000</creation_ts>
+          <short_desc>zip analyzer fails to parse odps</short_desc>
+          <delta_ts>2010-02-17 12:47:24 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>analyzer</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXED</resolution>
+          
+          
+          
+          
+          
+          <priority>P4</priority>
+          <bug_severity>minor</bug_severity>
+          <target_milestone>0.8</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Lubos Kosco">Lubos.Kosco</reporter>
+          <assigned_to name="Knut Anders Hatlen">knut.hatlen</assigned_to>
+          <cc>knut.hatlen</cc>
+    
+    <cc>vladimir.kotal</cc>
+    
+    <cc>z.carter</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>45744</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2009-08-04 05:10:23 +0000</bug_when>
+            <thetext>Aug 3, 2009 6:55:02 AM org.opensolaris.opengrok.index.IndexDatabase indexDown
+WARNING: Failed to add file /tank/opengrok-sources/coso-Main-HEAD/src/artifacts/ChassisMgmtTOI.odp
+java.lang.IllegalArgumentException
+        at java.util.zip.ZipInputStream.getUTF8String(ZipInputStream.java:299)
+        at java.util.zip.ZipInputStream.readLOC(ZipInputStream.java:238)
+        at java.util.zip.ZipInputStream.getNextEntry(ZipInputStream.java:73)
+        at org.opensolaris.opengrok.analysis.archive.ZipAnalyzer.analyze(ZipAnalyzer.java:69)
+        at org.opensolaris.opengrok.analysis.AnalyzerGuru.getDocument(AnalyzerGuru.java:246)
+        at org.opensolaris.opengrok.index.IndexDatabase.addFile(IndexDatabase.java:458)
+        at org.opensolaris.opengrok.index.IndexDatabase.indexDown(IndexDatabase.java:578)
+        at org.opensolaris.opengrok.index.IndexDatabase.indexDown(IndexDatabase.java:561)
+        at org.opensolaris.opengrok.index.IndexDatabase.indexDown(IndexDatabase.java:561)
+        at org.opensolaris.opengrok.index.IndexDatabase.update(IndexDatabase.java:251)
+        at org.opensolaris.opengrok.index.IndexDatabase$1.run(IndexDatabase.java:139)
+        at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:417)
+        at java.util.concurrent.FutureTask$Sync.innerRun(FutureTask.java:269)
+        at java.util.concurrent.FutureTask.run(FutureTask.java:123)
+        at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:650)
+        at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:675)
+        at java.lang.Thread.run(Thread.java:595)</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>48272</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2009-08-30 19:00:02 +0000</bug_when>
+            <thetext>I tried to index an odp myself and didn&apos;t see any exception, so it apparently doesn&apos;t affect all odps. Could you please attach a reproducible test case?
+
+As far as I understand the stack trace, it indicates that the odp file is not a valid zip file. Or at least that ZipInputStream doesn&apos;t understand it. In either of those cases the bug is not in OpenGrok, but it&apos;s hard to tell without seeing an odp that shows the reported behaviour.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>48291</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2009-08-31 06:40:34 +0000</bug_when>
+            <thetext>(In reply to comment #1)
+&gt; I tried to index an odp myself and didn&apos;t see any exception, so it apparently
+&gt; doesn&apos;t affect all odps. Could you please attach a reproducible test case?
+&gt; 
+&gt; As far as I understand the stack trace, it indicates that the odp file is not a
+&gt; valid zip file. Or at least that ZipInputStream doesn&apos;t understand it. In
+&gt; either of those cases the bug is not in OpenGrok, but it&apos;s hard to tell without
+&gt; seeing an odp that shows the reported behaviour.
+
+the odp is broken indeed ... I couldn&apos;t open it using zip either (will send it to you internally, since it&apos;s Sun proprietary) ...
+but on the other hand I think we should fix this as being reported only in FINE level and just a WARNING about the file not beind indexed because unreadable
+
+So it&apos;s really like a bug against logging of stacks, where they really don&apos;t make sense to report to WARNING level
+
+we had a talk with Trond about this, I agree with him on showing stacks where appropriate, but this is not appropriate for sure ...
+
+thnx
+L</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>48294</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2009-08-31 07:30:38 +0000</bug_when>
+            <thetext>Would you be fine with logging a message about the file being skipped because the analyzer didn&apos;t understand it with INFO level, and the actual exception with FINE?
+
+It would probably make sense to change FileAnalyzer.analyze(Document,InputStream) so that it&apos;s declared to throw exceptions. Then the logging doesn&apos;t have to be done in each analyzer, but can instead be done centralized on a higher level which makes it easier to get consistent logging across the analyzers.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>48296</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2009-08-31 07:35:19 +0000</bug_when>
+            <thetext>*** Bug 10443 has been marked as a duplicate of this bug. ***</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>48300</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2009-08-31 08:32:14 +0000</bug_when>
+            <thetext>
+ACK, go for it kah ! :)
+
+(In reply to comment #3)
+&gt; Would you be fine with logging a message about the file being skipped because
+&gt; the analyzer didn&apos;t understand it with INFO level, and the actual exception
+&gt; with FINE?
+&gt; 
+&gt; It would probably make sense to change
+&gt; FileAnalyzer.analyze(Document,InputStream) so that it&apos;s declared to throw
+&gt; exceptions. Then the logging doesn&apos;t have to be done in each analyzer, but can
+&gt; instead be done centralized on a higher level which makes it easier to get
+&gt; consistent logging across the analyzers.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>54098</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2009-10-25 19:23:24 +0000</bug_when>
+            <thetext>Fixed in changeset 889:70983e950e18.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>54100</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2009-10-25 19:30:29 +0000</bug_when>
+            <thetext>*** Bug 9426 has been marked as a duplicate of this bug. ***</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>66517</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2010-02-17 12:47:24 +0000</bug_when>
+            <thetext>*** Bug 3481 has been marked as a duplicate of this bug. ***</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

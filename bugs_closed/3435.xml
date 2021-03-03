@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>3435</bug_id>
+          
+          <creation_ts>2008-09-15 06:16:00 +0000</creation_ts>
+          <short_desc>C functions are not considered as functions</short_desc>
+          <delta_ts>2010-02-23 09:16:18 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>analyzer</component>
+          <version>unspecified</version>
+          <rep_platform>Other</rep_platform>
+          <op_sys>Solaris</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXED</resolution>
+          
+          
+          
+          
+          
+          <priority>P4</priority>
+          <bug_severity>minor</bug_severity>
+          <target_milestone>0.9</target_milestone>
+          
+          <blocked>14744</blocked>
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="vita">vitezslav.batrla</reporter>
+          <assigned_to name="Knut Anders Hatlen">knut.hatlen</assigned_to>
+          <cc>knut.hatlen</cc>
+    
+    <cc>Lubos.Kosco</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>12500</commentid>
+            <who name="vita">vitezslav.batrla</who>
+            <bug_when>2008-09-15 06:16:44 +0000</bug_when>
+            <thetext>In OpenSolaris source sd.c (usr/src/uts/common/io/scsi/targets/sd.c), the functions sd_* may get redefined to ssd_* under certain circumstances:
+
+    138 #if (defined(__fibre))
+    139 /*
+    140  * These #defines are to avoid namespace collisions that occur because his
+    141  * code is currently used to compile two separate driver modules: sd and sd.
+    142  * All global variables need to be treated this way (even if declared static)
+    143  * in order to allow the debugger to resolve the names properly.
+    144  * It is anticipated that in the near future the ssd module will be obsoleted,
+    145  * at which time this namespace issue should go away.
+    146  */
+    147 #define	sd_state			ssd_state
+    148 #define	sd_io_time			ssd_io_time
+    149 #define	sd_failfast_enable		ssd_failfast_enable
+    150 #define	sd_ua_retry_count		ssd_ua_retry_count
+    151 #define	sd_report_pfa			ssd_report_pfa
+
+However, when the function sd_* gets called in the code, OpenGrok doesn&apos;t show it as link pointing to function definition as it normally does. For example:
+
+   29745 	if (rval != 0) {
+   29746 		if (rval == EIO)
+   29747 			sd_ssc_assessment(ssc, SD_FMT_STATUS_CHECK);
+   29748 		else
+   29749 			sd_ssc_assessment(ssc, SD_FMT_IGNORE);
+   29750 	}
+
+In this code snippet, OpenGrok displays sd_ssc_assessment and sd_ssc_assessment as normal text, not links.
+
+Url to sd.c source:
+http://src.opensolaris.org/source/xref/onnv/onnv-gate/usr/src/uts/common/io/scsi/targets/sd.c</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>67006</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2010-02-21 11:02:15 +0000</bug_when>
+            <thetext>*** Bug 11888 has been marked as a duplicate of this bug. ***</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>67007</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2010-02-21 12:03:37 +0000</bug_when>
+            <thetext>Looks like the problem here is that there are two definitions of sd_ssc_assessment in the file:
+
+#define	sd_ssc_assessment		ssd_ssc_assessment
+
+and
+
+static void sd_ssc_assessment(sd_ssc_t *ssc,
+    enum sd_type_assessment tp_assess);
+
+The C analyzer (and, thanks to copy and paste, most other analyzers) does not produce a link if the symbol is defined more than once in the same file. It should have produced a link for a definition search.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>67008</commentid>
+              <attachid>3717</attachid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2010-02-21 12:07:56 +0000</bug_when>
+            <thetext>Created attachment 3717
+simple C file that demonstrates the bug
+
+sd.c contains tens of thousands of lines, so I&apos;m attaching a smaller C file to demonstrates the bug more easily.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>67013</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2010-02-21 16:16:23 +0000</bug_when>
+            <thetext>Changeset 944:a6dffac2a4b4 enabled the link on the symbol so that a definition search would be performed. However, this search would incorrectly jump directly to the #define line and hide the fact that the symbol is also used in another definition further down. Changeset 946:48932c825a44 made search.jsp always show a listing of available definitions if there are more than one.</thetext>
+          </long_desc>
+      
+          <attachment
+              isobsolete="0"
+              ispatch="0"
+              isprivate="0"
+              isurl="0"
+          >
+            <attachid>3717</attachid>
+            <date>2010-02-21 12:07:00 +0000</date>
+            <delta_ts>2010-02-21 12:07:56 +0000</delta_ts>
+            <desc>simple C file that demonstrates the bug</desc>
+            <filename>test.c</filename>
+            <type>application/octet-stream</type>
+            <size>63</size>
+            <attacher>knut.hatlen</attacher>
+            
+              <data encoding="base64">I2RlZmluZSB4eXogYWJjCgp2b2lkIHh5eih2b2lkKQp7Cn0KCnZvaWQgZih2b2lkKQp7CiAgeHl6
+KCk7Cn0K
+</data>
+
+          </attachment>
+      
+
+    </bug>
+
+</bugzilla>

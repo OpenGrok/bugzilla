@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>17073</bug_id>
+          
+          <creation_ts>2010-09-20 13:34:00 +0000</creation_ts>
+          <short_desc>Broken links out of indexed source</short_desc>
+          <delta_ts>2010-09-21 09:56:57 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>analyzer</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>WORKSFORME</resolution>
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>major</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Glyn Normington">gnormington</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          <cc>knut.hatlen</cc>
+    
+    <cc>Lubos.Kosco</cc>
+    
+    <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>77771</commentid>
+            <who name="Glyn Normington">gnormington</who>
+            <bug_when>2010-09-20 13:34:36 +0000</bug_when>
+            <thetext>Since we moved to v0.9 of opengrok, links from indexed source are invalid and result in a 404. For example, the following link from a Java class name:
+
+http://sou-opengrok.eng.vmware.com:8080/source/s?refs=ScopingTransformer
+
+is broken. If &quot;source/&quot; is manually removed from the URL, it works fine, but this is too laborious for normal use. This was not an issue with v0.7.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>77782</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2010-09-20 19:14:32 +0000</bug_when>
+            <thetext>hmm
+have you reindexed cleanly ? (a jump to root cause, but I lack data, so I am just trying my luck ;) )
+
+with such a huge jump as 0.7 to 0.9 I suggest to create a clean index(xref cache, history cache)
+opengrok is not updating xref cache (which contains maybe old links, you can try to delete the problematic cache file by finding it in xref directory) and if you jump between major versions a clean index run is suggested (!not! on top of old data directory)
+
+or if you can please clarify how you moved to 0.9 then it might shed some light, since this seems to me as rather as some inconsistency issue
+(also I hope you updated your web application to 0.9 war file ;) )
+
+thnx for clarification
+L</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>77783</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2010-09-20 19:21:58 +0000</bug_when>
+            <thetext>AH
+
+I see the problem now, it is in the xref cache indeed, but because of default /source webapp prefix !
+
+you don&apos;t have the source prefix
+
+so you need to use the -w option
+http://src.opensolaris.org/source/xref/opengrok/trunk/src/org/opensolaris/opengrok/index/CommandLineOptions.java#92
+
+and I just noticed we don&apos;t have support for it in OpenGrok script ... mhmm :(
+
+so deleting xref cache and reindexing with above option set to nothing will get you webapp nameless urls in links
+
+:)</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>77791</commentid>
+            <who name="Glyn Normington">gnormington</who>
+            <bug_when>2010-09-21 07:59:56 +0000</bug_when>
+            <thetext>-w &quot;/&quot; did the trick. Thanks!</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>77793</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2010-09-21 09:03:09 +0000</bug_when>
+            <thetext>We also have bug #13985 (option -w should die) which would make the webapp detect the prefix automatically.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>77794</commentid>
+            <who name="Glyn Normington">gnormington</who>
+            <bug_when>2010-09-21 09:56:57 +0000</bug_when>
+            <thetext>(In reply to comment #4)
+&gt; We also have bug #13985 (option -w should die) which would make the webapp
+&gt; detect the prefix automatically.
+
+Thanks.</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

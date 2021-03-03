@@ -1,0 +1,389 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>14924</bug_id>
+          
+          <creation_ts>2010-02-27 15:24:00 +0000</creation_ts>
+          <short_desc>Java method calls incorrectly classified as definitions</short_desc>
+          <delta_ts>2011-01-03 13:10:19 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>indexer</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>CAUSEKNOWN</bug_status>
+          
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>minor</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Knut Anders Hatlen">knut.hatlen</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          <cc>Lubos.Kosco</cc>
+    
+    <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>67902</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2010-02-27 15:24:31 +0000</bug_when>
+            <thetext>Given this Java class (Test.java)
+
+public class Test {
+  void f() {
+    synchronized (this) {
+      notifyAll();
+    }
+  }
+}
+
+a definition search for notifyAll will list a match in Test.java. But there&apos;s no definition of notifyAll in that file, just a call to it.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>67904</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2010-02-27 16:26:59 +0000</bug_when>
+            <thetext>This appears to be a ctags problem. Running ctags (5.8) on the file gives this output:
+
+Test    src/Test.java   /^public class Test {$/;&quot;       c
+f       src/Test.java   /^  void f() {$/;&quot;      m       class:Test
+
+Test is recognized as a class and f is recognized as a method, and those are the only definitions in the file. This looks correct.
+
+When OpenGrok performs indexing, it runs ctags with --java-kinds=+l to enable tagging of local variables. Then the output is changed to this:
+
+Test    src/Test.java   /^public class Test {$/;&quot;       c
+f       src/Test.java   /^  void f() {$/;&quot;      m       class:Test
+notifyAll       src/Test.java   /^      notifyAll();$/;&quot;        m
+
+For some reason, ctags now thinks notifyAll is a method definition.
+
+Or maybe we are just misinterpreting the ctags output? The real method definition in the file (f) is marked as a method in class:Test, whereas notifyAll is just marked as a method. Perhaps we need to ignore those methods that are not associated with a class?</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>67905</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2010-02-27 17:12:08 +0000</bug_when>
+            <thetext>Could be this ctags bug: https://sourceforge.net/tracker/?func=detail&amp;aid=2726391&amp;group_id=6556&amp;atid=106556</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>80200</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2011-01-03 09:28:27 +0000</bug_when>
+            <thetext>Filed a new bug against CTags (in case it&apos;s not the same problem as the C++ one): https://sourceforge.net/tracker/?func=detail&amp;aid=3150230&amp;group_id=6556&amp;atid=106556</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>80201</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2011-01-03 09:34:50 +0000</bug_when>
+            <thetext>(In reply to comment #1)
+&gt; Or maybe we are just misinterpreting the ctags output? The real method
+&gt; definition in the file (f) is marked as a method in class:Test, whereas
+&gt; notifyAll is just marked as a method. Perhaps we need to ignore those methods
+&gt; that are not associated with a class?
+
+I&apos;ve tried this, but then some actual method definitions were left out.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>80202</commentid>
+              <attachid>4440</attachid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2011-01-03 09:52:24 +0000</bug_when>
+            <thetext>Created attachment 4440
+Screenshot of the navigation panel
+
+This bug is very visible in the new navigation panel. See the attached screenshot (navigation panel for src/org/opensolaris/opengrok/FileLogFormatter.java). All the methods marked with red are not really method definitions.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>80203</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2011-01-03 09:58:17 +0000</bug_when>
+            <thetext>so what about leaving the local vars out from ctags kinds?
+I&apos;d rather miss stuff than have a LOT of false positives ...</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>80204</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2011-01-03 11:43:46 +0000</bug_when>
+            <thetext>(In reply to comment #6)
+&gt; so what about leaving the local vars out from ctags kinds?
+&gt; I&apos;d rather miss stuff than have a LOT of false positives ...
+
+I agree that the false positives in the method list is more annoying than missing local variables (at least the way I use OpenGrok). But, of course, it&apos;s not an ideal solution... If there are no objections, I&apos;ll disable local variables for Java files only. This bug should be kept open so that we remember to re-enable local variables when/if the upstream bug is fixed.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>80205</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2011-01-03 13:10:19 +0000</bug_when>
+            <thetext>Checked in suggested workaround.
+changeset:   1148:b42a9515757a
+
+Leaving bug open with status CAUSEKNOWN.</thetext>
+          </long_desc>
+      
+          <attachment
+              isobsolete="0"
+              ispatch="0"
+              isprivate="0"
+              isurl="0"
+          >
+            <attachid>4440</attachid>
+            <date>2011-01-03 09:52:00 +0000</date>
+            <delta_ts>2011-01-03 09:52:24 +0000</delta_ts>
+            <desc>Screenshot of the navigation panel</desc>
+            <filename>navigate.png</filename>
+            <type>image/png</type>
+            <size>12339</size>
+            <attacher>knut.hatlen</attacher>
+            
+              <data encoding="base64">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
+AEAqAJAKAKQCAKkAQCoAAKkAQCoAkAoApAIAqQBAKgCQCgCkAgCpAEAqAJAKAKQCAKkAQCoAkAoA
+pAIAqQAApAIAqQBAKgCQCgCkAgCpAEAqAJAKAKQCAKkAQCoAkAoApAIAqQBAKgCQCgBAKgCQCgCk
+AgCpAEAqAJAKAKQCAKkAQCoAkAoApAIAqQBAKgCQCgCkAgCpAACkAgCpAEAqAJAKAKQCAKkAQCoA
+kAoApAIAqQBAKgCQCgCkAgCpAEAqAJAKAEAqAJAKAKQCAKkAQCoAkAoApAIAqQBAKgCQCgCkAgCp
+AEAqAJAKAKQCAKkAAKQCAKkAQCoAkAoApAIAqQBAKgCQCgCkAgCpAEAqAJAKAKQCAKkAQCoAkAoA
+QCoAkAoApAIAqQBAKgCQCgCkAgCpAEAqAJAKAKQCAKkAQCoAkAoApAIAqQAApAIAqQBAKgCQCgCk
+AgCpAEAqAJAKAKQCAKkAQCoAkAoApAIAqQBAKgCQCgBAKgCQCgCkAgCpAEAqAJAKAKQCAKkAQCoA
+kAoApAIAqQBAKgCQCgCkAgCpAEAqAACpAEAqAJAKgIfDM110+rQc5wXsGUen0+EsAGAEBYBUACAV
+AEgFQGf6f19yLjBSRianAAAAAElFTkSuQmCC
+</data>
+
+          </attachment>
+      
+
+    </bug>
+
+</bugzilla>

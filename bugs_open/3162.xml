@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>3162</bug_id>
+          
+          <creation_ts>2008-08-29 02:11:00 +0000</creation_ts>
+          <short_desc>&quot;Download&quot; link misleading, &quot;Raw&quot; needed</short_desc>
+          <delta_ts>2008-09-16 02:16:22 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>webapp</component>
+          <version>unspecified</version>
+          <rep_platform>Other</rep_platform>
+          <op_sys>Solaris</op_sys>
+          <bug_status>ACCEPTED</bug_status>
+          
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>enhancement</bug_severity>
+          <target_milestone>0.8</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Mark Phalan">mark.phalan</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          <cc>jorgen.austvik</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>11471</commentid>
+            <who name="Mark Phalan">mark.phalan</who>
+            <bug_when>2008-08-29 02:11:58 +0000</bug_when>
+            <thetext>There are a number of links visible when viewing a file
+&quot;Home | History | Annotate | Download&quot;
+
+The &quot;Download&quot; link is misleading - it does not necessarily lead to a download of the file but rather gives a raw view. This raw view mostly results in the file being viewed in the browser.
+
+The current &quot;Download&quot; link should be changed to &quot;Raw&quot; or &quot;Raw file&quot; and a new link &quot;Download&quot; should be introduced which will always trigger a download of the file (using the download manager of the browser) no matter what content the file has.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>12560</commentid>
+            <who name="Jorgen Austvik">jorgen.austvik</who>
+            <bug_when>2008-09-16 02:16:22 +0000</bug_when>
+            <thetext>Looks like Content-Disposition should be used for the download link:
+
+http://www.w3.org/Protocols/rfc2616/rfc2616-sec19.html#sec19.5.1
+http://support.microsoft.com/kb/260519</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

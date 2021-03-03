@@ -1,0 +1,407 @@
+diff -ur opengrok-0.9-src/src/org/opensolaris/opengrok/configuration/Configuration.java opengrok-0.9-src-symlinks/src/org/opensolaris/opengrok/configuration/Configuration.java
+--- opengrok-0.9-src/src/org/opensolaris/opengrok/configuration/Configuration.java	2010-05-20 13:08:46.000000000 -0600
++++ opengrok-0.9-src-symlinks/src/org/opensolaris/opengrok/configuration/Configuration.java	2010-05-20 12:52:45.000000000 -0600
+@@ -37,7 +37,9 @@
+ import java.io.OutputStream;
+ import java.util.ArrayList;
+ import java.util.Date;
++import java.util.HashSet;
+ import java.util.List;
++import java.util.Set;
+ import org.opensolaris.opengrok.history.RepositoryInfo;
+ import org.opensolaris.opengrok.index.IgnoredNames;
+ 
+@@ -89,6 +91,7 @@
+     private String databaseDriver;
+     private String databaseUrl;
+     private Integer scanningDepth;
++    private Set<String> allowedSymlinks;
+ 
+     public Integer getScanningDepth() {
+         return scanningDepth;
+@@ -129,6 +132,7 @@
+         setHitsPerPage(25);
+         setCachePages(5);
+         setScanningDepth(3); // default depth of scanning for repositories
++        setAllowedSymlinks(new HashSet<String>());
+     }
+ 
+     public String getCtags() {
+@@ -424,6 +428,14 @@
+         this.databaseUrl = databaseUrl;
+     }
+ 
++    public Set<String> getAllowedSymlinks() {
++        return allowedSymlinks;
++    }
++
++    public void setAllowedSymlinks(Set<String> allowedSymlinks) {
++        this.allowedSymlinks = allowedSymlinks;
++    }
++
+     /**
+      * Write the current configuration to a file
+      * @param file the file to write the configuration into
+diff -ur opengrok-0.9-src/src/org/opensolaris/opengrok/configuration/RuntimeEnvironment.java opengrok-0.9-src-symlinks/src/org/opensolaris/opengrok/configuration/RuntimeEnvironment.java
+--- opengrok-0.9-src/src/org/opensolaris/opengrok/configuration/RuntimeEnvironment.java	2010-05-20 13:08:46.000000000 -0600
++++ opengrok-0.9-src-symlinks/src/org/opensolaris/opengrok/configuration/RuntimeEnvironment.java	2010-05-20 12:52:20.000000000 -0600
+@@ -34,7 +34,9 @@
+ import java.net.SocketAddress;
+ import java.net.UnknownHostException;
+ import java.util.Date;
++import java.util.HashSet;
+ import java.util.List;
++import java.util.Set;
+ import java.util.logging.Level;
+ import java.util.logging.Logger;
+ import org.opensolaris.opengrok.OpenGrokLogger;
+@@ -161,6 +163,29 @@
+     public void setSourceRoot(String sourceRoot) {
+         threadConfig.get().setSourceRoot(getCanonicalPath(sourceRoot));
+     }
++
++    /**
++     * Returns a path relative to source root. This would just be a simple
++     * substring operation, except we need to support symlinks outside the
++     * source root.
++     * @param file A file to resolve
++     * @param stripCount Number of characters past source root to strip
++     * @return Path relative to source root
++     */
++    public String getPathRelativeToSourceRoot(File file, int stripCount) throws IOException {
++        String canonicalPath = file.getCanonicalPath();
++        String sourceRoot = getSourceRootPath();
++        if (canonicalPath.startsWith(sourceRoot)) {
++            return canonicalPath.substring(sourceRoot.length() + stripCount);
++        } 
++        for (String allowedSymlink : getAllowedSymlinks()) {
++            String allowedTarget = new File(allowedSymlink).getCanonicalPath();
++            if (canonicalPath.startsWith(allowedTarget)) {
++                return canonicalPath.substring(allowedTarget.length() + stripCount);
++            }
++        }
++        throw new RuntimeException("Failed to resolve ["+canonicalPath+"] relative to source root ["+sourceRoot+"]");
++    }
+     
+     /**
+      * Do we have projects?
+@@ -595,6 +620,14 @@
+         threadConfig.get().setDatabaseUrl(databaseUrl);
+     }
+ 
++    public Set<String> getAllowedSymlinks() {
++        return threadConfig.get().getAllowedSymlinks();
++    }
++
++    public void setAllowedSymlinks(Set<String> allowedSymlinks) {
++        threadConfig.get().setAllowedSymlinks(allowedSymlinks);
++    }
++    
+     /**
+      * Read an configuration file and set it as the current configuration.
+      * @param file the file to read
+diff -ur opengrok-0.9-src/src/org/opensolaris/opengrok/history/ClearCaseHistoryParser.java opengrok-0.9-src-symlinks/src/org/opensolaris/opengrok/history/ClearCaseHistoryParser.java
+--- opengrok-0.9-src/src/org/opensolaris/opengrok/history/ClearCaseHistoryParser.java	2010-05-11 03:12:43.000000000 -0600
++++ opengrok-0.9-src-symlinks/src/org/opensolaris/opengrok/history/ClearCaseHistoryParser.java	2010-05-20 12:03:14.000000000 -0600
+@@ -43,15 +43,20 @@
+ 
+     History parse(File file, Repository repos) throws HistoryException {
+         repository = (ClearCaseRepository)repos;
+-        Executor executor = repository.getHistoryLogExecutor(file);
+-        int status = executor.exec(true, this);
+-
+-        if (status != 0) {
++        try {
++            Executor executor = repository.getHistoryLogExecutor(file);
++            int status = executor.exec(true, this);
++
++            if (status != 0) {
++                throw new HistoryException("Failed to get history for: \"" +
++                                           file.getAbsolutePath() + "\" Exit code: " + status);
++            }
++            
++            return history;
++        } catch (IOException e) {
+             throw new HistoryException("Failed to get history for: \"" +
+-                    file.getAbsolutePath() + "\" Exit code: " + status);
++                                       file.getAbsolutePath() + "\"", e);
+         }
+-
+-        return history;
+     }
+ 
+    /**
+diff -ur opengrok-0.9-src/src/org/opensolaris/opengrok/history/ClearCaseRepository.java opengrok-0.9-src-symlinks/src/org/opensolaris/opengrok/history/ClearCaseRepository.java
+--- opengrok-0.9-src/src/org/opensolaris/opengrok/history/ClearCaseRepository.java	2010-05-20 13:08:46.000000000 -0600
++++ opengrok-0.9-src-symlinks/src/org/opensolaris/opengrok/history/ClearCaseRepository.java	2010-05-20 12:32:10.000000000 -0600
+@@ -78,8 +78,8 @@
+      * @param file The file to retrieve history for
+      * @return An Executor ready to be started
+      */
+-    Executor getHistoryLogExecutor(final File file) {
+-        String abs = file.getAbsolutePath();
++    Executor getHistoryLogExecutor(final File file) throws IOException {
++        String abs = file.getCanonicalPath();
+         String filename = "";
+         if (abs.length() > directoryName.length()) {
+             filename = abs.substring(directoryName.length() + 1);
+@@ -104,11 +104,11 @@
+ 
+         File directory = new File(directoryName);
+ 
+-        String filename = (new File(parent, basename)).getAbsolutePath().substring(directoryName.length() + 1);
+         Process process = null;
+         try {
++            String filename = (new File(parent, basename)).getCanonicalPath().substring(directoryName.length() + 1);
+             final File tmp = File.createTempFile("opengrok", "tmp");
+-            String tmpName = tmp.getAbsolutePath();
++            String tmpName = tmp.getCanonicalPath();
+ 
+             // cleartool can't get to a previously existing file
+             if (tmp.exists() && !tmp.delete()) {
+@@ -321,12 +321,58 @@
+     @Override
+     boolean isRepositoryFor(File file) {
+         // if the parent contains a file named "view.dat" or
+-        // the parent is named "vobs"
++        // the parent is named "vobs" or the canonical path
++        // is found in "cleartool lsvob -s"
+         File f = new File(file, "view.dat");
+         if (f.exists()) {
+             return true;
++        } else if (file.getName().equalsIgnoreCase("vobs")) {
++            return true;
+         } else {
+-            return file.isDirectory() && file.getName().equalsIgnoreCase("vobs");
++            try {
++                String path = file.getCanonicalPath();
++                List<String> vobs = getAllVobs();
++                for (String vob : vobs) {
++                    if (path.equalsIgnoreCase(vob)) {
++                        return true;
++                    }
++                }
++            } catch (IOException e) {
++                OpenGrokLogger.getLogger().log(Level.FINE, "Error checking clearcase for \""+file+"\"", e);
++            }
++        }
++        return false;
++    }
++
++    private List<String> getAllVobs() throws IOException {
++        Process process = null;
++        BufferedReader in = null;
++        try {
++            String[] argv = {getCommand(), "lsvob", "-s"};
++            process = Runtime.getRuntime().exec(argv);
++            in = new BufferedReader(new InputStreamReader(process.getInputStream()));
++            List<String> vobs = new ArrayList<String>();
++            String line;
++            while ((line = in.readLine()) != null) {
++                vobs.add(line);
++            }
++            waitFor(process);
++            return vobs;
++        } finally {
++            if (in != null) {
++                try {
++                    in.close();
++                } catch (IOException e) {
++                    OpenGrokLogger.getLogger().log(Level.WARNING, "An error occured while closing stream.", e);
++                }
++            }
++            if (process != null) {
++                try {
++                    process.exitValue();
++                } catch (IllegalThreadStateException e) {
++                    process.destroy();
++                }
++            }
+         }
+     }
+ 
+diff -ur opengrok-0.9-src/src/org/opensolaris/opengrok/history/FileHistoryCache.java opengrok-0.9-src-symlinks/src/org/opensolaris/opengrok/history/FileHistoryCache.java
+--- opengrok-0.9-src/src/org/opensolaris/opengrok/history/FileHistoryCache.java	2010-05-20 13:08:46.000000000 -0600
++++ opengrok-0.9-src-symlinks/src/org/opensolaris/opengrok/history/FileHistoryCache.java	2010-05-12 17:03:13.000000000 -0600
+@@ -85,27 +85,17 @@
+         sb.append(env.getDataRootPath());
+         sb.append(File.separatorChar);
+         sb.append("historycache");
+-        
+-        String sourceRoot = env.getSourceRootPath();
+-        if (sourceRoot == null) {
+-            return null;
+-        }
+ 
+-        String add;
+         try {
+-            try {
+-                add = file.getCanonicalPath().substring(sourceRoot.length());
+-            } catch (StringIndexOutOfBoundsException exp) {
+-                throw new HistoryException("Failed to get path for: <" + file + "> [" + file.getCanonicalPath() + "] [" + sourceRoot + "]", exp);
+-            }
+-        } catch (IOException ioe) {
+-            throw new HistoryException("Failed to get path for: " + file, ioe);
+-        }
+-        if (add.length() == 0) {
+-            add = File.separator;
++            String add = env.getPathRelativeToSourceRoot(file, 0);
++            if (add.length() == 0) {
++                add = File.separator;
++            }
++            sb.append(add);
++            sb.append(".gz");
++        } catch (IOException e) {
++            throw new HistoryException("Failed to get path relative to source root for " + file);
+         }
+-        sb.append(add);
+-        sb.append(".gz");
+         
+         return new File(sb.toString());
+     }
+@@ -281,9 +271,14 @@
+         if (repos == null) {
+             return true;
+         }
+-        File dir = RuntimeEnvironment.getInstance().getDataRootFile();
++        RuntimeEnvironment env = RuntimeEnvironment.getInstance();
++        File dir = env.getDataRootFile();
+         dir = new File(dir, "historycache");
+-        dir = new File(dir, repos.getDirectoryName().substring(RuntimeEnvironment.getInstance().getSourceRootPath().length()));
++        try {
++            dir = new File(dir, env.getPathRelativeToSourceRoot(new File(repos.getDirectoryName()), 0));
++        } catch (IOException e) {
++            throw new HistoryException("Could not resolve "+repos.getDirectoryName()+" relative to source root");
++        }
+         return dir.exists();
+     }
+ 
+diff -ur opengrok-0.9-src/src/org/opensolaris/opengrok/index/CommandLineOptions.java opengrok-0.9-src-symlinks/src/org/opensolaris/opengrok/index/CommandLineOptions.java
+--- opengrok-0.9-src/src/org/opensolaris/opengrok/index/CommandLineOptions.java	2010-05-11 03:12:43.000000000 -0600
++++ opengrok-0.9-src-symlinks/src/org/opensolaris/opengrok/index/CommandLineOptions.java	2010-05-20 12:46:05.000000000 -0600
+@@ -78,6 +78,7 @@
+         options.add(new Option('P', null, "Generate a project for each of the top-level directories in source root"));
+         options.add(new Option('p', "/path/to/default/project", "This is the path to the project that should be selected by default in the web application(when no other project set either in cookie or in parameter). You should strip off the source root."));
+         options.add(new Option('Q', ON_OFF, "Turn on/off quick context scan. By default only the first 32k of a file is scanned, and a '[..all..]' link is inserted if the file is bigger. Activating this may slow the server down (Note: this is setting only affects the web application)"));
++        options.add(new Option('N', "/path/to/symlink", "Allow this symlink to be followed. Option may be repeated."));
+         options.add(new Option('n', null, "Do not generate indexes, but process all other command line options"));
+         options.add(new Option('H', null, "Generate history cache for all external repositories"));
+         options.add(new Option('h', "/path/to/repository", "Generate history cache for the specified repos (absolute path from source root)"));
+diff -ur opengrok-0.9-src/src/org/opensolaris/opengrok/index/IndexDatabase.java opengrok-0.9-src-symlinks/src/org/opensolaris/opengrok/index/IndexDatabase.java
+--- opengrok-0.9-src/src/org/opensolaris/opengrok/index/IndexDatabase.java	2010-05-20 13:08:46.000000000 -0600
++++ opengrok-0.9-src-symlinks/src/org/opensolaris/opengrok/index/IndexDatabase.java	2010-05-12 14:13:51.000000000 -0600
+@@ -608,30 +608,27 @@
+             return false;
+         }
+ 
++        String absolutePath = file.getAbsolutePath();
++
+         if (!file.canRead()) {
+-            log.warning("Warning: could not read " + file.getAbsolutePath());
++            log.warning("Warning: could not read " + absolutePath);
+             return false;
+         }
+ 
+         try {
+-            if (!file.getAbsolutePath().equals(file.getCanonicalPath())) {
+-                if (file.getParentFile().equals(file.getCanonicalFile().getParentFile())) {
+-                    // Lets support symlinks within the same directory, this
+-                    // should probably be extended to within the same repository
+-                    return true;
+-                } else {
+-                    log.warning("Warning: ignored non-local symlink " + file.getAbsolutePath() +
+-                            " -> " + file.getCanonicalPath());
+-                    return false;
+-                }
++            String canonicalPath = file.getCanonicalPath();
++            if (!absolutePath.equals(canonicalPath) && !acceptSymlink(absolutePath, canonicalPath)) {
++                log.warning("Warning: ignored non-local symlink " + absolutePath +
++                            " -> " + canonicalPath);
++                return false;
+             }
+             //below will only let go files and directories, anything else is considered special and is not added
+             if (!file.isFile() && !file.isDirectory()) {
+-                log.warning("Warning: ignored special file " + file.getAbsolutePath());
++                log.warning("Warning: ignored special file " + absolutePath);
+                     return false;
+             }
+         } catch (IOException exp) {
+-            log.warning("Warning: Failed to resolve name: " + file.getAbsolutePath());
++            log.warning("Warning: Failed to resolve name: " + absolutePath);
+             log.log(Level.FINE,"Stack Trace: ",exp);       
+         }
+ 
+@@ -650,6 +647,25 @@
+     }
+ 
+     /**
++     * Check if I should accept the path containing a symlink
++     * @param absolutePath the path with a symlink to check
++     * @param canonicalPath the canonical path to the file
++     * @return true if the file should be accepted, false otherwise
++     */
++    private boolean acceptSymlink(String absolutePath, String canonicalPath) throws IOException {
++        for (String allowedSymlink : RuntimeEnvironment.getInstance().getAllowedSymlinks()) {
++            if (absolutePath.startsWith(allowedSymlink)) {
++                String allowedTarget = new File(allowedSymlink).getCanonicalPath();
++                if (canonicalPath.startsWith(allowedTarget) &&
++                    absolutePath.substring(allowedSymlink.length()).equals(canonicalPath.substring(allowedTarget.length()))) {
++                    return true;
++                }
++            }
++        }
++        return false;
++    }
++
++    /**
+      * Generate indexes recursively
+      * @param dir the root indexDirectory to generate indexes for
+      * @param path the path
+diff -ur opengrok-0.9-src/src/org/opensolaris/opengrok/index/Indexer.java opengrok-0.9-src-symlinks/src/org/opensolaris/opengrok/index/Indexer.java
+--- opengrok-0.9-src/src/org/opensolaris/opengrok/index/Indexer.java	2010-05-11 03:12:43.000000000 -0600
++++ opengrok-0.9-src-symlinks/src/org/opensolaris/opengrok/index/Indexer.java	2010-05-20 12:59:56.000000000 -0600
+@@ -30,7 +30,9 @@
+ import java.util.ArrayList;
+ import java.util.Collections;
+ import java.util.Comparator;
++import java.util.HashSet;
+ import java.util.List;
++import java.util.Set;
+ import java.util.concurrent.ExecutorService;
+ import java.util.concurrent.Executors;
+ import java.util.concurrent.TimeUnit;
+@@ -86,6 +88,7 @@
+             boolean searchRepositories = false;
+             ArrayList<String> subFiles = new ArrayList<String>();
+             ArrayList<String> repositories = new ArrayList<String>();
++            HashSet<String> allowedSymlinks = new HashSet<String>();
+             String configFilename = null;
+             String configHost = null;
+             boolean addProjects = false;
+@@ -167,6 +170,9 @@
+                         case 'R':
+                             // already handled
+                             break;
++                        case 'N':
++                            allowedSymlinks.add(getopt.getOptarg());
++                            break;
+                         case 'n':
+                             runIndex = false;
+                             break;
+@@ -397,6 +403,16 @@
+                 env.setDatabaseDriver(databaseDriver);
+                 env.setDatabaseUrl(databaseURL);
+ 
++                // automatically allow symlinks that are directly in source root
++                for (File sourceRootDir : env.getSourceRootFile().listFiles()) {
++                    if (!sourceRootDir.getCanonicalPath().equals(sourceRootDir.getAbsolutePath())) {
++                        allowedSymlinks.add(sourceRootDir.getAbsolutePath());
++                    }
++                }
++                
++                allowedSymlinks.addAll(env.getAllowedSymlinks());
++                env.setAllowedSymlinks(allowedSymlinks);
++
+                 getInstance().prepareIndexer(env, searchRepositories, addProjects,
+                         defaultProject, configFilename, refreshHistory,
+                         listFiles, createDict, subFiles, repositories);

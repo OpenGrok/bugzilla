@@ -1,0 +1,59 @@
+	ENTRY_NP(debug_flush_windows)
+	set	nwindows, %g1
+	ld	[%g1], %g1
+	mov	%g1, %g2
+	
+1:
+	save	%sp, -WINDOWSIZE, %sp
+	brnz	%g2, 1b
+	dec	%g2
+	
+	mov	%g1, %g2
+2:
+	restore
+	brnz	%g2, 2b
+	dec	%g2
+	
+	retl
+	nop
+	
+	SET_SIZE(debug_flush_windows)
+
+
+/* another function */
+
+	ENTRY(flush_user_windows)
+	rdpr	%otherwin, %g1
+	brz	%g1, 3f
+	clr	%g2
+1:
+	save	%sp, -WINDOWSIZE, %sp
+	rdpr	%otherwin, %g1
+	brnz	%g1, 1b
+	add	%g2, 1, %g2
+2:
+	sub	%g2, 1, %g2		! restore back to orig window
+	brnz	%g2, 2b
+	restore
+3:
+	retl
+	nop
+	SET_SIZE(flush_user_windows)
+
+/* 2 definitions */
+
+	ENTRY2(_cerror,__cerror)
+	cmp	%o0, ERESTART
+	be,a	1f
+	mov	EINTR, %o0
+1:
+	save	%sp, -SA(MINFRAME), %sp
+	call	___errno
+	nop
+	st	%i0, [%o0]
+	restore
+	retl
+	mov	-1, %o0
+
+	SET_SIZE(_cerror)
+	SET_SIZE(__cerror)

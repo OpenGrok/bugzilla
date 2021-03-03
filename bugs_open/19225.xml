@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>19225</bug_id>
+          
+          <creation_ts>2012-07-09 02:33:00 +0000</creation_ts>
+          <short_desc>AccuRev may have bad impact on repo scan</short_desc>
+          <delta_ts>2012-07-09 02:33:53 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>analyzer</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>NEW</bug_status>
+          
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>normal</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Jens Elkner">jel+osbugs</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>86525</commentid>
+            <who name="Jens Elkner">jel+osbugs</who>
+            <bug_when>2012-07-09 02:33:53 +0000</bug_when>
+            <thetext>The AccuRev support seems to have several problems:
+
+Biggest one IMHO is the AccuRevRepository:isRepositoryFor(...), which forks an accurev process for each file to be tested. For auto repo detection (which is probably used by most users) this may have a really bad impact (no matter, whether there is actually a accrev repo or not), since the scanner walks down the source root tree ... So if AccuRev is installed, but one doesn&apos;t have AccuRev, for now it is probably the best to set the JVM property org.opensolaris.opengrok.history.AccuRev to an invalid path so that isWorking() always returns false and doesn&apos;t try it again and again (add README note?) ...
+
+Also several times there are exceptions declared, which are actually not thrown (e.g. AccuRevRepository:annotate) -&gt; sounds supicious ...
+
+Last but not least: AccuRevHistoryParser:processStream doesn&apos;t do, what&apos;s documented above its while loop. Probably an import/auto-format problem ...</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

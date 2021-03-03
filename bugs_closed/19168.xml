@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>19168</bug_id>
+          
+          <creation_ts>2012-02-13 06:27:00 +0000</creation_ts>
+          <short_desc>cache contents of timestamp/{header,footer}_include</short_desc>
+          <delta_ts>2012-02-14 09:54:31 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>webapp</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXINSOURCE</resolution>
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>normal</bug_severity>
+          <target_milestone>next</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Jens Elkner">jel+osbugs</reporter>
+          <assigned_to name="Lubos Kosco">Lubos.Kosco</assigned_to>
+          <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>86179</commentid>
+              <attachid>4622</attachid>
+            <who name="Jens Elkner">jel+osbugs</who>
+            <bug_when>2012-02-13 06:27:53 +0000</bug_when>
+            <thetext>Created attachment 4622
+patch
+
+the content of the include files timestamp/{header,footer}_include should be cached in memory until a new configuration is received to avoid a lot of unnecessary I/O.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86190</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2012-02-14 09:54:31 +0000</bug_when>
+            <thetext>changeset:   1324:79f80635064e
+tag:         tip
+user:        jel+opengrok@cs.uni-magdeburg.de
+date:        Sat Feb 11 19:42:18 2012 +0100
+summary:     avoid unecessary I/O - cache contents of timestamp/{header,footer}_include until reconfiguration occures</thetext>
+          </long_desc>
+      
+          <attachment
+              isobsolete="0"
+              ispatch="1"
+              isprivate="0"
+              isurl="0"
+          >
+            <attachid>4622</attachid>
+            <date>2012-02-13 06:27:00 +0000</date>
+            <delta_ts>2012-02-13 06:28:07 +0000</delta_ts>
+            <desc>patch</desc>
+            <filename>include_file.patch</filename>
+            <type>text/plain</type>
+            <size>5376</size>
+            <attacher>jel+osbugs</attacher>
+            
+              <data encoding="base64">IyBIRyBjaGFuZ2VzZXQgcGF0Y2gKIyBVc2VyIGplbCtvcGVuZ3Jva0Bjcy51bmktbWFnZGVidXJn
+LmRlCiMgRGF0ZSAxMzI4OTg1NzM4IC0zNjAwCiMgTm9kZSBJRCA3OWY4MDYzNTA2NGU3NTJhOTZk
+MWNkZTJkM2MyZGE5NTUzMmJmODVmCiMgUGFyZW50ICA4MjU3OTgzMGEyYTI2ZmMzZDcwM2IwYWI0
+ZmEzOTg3NmE1ZDkwMzA1CmF2b2lkIHVuZWNlc3NhcnkgSS9PIC0gY2FjaGUgY29udGVudHMgb2Yg
+dGltZXN0YW1wL3toZWFkZXIsZm9vdGVyfV9pbmNsdWRlIHVudGlsIHJlY29uZmlndXJhdGlvbiBv
+Y2N1cmVzCgpkaWZmIC1yIDgyNTc5ODMwYTJhMiAtciA3OWY4MDYzNTA2NGUgc3JjL29yZy9vcGVu
+c29sYXJpcy9vcGVuZ3Jvay9jb25maWd1cmF0aW9uL0NvbmZpZ3VyYXRpb24uamF2YQotLS0gYS9z
+cmMvb3JnL29wZW5zb2xhcmlzL29wZW5ncm9rL2NvbmZpZ3VyYXRpb24vQ29uZmlndXJhdGlvbi5q
+YXZhCVNhdCBGZWIgMTEgMDQ6NDY6NDIgMjAxMiArMDEwMAorKysgYi9zcmMvb3JnL29wZW5zb2xh
+cmlzL29wZW5ncm9rL2NvbmZpZ3VyYXRpb24vQ29uZmlndXJhdGlvbi5qYXZhCVNhdCBGZWIgMTEg
+MTk6NDI6MTggMjAxMiArMDEwMApAQCAtNTA1LDYzICs1MDUsOTAgQEAKICAgICAgICAgdGhpcy5p
+bmRleFZlcnNpb25lZEZpbGVzT25seSA9IGluZGV4VmVyc2lvbmVkRmlsZXNPbmx5OwogICAgIH0K
+IAorICAgIHByaXZhdGUgdHJhbnNpZW50IERhdGUgbGFzdE1vZGlmaWVkOworICAgIC8qKgorICAg
+ICAqIEdldCB0aGUgZGF0ZSBvZiB0aGUgbGFzdCBpbmRleCB1cGRhdGUuCisgICAgICogQHJldHVy
+biB0aGUgdGltZSBvZiB0aGUgbGFzdCBpbmRleCB1cGRhdGUuCisgICAgICovCiAgICAgcHVibGlj
+IERhdGUgZ2V0RGF0ZUZvckxhc3RJbmRleFJ1bigpIHsKLSAgICAgICAgRmlsZSB0aW1lc3RhbXAg
+PSBuZXcgRmlsZShnZXREYXRhUm9vdCgpLCAidGltZXN0YW1wIik7Ci0gICAgICAgIHJldHVybiBu
+ZXcgRGF0ZSh0aW1lc3RhbXAubGFzdE1vZGlmaWVkKCkpOworICAgIAlpZiAobGFzdE1vZGlmaWVk
+ID09IG51bGwpIHsKKyAgICAJCUZpbGUgdGltZXN0YW1wID0gbmV3IEZpbGUoZ2V0RGF0YVJvb3Qo
+KSwgInRpbWVzdGFtcCIpOworICAgICAgICAJbGFzdE1vZGlmaWVkID0gbmV3IERhdGUodGltZXN0
+YW1wLmxhc3RNb2RpZmllZCgpKTsKKyAgICAJfQorICAgIAlyZXR1cm4gbGFzdE1vZGlmaWVkOwog
+ICAgIH0KIAogICAgIC8qKgotICAgICAqIFJldHVybiBjb250ZW50cyBvZiBhIGZpbGUgb3IgZW1w
+dHkgc3RyaW5nIGlmIHRoZSBmaWxlIGNhbm5vdCBiZSByZWFkLgorICAgICAqIEdldCB0aGUgY29u
+dGVudHMgb2YgYSBmaWxlIG9yIGVtcHR5IHN0cmluZyBpZiB0aGUgZmlsZSBjYW5ub3QgYmUgcmVh
+ZC4KICAgICAgKi8KLSAgICBwcml2YXRlIFN0cmluZyBnZXRGaWxlQ29udGVudChGaWxlIGZpbGUp
+IHsKLSAgICAgICAgU3RyaW5nQnVpbGRlciBjb250ZW50cyA9IG5ldyBTdHJpbmdCdWlsZGVyKCk7
+Ci0KKyAgICBwcml2YXRlIHN0YXRpYyBTdHJpbmcgZ2V0RmlsZUNvbnRlbnQoRmlsZSBmaWxlKSB7
+CisgICAgICAgIGlmIChmaWxlID09IG51bGwgfHwgISBmaWxlLmNhblJlYWQoKSkgeworICAgICAg
+ICAJcmV0dXJuICIiOworICAgICAgICB9CisgICAgICAgIEZpbGVSZWFkZXIgZmluID0gbnVsbDsK
+KyAgICAgICAgQnVmZmVyZWRSZWFkZXIgaW5wdXQgPSBudWxsOwogICAgICAgICB0cnkgewotICAg
+ICAgICAgICAgQnVmZmVyZWRSZWFkZXIgaW5wdXQgPSBuZXcgQnVmZmVyZWRSZWFkZXIobmV3IEZp
+bGVSZWFkZXIoZmlsZSkpOwotICAgICAgICAgICAgdHJ5IHsKLSAgICAgICAgICAgICAgICBTdHJp
+bmcgbGluZSA9IG51bGw7Ci0gICAgICAgICAgICAgICAgd2hpbGUgKCggbGluZSA9IGlucHV0LnJl
+YWRMaW5lKCkpICE9IG51bGwpIHsKLSAgICAgICAgICAgICAgICAgICAgY29udGVudHMuYXBwZW5k
+KGxpbmUpOwotICAgICAgICAgICAgICAgICAgICBjb250ZW50cy5hcHBlbmQoU3lzdGVtLmdldFBy
+b3BlcnR5KCJsaW5lLnNlcGFyYXRvciIpKTsKLSAgICAgICAgICAgICAgICB9CisgICAgICAgIAlm
+aW4gPSBuZXcgRmlsZVJlYWRlcihmaWxlKTsKKyAgICAgICAgICAgIGlucHV0ID0gbmV3IEJ1ZmZl
+cmVkUmVhZGVyKGZpbik7CisgICAgICAgICAgICBTdHJpbmcgbGluZSA9IG51bGw7CisgICAgICAg
+ICAgICBTdHJpbmdCdWlsZGVyIGNvbnRlbnRzID0gbmV3IFN0cmluZ0J1aWxkZXIoKTsKKyAgICAg
+ICAgICAgIFN0cmluZyBFT0wgPSBTeXN0ZW0uZ2V0UHJvcGVydHkoImxpbmUuc2VwYXJhdG9yIik7
+CisgICAgICAgICAgICB3aGlsZSAoKCBsaW5lID0gaW5wdXQucmVhZExpbmUoKSkgIT0gbnVsbCkg
+eworICAgICAgICAgICAgICAgIGNvbnRlbnRzLmFwcGVuZChsaW5lKS5hcHBlbmQoRU9MKTsKICAg
+ICAgICAgICAgIH0KLSAgICAgICAgICAgIGNhdGNoIChqYXZhLmlvLklPRXhjZXB0aW9uIGUpIHsK
+LSAgICAgICAgICAgICAgICBsb2dnZXIud2FybmluZygiZmFpbGVkIHRvIHJlYWQgaGVhZGVyIGlu
+Y2x1ZGUgZmlsZTogIiArIGUpOwotICAgICAgICAgICAgICAgIHJldHVybiAiIjsKLSAgICAgICAg
+ICAgIH0KLSAgICAgICAgICAgIGZpbmFsbHkgewotICAgICAgICAgICAgICAgIHRyeSB7Ci0gICAg
+ICAgICAgICAgICAgICAgIGlucHV0LmNsb3NlKCk7Ci0gICAgICAgICAgICAgICAgfQotICAgICAg
+ICAgICAgICAgIGNhdGNoIChqYXZhLmlvLklPRXhjZXB0aW9uIGUpIHsKLSAgICAgICAgICAgICAg
+ICAgICAgbG9nZ2VyLmluZm8oImZhaWxlZCB0byBjbG9zZSBoZWFkZXIgaW5jbHVkZSBmaWxlOiAi
+ICsgZSk7Ci0gICAgICAgICAgICAgICAgfQotICAgICAgICAgICAgfQorICAgICAgICAgICAgcmV0
+dXJuIGNvbnRlbnRzLnRvU3RyaW5nKCk7CisgICAgICAgIH0gY2F0Y2ggKGphdmEuaW8uRmlsZU5v
+dEZvdW5kRXhjZXB0aW9uIGUpIHsKKyAgICAgICAgICAgIC8qIHNob3VsZCB1c3VhbGx5IG5vdCBo
+YXBwZW4gKi8KKyAgICAgICAgfSBjYXRjaCAoamF2YS5pby5JT0V4Y2VwdGlvbiBlKSB7CisgICAg
+ICAgICAgICBsb2dnZXIud2FybmluZygiZmFpbGVkIHRvIHJlYWQgaGVhZGVyIGluY2x1ZGUgZmls
+ZTogIiArIGUuZ2V0TWVzc2FnZSgpKTsKKyAgICAgICAgfSBmaW5hbGx5IHsKKyAgICAgICAgCWlm
+IChpbnB1dCAhPSBudWxsKSB7CisJICAgICAgICAgICAgdHJ5IHsgaW5wdXQuY2xvc2UoKTsgfSAK
+KwkgICAgICAgICAgICBjYXRjaCAoRXhjZXB0aW9uIGUpIHsgLyogbm90aGluZyB3ZSBjYW4gZG8g
+YWJvdXQgaXQgKi8gfQorICAgICAgICAJfSBlbHNlIGlmIChmaW4gIT0gbnVsbCkgeworCSAgICAg
+ICAgICAgIHRyeSB7IGZpbi5jbG9zZSgpOyB9IAorCSAgICAgICAgICAgIGNhdGNoIChFeGNlcHRp
+b24gZSkgeyAvKiBub3RoaW5nIHdlIGNhbiBkbyBhYm91dCBpdCAqLyB9CisgICAgICAgIAl9CiAg
+ICAgICAgIH0KLSAgICAgICAgY2F0Y2ggKGphdmEuaW8uRmlsZU5vdEZvdW5kRXhjZXB0aW9uIGUp
+IHsKLSAgICAgICAgICAgIHJldHVybiAiIjsKLSAgICAgICAgfQotICAgICAgICByZXR1cm4gY29u
+dGVudHMudG9TdHJpbmcoKTsKKyAgICAgICAgcmV0dXJuICIiOwogICAgIH0KIAogICAgIC8qKgot
+ICAgICAqIFJldHVybiBzdHJpbmcgZnJvbSB0aGUgaGVhZGVyIGluY2x1ZGUgZmlsZSBzbyBpdCBj
+YW4gYmUgZW1iZWRkZWQgaW50bwotICAgICAqIHBhZ2UgZm9vdGVyLgorICAgICAqIFRoZSBuYW1l
+IG9mIHRoZSBmaWxlIHJlbGF0aXZlIHRvIHRoZSA8dmFyPkRBVEFfUk9PVDwvdmFyPiwgd2hpY2gg
+c2hvdWxkIAorICAgICAqIGJlIGluY2x1ZGVkIGludG8gdGhlIGZvb3RlciBvZiBnZW5lcmF0ZWQg
+d2ViIHBhZ2VzLgorICAgICAqLworICAgIHB1YmxpYyBzdGF0aWMgZmluYWwgU3RyaW5nIEZPT1RF
+Ul9JTkNMVURFX0ZJTEUgPSAiZm9vdGVyX2luY2x1ZGUiOworICAgIAorICAgIHByaXZhdGUgdHJh
+bnNpZW50IFN0cmluZyBmb290ZXIgPSBudWxsOworICAgIC8qKgorICAgICAqIEdldCB0aGUgY29u
+dGVudHMgb2YgdGhlIGZvb3RlciBpbmNsdWRlIGZpbGUuCisgICAgICogQHJldHVybiBhbiBlbXB0
+eSBzdHJpbmcgaWYgaXQgY291bGQgbm90IGJlIHJlYWQgc3VjY2Vzc2Z1bGx5LCB0aGUgCisgICAg
+ICogCWNvbnRlbnRzIG9mIHRoZSBmaWxlIG90aGVyd2lzZS4KICAgICAgKi8KICAgICBwdWJsaWMg
+U3RyaW5nIGdldEZvb3RlckluY2x1ZGVGaWxlQ29udGVudCgpIHsKLSAgICAgICAgRmlsZSBoZHJm
+aWxlID0gbmV3IEZpbGUoZ2V0RGF0YVJvb3QoKSwgImZvb3Rlcl9pbmNsdWRlIik7Ci0gICAgICAg
+IAotICAgICAgICByZXR1cm4gZ2V0RmlsZUNvbnRlbnQoaGRyZmlsZSk7CisgICAgCWlmIChmb290
+ZXIgPT0gbnVsbCkgeworICAgIAkJZm9vdGVyID0gZ2V0RmlsZUNvbnRlbnQobmV3IEZpbGUoZ2V0
+RGF0YVJvb3QoKSwgRk9PVEVSX0lOQ0xVREVfRklMRSkpOworICAgIAl9CisgICAgCXJldHVybiBm
+b290ZXI7CiAgICAgfQogCiAgICAgLyoqCi0gICAgICogUmV0dXJuIHN0cmluZyBmcm9tIHRoZSBo
+ZWFkZXIgaW5jbHVkZSBmaWxlIHNvIGl0IGNhbiBiZSBlbWJlZGRlZCBpbnRvCi0gICAgICogcGFn
+ZSBoZWFkZXIuCisgICAgICogVGhlIG5hbWUgb2YgdGhlIGZpbGUgcmVsYXRpdmUgdG8gdGhlIDx2
+YXI+REFUQV9ST09UPC92YXI+LCB3aGljaCBzaG91bGQgCisgICAgICogYmUgaW5jbHVkZWQgaW50
+byB0aGUgZm9vdGVyIG9mIGdlbmVyYXRlZCB3ZWIgcGFnZXMuCisgICAgICovCisgICAgcHVibGlj
+IHN0YXRpYyBmaW5hbCBTdHJpbmcgSEVBREVSX0lOQ0xVREVfRklMRSA9ICJoZWFkZXJfaW5jbHVk
+ZSI7CisgICAgCisgICAgcHJpdmF0ZSB0cmFuc2llbnQgU3RyaW5nIGhlYWRlciA9IG51bGw7Cisg
+ICAgLyoqCisgICAgICogR2V0IHRoZSBjb250ZW50cyBvZiB0aGUgZm9vdGVyIGluY2x1ZGUgZmls
+ZS4KKyAgICAgKiBAcmV0dXJuIGFuIGVtcHR5IHN0cmluZyBpZiBpdCBjb3VsZCBub3QgYmUgcmVh
+ZCBzdWNjZXNzZnVsbHksIHRoZSAKKyAgICAgKiAJY29udGVudHMgb2YgdGhlIGZpbGUgb3RoZXJ3
+aXNlLgogICAgICAqLwogICAgIHB1YmxpYyBTdHJpbmcgZ2V0SGVhZGVySW5jbHVkZUZpbGVDb250
+ZW50KCkgewotICAgICAgICBGaWxlIGhkcmZpbGUgPSBuZXcgRmlsZShnZXREYXRhUm9vdCgpLCAi
+aGVhZGVyX2luY2x1ZGUiKTsKLQotICAgICAgICByZXR1cm4gZ2V0RmlsZUNvbnRlbnQoaGRyZmls
+ZSk7CisgICAgCWlmIChoZWFkZXIgPT0gbnVsbCkgeworICAgIAkJaGVhZGVyID0gZ2V0RmlsZUNv
+bnRlbnQobmV3IEZpbGUoZ2V0RGF0YVJvb3QoKSwgSEVBREVSX0lOQ0xVREVfRklMRSkpOworICAg
+IAl9CisgICAgCXJldHVybiBoZWFkZXI7CiAgICAgfQogCiAgICAgcHVibGljIFN0cmluZyBnZXRE
+YXRhYmFzZURyaXZlcigpIHsK
+</data>
+
+          </attachment>
+      
+
+    </bug>
+
+</bugzilla>

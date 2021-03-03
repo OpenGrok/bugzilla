@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>19172</bug_id>
+          
+          <creation_ts>2012-02-13 11:15:00 +0000</creation_ts>
+          <short_desc>diff links would be a nice to have in the file history view</short_desc>
+          <delta_ts>2012-02-13 11:15:48 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>webapp</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>NEW</bug_status>
+          
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>enhancement</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Konrad Karczewski">konrad.karczewski</reporter>
+          <assigned_to name="Lubos Kosco">Lubos.Kosco</assigned_to>
+          <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>86185</commentid>
+            <who name="Konrad Karczewski">konrad.karczewski</who>
+            <bug_when>2012-02-13 11:15:48 +0000</bug_when>
+            <thetext>In 0.11 the history view allows to see all of the files that were modified by given changeset. The links point to the revision of the file created by this changeset. It would be nice to have a link to a diff with the previous version there as well - When I&apos;m looking through the history I&apos;m usually more interested in seeing what was changed, not how the file looked like after the fix.</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

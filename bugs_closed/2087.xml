@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>2087</bug_id>
+          
+          <creation_ts>2008-05-29 14:57:00 +0000</creation_ts>
+          <short_desc>XRef browsing does not properly handle spaces in filenames</short_desc>
+          <delta_ts>2008-05-30 04:55:56 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>webapp</component>
+          <version>unspecified</version>
+          <rep_platform>Other</rep_platform>
+          <op_sys>Windows</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>DUPLICATE</resolution>
+          <dup_id>1135</dup_id>
+          
+          
+          
+          
+          <priority>P4</priority>
+          <bug_severity>critical</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter>mattinger</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          <cc>jaustvik</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>7478</commentid>
+            <who name="">mattinger</who>
+            <bug_when>2008-05-29 14:57:43 +0000</bug_when>
+            <thetext>When browsing the source tree, opengrok does not properly handle directories/files with spaces in them.
+
+For a file like &quot;Foo bar&quot;, it generates an href like &quot;Foo+bar&quot; which is incorrect.  The correct href is &quot;Foo%20bar&quot;.
+
+The root of the problem lies in the two classes:  
+  org/opensolaris/opengrok/web/DirectoryListing.java
+  org/opensolaris/opengrok/web/Util.java
+
+
+Line 107 of DirectoryListing has the following code:
+                out.write(&quot;&gt;&lt;td align=\&quot;left\&quot;&gt;&lt;tt&gt;&lt;a href=\&quot;&quot; + Util.URIEncode(file) + (isDir ? &quot;/\&quot; class=\&quot;r\&quot;&quot; : &quot;\&quot; class=\&quot;p\&quot;&quot;) + &quot;&gt;&quot;);
+
+the URIEncode method of the Util class does this:
+  return URLEncoder.encode(q, &quot;ISO-8859-1&quot;);
+
+
+This is entirely incorrect when trying to encode pathnames for use as an href.
+The URLEncoder class is mean to encode data which is to be passed as part of the query string of a URI, not to encode the path portion of the URI.
+
+The fix is to change DirectoryListing to call Util.URIEncodePath instead, and
+modifed Util.URIEncodePath to properly escape the path.  I&apos;ve implemented it as follows.  This implementation only handles spaces, but it&apos;s good for what i&apos;m doing.  Other characters may need to be escaped as well:
+
+   public static String URIEncodePathSegment(String segment) {
+     return segment.replaceAll(&quot; &quot;, &quot;%20&quot;);
+   }
+
+    public static String URIEncodePath(String path) {
+        final String SEGMENT_SEP = &quot;/&quot;;
+        StringTokenizer pathTokenizer = new StringTokenizer(path, SEGMENT_SEP, true);
+        StringBuilder urlPath = new StringBuilder();
+
+        while (pathTokenizer.hasMoreTokens()) {
+            String token = pathTokenizer.nextToken();
+            urlPath.append(SEGMENT_SEP.equals(token) ? token : URIEncodePathSegment(token));
+        }
+
+        return urlPath.toString();
+    }</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>7512</commentid>
+            <who name="Jørgen Austvik">jaustvik</who>
+            <bug_when>2008-05-30 01:38:23 +0000</bug_when>
+            <thetext>http://tools.ietf.org/html/rfc3986#section-3.3:
+
+&quot;URI producing applications often use the reserved characters allowed in a segment to delimit scheme-specific or dereference-handler-specific subcomponents.&quot;
+
+http://en.wikipedia.org/wiki/Percent-encoding:
+
+&quot;When data that has been entered into HTML forms is submitted, the form field names and values are encoded and sent to the server in an HTTP request message using method GET or POST, or, historically, via email.[1] The encoding used by default is based on a very early version of the general URI percent-encoding rules, with a number of modifications such as newline normalization and replacing spaces with &quot;+&quot; instead of &quot;%20&quot;.&quot;
+
+So I agree - it looks like we should support decoding &quot;+&quot; and %20, but only encode in percent-encoding? (Or actually, only decode + if it is a part of a query in the URI)</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>7519</commentid>
+            <who name="Trond Norbye">trond.norbye</who>
+            <bug_when>2008-05-30 04:55:56 +0000</bug_when>
+            <thetext>
+
+*** This bug has been marked as a duplicate of bug 1135 ***</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

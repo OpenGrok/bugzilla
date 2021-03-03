@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>19242</bug_id>
+          
+          <creation_ts>2012-10-03 13:12:00 +0000</creation_ts>
+          <short_desc>clearcase isWorking method does not work</short_desc>
+          <delta_ts>2012-11-05 10:28:30 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>indexer</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXINSOURCE</resolution>
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>normal</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Vladimir Kotal">vladimir.kotal</reporter>
+          <assigned_to name="Vladimir Kotal">vladimir.kotal</assigned_to>
+          <cc>fwans089</cc>
+    
+    <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>86626</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2012-10-03 13:12:48 +0000</bug_when>
+            <thetext>isWorking() method in ClearCaseRepository.java contains this:
+
+323    public boolean isWorking() {
+324        if (working == null) {
+325            ensureCommand(CMD_PROPERTY_KEY, CMD_FALLBACK);
+326            working = checkCmd(cmd, &quot;���version&quot;);
+327        }
+328        return working.booleanValue();
+329    }
+
+there is obviously some garbage before the version string which prevents the clearcase repo indexing from working.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86627</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2012-10-03 13:17:23 +0000</bug_when>
+            <thetext>This bug seems to be introduced with changeset 1182:d9988c79ffbe.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86628</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2012-10-03 14:41:09 +0000</bug_when>
+            <thetext>fixed with:
+
+changeset:   1413:eb0e79476c12
+tag:         tip
+user:        Vladimir Kotal &lt;Vladimir.Kotal@oracle.com&gt;
+date:        Wed Oct 03 15:18:26 2012 +0200
+
+description:
+	Bug 19242 - clearcase isWorking method does not work
+
+modified:
+   src/org/opensolaris/opengrok/history/ClearCaseRepository.java</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86641</commentid>
+            <who name="Fadel Wanssa">fwans089</who>
+            <bug_when>2012-11-03 01:47:22 +0000</bug_when>
+            <thetext>Which release is going to include this fix?
+
+Thanks,
+Fadl</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86642</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2012-11-05 10:28:30 +0000</bug_when>
+            <thetext>(In reply to comment #3)
+&gt; Which release is going to include this fix?
+&gt; 
+&gt; Thanks,
+&gt; Fadl
+
+0.12.</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

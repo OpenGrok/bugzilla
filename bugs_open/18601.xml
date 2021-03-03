@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>18601</bug_id>
+          
+          <creation_ts>2011-06-22 19:33:00 +0000</creation_ts>
+          <short_desc>IgnoredNames.java should have two lists -- one for files, one for directories</short_desc>
+          <delta_ts>2012-02-21 21:31:15 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>indexer</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>CAUSEKNOWN</bug_status>
+          
+          
+          <see_also>http://defect.opensolaris.org/bz/show_bug.cgi?id=19180</see_also>
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>major</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Doug McLaren">dougmc+opensolaris</reporter>
+          <assigned_to name="Vladimir Kotal">vladimir.kotal</assigned_to>
+          <cc>Lubos.Kosco</cc>
+    
+    <cc>opengrok-dev</cc>
+    
+    <cc>seadog1234567890</cc>
+    
+    <cc>vladimir.kotal</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>83813</commentid>
+            <who name="Doug McLaren">dougmc+opensolaris</who>
+            <bug_when>2011-06-22 19:33:16 +0000</bug_when>
+            <thetext>In the course of my figuring out why opengrok 0.10 wouldn&apos;t index all my files, I found two different problems that caused the issue.
+
+The simplest problem was that opengrok wasn&apos;t indexing anything in our directories called &quot;tags&quot;.  (Combined with the other problem, it wasn&apos;t immediately apparent that anything in a directory called &quot;tags&quot; was skipped, but eventually it became clear.)
+
+(The other problem will be the subject of another defect.)
+
+In any event, the ctags program will create a file called &quot;tags&quot;, so it makes sense to ignore these files, but there&apos;s no reason that I&apos;m aware of to ignore a directory called tags.
+
+Therefore, I suggest that IgnoredNames.java have two lists rather than one -- one list is a list of files to be ignored, and the other list is a list of directories to be ignored.  (There may also need to be some other code changes -- when the code actually checks to see if a file name should be ignored, it might have to tell the method that this is a file or it&apos;s a directory -- but that should be pretty obvious.)
+
+For my own use, I&apos;m simply recompiling IgnoredNames.java to not skip anything named &quot;tags&quot;, but a proper fix is likely what I suggested above.
+
+Also, some documentation on this list might be appropriate, or perhaps some way to customize the default list without recompiling.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>84446</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2011-07-21 13:28:44 +0000</bug_when>
+            <thetext>Trond :) 
+
+me is affected too! 
+and me not like it
+
+what will do ?
+
+:-D
+
+but seriously, this is a prob, I wasted 2 hours since I couldn&apos;t find my semantic tag sources which live in a directory called tags ;)</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86261</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2012-02-21 21:30:40 +0000</bug_when>
+            <thetext>We will need to figure out what to do with the -i option since it is also generic.</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

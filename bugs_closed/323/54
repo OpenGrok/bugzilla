@@ -1,0 +1,106 @@
+# HG changeset patch
+# User Leo Davis <ldavis@fonix.com>
+# Date 1200092141 25200
+# Node ID 90115521127085e9a3bee3dd5f1550b65074bac1
+# Parent  a7931ffbfe71241d76f20dc040ad8cde94e35d30
+This should fix some issues with files/directories having space in pathname
+problems.
+
+web/history.jsp: added percent encoding to RSS URIs
+web/list.jsp: Fix raw file downloads -- spaces had "+" instead of space.
+web/mast.jsp: percent decode the path.
+              Fix raw file downloads -- spaces had "+" instead of space.
+web/rss.jsp: percent decode the path.
+
+diff -r a7931ffbfe71 -r 901155211270 web/history.jsp
+--- a/web/history.jsp	Fri Jan 11 15:55:31 2008 -0700
++++ b/web/history.jsp	Fri Jan 11 15:55:41 2008 -0700
+@@ -132,6 +132,6 @@ if(files != null) {%><br/><%
+         if(striked) {
+             %><p><b>Note:</b> No associated file changes are available for revisions with strike-through numbers (eg. <strike>1.45</strike>)</p><%
+         }
+-        %><p class="rssbadge"><a href="<%=context%>/rss<%=path%>"><img src="<%=context%>/<%=environment.getWebappLAF()%>/img/rss.png" width="80" height="15" alt="RSS XML Feed" title="RSS XML Feed of latest changes"/></a></p><%
++        %><p class="rssbadge"><a href="<%=context%>/rss<%=Util.URIEncodePath(path)%>"><img src="<%=context%>/<%=environment.getWebappLAF()%>/img/rss.png" width="80" height="15" alt="RSS XML Feed" title="RSS XML Feed of latest changes"/></a></p><%
+ }
+ %><%@include file="foot.jspf"%>
+diff -r a7931ffbfe71 -r 901155211270 web/list.jsp
+--- a/web/list.jsp	Fri Jan 11 15:55:31 2008 -0700
++++ b/web/list.jsp	Fri Jan 11 15:55:41 2008 -0700
+@@ -139,7 +139,7 @@ if (valid) {
+                             g = AnalyzerGuru.getGenre(a);
+                         }
+                         if (g == Genre.DATA || g == Genre.XREFABLE || g == null) {
+-		%> <div id="src">Binary file [Click <a href="<%=context%>/raw<%=uriEncodedName%>?r=<%=rev%>">here</a> to download] </div><%
++		%> <div id="src">Binary file [Click <a href="<%=context%>/raw<%=path%>?r=<%=rev%>">here</a> to download] </div><%
+                         } else {
+ 		%><div id="src"><span class="pagetitle"><%=basename%> revision <%=rev%> </span><pre>
+ <%
+@@ -219,7 +219,7 @@ if (g == Genre.PLAIN) {
+             AnalyzerGuru.writeXref(a, bin, out, annotation);
+             %></pre></div><%
+             } else {
+-	    %> Click <a href="<%=context%>/raw<%=uriEncodedName%>">download <%=basename%></a><%
++	    %> Click <a href="<%=context%>/raw<%=path%>">download <%=basename%></a><%
+         }
+         }
+     }
+diff -r a7931ffbfe71 -r 901155211270 web/mast.jsp
+--- a/web/mast.jsp	Fri Jan 11 15:55:31 2008 -0700
++++ b/web/mast.jsp	Fri Jan 11 15:55:41 2008 -0700
+@@ -26,6 +26,7 @@ javax.servlet.http.*,
+ javax.servlet.http.*,
+ java.util.*,
+ java.io.*,
++java.net.URLDecoder,
+ org.opensolaris.opengrok.index.*,
+ org.opensolaris.opengrok.configuration.*
+ "
+@@ -35,6 +36,12 @@ String reqURI = request.getRequestURI();
+ String reqURI = request.getRequestURI();
+ String path = request.getPathInfo();
+ if (path == null) path = "";
++else {
++     try {
++       path = URLDecoder.decode(path, "ISO-8859-1");
++     } catch (UnsupportedEncodingException e) {
++     }
++}
+ RuntimeEnvironment environment = RuntimeEnvironment.getInstance();
+ environment.setUrlPrefix(context + "/s?");
+ environment.register();
+@@ -182,9 +189,9 @@ toggle_ss.style.display = 'none';
+         if (!isDir) {
+            String rev = request.getParameter("r");
+            if (rev == null || rev.equals("")) {
+-%> <a id="download" href="<%=context%>/raw<%=uriEncodedName%>">Download</a> | <%
++%> <a id="download" href="<%=context%>/raw<%=path%>">Download</a> | <%
+            } else {
+-%> <a id="download" href="<%=context%>/raw<%=uriEncodedName%>?r=<%=rev%>">Download</a> | <%
++%> <a id="download" href="<%=context%>/raw<%=path%>?r=<%=rev%>">Download</a> | <%
+            }
+         }
+ 
+diff -r a7931ffbfe71 -r 901155211270 web/rss.jsp
+--- a/web/rss.jsp	Fri Jan 11 15:55:31 2008 -0700
++++ b/web/rss.jsp	Fri Jan 11 15:55:41 2008 -0700
+@@ -26,6 +26,7 @@ javax.servlet.http.*,
+ javax.servlet.http.*,
+ java.util.*,
+ java.io.*,
++java.net.URLDecoder,
+ org.opensolaris.opengrok.analysis.*,
+ org.opensolaris.opengrok.web.*,
+ org.opensolaris.opengrok.history.*,
+@@ -43,6 +44,12 @@ String reqURI = request.getRequestURI();
+ String reqURI = request.getRequestURI();
+ String path = request.getPathInfo();
+ if(path == null) path = "";
++else {
++     try {
++       path = URLDecoder.decode(path, "ISO-8859-1");
++     } catch (UnsupportedEncodingException e) {
++     }
++}
+ RuntimeEnvironment env = RuntimeEnvironment.getInstance();
+ env.setUrlPrefix(context + "/s?");
+ env.register();

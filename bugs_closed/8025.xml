@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>8025</bug_id>
+          
+          <creation_ts>2009-04-08 05:06:00 +0000</creation_ts>
+          <short_desc>Partial line returned in search results.</short_desc>
+          <delta_ts>2010-05-08 22:29:13 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>webapp</component>
+          <version>unspecified</version>
+          <rep_platform>Other</rep_platform>
+          <op_sys>Linux</op_sys>
+          <bug_status>INCOMPLETE</bug_status>
+          
+          
+          
+          
+          
+          
+          <priority>P4</priority>
+          <bug_severity>minor</bug_severity>
+          <target_milestone>---</target_milestone>
+          <dependson>15638</dependson>
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Bruce Furber">bruce30062</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          <cc>knut.hatlen</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>34580</commentid>
+            <who name="Bruce Furber">bruce30062</who>
+            <bug_when>2009-04-08 05:06:10 +0000</bug_when>
+            <thetext>Problem exists in Opengrok 0.61 and 0.7
+
+Searching for IRDFTL returns this:
+
+179 MVC EBW089(L&apos;IRDFTL-3),IRDFTL COVER THE DECIMAL POINT
+261 IRDFTL),IRDFTL TOTAL TO WORK AREA
+264 MVC EBW081(L&apos;IRDFTL-4),IRDFTL COVER THE DEC PT
+
+Line 261 reads:
+
+         MVC   EBW080(L&apos;IRDFTL),IRDFTL   TOTAL TO WORK AREA
+
+The file was processed by PlainAnalyzer:
+Adding: /gal/prod/s/ssh60c.asm (PlainAnalyzer)
+
+Index was built with this command:
+
+java ${JAVA_OPTS} -jar ${PROGDIR}/opengrok.jar -W gpamp-config.xml -m 150000 
+-a on -Q off -e -v -w gpamp -i .listing -c ${EXUB_CTAGS} -s ${SRC_ROOT} -d ${DATA_ROOT}</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>72703</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2010-05-08 22:29:13 +0000</bug_when>
+            <thetext>I haven&apos;t been able to reproduce this from the information in the bug report (I created a file containing the three lines mentioned in the bug description). Bruce, do you have a file you can upload that shows the problem?</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

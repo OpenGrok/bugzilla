@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>16985</bug_id>
+          
+          <creation_ts>2010-09-06 14:34:00 +0000</creation_ts>
+          <short_desc>error opening revisions (teamware)</short_desc>
+          <delta_ts>2011-01-05 08:42:27 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>webapp</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>CAUSEKNOWN</bug_status>
+          
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>minor</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Lubos Kosco">Lubos.Kosco</reporter>
+          <assigned_to name="Lubos Kosco">Lubos.Kosco</assigned_to>
+          <cc>knut.hatlen</cc>
+    
+    <cc>marcel.telka</cc>
+    
+    <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>77336</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2010-09-06 14:34:13 +0000</bug_when>
+            <thetext>http://grok.czech.sun.com:8080/source/diff/sfwnv-clone/usr/src/cmd/dvd+rw-tools/install-dvd+rw-tools?r2=%2Fsfwnv-clone%2Fusr%2Fsrc%2Fcmd%2Fdvd%2Brw-tools%2Finstall-dvd%2Brw-tools%401.7&amp;r1=%2Fsfwnv-clone%2Fusr%2Fsrc%2Fcmd%2Fdvd%2Brw-tools%2Finstall-dvd%2Brw-tools%401.6
+
+gives
+Error opening revisions!
+
+it seems we don&apos;t parse the path with special chars ( + ) properly  ...</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>77337</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2010-09-06 15:09:55 +0000</bug_when>
+            <thetext>http://grok.czech.sun.com:8080/source/xref/opengrok-trunk/src/org/opensolaris/opengrok/web/Util.java?a=true#436
+
+seems to be the problem, history.jsp uses it, but diff uses urldecoder ... we need to be united on the way how we encode urls ... history.jsp should send good data
+
+for what is worth, bugs 1135 and changeset 158 are interesting on the topic of encoding of paths, data etc. in URL ...</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>77340</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2010-09-06 15:44:37 +0000</bug_when>
+            <thetext>changeset 170 is also very interesting
+
+it seems that rather than generating URI, we would need to generate proper html characters for the radio buttons content and leave the rest for the browser, which will submit the form properly
+also no decode is needed on the other side for such path (I&apos;ll add tests for this)</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>80286</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2011-01-05 08:42:27 +0000</bug_when>
+            <thetext>Resetting target milestone since this won&apos;t make it into 0.10.</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

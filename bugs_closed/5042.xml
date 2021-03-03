@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>5042</bug_id>
+          
+          <creation_ts>2008-11-14 02:14:00 +0000</creation_ts>
+          <short_desc>Author field empty in opengrok after a multiple changeset push</short_desc>
+          <delta_ts>2010-05-10 10:54:32 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>webapp</component>
+          <version>unspecified</version>
+          <rep_platform>Other</rep_platform>
+          <op_sys>Solaris</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXED</resolution>
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>minor</bug_severity>
+          <target_milestone>0.9</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Mark Phalan">mark.phalan</reporter>
+          <assigned_to name="Knut Anders Hatlen">knut.hatlen</assigned_to>
+          <cc>knut.hatlen</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>19730</commentid>
+            <who name="Mark Phalan">mark.phalan</who>
+            <bug_when>2008-11-14 02:14:55 +0000</bug_when>
+            <thetext>I recently pushed multiple changesets with a single push to onnv-gate. When viewed through opengrok the &quot;Author&quot; field is empty. For e.g. take a look at
+
+http://grok.czech:8080/source/history/onnv-clone/usr/src/lib/krb5/ss/ss_err.h
+
+The putback added the following changsets:
+
+
+Changeset: 8ddcc43edff5
+Changeset: 91578ededd79
+Changeset: 881094b90540
+Changeset: 74d2f345b088
+Changeset: 19771b16f0a8
+Changeset: d2fc11f7c4e7</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>51287</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2009-10-01 08:51:00 +0000</bug_when>
+            <thetext>Here&apos;s what hg log says:
+
+changeset:   8093:d2fc11f7c4e7
+user:        &lt;Mark.Phalan@Sun.COM&gt;
+date:        Wed Nov 05 10:43:38 2008 +0100
+summary:     5047971 kadmin could use libtecla for enhanced command history and editing
+
+It looks like &quot;&lt;&quot; and &quot;&gt;&quot; in the author name are not replaced with &quot;&amp;lt;&quot; and &quot;&amp;gt;&quot; in the webapp, so it&apos;s interpreted as an invalid HTML tag and therefore not shown.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>72720</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2010-05-10 10:54:32 +0000</bug_when>
+            <thetext>changeset:   1005:e7e5fde8de63</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

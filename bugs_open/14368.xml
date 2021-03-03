@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>14368</bug_id>
+          
+          <creation_ts>2010-02-04 14:03:00 +0000</creation_ts>
+          <short_desc>Highlight line number</short_desc>
+          <delta_ts>2010-10-04 09:06:02 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>webapp</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>NEW</bug_status>
+          
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>enhancement</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          <blocked>17156</blocked>
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Vasanth Manickam">vasanth.manickam</reporter>
+          <assigned_to name="Lubos Kosco">Lubos.Kosco</assigned_to>
+          <cc>Lubos.Kosco</cc>
+    
+    <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>65076</commentid>
+            <who name="Vasanth Manickam">vasanth.manickam</who>
+            <bug_when>2010-02-04 14:03:26 +0000</bug_when>
+            <thetext>When a link with line number is clicked we have to do a bit of searching if the line number happens to be close to the end of the page as the page cannot be scrolled anymore to have the specified line number at the top.
+
+Would be good if the line number can be highlighted to make it easier.</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

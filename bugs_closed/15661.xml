@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>15661</bug_id>
+          
+          <creation_ts>2010-04-16 11:57:00 +0000</creation_ts>
+          <short_desc>OpenGROK should support new ksh command substitution x=${ cmd ; }</short_desc>
+          <delta_ts>2010-08-03 12:58:00 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>indexer</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXED</resolution>
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>minor</bug_severity>
+          <target_milestone>0.10</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Olga Kryzhanovska">olga.kryzhanovska</reporter>
+          <assigned_to name="Knut Anders Hatlen">knut.hatlen</assigned_to>
+          <cc>knut.hatlen</cc>
+    
+    <cc>olga.kryzhanovska</cc>
+    
+    <cc>opengrok-dev</cc>
+    
+    <cc>roland.mainz</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>71531</commentid>
+            <who name="Olga Kryzhanovska">olga.kryzhanovska</who>
+            <bug_when>2010-04-16 11:57:40 +0000</bug_when>
+            <thetext>OpenGROK should support the new ksh command substitution x=${ cmd ; }. It works like x=$(cmd) but runs the command in the same shell level and *not* in a sub shell like x$(cmd) does.
+
+Syntax:
+variable=${(SPACE)(cmd);}
+
+(SPACE) may be any white space (TAB, SPACE), followed by one or more commands and is terminated with a ;}. A (SPACE) between ; and } is optional.
+
+Like x=$(cmd) the cmd may stretch over multiple lines and may be nested
+For example:
+stderr=${ stdout=${ cmd ; res=$? ;} 2&gt;&amp;1 ; }
+will assign the stdout output of cmd to variable stdout, the stderr output to variable stderr and res contains the return code of the command.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>72788</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2010-05-11 19:51:20 +0000</bug_when>
+            <thetext>Olga, could you point us to a document with the exact syntax specification? The syntax accepted by my version of ksh differs slightly from what&apos;s described above. For example, it looks as if the semi colon that terminates the command is optional, as long as a space appears in front of the closing brace:
+
+$ echo ${.sh.version}
+Version JMP 93t+ 2010-03-05
+$ echo ${ echo hello;}
+hello
+$ echo ${ echo hello }                                             
+hello
+
+I think it should be fairly easy to add support for this syntax in ShXref, but it would be good to see the authoritative description before starting to implement it.
+
+Thanks.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>72791</commentid>
+            <who name="Roland Mainz">roland.mainz</who>
+            <bug_when>2010-05-11 20:58:08 +0000</bug_when>
+            <thetext>(In reply to comment #1)
+&gt; Olga, could you point us to a document with the exact syntax specification? The
+&gt; syntax accepted by my version of ksh differs slightly from what&apos;s described
+&gt; above. For example, it looks as if the semi colon that terminates the command
+&gt; is optional, as long as a space appears in front of the closing brace:
+
+AFAIK the sh(1) manual page in the OS/Net tree should have it (assuming David Korn updated the documnetation).
+Officially the design is that command sequence must always be terminated with a &apos;;&apos; character like a normal POSIX shell curly bracket expression, e.g.
+-- snip --
+true &amp;&amp; { printf &quot;hello\n&quot;  ; printf &quot;world\n&quot; }
+-- snip --
+... is not valid but...
+-- snip --
+true &amp;&amp; { printf &quot;hello\n&quot;  ; printf &quot;world\n&quot; ; }
+-- snip --
+... is. The ${ cmd;} is a plain extension of the POSIX syntax. AFAIK it&apos;s a bug if ksh93 allows the &apos;;&apos; to be obmitted (because it would not be a straightforward extension of the POSIX curly bracket expression anymore).</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>72825</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2010-05-12 08:42:45 +0000</bug_when>
+            <thetext>Thanks, Roland. Found it here: http://www2.research.att.com/~gsf/man/man1/ksh-man.html#Command%20Substitution</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>76159</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2010-08-03 12:58:00 +0000</bug_when>
+            <thetext>Pushed a fix for this bug,
+changeset:   1060:2a27ccb1bba5
+
+I also checked in a script with examples of syntax that will now be understood by OpenGrok. The next time src.opensolaris.org pulls the latest sources, it will be available here: http://src.opensolaris.org/source/xref/opengrok/trunk/testdata/sources/script/bug15661.ksh
+
+(Of course, the syntax highlighting on that URL will be broken until src.opensolaris.org is upgraded.)
+
+We now recognize &quot;${&quot; followed by any whitespace character as the start of a command substitution expression. A semi-colon followed by zero or more whitespace characters and a closing brace will be recognized as the end of such an expression. A closing brace which appears as the first non-whitespace character on a line will also close the expression.
+
+As discussed above, a closing brace without a preceding semi-colon or newline will not close the expression, even though the korn shell in my environment accepts statements like &quot;${ echo true }&quot;, as that appears to be a bug. From the man page referenced in comment #3: &quot;} must appear at the beginning of the line or follow a ;.&quot;</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

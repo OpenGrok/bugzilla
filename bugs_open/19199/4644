@@ -1,0 +1,175 @@
+# HG changeset patch
+# User jel+opengrok@cs.uni-magdeburg.de
+# Date 1333181373 -7200
+# Node ID 6478b3fe6f10c01309a1539df23463168e788dcd
+# Parent  1c62bc7908a0259c787088588fbcc17408b00565
+make tests happy wrt. latest changes
+
+diff -r 1c62bc7908a0 -r 6478b3fe6f10 test/org/opensolaris/opengrok/analysis/JFlexXrefTest.java
+--- a/test/org/opensolaris/opengrok/analysis/JFlexXrefTest.java	Sat Mar 31 10:08:47 2012 +0200
++++ b/test/org/opensolaris/opengrok/analysis/JFlexXrefTest.java	Sat Mar 31 10:09:33 2012 +0200
+@@ -64,8 +64,12 @@
+      * This is what we expect to find at the beginning of the first line
+      * returned by an xref.
+      */
+-    private static final String FIRST_LINE_PREAMBLE =
+-                "<a class=\"l\" name=\"1\" href=\"#1\">1</a>";
++    public static final String FIRST_LINE_PREAMBLE =
++                "<div id='lines'\n><div>";
++    /** the end of each line in an xref file */
++    public static final String LINE_SUFFIX = "</div\n>";
++    /** the end of an xref file */
++    public static final String EOS = "</div\n>";
+ 
+     @BeforeClass
+     public static void setUpClass() throws Exception {
+@@ -204,7 +208,8 @@
+         StringWriter output = new StringWriter();
+         xref.write(new XrefWriter(output));
+ 
+-        assertEquals(FIRST_LINE_PREAMBLE + expectedOutput, output.toString());
++        assertEquals(FIRST_LINE_PREAMBLE + expectedOutput + LINE_SUFFIX + EOS, 
++            output.toString());
+     }
+ 
+     /**
+@@ -219,10 +224,9 @@
+         ShXref xref = new ShXref(new StringReader("echo \"xyz"));
+         StringWriter out = new StringWriter();
+         xref.write(new XrefWriter(out));
+-        assertEquals(
+-                FIRST_LINE_PREAMBLE +
+-                    "<b>echo</b> <span class=\"s\">\"xyz</span>",
+-                out.toString());
++        assertEquals(FIRST_LINE_PREAMBLE 
++            + "<b>echo</b> <span class=\"s\">\"xyz</span>" + LINE_SUFFIX + EOS,
++            out.toString());
+ 
+         // Reuse the xref and verify that the broken syntax in the previous
+         // file doesn't cause broken highlighting in the next file
+@@ -230,10 +234,9 @@
+         String contents = "echo \"hello\"";
+         xref.reInit(contents.toCharArray(), contents.length());
+         xref.write(new XrefWriter(out));
+-        assertEquals(
+-                FIRST_LINE_PREAMBLE +
+-                    "<b>echo</b> <span class=\"s\">\"hello\"</span>",
+-                out.toString());
++        assertEquals(FIRST_LINE_PREAMBLE 
++            + "<b>echo</b> <span class=\"s\">\"hello\"</span>" + LINE_SUFFIX + EOS,
++            out.toString());
+     }
+ 
+     /**
+@@ -276,7 +279,8 @@
+             StringWriter out = new StringWriter();
+             JFlexXref xref = klass.getConstructor(Reader.class).newInstance(in);
+             xref.write(new XrefWriter(out));
+-            assertEquals(FIRST_LINE_PREAMBLE + s[1], out.toString());
++            assertEquals(FIRST_LINE_PREAMBLE + s[1] + LINE_SUFFIX + EOS, 
++                out.toString());
+         }
+     }
+ 
+@@ -298,11 +302,14 @@
+         String[] result = out.toString().split("\n");
+ 
+         // The single-quote on line 2 shouldn't start a string literal.
+-        assertTrue(result[1].endsWith("This shouldn't cause any problem."));
++        assertTrue(result[2], 
++            result[2].endsWith("This shouldn't cause any problem.</span>"
++            + (LINE_SUFFIX + EOS).split("\n")[0]));
+ 
+         // The string literal on line 4 should be recognized as one.
+-        assertTrue(
+-            result[3].endsWith("=<span class=\"s\">'some string'</span>"));
++        assertTrue(result[4],
++            result[4].endsWith("=<span class=\"s\">'some string'</span>"
++                + (LINE_SUFFIX + EOS).split("\n")[0]));
+     }
+ 
+     /**
+diff -r 1c62bc7908a0 -r 6478b3fe6f10 test/org/opensolaris/opengrok/analysis/plain/XMLAnalyzerTest.java
+--- a/test/org/opensolaris/opengrok/analysis/plain/XMLAnalyzerTest.java	Sat Mar 31 10:08:47 2012 +0200
++++ b/test/org/opensolaris/opengrok/analysis/plain/XMLAnalyzerTest.java	Sat Mar 31 10:09:33 2012 +0200
+@@ -47,9 +47,9 @@
+         XMLAnalyzer.writeXref(sr, new XrefWriter(sw), null, null, null);
+         String[] xref = sw.toString().split("\n");
+         // Reference to a Java class should have / instead of . in the path
+-        assertTrue(xref[2].contains("path=com/foo/bar/MyClass"));
++        assertTrue(xref[3].contains("path=com/foo/bar/MyClass"));
+         // Ordinary file names should not have .'s replaced
+-        assertTrue(xref[3].contains("path=README.txt"));
++        assertTrue(xref[4].contains("path=README.txt"));
+     }
+ 
+     /**
+diff -r 1c62bc7908a0 -r 6478b3fe6f10 test/org/opensolaris/opengrok/configuration/RuntimeEnvironmentTest.java
+--- a/test/org/opensolaris/opengrok/configuration/RuntimeEnvironmentTest.java	Sat Mar 31 10:08:47 2012 +0200
++++ b/test/org/opensolaris/opengrok/configuration/RuntimeEnvironmentTest.java	Sat Mar 31 10:09:33 2012 +0200
+@@ -44,6 +44,7 @@
+ import org.junit.Before;
+ import org.junit.BeforeClass;
+ import org.junit.Test;
++import org.opensolaris.opengrok.analysis.JFlexXrefTest;
+ import org.opensolaris.opengrok.analysis.XrefWriter;
+ import org.opensolaris.opengrok.analysis.plain.PlainXref;
+ import org.opensolaris.opengrok.history.RepositoryInfo;
+@@ -107,8 +108,8 @@
+     @Test
+     public void testSourceRoot() throws IOException {
+         RuntimeEnvironment instance = RuntimeEnvironment.getInstance();
+-        assertNull(instance.getSourceRootFile());
+-        assertNull(instance.getSourceRootPath());
++        assertNull("" + instance.getSourceRootFile(), instance.getSourceRootFile());
++        assertNull(instance.getSourceRootPath(), instance.getSourceRootPath());
+         File f = File.createTempFile("sourceroot", null);
+         String path = f.getCanonicalPath();
+         assertTrue(f.delete());
+@@ -312,7 +313,7 @@
+     @Test
+     public void testWebappLAF() {
+         RuntimeEnvironment instance = RuntimeEnvironment.getInstance();
+-        assertEquals("default", instance.getWebappLAF());
++        assertEquals(Configuration.DEFAULT_STYLE, instance.getWebappLAF());
+         instance.setWebappLAF("foo");
+         assertEquals("foo", instance.getWebappLAF());
+     }
+@@ -431,9 +432,8 @@
+         String expectedAddress = expected ?
+             address.replace("@", " (at) ") : address;
+ 
+-        String expectedOutput =
+-                "<a class=\"l\" name=\"1\" href=\"#1\">1</a>"
+-                + expectedAddress;
++        String expectedOutput = JFlexXrefTest.FIRST_LINE_PREAMBLE
++            + expectedAddress + JFlexXrefTest.LINE_SUFFIX + JFlexXrefTest.EOS;
+ 
+         assertEquals(expectedOutput, out.toString());
+     }
+diff -r 1c62bc7908a0 -r 6478b3fe6f10 test/org/opensolaris/opengrok/history/HistoryGuruTest.java
+--- a/test/org/opensolaris/opengrok/history/HistoryGuruTest.java	Sat Mar 31 10:08:47 2012 +0200
++++ b/test/org/opensolaris/opengrok/history/HistoryGuruTest.java	Sat Mar 31 10:09:33 2012 +0200
+@@ -126,8 +126,8 @@
+         HistoryGuru instance = HistoryGuru.getInstance();
+         for (File f : files) {
+             if (f.getName().equals("bugreport16465@")) {
+-                assertNotNull(instance.getHistory(f));
+-                assertNotNull(instance.annotate(f, null));
++                assertNotNull("" + f, instance.getHistory(f));
++                assertNotNull("" + f, instance.annotate(f, null));
+             }
+         }
+     }
+diff -r 1c62bc7908a0 -r 6478b3fe6f10 test/org/opensolaris/opengrok/web/UtilTest.java
+--- a/test/org/opensolaris/opengrok/web/UtilTest.java	Sat Mar 31 10:08:47 2012 +0200
++++ b/test/org/opensolaris/opengrok/web/UtilTest.java	Sat Mar 31 10:09:33 2012 +0200
+@@ -232,7 +232,7 @@
+ 
+     @Test
+     public void jsStringLiteral() {
+-        assertEquals("'abc\\n\\r\"\\'\\\\'",
++        assertEquals("\"abc\\n\\r\\\"'\\\\\"",
+                      Util.jsStringLiteral("abc\n\r\"'\\"));
+     }
+ }

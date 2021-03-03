@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>18687</bug_id>
+          
+          <creation_ts>2011-07-10 14:10:00 +0000</creation_ts>
+          <short_desc>Run ASP.NET(.aspx,...) and WPF(.xaml) files through XML analyzer</short_desc>
+          <delta_ts>2011-11-04 12:19:32 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>analyzer</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXINSOURCE</resolution>
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>enhancement</bug_severity>
+          <target_milestone>0.11</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Mateusz B.">bronk.m</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          <cc>knut.hatlen</cc>
+    
+    <cc>Lubos.Kosco</cc>
+    
+    <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>84212</commentid>
+            <who name="Mateusz B.">bronk.m</who>
+            <bug_when>2011-07-10 14:10:47 +0000</bug_when>
+            <thetext>*.aspx, *.ascx, *.asax, *.Master and *.xaml files do not contain XML declaration tag at the beginning, so they are not recognized by OpenGrok as XML files and are processed as plaintext.
+
+Since they are in fact XMLs, they should be processed by XML handler (e.g. added to XMLAnalyzerFactory::SUFFIXES). Mentioned ASP.NET files always begin with &apos;&lt;@ &apos; directive (like  &apos;&lt;%@ Page&apos;, &apos;&lt;%@ Control&apos;, &apos;&lt;%@ Application&apos;) which could be used for heuristics as well.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>85640</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2011-11-03 12:19:08 +0000</bug_when>
+            <thetext>should be fixed by 
+changeset:   1275:affabbacf51c</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

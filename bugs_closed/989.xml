@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>989</bug_id>
+          
+          <creation_ts>2008-04-04 03:33:00 +0000</creation_ts>
+          <short_desc>Can&apos;t reindex a subtree</short_desc>
+          <delta_ts>2008-04-09 03:35:46 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>indexer</component>
+          <version>unspecified</version>
+          <rep_platform>Other</rep_platform>
+          <op_sys>Linux</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXED</resolution>
+          
+          
+          
+          
+          
+          <priority>P4</priority>
+          <bug_severity>minor</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Lubomir Rintel">lkundrak</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>3224</commentid>
+            <who name="Lubomir Rintel">lkundrak</who>
+            <bug_when>2008-04-04 03:33:09 +0000</bug_when>
+            <thetext>Using OpenGrok hg revision 260 I can no longer reindex a part of a subtree. It seems to have no effect when I specify the directory name as the last argument.
+
+Furthermore it no longer shows up in the documentation, so I am wondering if it had something with the changes in revision 260?</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>3262</commentid>
+            <who name="Trond Norbye">trond.norbye</who>
+            <bug_when>2008-04-06 07:03:05 +0000</bug_when>
+            <thetext>This bug was introduced in revision 207 when we introduced a separate database pr project. 
+
+The current implementation will just re-index the complete project that the path belongs to (and the path must be specified with a leading &apos;/&apos;)</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>3444</commentid>
+            <who name="Trond Norbye">trond.norbye</who>
+            <bug_when>2008-04-09 03:35:46 +0000</bug_when>
+            <thetext>Fixed in changeset 274:371e2b5d3b9a</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

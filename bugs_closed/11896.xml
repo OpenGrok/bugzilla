@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>11896</bug_id>
+          
+          <creation_ts>2009-10-12 19:08:00 +0000</creation_ts>
+          <short_desc>indexer chokes on fifos</short_desc>
+          <delta_ts>2009-10-13 16:23:17 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>indexer</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>Solaris</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXED</resolution>
+          
+          
+          
+          
+          
+          <priority>P4</priority>
+          <bug_severity>major</bug_severity>
+          <target_milestone>0.8</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Vladimir Kotal">vladimir.kotal</reporter>
+          <assigned_to name="Lubos Kosco">Lubos.Kosco</assigned_to>
+          <cc>Lubos.Kosco</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>52362</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2009-10-12 19:08:59 +0000</bug_when>
+            <thetext>I got an OpenGrok re-indexing process seemingly hanging. Upon inspection, it cycles in the following:
+
+2224/4:         lwp_cond_wait(0x00039148, 0x00039130, 0x00000000, 0) (sleeping...)
+2224/14:        lwp_park(0x00000000, 0)         (sleeping...)
+2224/16:        lwp_cond_wait(0x00166C48, 0x00166C30, 0x00000000, 0) (sleeping...)
+2224/17:        lwp_cond_wait(0x00169748, 0x00169730, 0x00000000, 0) (sleeping...)
+2224/75:        open64(&quot;/ws-local/history/REDACTED/etc/cron.d/FIFO&quot;, O_RDONLY) (sleeping...)
+2224/96:        waitid(P_PID, 14283, 0xB5A7F568, WEXITED|WTRAPPED) (sleeping...)
+2224/2:         lwp_cond_wait(0x00031A68, 0x00031A50, 0xFE37F708, 0) (sleeping...)
+2224/95:        waitid(P_PID, 13377, 0xB577F5E8, WEXITED|WTRAPPED) (sleeping...)
+2224/185:       waitid(P_PID, 535, 0xB527F4E8, WEXITED|WTRAPPED) (sleeping...)
+2224/336:       waitid(P_PID, 12938, 0xB4D7F568, WEXITED|WTRAPPED) (sleeping...)
+2224/263:       waitid(P_PID, 6106, 0xB537F5E8, WEXITED|WTRAPPED) (sleeping...)
+2224/80:        waitid(P_PID, 2756, 0xB5B7F568, WEXITED|WTRAPPED) (sleeping...)
+2224/266:       waitid(P_PID, 6181, 0xB4F7F468, WEXITED|WTRAPPED) (sleeping...)
+2224/9:         lwp_cond_wait(0x0003F848, 0x0003F830, 0x00000000, 0) (sleeping...)
+2224/92:        waitid(P_PID, 2960, 0xB587F768, WEXITED|WTRAPPED) (sleeping...)
+2224/97:        waitid(P_PID, 17543, 0xB567F4E8, WEXITED|WTRAPPED) (sleeping...)
+2224/100:       waitid(P_PID, 17681, 0xB547F768, WEXITED|WTRAPPED) (sleeping...)
+2224/103:       waitid(P_PID, 17712, 0xB557F5E8, WEXITED|WTRAPPED) (sleeping...)
+2224/345:       waitid(P_PID, 14076, 0xB5E7F4E8, WEXITED|WTRAPPED) (sleeping...)
+2224/18:        pollsys(0x00000000, 0, 0xB677F920, 0x00000000)  = 0
+2224/18:        pollsys(0x00000000, 0, 0xB677F920, 0x00000000)  = 0
+2224/18:        pollsys(0x00000000, 0, 0xB677F920, 0x00000000)  = 0
+2224/18:        pollsys(0x00000000, 0, 0xB677F920, 0x00000000)  = 0
+2224/18:        pollsys(0x00000000, 0, 0xB677F920, 0x00000000)  = 0
+2224/18:        pollsys(0x00000000, 0, 0xB677F920, 0x00000000)  = 0
+2224/18:        pollsys(0x00000000, 0, 0xB677F920, 0x00000000)  = 0
+2224/18:        pollsys(0x00000000, 0, 0xB677F920, 0x00000000)  = 0
+2224/18:        pollsys(0x00000000, 0, 0xB677F920, 0x00000000)  = 0
+2224/18:        pollsys(0x00000000, 0, 0xB677F920, 0x00000000)  = 0
+2224/11:        lwp_cond_wait(0x00148A48, 0x00148A30, 0xB6E7FBD8, 0) (sleeping...)
+2224/11:        lwp_cond_wait(0x00148A48, 0x00148A30, 0xB6E7FBD8, 0) Err#62 ETIME
+2224/18:        pollsys(0x00000000, 0, 0xB677F920, 0x00000000)  = 0
+2224/18:        pollsys(0x00000000, 0, 0xB677F920, 0x00000000)  = 0
+2224/18:        pollsys(0x00000000, 0, 0xB677F920, 0x00000000)  = 0
+2224/18:        pollsys(0x00000000, 0, 0xB677F920, 0x00000000)  = 0
+2224/18:        pollsys(0x00000000, 0, 0xB677F920, 0x00000000)  = 0
+
+and here&apos;s the corresponding part of the stack of the thread doing the open syscall:
+
+-----------------  lwp# 75 / thread# 75  --------------------
+ ff2c7c94 open64   (ad4950, 0, 1b6)
+ ff2b2e0c open64   (ad4950, 0, 1b6, 1e1000, 0, 0) + 90
+ fe2e1eb0 sysOpen  (ad4950, 0, 1b6, 10000, ad4950, 7ba624) + 14
+ fe5f7a30 JVM_Open (fe2f8758, fede5200, 33200, 48660, fe3c8c9c, 48400) + 58
+ fe39e494 fileOpen (1e1110, b627f180, b627f184, 22, 0, ad4950) + 50
+ fe39e424 Java_java_io_FileInputStream_open (1e1110, b627f180, fe3c9d18, 1c00, 29c0c, fe3c8000) + 34
+ fc28b500 * *java/io/FileInputStream.open(Ljava/lang/String;)V [compiled] 
+ fc005868 * java/io/FileInputStream.&lt;init&gt;(Ljava/io/File;)V+60 (line 441)
+ fc005868 * org/opensolaris/opengrok/index/IndexDatabase.addFile(Ljava/io/File;Ljava/lang/String;)V+9 (line 906)
+ fc32e248 * *org/opensolaris/opengrok/index/IndexDatabase.indexDown(Ljava/io/File;Ljava/lang/String;)V [compiled] +298 (line 1109)
+ fc32e284 * *org/opensolaris/opengrok/index/IndexDatabase.indexDown(Ljava/io/File;Ljava/lang/String;)V [compiled] +144 (line 1098)
+ fc32e284 * *org/opensolaris/opengrok/index/IndexDatabase.indexDown(Ljava/io/File;Ljava/lang/String;)V [compiled] +144 (line 1098)
+ fc32e284 * *org/opensolaris/opengrok/index/IndexDatabase.indexDown(Ljava/io/File;Ljava/lang/String;)V [compiled] +144 (line 1098)
+ fc32e284 * *org/opensolaris/opengrok/index/IndexDatabase.indexDown(Ljava/io/File;Ljava/lang/String;)V [compiled] +144 (line 1098)
+ fc005868 * org/opensolaris/opengrok/index/IndexDatabase.indexDown(Ljava/io/File;Ljava/lang/String;)V+143 (line 1098)
+ fc005868 * org/opensolaris/opengrok/index/IndexDatabase.update()V+229 (line 470)
+ fc005868 * org/opensolaris/opengrok/index/IndexDatabase$1.run()V+4 (line 278)
+ fc005d88 * java/util/concurrent/Executors$RunnableAdapter.call()Ljava/lang/Object;+4 (line 882)
+ fc005ea8 * java/util/concurrent/FutureTask$Sync.innerRun()V+30 (line 601)
+ fc005868 * java/util/concurrent/FutureTask.run()V+4 (line 276)
+ fc005d88 * java/util/concurrent/ThreadPoolExecutor$Worker.runTask(Ljava/lang/Runnable;)V+59 (line 1763)
+ fc005868 * java/util/concurrent/ThreadPoolExecutor$Worker.run()V+28 (line 1813)
+ fc005d88 * java/lang/Thread.run()V+11 (line 1237)
+ fc00021c * StubRoutines (1)
+ fe551b74 __1cJJavaCallsLcall_helper6FpnJJavaValue_pnMmethodHandle_pnRJavaCallArguments_pnGThread__v_ (fc0001c0, 1e1000, 1, 1dd338, b7830228, b627fe78) + 208
+ fe8ec220 __1cJJavaCallsMcall_virtual6FpnJJavaValue_nLKlassHandle_nMsymbolHandle_4pnRJavaCallArguments_pnGThread__v_ (b627fe70, 1dd33c, 1dd348, 860400, b627fd58, ff79f96c) + 10c
+ fe5e56e4 __1cJJavaCallsMcall_virtual6FpnJJavaValue_nGHandle_nLKlassHandle_nMsymbolHandle_5pnGThread__v_ (b627fe70, b627fe6c, b627fe68, b627fe64, b627fe60, 1dd33c) + 74
+ fe5f8764 __1cMthread_entry6FpnKJavaThread_pnGThread__v_ (b7832458, 1e1000, 4d400, fedffa38, fedff7c4, fedff514) + 110
+ febb52d8 __1cKJavaThreadRthread_main_inner6M_v_ (1e1000, 1dcf38, 4b, f, fedb2000, 0) + 48
+ feaf58d0 java_start (1e1000, 8b0, fedb2000, fed00039, 1e3e90, fedfb3e4) + 22c
+ ff2c11f0 _lwp_start (0, 0, 0, 0, 0, 0)
+
+
+Looking at the entry, it&apos;s indeed a FIFO:
+
+file /ws-local/history/REDACTED/etc/cron.d/FIFO
+/ws-local/history/REDACTED/etc/cron.d/FIFO:     fifo</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>52365</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2009-10-12 19:13:28 +0000</bug_when>
+            <thetext>This happens on OpenGrok 0.7.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>52500</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2009-10-13 16:02:37 +0000</bug_when>
+            <thetext>we shall only accept files for indexing, everything else will be ignored</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>52503</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2009-10-13 16:20:56 +0000</bug_when>
+            <thetext>(In reply to comment #2)
+&gt; we shall only accept files for indexing, everything else will be ignored
+
+
+a sample test:
+
+[lk162707@sun-n1]:pts/4:737  Jobs:0  Today: Tue Oct 13, 18:19
+ ~/Projects/opengrok-dev&gt;% OPENGROK_VERBOSE=1 ./OpenGrok index /tank/opengrok/source
+Loading the default instance configuration ...
+WARNING: OpenGrok Generated Data Path /var/opengrok/data doesn&apos;t exist
+  Attempting to create generated data directory ...
+WARNING: OpenGrok Generated Etc Path /var/opengrok/etc doesn&apos;t exist
+  Attempting to create generated etc directory ...
+  Creating default /var/opengrok/logging.properties ...
+Scanning for repositories...
+Done searching for repositories (10s)
+Writing configuration to /var/opengrok/etc/configuration.xml
+Done...
+Oct 13, 2009 6:20:11 PM org.opensolaris.opengrok.index.Indexer doIndexerExecution
+INFO: Starting indexExecution
+Oct 13, 2009 6:20:11 PM org.opensolaris.opengrok.index.IndexDatabase accept
+WARNING: Warning: ignored special file /tank/opengrok/source/FIFO/FIFO -&gt; /tank/opengrok/source/FIFO/FIFO
+Oct 13, 2009 6:20:11 PM org.opensolaris.opengrok.index.IndexDatabase accept
+WARNING: Warning: ignored special file /tank/opengrok/source/FIFO/half/FIFO -&gt; /tank/opengrok/source/FIFO/half/FIFO
+Oct 13, 2009 6:20:11 PM org.opensolaris.opengrok.index.IndexDatabase accept
+WARNING: Warning: ignored special file /tank/opengrok/source/FIFO/half/_pmpipe -&gt; /tank/opengrok/source/FIFO/half/_pmpipe
+Oct 13, 2009 6:20:11 PM org.opensolaris.opengrok.index.IndexDatabase accept
+WARNING: Warning: ignored special file /tank/opengrok/source/FIFO/half/initpipe -&gt; /tank/opengrok/source/FIFO/half/initpipe
+Oct 13, 2009 6:20:11 PM org.opensolaris.opengrok.index.IndexDatabase accept
+WARNING: Warning: ignored special file /tank/opengrok/source/FIFO/half/listenBSD -&gt; /tank/opengrok/source/FIFO/half/listenBSD
+Oct 13, 2009 6:20:11 PM org.opensolaris.opengrok.index.IndexDatabase accept
+WARNING: Warning: ignored special file /tank/opengrok/source/FIFO/half/listenS5 -&gt; /tank/opengrok/source/FIFO/half/listenS5
+Adding: /bigtgz/wc-test.tgz (GZIPAnalyzer)
+Adding: /oom-test/rox_admin.tar (TarAnalyzer)
+Adding: /oom-test/sd.c (CAnalyzer)
+Oct 13, 2009 6:20:16 PM org.opensolaris.opengrok.index.IndexDatabase optimize
+INFO: Optimizing the index ...
+Oct 13, 2009 6:20:16 PM org.opensolaris.opengrok.index.IndexDatabase optimize
+INFO: done
+Oct 13, 2009 6:20:16 PM org.opensolaris.opengrok.index.IndexDatabase createSpellingSuggestions
+INFO: Generating spelling suggestion index ...
+Oct 13, 2009 6:20:16 PM org.opensolaris.opengrok.index.IndexDatabase createSpellingSuggestions
+INFO: done
+Oct 13, 2009 6:20:16 PM org.opensolaris.opengrok.index.Indexer sendToConfigHost
+INFO: Send configuration to: localhost:2424</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>52504</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2009-10-13 16:23:17 +0000</bug_when>
+            <thetext>fixed in changeset:   872:14a30aaa4297
+will be in 0.8</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

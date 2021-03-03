@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>16076</bug_id>
+          
+          <creation_ts>2010-05-26 11:07:00 +0000</creation_ts>
+          <short_desc>problem of ELFAnalyzer in opengrok 0.9</short_desc>
+          <delta_ts>2010-05-28 15:29:05 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>analyzer</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXINSOURCE</resolution>
+          
+          
+          
+          
+          
+          <priority>P4</priority>
+          <bug_severity>normal</bug_severity>
+          <target_milestone>0.10</target_milestone>
+          <dependson>10440</dependson>
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter>xinfeng.liu</reporter>
+          <assigned_to name="Lubos Kosco">Lubos.Kosco</assigned_to>
+          <cc>Lubos.Kosco</cc>
+    
+    <cc>opengrok-dev</cc>
+    
+    <cc>vasanth.manickam</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>73503</commentid>
+            <who name="">xinfeng.liu</who>
+            <bug_when>2010-05-26 11:07:52 +0000</bug_when>
+            <thetext>I tried using ELFAnalyzer in opengrok 0.9, however, &quot;full&quot; field is missing in generated index. The problem is in analyze() method:
+....
+    if (len&gt;  0) {
+     doc.add(new Field(&quot;full&quot;, &quot; &quot;, Field.Store.YES, Field.Index.ANALYZED));
+....
+In fact, the value of &quot;len&quot; is never set.
+
+Suggested fix:
+add &quot;len = content.length();&quot; at the end of parseELF() method, see below:
+
+public void parseELF(FileInputStream f) throws IOException {
+....
+        content = sb.toString();
++++     len = content.length(); 
+}
+
+
+Thanks,
+Xinfeng Liu</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>73657</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2010-05-28 15:29:05 +0000</bug_when>
+            <thetext>changeset:   1019:848376ba14bb</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

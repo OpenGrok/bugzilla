@@ -1,0 +1,580 @@
+# HG changeset patch
+# User jel+opengrok@cs.uni-magdeburg.de
+# Date 1329003774 -3600
+# Node ID 1051cd05cd8d6a0900b83e5899d0022cd84915cc
+# Parent  79f80635064e752a96d1cde2d3c2da95532bf85f
+fix "upper directory" entry and move the whole directory listing code to the place it belongs to: list.jsp
+
+diff -r 79f80635064e -r 1051cd05cd8d src/org/opensolaris/opengrok/web/DirectoryListing.java
+--- a/src/org/opensolaris/opengrok/web/DirectoryListing.java	Sat Feb 11 19:42:18 2012 +0100
++++ /dev/null	Thu Jan 01 00:00:00 1970 +0000
+@@ -1,172 +0,0 @@
+-/*
+- * CDDL HEADER START
+- *
+- * The contents of this file are subject to the terms of the
+- * Common Development and Distribution License (the "License").
+- * You may not use this file except in compliance with the License.
+- *
+- * See LICENSE.txt included in this distribution for the specific
+- * language governing permissions and limitations under the License.
+- *
+- * When distributing Covered Code, include this CDDL HEADER in each
+- * file and include the License file at LICENSE.txt.
+- * If applicable, add the following below this CDDL HEADER, with the
+- * fields enclosed by brackets "[]" replaced with your own identifying
+- * information: Portions Copyright [yyyy] [name of copyright owner]
+- *
+- * CDDL HEADER END
+- */
+-
+-/*
+- * Copyright (c) 2005, 2012, Oracle and/or its affiliates. All rights reserved.
+- *
+- * Portions Copyright 2011 Jens Elkner.
+- */
+-package org.opensolaris.opengrok.web;
+-
+-import java.io.File;
+-import java.io.IOException;
+-import java.io.Writer;
+-import java.text.Format;
+-import java.text.SimpleDateFormat;
+-import java.util.ArrayList;
+-import java.util.List;
+-import java.util.Locale;
+-import org.opensolaris.opengrok.configuration.RuntimeEnvironment;
+-import org.opensolaris.opengrok.index.IgnoredNames;
+-
+-/**
+- * Generates HTML listing of a Directory
+- */
+-public class DirectoryListing {
+-
+-    private final EftarFileReader desc;
+-    private final long now;
+-
+-    public DirectoryListing() {
+-        desc = null;
+-        now = System.currentTimeMillis();
+-    }
+-
+-    public DirectoryListing(EftarFileReader desc) {
+-        this.desc = desc;
+-        now = System.currentTimeMillis();
+-    }
+-
+-    /**
+-     * Write part of HTML code which contains file/directory last
+-     * modification time and size.
+-     *
+-     * @param out write destination
+-     * @param child the file or directory to use for writing the data
+-     * @param dateFormatter the formatter to use for pretty printing dates
+-     *
+-     * @throws NullPointerException if a parameter is {@code null}
+-     */
+-    private void PrintDateSize(Writer out, File child, Format dateFormatter)
+-            throws IOException {
+-        long lastm = child.lastModified();
+-
+-        out.write("<td>");
+-        if (now - lastm < 86400000) {
+-            out.write("Today");
+-        } else {
+-            out.write(dateFormatter.format(lastm));
+-        }
+-        out.write("</td><td>");
+-        // if (isDir) {
+-            out.write(Util.readableSize(child.length()));
+-        // }
+-        out.write("</td>");
+-    }
+-
+-    /**
+-     * Write a htmlized listing of the given directory to the given destination.
+-     *
+-     * @param dir the directory to list
+-     * @param out write destination
+-     * @param path virtual path of the directory (usually the path name of
+-     *  <var>dir</var> with the opengrok source directory stripped off).
+-     * @param files basenames of potential children of the directory to list.
+-     *  Gets filtered by {@link IgnoredNames}.
+-     * @return a possible empty list of README files included in the written
+-     *  listing.
+-     *
+-     * @throws java.io.IOException
+-     * @throws NullPointerException if a parameter except <var>files</var>
+-     *  is {@code null}
+-     */
+-    public List<String> listTo(File dir, Writer out, String path, List<String> files) throws IOException {
+-        // TODO this belongs to a jsp, not here
+-        ArrayList<String> readMes = new ArrayList<String>();
+-        int offset = -1;
+-        EftarFileReader.FNode parentFNode = null;
+-        if (desc != null) {
+-            parentFNode = desc.getNode(path);
+-            if (parentFNode != null) {
+-                offset = parentFNode.childOffset;
+-            }
+-        }
+-
+-        out.write("<table id=\"dirlist\">\n");
+-        out.write("<thead>\n<tr><th/><th>Name</th><th>Date</th><th>Size</th>");
+-        if (offset > 0) {
+-            out.write("<th><tt>Description</tt></th>");
+-        }
+-        out.write("</tr>\n</thead>\n<tbody>\n");
+-        IgnoredNames ignoredNames = RuntimeEnvironment.getInstance().getIgnoredNames();
+-
+-        Format dateFormatter = new SimpleDateFormat("dd-MMM-yyyy", Locale.getDefault());
+-
+-        // print the '..' entry even for empty directories
+-        if (path.length() != 0) {
+-            out.write("<tr><td><p class=\"'r'\"/></td><td>");
+-            out.write("<b><a href=\"..\">..</a></b></td>");
+-            PrintDateSize(out, dir.getParentFile(), dateFormatter);
+-            out.write("</tr>\n");
+-        }
+-
+-        if (files != null) {
+-            for (String file : files) {
+-                if (ignoredNames.ignore(file)) {
+-                    continue;
+-                }
+-                File child = new File(dir, file);
+-                if (file.startsWith("README") || file.endsWith("README")
+-                    || file.startsWith("readme"))
+-                {
+-                    readMes.add(file);
+-                }
+-                boolean isDir = child.isDirectory();
+-                out.write("<tr><td><p class=\"");
+-                out.write(isDir ? 'r' : 'p');
+-                out.write("\"/></td><td><a href=\"");
+-                out.write(Util.URIEncodePath(file));
+-                if (isDir) {
+-                    out.write("/\"><b>");
+-                    out.write(file);
+-                    out.write("</b></a>/");
+-                } else {
+-                    out.write("\">");
+-                    out.write(file);
+-                    out.write("</a>");
+-                }
+-                out.write("</td>");
+-                PrintDateSize(out, child, dateFormatter);
+-                if (offset > 0) {
+-                    String briefDesc = desc.getChildTag(parentFNode, file);
+-                    if (briefDesc == null) {
+-                        out.write("<td/>");
+-                    } else {
+-                        out.write("<td>");
+-                        out.write(briefDesc);
+-                        out.write("</td>");
+-                    }
+-                }
+-                out.write("</tr>\n");
+-            }
+-        }
+-        out.write("</tbody>\n</table>");
+-        return readMes;
+-    }
+-}
+diff -r 79f80635064e -r 1051cd05cd8d src/org/opensolaris/opengrok/web/EftarFileReader.java
+--- a/src/org/opensolaris/opengrok/web/EftarFileReader.java	Sat Feb 11 19:42:18 2012 +0100
++++ b/src/org/opensolaris/opengrok/web/EftarFileReader.java	Sun Feb 12 00:42:54 2012 +0100
+@@ -45,7 +45,7 @@
+     private boolean isOpen;
+     private static final Logger log = Logger.getLogger(EftarFileReader.class.getName());
+ 
+-    class FNode {
++    public class FNode {
+ 
+         public long offset;
+         public long hash;
+diff -r 79f80635064e -r 1051cd05cd8d test/org/opensolaris/opengrok/web/DirectoryListingTest.java
+--- a/test/org/opensolaris/opengrok/web/DirectoryListingTest.java	Sat Feb 11 19:42:18 2012 +0100
++++ /dev/null	Thu Jan 01 00:00:00 1970 +0000
+@@ -1,258 +0,0 @@
+-/*
+- * CDDL HEADER START
+- *
+- * The contents of this file are subject to the terms of the
+- * Common Development and Distribution License (the "License").
+- * You may not use this file except in compliance with the License.
+- *
+- * See LICENSE.txt included in this distribution for the specific
+- * language governing permissions and limitations under the License.
+- *
+- * When distributing Covered Code, include this CDDL HEADER in each
+- * file and include the License file at LICENSE.txt.
+- * If applicable, add the following below this CDDL HEADER, with the
+- * fields enclosed by brackets "[]" replaced with your own identifying
+- * information: Portions Copyright [yyyy] [name of copyright owner]
+- *
+- * CDDL HEADER END
+- */
+-
+-/*
+- * Copyright (c) 2007, 2012, Oracle and/or its affiliates. All rights reserved.
+- */
+-package org.opensolaris.opengrok.web;
+-
+-import java.io.ByteArrayInputStream;
+-import java.io.File;
+-import java.io.FileOutputStream;
+-import java.io.StringWriter;
+-import java.text.SimpleDateFormat;
+-import java.util.Arrays;
+-import javax.xml.parsers.DocumentBuilder;
+-import javax.xml.parsers.DocumentBuilderFactory;
+-import org.junit.After;
+-import org.junit.AfterClass;
+-import org.junit.Before;
+-import org.junit.BeforeClass;
+-import org.junit.Test;
+-import org.opensolaris.opengrok.util.FileUtilities;
+-import org.w3c.dom.Document;
+-import org.w3c.dom.Element;
+-import org.w3c.dom.Node;
+-import org.w3c.dom.NodeList;
+-import static org.junit.Assert.*;
+-
+-/**
+- * JUnit test to test that the DirectoryListing produce the expected result
+- */
+-public class DirectoryListingTest {
+-
+-    private File directory;
+-    private FileEntry[] entries;
+-    private SimpleDateFormat dateFormatter;
+-
+-    class FileEntry implements Comparable {
+-        FileEntry() {
+-            dateFormatter = new SimpleDateFormat("dd-MMM-yyyy");
+-        }
+-
+-        FileEntry(String name, long lastModified, int size) {
+-            this.name = name;
+-            this.lastModified = lastModified;
+-            this.size = size;
+-        }
+-
+-        private void create() throws Exception {
+-            File file = new File(directory, name);
+-            if (!file.exists()) {
+-                assertTrue("Failed to create file", file.createNewFile());
+-            }
+-
+-            long val = lastModified;
+-            if (val == Long.MAX_VALUE) {
+-                val = System.currentTimeMillis();
+-            }
+-
+-            assertTrue("Failed to set modification time",
+-                       file.setLastModified(val));
+-
+-            if (size > 0) {
+-                FileOutputStream out = new FileOutputStream(file);
+-                byte[] buffer = new byte[size];
+-                out.write(buffer);
+-                out.close();
+-            }
+-        }
+-        String name;
+-        long lastModified;
+-        int size;
+-
+-        public int compareTo(Object o) {
+-            if (o instanceof FileEntry) {
+-                FileEntry fe = (FileEntry) o;
+-
+-                // @todo verify all attributes!
+-                return name.compareTo(fe.name);
+-            }
+-            return -1;
+-        }
+-    }
+-
+-    public DirectoryListingTest() {
+-    }
+-
+-    @BeforeClass
+-    public static void setUpClass() throws Exception {
+-    }
+-
+-    @AfterClass
+-    public static void tearDownClass() throws Exception {
+-    }
+-
+-    @Before
+-    public void setUp() throws Exception {
+-        directory = FileUtilities.createTemporaryDirectory("directory");
+-
+-        entries = new FileEntry[2];
+-        entries[0] = new FileEntry("foo", 0, 0);
+-        entries[1] = new FileEntry("bar", Long.MAX_VALUE, 0);
+-
+-        for (FileEntry entry : entries) {
+-            entry.create();
+-        }
+-    }
+-
+-    @After
+-    public void tearDown() throws Exception {
+-        if (directory != null && directory.exists()) {
+-            removeDirectory(directory);
+-        }
+-    }
+-
+-    private void removeDirectory(File dir) {
+-        File[] childs = dir.listFiles();
+-        if (childs != null) {
+-            for (File f : childs) {
+-
+-                if (f.isDirectory()) {
+-                    removeDirectory(f);
+-                }
+-                f.delete();
+-            }
+-        }
+-    }
+-
+-    /**
+-     * Get the filename from: &lt;td align="left"&gt;&lt;tt&gt;&lt;a href="foo"
+-     * class="p"&gt;foo&lt;/a&gt;&lt;/tt&gt;&lt;/td&gt;
+-     *
+-     * @param item
+-     * @return
+-     * @throws java.lang.Exception
+-     */
+-    private String getFilename(Node item) throws Exception {
+-        Node node = item.getFirstChild(); // a
+-        assertNotNull(node);
+-        assertEquals(Node.ELEMENT_NODE, node.getNodeType());
+-        node = node.getFirstChild();
+-        assertNotNull(node);
+-        assertEquals(Node.TEXT_NODE, node.getNodeType());
+-        return node.getNodeValue();
+-    }
+-
+-    /**
+-     * Get the LastModified date from the &lt;td&gt;date&lt;/td&gt;
+-     * @todo fix the item
+-     * @param item the node representing &lt;td&gt
+-     * @return last modified date of the file
+-     * @throws java.lang.Exception if an error occurs
+-     */
+-    private long getLastModified(Node item) throws Exception {
+-        Node val = item.getFirstChild();
+-        assertNotNull(val);
+-        assertEquals(Node.TEXT_NODE, val.getNodeType());
+-
+-        String value = val.getNodeValue();
+-        return value.equalsIgnoreCase("Today")
+-            ? Long.MAX_VALUE
+-            : dateFormatter.parse(value).getTime();
+-    }
+-
+-    /**
+-     * Get the size from the: &lt;td&gt;&lt;tt&gt;size&lt;/tt&gt;&lt;/td&gt;
+-     * @param item the node representing &lt;td&gt;
+-     * @return The size
+-     * @throws java.lang.Exception if an error occurs
+-     */
+-    private int getSize(Node item) throws Exception {
+-        Node val = item.getFirstChild();
+-        assertNotNull(val);
+-        assertEquals(Node.TEXT_NODE, val.getNodeType());
+-        return Integer.parseInt(val.getNodeValue().trim());
+-    }
+-
+-    /**
+-     * Validate this file-entry in the table
+-     * @param element The &lt;tr&gt; element
+-     * @throws java.lang.Exception
+-     */
+-    private void validateEntry(Element element) throws Exception {
+-        FileEntry entry = new FileEntry();
+-        NodeList nl = element.getElementsByTagName("td");
+-        int len = nl.getLength();
+-        if (len < 4) {
+-            return;
+-        }
+-        assertEquals(4, len);
+-
+-        // item(0) is a decoration placeholder, i.e. no content
+-        entry.name = getFilename(nl.item(1));
+-        entry.lastModified = getLastModified(nl.item(2));
+-        entry.size = getSize(nl.item(3));
+-
+-        // Try to look it up in the list of files
+-        for (int ii = 0; ii < entries.length; ++ii) {
+-            if (entries[ii] != null && entries[ii].compareTo(entry) == 0) {
+-                entries[ii] = null;
+-                return;
+-            }
+-        }
+-
+-        fail("Could not find a match for: " + entry.name);
+-    }
+-
+-    /**
+-     * Test directory listing
+-     * @throws java.lang.Exception if an error occurs while generating the
+-     *         list.
+-     */
+-    @Test
+-    public void directoryListing() throws Exception {
+-        StringWriter out = new StringWriter();
+-        out.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<start>\n");
+-
+-        DirectoryListing instance = new DirectoryListing();
+-        instance.listTo(directory, out, directory.getPath(),
+-                        Arrays.asList(directory.list()));
+-
+-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+-        assertNotNull("DocumentBuilderFactory is null", factory);
+-
+-        DocumentBuilder builder = factory.newDocumentBuilder();
+-        assertNotNull("DocumentBuilder is null", out);
+-
+-        out.append("</start>\n");
+-        String str = out.toString();
+-        System.out.println(str);
+-        Document document = builder.parse(new ByteArrayInputStream(str.getBytes()));
+-
+-        NodeList nl = document.getElementsByTagName("tr");
+-        int len = nl.getLength();
+-        // add one extra for header and one for parent directory link
+-        assertEquals(entries.length + 2, len);
+-        // Skip the the header and parent link
+-        for (int i = 2; i < len; ++i) {
+-            validateEntry((Element) nl.item(i));
+-        }
+-    }
+-}
+diff -r 79f80635064e -r 1051cd05cd8d web/list.jsp
+--- a/web/list.jsp	Sat Feb 11 19:42:18 2012 +0100
++++ b/web/list.jsp	Sun Feb 12 00:42:54 2012 +0100
+@@ -21,29 +21,25 @@
+ Copyright (c) 2005, 2011, Oracle and/or its affiliates. All rights reserved.
+ Portions Copyright 2011 Jens Elkner.
+ 
+---%><%@page import="
++--%><%@ page session="false" errorPage="error.jsp" import="
+ java.io.BufferedInputStream,
+-java.io.BufferedReader,
+ java.io.FileInputStream,
+-java.io.FileReader,
+ java.io.InputStream,
+ java.io.InputStreamReader,
+ java.io.Reader,
++java.text.Format,
++java.text.SimpleDateFormat,
+ java.util.ArrayList,
+-java.util.Arrays,
+ java.util.List,
+ java.util.Set,
+-java.util.logging.Level,
+-java.util.zip.GZIPInputStream,
+ 
+-org.opensolaris.opengrok.OpenGrokLogger,
+ org.opensolaris.opengrok.analysis.AnalyzerGuru,
+ org.opensolaris.opengrok.analysis.Definitions,
+ org.opensolaris.opengrok.analysis.FileAnalyzer.Genre,
+ org.opensolaris.opengrok.analysis.FileAnalyzerFactory,
+ org.opensolaris.opengrok.history.Annotation,
+-org.opensolaris.opengrok.index.IndexDatabase,
+-org.opensolaris.opengrok.web.DirectoryListing"
++org.opensolaris.opengrok.index.IgnoredNames,
++org.opensolaris.opengrok.index.IndexDatabase"
+ %><%
+ {
+     // need to set it here since requesting parameters
+@@ -99,11 +95,81 @@
+                 response.addCookie(cookie);
+             }
+         }
+-        // requesting a directory listing
+-        DirectoryListing dl = new DirectoryListing(cfg.getEftarReader());
++
++        // directory listing
+         List<String> files = cfg.getResourceFileList();
+         if (!files.isEmpty()) {
+-            List<String> readMes = dl.listTo(resourceFile, out, path, files);
++	        long now = System.currentTimeMillis();
++	        ArrayList<String> readMes = new ArrayList<String>();
++	        int offset = -1;
++	        EftarFileReader.FNode parentFNode = null;
++	        EftarFileReader desc = cfg.getEftarReader();
++	        if (desc != null) {
++	            parentFNode = desc.getNode(path);
++	            if (parentFNode != null) {
++	                offset = parentFNode.childOffset;
++	            }
++	        }
++%><table id="dirlist">
++<thead>
++<tr>
++	<th/>
++	<th>Name</th>
++	<th>Date</th>
++	<th>Size</th><%
++	        if (offset > 0) {
++%>	<th><tt>Description</tt></th><%
++	        }
++%>
++</tr>
++</thead>
++<tbody><%
++            IgnoredNames ignoredNames = cfg.getIgnoredNames();
++            Format dateFormatter = new SimpleDateFormat("dd-MMM-yyyy");
++            // upper directory
++            if (path.length() != 0) {
++				long lastm = resourceFile.getParentFile().lastModified();
++%>
++<tr>
++	<td><p class="r"/></td>
++	<td><b><a href="..">..</a></b></td>
++	<td><%= now-lastm < 86400000 ? "Today" : dateFormatter.format(lastm) %></td>
++	<td><%= Util.readableSize(resourceFile.getParentFile().length()) %></td><%
++				if (offset > 0) { %>
++	<td/><%
++				} %>
++</tr><%
++            }
++            // entries
++            for (String file : files) {
++                if (ignoredNames.ignore(file)) {
++                    continue;
++                }
++                File child = new File(resourceFile, file);
++                if (file.startsWith("README") || file.endsWith("README")
++                    || file.startsWith("readme"))
++                {
++                    readMes.add(file);
++                }
++                boolean isDir = child.isDirectory();
++				long lastm = child.lastModified();
++%>
++<tr>
++	<td><p class="<%= isDir ? 'r' : 'p' %>"/></td>
++	<td><a href="<%= Util.URIEncodePath(file) %>"><%= isDir ? "<b>" + file + "</b>" : file %></a></td>
++	<td><%= now-lastm < 86400000 ? "Today" : dateFormatter.format(lastm) %></td>
++	<td><%= Util.readableSize(child.length()) %></td><%
++                if (offset > 0) {
++                    String briefDesc = desc.getChildTag(parentFNode, file); %>
++	<td><%= briefDesc == null ? "" : briefDesc %></td><%
++    			} %>
++</tr><%
++            }
++%>
++</tbody>
++</table>
++<%	        
++            // finally append READMEs to the listing
+             File[] catfiles = cfg.findDataFiles(readMes);
+             for (int i=0; i < catfiles.length; i++) {
+                 if (catfiles[i] == null) {

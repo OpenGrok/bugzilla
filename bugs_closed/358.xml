@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>358</bug_id>
+          
+          <creation_ts>2008-01-13 08:58:00 +0000</creation_ts>
+          <short_desc>Add reference to jflex.jar in build.generic.xml</short_desc>
+          <delta_ts>2008-01-16 11:25:14 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>build</component>
+          <version>unspecified</version>
+          <rep_platform>Other</rep_platform>
+          <op_sys>Windows</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>WONTFIX</resolution>
+          
+          
+          
+          
+          
+          <priority>P4</priority>
+          <bug_severity>minor</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Sriram Narayanan">sriramnrn</reporter>
+          <assigned_to name="Knut Anders Hatlen">knut.hatlen</assigned_to>
+          
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>988</commentid>
+              <attachid>56</attachid>
+            <who name="Sriram Narayanan">sriramnrn</who>
+            <bug_when>2008-01-13 08:58:46 +0000</bug_when>
+            <thetext>Created attachment 56
+an hg diff of the change to build.generic.xml for the jflex classpath
+
+The build.generic.xml does not include the classpath reference for the jflex task def. The build.xml does.
+
+Here&apos;s a fix for build.generic.xml.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>1034</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2008-01-16 11:25:14 +0000</bug_when>
+            <thetext>build.generic.xml was removed in changeset 222:9fbe5439400f, so this shouldn&apos;t be an issue anymore.</thetext>
+          </long_desc>
+      
+          <attachment
+              isobsolete="0"
+              ispatch="0"
+              isprivate="0"
+              isurl="0"
+          >
+            <attachid>56</attachid>
+            <date>2008-01-13 08:58:00 +0000</date>
+            <delta_ts>2008-01-13 08:58:46 +0000</delta_ts>
+            <desc>an hg diff of the change to build.generic.xml for the jflex classpath</desc>
+            <filename>jflexpathfix.diff</filename>
+            <type>application/octet-stream</type>
+            <size>848</size>
+            <attacher>sriramnrn</attacher>
+            
+              <data encoding="base64">ZGlmZiAtciA0ODNiOGFjZTE1NmEgYnVpbGQuZ2VuZXJpYy54bWwNCi0tLSBhL2J1aWxkLmdlbmVy
+aWMueG1sCVNhdCBKYW4gMTIgMTY6MTQ6NDggMjAwOCArMDEwMA0KKysrIGIvYnVpbGQuZ2VuZXJp
+Yy54bWwJU3VuIEphbiAxMyAyMjoxNTo1NCAyMDA4ICswNTMwDQpAQCAtMjUsNyArMjUsNiBAQCBp
+ZGVudAkiJVolJU0lICVJJSAgICAgJUUlIFNNSSINCiANCiAtLT4NCiA8cHJvamVjdCBkZWZhdWx0
+PSJidWlsZCI+DQotICAgIDx0YXNrZGVmIGNsYXNzbmFtZT0iSkZsZXguYW50dGFzay5KRmxleFRh
+c2siIG5hbWU9ImpmbGV4Ii8+DQogICAgIDxwcm9wZXJ0eSBuYW1lPSJ2ZXJzaW9uIiB2YWx1ZT0i
+MC41Ii8+DQogICAgIDxwcm9wZXJ0eSBuYW1lPSJidWlsZGRpciIgdmFsdWU9ImJ1aWxkIi8+DQog
+ICAgIDxwcm9wZXJ0eSBuYW1lPSJkaXN0ZGlyIiB2YWx1ZT0iZGlzdCIvPg0KQEAgLTQ1LDYgKzQ0
+LDcgQEAgaWRlbnQJIiVaJSVNJSAlSSUgICAgICVFJSBTTUkiDQogICAgIDxwYXRoIHJlZmlkPSJy
+dW5jcCIvPg0KICAgICAgICAgPHBhdGhlbGVtZW50IGxvY2F0aW9uPSIke2NsYXNzZGlyfSIvPg0K
+ICAgICA8L3BhdGg+DQorICAgIDx0YXNrZGVmIGNsYXNzbmFtZT0iSkZsZXguYW50dGFzay5KRmxl
+eFRhc2siIG5hbWU9ImpmbGV4IiBjbGFzc3BhdGhyZWY9ImNvbXBpbGVjcCIvPg0KICAgICA8dGFy
+Z2V0IG5hbWU9ImpmbGV4Ij4NCiAgICAgICAgIDxta2RpciBkaXI9IiR7Z2Vuc3JjZGlyfSIvPg0K
+ICAgICAgICAgPGpmbGV4IGZpbGU9InNyYy9vcmcvb3BlbnNvbGFyaXMvb3Blbmdyb2svYW5hbHlz
+aXMvcGxhaW4vUGxhaW5YcmVmLmxleCIgZGVzdGRpcj0iJHtnZW5zcmNkaXJ9Ii8+DQo=
+</data>
+
+          </attachment>
+      
+
+    </bug>
+
+</bugzilla>

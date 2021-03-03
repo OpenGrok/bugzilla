@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>18655</bug_id>
+          
+          <creation_ts>2011-07-03 12:37:00 +0000</creation_ts>
+          <short_desc>Support for C# verbatim strings</short_desc>
+          <delta_ts>2011-11-03 12:18:14 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>analyzer</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXINSOURCE</resolution>
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>enhancement</bug_severity>
+          <target_milestone>0.11</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Mateusz B.">bronk.m</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          <cc>knut.hatlen</cc>
+    
+    <cc>Lubos.Kosco</cc>
+    
+    <cc>opengrok-dev</cc>
+    
+    <cc>seadog1234567890</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>84045</commentid>
+            <who name="Mateusz B.">bronk.m</who>
+            <bug_when>2011-07-03 12:37:00 +0000</bug_when>
+            <thetext>Currently C# files are analyzed using C parser which does not understand (C#-specific) verbatim string syntax (it&apos;s a C parser after all).
+
+Unfortunatelly verbatim strings in source file break further processing:
+e.g. if a literal like this:   @&quot;c:\some\path\&quot;   is encountered, the trailing \&quot; will be interpreted as an escape sequence (see STRING token def) and the lexical analyzer will search for string termination in next lines, thus ignoring any symbols in-between. This prevents effective searching through C# files.
+
+Since OpenGrok partially supports C#, I thing it would be the time to separate C and C# processing logic, so that the latter may be furtrer customized.
+As a quick fix - adding support for verbatim (@&quot;...&quot;) strings in C lexical analyzer shouldn&apos;t break anything :)</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>84046</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2011-07-03 16:58:38 +0000</bug_when>
+            <thetext>Yes, a C# analyzer would be nice. I don&apos;t think we should add support for non-C syntax to the C analyzer, but I suppose we could create a copy of the C analyzer and add support for this syntax in the copy. I&apos;m not familiar with C#, but perhaps the Java analyzer would be a better starting point than the C analyzer?</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>84211</commentid>
+            <who name="Mateusz B.">bronk.m</who>
+            <bug_when>2011-07-10 13:21:03 +0000</bug_when>
+            <thetext>Java analyzer does indeed look like a good starting point. That is - I did a quick POC and processed all .cs files via java handler - the output is much closer to desired one than outputted by a C parser and I didn&apos;t see any pitfalls where the analyzer would interpret some construct in the wrong way.
+
+Aside of no support for verbatim strings (which cause the parser to behave incorrectly), the sources were nicely processed and presented in a much more usable format than ones parsed by C analyzer.
+
+In the future, some adjustments need to be made though. For example: (I&apos;m writing from the top of my head - there certainly are others)
+
+1. C# has different syntax for class annotations - instead of @Annotation in C# the syntax is: [Annotation] - e.g. [global::System.CodeDom.Compiler.GeneratedCodeAttribute(&quot;System.Resources.Tools.StronglyTypedResourceBuilder&quot;, &quot;4.0.0.0&quot;)]
+
+2. Javadoc processing logic may be transformed to understand C# XML comments (see. http://msdn.microsoft.com/en-us/library/b2s063f7.aspx ).
+
+3. Some keywords and base types should be added (a full list is here: http://msdn.microsoft.com/en-us/library/x53a06bb(v=vs.71).aspx )
+
+
+As for the support for verbatim strings - I&apos;ve currently workarounded this by adding a separate VSTRING token (defined as below) - I believe something simmilar should be implemented in the C# analyzer.
+
+&quot;@\&quot;&quot;  { yybegin(VSTRING);out.write(&quot;&lt;span class=\&quot;s\&quot;&gt;\&quot;&quot;);}
+
+&lt;VSTRING&gt; {
+ \&quot; {WhiteSpace} \&quot;  { out.write(yytext());}
+ &quot;\&quot;\&quot;&quot;   { out.write(&quot;\&quot;\&quot;&quot;); }
+ \&quot;       { yybegin(YYINITIAL); out.write(&quot;\&quot;&lt;/span&gt;&quot;); } 
+ \\       { out.write(&quot;\\&quot;); }
+}</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>85639</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2011-11-03 12:18:14 +0000</bug_when>
+            <thetext>should be fixed by changeset:   1275:affabbacf51c
+hence closing</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

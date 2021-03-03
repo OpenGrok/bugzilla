@@ -1,0 +1,269 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>335</bug_id>
+          
+          <creation_ts>2007-12-27 10:25:00 +0000</creation_ts>
+          <short_desc>OpenGrok trips up over Unicode byte-order marks</short_desc>
+          <delta_ts>2007-12-28 08:22:24 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>analyzer</component>
+          <version>unspecified</version>
+          <rep_platform>Other</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXED</resolution>
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>major</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Stephen Lau">stevel</reporter>
+          <assigned_to name="Knut Anders Hatlen">knut.hatlen</assigned_to>
+          <cc>knut.hatlen</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>926</commentid>
+              <attachid>51</attachid>
+            <who name="Stephen Lau">stevel</who>
+            <bug_when>2007-12-27 10:25:53 +0000</bug_when>
+            <thetext>Created attachment 51
+An XML file with a UTF-8 BOM
+
+Files that have Unicode byte-order marks aren&apos;t currently being analysed/indexed by OpenGrok.  They also can&apos;t be displayed, example:
+
+http://dingo.songbirdnest.com:8080/source/xref/app/content/xul/trackEditor.xul
+
+... shows no content.
+
+[stevel@dingo:xul] 514$ file trackEditor.xul
+trackEditor.xul: UTF-8 Unicode C program text
+
+[stevel@dingo:xul] 525$ hd trackEditor.xul | head -1
+00000000  ef bb bf 3c 3f 78 6d 6c  20 76 65 72 73 69 6f 6e  |...&lt;?xml version|
+
+the &quot;ef bb bf&quot; characters are the Unicode UTF-8 BOM before the &lt;?xml (&quot;3c 3f 78&quot;)
+See the Wikipedia article for a table of other Unicode BOMs that should be handled: http://en.wikipedia.org/wiki/Byte-order_mark
+
+For a sample, I&apos;ve attached a file with the UTF-8 BOM.  If you want it under SVN control to try indexing, you can do:
+
+svn co https://publicsvn.songbirdnest.com/songbird/client/trunk/app/content/xul
+
+For a small subdirectory testcase of XML files, some with the UTF-8 BOM (trackEditor.xul &amp; trackEditorForm.xul) and others without it.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>929</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2007-12-28 06:16:29 +0000</bug_when>
+            <thetext>trackEditor.xul is handled correctly if it is renamed to trackEditor.xml, so I guess it&apos;ll work if we remove the byte-order marker before we check for magic byte sequences in AnalyzerGuru.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>930</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2007-12-28 08:22:24 +0000</bug_when>
+            <thetext>Fixed in changeset 200:b5a46fc9e89e.</thetext>
+          </long_desc>
+      
+          <attachment
+              isobsolete="0"
+              ispatch="0"
+              isprivate="0"
+              isurl="0"
+          >
+            <attachid>51</attachid>
+            <date>2007-12-27 10:25:00 +0000</date>
+            <delta_ts>2007-12-27 10:25:53 +0000</delta_ts>
+            <desc>An XML file with a UTF-8 BOM</desc>
+            <filename>trackEditor.xul</filename>
+            <type>application/xml</type>
+            <size>8815</size>
+            <attacher>stevel</attacher>
+            
+              <data encoding="base64">77u/PD94bWwgdmVyc2lvbj0iMS4wIj8+CjwhLS0KLyoKIC8vCi8vIEJFR0lOIFNPTkdCSVJEIEdQ
+TAovLyAKLy8gVGhpcyBmaWxlIGlzIHBhcnQgb2YgdGhlIFNvbmdiaXJkIHdlYiBwbGF5ZXIuCi8v
+Ci8vIENvcHlyaWdodChjKSAyMDA1LTIwMDggUE9USSwgSW5jLgovLyBodHRwOi8vc29uZ2JpcmRu
+ZXN0LmNvbQovLyAKLy8gVGhpcyBmaWxlIG1heSBiZSBsaWNlbnNlZCB1bmRlciB0aGUgdGVybXMg
+b2Ygb2YgdGhlCi8vIEdOVSBHZW5lcmFsIFB1YmxpYyBMaWNlbnNlIFZlcnNpb24gMiAodGhlICJH
+UEwiKS4KLy8gCi8vIFNvZnR3YXJlIGRpc3RyaWJ1dGVkIHVuZGVyIHRoZSBMaWNlbnNlIGlzIGRp
+c3RyaWJ1dGVkIAovLyBvbiBhbiAiQVMgSVMiIGJhc2lzLCBXSVRIT1VUIFdBUlJBTlRZIE9GIEFO
+WSBLSU5ELCBlaXRoZXIgCi8vIGV4cHJlc3Mgb3IgaW1wbGllZC4gU2VlIHRoZSBHUEwgZm9yIHRo
+ZSBzcGVjaWZpYyBsYW5ndWFnZSAKLy8gZ292ZXJuaW5nIHJpZ2h0cyBhbmQgbGltaXRhdGlvbnMu
+Ci8vCi8vIFlvdSBzaG91bGQgaGF2ZSByZWNlaXZlZCBhIGNvcHkgb2YgdGhlIEdQTCBhbG9uZyB3
+aXRoIHRoaXMgCi8vIHByb2dyYW0uIElmIG5vdCwgZ28gdG8gaHR0cDovL3d3dy5nbnUub3JnL2xp
+Y2Vuc2VzL2dwbC5odG1sCi8vIG9yIHdyaXRlIHRvIHRoZSBGcmVlIFNvZnR3YXJlIEZvdW5kYXRp
+b24sIEluYy4sIAovLyA1MSBGcmFua2xpbiBTdHJlZXQsIEZpZnRoIEZsb29yLCBCb3N0b24sIE1B
+IDAyMTEwLTEzMDEsIFVTQS4KLy8gCi8vIEVORCBTT05HQklSRCBHUEwKLy8KICovCi0tPgo8P3ht
+bC1zdHlsZXNoZWV0IGhyZWY9ImNocm9tZTovL3NvbmdiaXJkLWRpYWxvZ3Mvc2tpbi90cmFja0Vk
+aXRvci5jc3MiIHR5cGU9InRleHQvY3NzIj8+Cjw/eG1sLXN0eWxlc2hlZXQgaHJlZj0iY2hyb21l
+Oi8vZ2xvYmFsL3NraW4iIHR5cGU9InRleHQvY3NzIj8+Cjw/eG1sLXN0eWxlc2hlZXQgaHJlZj0i
+Y2hyb21lOi8vc29uZ2JpcmQvc2tpbi9zb25nYmlyZC5jc3MiIHR5cGU9InRleHQvY3NzIj8+Cjw/
+eG1sLXN0eWxlc2hlZXQgaHJlZj0iY2hyb21lOi8vc29uZ2JpcmQvY29udGVudC9iaW5kaW5ncy9i
+aW5kaW5ncy5jc3MiIHR5cGU9InRleHQvY3NzIj8+CjwhRE9DVFlQRSB3aW5kb3cgU1lTVEVNICJj
+aHJvbWU6Ly9zb25nYmlyZC9sb2NhbGUvc29uZ2JpcmQuZHRkIiA+CjxkaWFsb2cKIHhtbG5zOmh0
+bWw9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGh0bWwiCiB4bWxucz0iaHR0cDovL3d3dy5tb3pp
+bGxhLm9yZy9rZXltYXN0ZXIvZ2F0ZWtlZXBlci90aGVyZS5pcy5vbmx5Lnh1bCIKIGlkPSJ0cmFj
+a19lZGl0b3IiCiB0aXRsZT0iJnRyYWNrZWRpdG9yLnRpdGxlOyIKIGhpZGVjaHJvbWU9InRydWUi
+CiBidXR0b25zPSJhY2NlcHQsY2FuY2VsLGV4dHJhMSIKIG9ubG9hZD0ib25Mb2FkVHJhY2tFZGl0
+b3IoKTsiCiBvbnVubG9hZD0ib25VbmxvYWRUcmFja0VkaXRvcigpOyIKIHdpbmRvd3R5cGU9InRy
+YWNrX2VkaXRvciIKIG9uZm9jdXM9Im9uRm9jdXMoKSIKIG9uYmx1cj0ib25CbHVyKCkiCiB0eXBl
+PSJzb25nYmlyZCIKIG9uZGlhbG9nYWNjZXB0PSJpZiAoIGRvT0soKSApIG9uRXhpdCggKTsiCiBv
+bmRpYWxvZ2V4dHJhMT0iZG9VbmRvKCk7Igogb25kaWFsb2djYW5jZWw9ImlmICggZG9DYW5jZWwo
+KSApIG9uRXhpdCggKTsiCiBidXR0b25sYWJlbGV4dHJhMT0iJndpbmRvdy51bmRvOyIKIHJlc2l6
+ZXJzPSJob3JpeiIKIHBlcnNpc3Q9InNjcmVlblggc2NyZWVuWSB3aWR0aCIKPgogIAogIDx3aW5k
+b3dyZWdpb24vPgoKICAgIDxtZW51YmFyIGlkPSJ0cmFja2VkaXRvcl9tZW51IiBoaWRkZW49ImZh
+bHNlIiAgb25jb21tYW5kPSJvbk1lbnUoZXZlbnQudGFyZ2V0KSIvPgoKICAgIDxkZXNjcmlwdGlv
+bj4KICAgICAgJnRyYWNrZWRpdG9yLmRpc2NsYWltZXI7CiAgICA8L2Rlc2NyaXB0aW9uPgoKICAg
+IDxoYm94IGlkPSJ0cmFja2VkaXRvci5oZmxleCI+CiAgICAgIDxzYi10cmFja2VkaXRvci1kcmF3
+ZXIgaWQ9InRyYWNrZWRpdG9yLnRyYWNrZWRpdG9yIiBoZmxleD0idHJhY2tlZGl0b3IuaGZsZXgi
+IHRpdGxlPSImdHJhY2tlZGl0b3IudHJhY2tkYXRhOyIgZmxleD0iMSIgLz4KICAgIDwvaGJveD4K
+ICAgIAogICAgPGhib3ggaWQ9ImV4dHRyYWNrZWRpdG9yLmhmbGV4Ij4KICAgICAgPHNiLWV4dHRy
+YWNrZWRpdG9yLWRyYXdlciBpZD0idHJhY2tlZGl0b3IuZXh0dHJhY2tlZGl0b3IiIGhmbGV4PSJl
+eHR0cmFja2VkaXRvci5oZmxleCIgdGl0bGU9IiZ0cmFja2VkaXRvci5leHR0cmFja2RhdGE7IiBm
+bGV4PSIxIiAKICAgICAgICBleGNsdWRlPSJodHRwOi8vc29uZ2JpcmRuZXN0LmNvbS9kYXRhLzEu
+MCNHVUlEO2h0dHA6Ly9zb25nYmlyZG5lc3QuY29tL2RhdGEvMS4wI2NvbnRlbnRVUkw7aHR0cDov
+L3NvbmdiaXJkbmVzdC5jb20vZGF0YS8xLjAjdHJhY2tOYW1lO2h0dHA6Ly9zb25nYmlyZG5lc3Qu
+Y29tL2RhdGEvMS4wI2FydGlzdE5hbWU7aHR0cDovL3NvbmdiaXJkbmVzdC5jb20vZGF0YS8xLjAj
+YWxidW1OYW1lO2h0dHA6Ly9zb25nYmlyZG5lc3QuY29tL2RhdGEvMS4wI2dlbnJlIi8+CiAgICA8
+L2hib3g+CjwhLS0KICAgIDxoYm94IGlkPSJ0YWdlZGl0b3IuaGZsZXgiPgogICAgICA8c2ItdGFn
+ZWRpdG9yLWRyYXdlciBpZD0idHJhY2tlZGl0b3IudGFnZWRpdG9yIiBoZmxleD0idGFnZWRpdG9y
+LmhmbGV4IiB0aXRsZT0iJnRyYWNrZWRpdG9yLnRhZ3M7IiBmbGV4PSIxIiAvPgogICAgPC9oYm94
+PgotLT4gICAgICAgICAgCgogIAogIDxzY3JpcHQgdHlwZT0iYXBwbGljYXRpb24veC1qYXZhc2Ny
+aXB0IiAKICAgc3JjPSJjaHJvbWU6Ly9zb25nYmlyZC9jb250ZW50L3NjcmlwdHMvc29uZ2JpcmRJ
+bnRlcmZhY2VzLmpzIiAvPgogIDxzY3JpcHQgdHlwZT0iYXBwbGljYXRpb24veC1qYXZhc2NyaXB0
+IiAKICAgc3JjPSJjaHJvbWU6Ly9zb25nYmlyZC9jb250ZW50L3NjcmlwdHMvc2JEYXRhUmVtb3Rl
+VXRpbHMuanMiIC8+CiAgPHNjcmlwdCB0eXBlPSJhcHBsaWNhdGlvbi94LWphdmFzY3JpcHQiIAog
+ICAgc3JjPSJjaHJvbWU6Ly9nbG9iYWwvY29udGVudC9nbG9iYWxPdmVybGF5LmpzIi8+ICAKICA8
+c2NyaXB0IHR5cGU9ImFwcGxpY2F0aW9uL3gtamF2YXNjcmlwdCIgIAogICBzcmM9ImNocm9tZTov
+L3NvbmdiaXJkL2NvbnRlbnQvc2NyaXB0cy93aW5kb3dVdGlscy5qcyIgLz4KICAKICA8c2NyaXB0
+PgoKICA8IVtDREFUQVsKCiAgY29uc3QgVktfRVNDQVBFID0gMjc7CiAgY29uc3QgVktfRU5URVIg
+PSAxMzsKICAKICB2YXIgcGxheWxpc3QgPSBudWxsOwogIAogIHZhciBkaXJ0eSA9IHsKICAgIHZh
+bHVlOiBmYWxzZSwKICAgIHNldERpcnR5OiBmdW5jdGlvbih2YWwpIHsKICAgICAgdGhpcy52YWx1
+ZSA9IHZhbDsKICAgICAgZW5hYmxlVW5kbygpOwogICAgfSwKICAgIGlzRGlydHk6IGZ1bmN0aW9u
+KCkgewogICAgICByZXR1cm4gdGhpcy52YWx1ZTsKICAgIH0KICB9OwogIAogIHZhciBfZm9jdXMg
+PSB7CiAgICB2YWx1ZTogZmFsc2UsCiAgICBzZXRJc0ZvY3VzZWQgOiBmdW5jdGlvbih2YWwpIHsK
+ICAgICAgdGhpcy52YWx1ZSA9IHZhbDsKICAgIH0sCiAgICBpc0ZvY3VzZWQ6IGZ1bmN0aW9uKCkg
+ewogICAgICByZXR1cm4gdGhpcy52YWx1ZTsKICAgIH0KICB9OwogIAogIGZ1bmN0aW9uIG9uTG9h
+ZFRyYWNrRWRpdG9yKCkgewogICAgdmFyIHBsYXlsaXN0ID0gd2luZG93LmFyZ3VtZW50c1swXTsK
+ICAgIHZhciBfdHJhY2tlZGl0b3IgPSBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgidHJhY2tlZGl0
+b3IudHJhY2tlZGl0b3IiKTsKICAgIF90cmFja2VkaXRvci5zZXRQbGF5bGlzdChwbGF5bGlzdCk7
+CiAgICBfdHJhY2tlZGl0b3Iuc2V0RGlydHlPYmplY3QoZGlydHkpOwogICAgX3RyYWNrZWRpdG9y
+LnNldE1haW5Gb2N1c09iamVjdChfZm9jdXMpOwogICAgdmFyIF9leHR0cmFja2VkaXRvciA9IGRv
+Y3VtZW50LmdldEVsZW1lbnRCeUlkKCJ0cmFja2VkaXRvci5leHR0cmFja2VkaXRvciIpOwogICAg
+X2V4dHRyYWNrZWRpdG9yLnNldFBsYXlsaXN0KHBsYXlsaXN0KTsKICAgIF9leHR0cmFja2VkaXRv
+ci5zZXREaXJ0eU9iamVjdChkaXJ0eSk7CiAgICBfZXh0dHJhY2tlZGl0b3Iuc2V0TWFpbkZvY3Vz
+T2JqZWN0KF9mb2N1cyk7CiAgICAvL3ZhciBfdGFnZWRpdG9yID0gZG9jdW1lbnQuZ2V0RWxlbWVu
+dEJ5SWQoInRyYWNrZWRpdG9yLnRhZ2VkaXRvciIpOwogICAgLy9fdGFnZWRpdG9yLnNldFBsYXls
+aXN0KHBsYXlsaXN0KTsKICAgIC8vX3RhZ2VkaXRvci5zZXREaXJ0eU9iamVjdChkaXJ0eSk7CiAg
+ICAvL190YWdlZGl0b3Iuc2V0TWFpbkZvY3VzT2JqZWN0KF9mb2N1cyk7CiAgICAKICAgIGRpc2Fi
+bGVVbmRvKCk7CiAgICAKICAgIGlmIChwbGF5bGlzdCkKICAgIHsKICAgICAgcGxheWxpc3QuYWRk
+RXZlbnRMaXN0ZW5lcigicGxheWxpc3QtZGVzdHJveSIsIG9uRGVzdHJveVBsYXlsaXN0LCBmYWxz
+ZSk7CiAgICB9CgogICAgc2V0VGltZW91dCgnZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoInRyYWNr
+ZWRpdG9yLnRyYWNrZWRpdG9yIikub3BlbkRyYXdlcigpOycsIDApOwogICAgc2V0VHJhY2tlZGl0
+b3JNaW5NYXhDYWxsYmFjaygpOwogIH0KICAKICBmdW5jdGlvbiBvbkRlc3Ryb3lQbGF5bGlzdCgp
+IHsKICAgIG9uRXhpdCgpOwogIH0KICAKICBmdW5jdGlvbiBvblVubG9hZFRyYWNrRWRpdG9yKCkg
+ewogICAgaWYgKHBsYXlsaXN0KQogICAgewogICAgICBwbGF5bGlzdC5yZW1vdmVFdmVudExpc3Rl
+bmVyKCJwbGF5bGlzdC1kZXN0cm95Iiwgb25EZXN0cm95UGxheWxpc3QsIGZhbHNlKTsKICAgIH0K
+ICAgIAogIH0KICAKICBmdW5jdGlvbiBlbmFibGVVbmRvKCkgewogICAgZG9jdW1lbnQuZG9jdW1l
+bnRFbGVtZW50LmdldEJ1dHRvbigiZXh0cmExIikucmVtb3ZlQXR0cmlidXRlKCJkaXNhYmxlZCIp
+OwogIH0KICAKICBmdW5jdGlvbiBkaXNhYmxlVW5kbygpIHsKICAgIGRvY3VtZW50LmRvY3VtZW50
+RWxlbWVudC5nZXRCdXR0b24oImV4dHJhMSIpLnNldEF0dHJpYnV0ZSgiZGlzYWJsZWQiLCAidHJ1
+ZSIpOwogIH0KICAKICBmdW5jdGlvbiBkb09LKCkgewogICAgLy9pZiAocGxheWxpc3QpIHBsYXls
+aXN0LmRlc2VsZWN0QWxsKCk7CiAgICB2YXIgdHJhY2tlZGl0b3IgPSBkb2N1bWVudC5nZXRFbGVt
+ZW50QnlJZCgidHJhY2tlZGl0b3IudHJhY2tlZGl0b3IiKTsKICAgIHZhciBleHR0cmFja2VkaXRv
+ciA9IGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCJ0cmFja2VkaXRvci5leHR0cmFja2VkaXRvciIp
+OwogICAgLy92YXIgdGFnZWRpdG9yID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoInRyYWNrZWRp
+dG9yLnRhZ2VkaXRvciIpOwogICAgdmFyIGVyciA9IHRyYWNrZWRpdG9yLmNoZWNrRm9ybWF0RXJy
+b3JzKCk7CiAgICBpZiAoIWVycikgZXJyID0gZXh0dHJhY2tlZGl0b3IuY2hlY2tGb3JtYXRFcnJv
+cnMoKTsKICAgIC8vaWYgKCFlcnIpIGVyciA9IHRhZ2VkaXRvci5jaGVja0Zvcm1hdEVycm9ycygp
+OwogICAgCiAgICAvLyBYWFhsb25lPiB1Z2ggOigKICAgIGlmICgxKSB7IC8vIWVycikgewogICAg
+ICB0cnkgewogICAgICAgIHRyYWNrZWRpdG9yLmFwcGx5KCk7CiAgICAgICAgZXh0dHJhY2tlZGl0
+b3IuYXBwbHkoKTsKICAgICAgICAvL3RhZ2VkaXRvci5hcHBseSgpOwogICAgICB9IGNhdGNoIChl
+KSB7CiAgICAgIH0KICAgIH0gZWxzZSB7CiAgICAgICAgZ1Byb21wdC5hbGVydCggd2luZG93LCAK
+ICAgICAgICAgICAgICAgICAgICAgIFNCU3RyaW5nKCAidHJhY2tlZGl0b3IuZm9ybWF0ZXJyb3Iu
+dGl0bGUiLCAiRm9ybWF0IEVycm9yIiApLAogICAgICAgICAgICAgICAgICAgICAgU0JTdHJpbmco
+ICJ0cmFja2VkaXRvci5mb3JtYXRlcnJvci5tc2ciLCAiRXJyb3IgaW4gZm9ybWF0IGZvciBwcm9w
+ZXJ0eSIgKSArICIgIiArIGVyciApOwogICAgICAgIHJldHVybiBmYWxzZTsKICAgIH0KICAgIHJl
+dHVybiB0cnVlOwogIH0KCiAgZnVuY3Rpb24gZG9VbmRvKCkgewogICAgZG9jdW1lbnQuZ2V0RWxl
+bWVudEJ5SWQoInRyYWNrZWRpdG9yLnRyYWNrZWRpdG9yIikudW5kbygpOwogICAgZG9jdW1lbnQu
+Z2V0RWxlbWVudEJ5SWQoInRyYWNrZWRpdG9yLmV4dHRyYWNrZWRpdG9yIikudW5kbygpOwogICAg
+Ly9kb2N1bWVudC5nZXRFbGVtZW50QnlJZCgidHJhY2tlZGl0b3IudGFnZWRpdG9yIikudW5kbygp
+OwogICAgZGlydHkuc2V0RGlydHkoZmFsc2UpOwogICAgZGlzYWJsZVVuZG8oKTsKICB9CiAgCiAg
+ZnVuY3Rpb24gZG9DYW5jZWwoKSB7CiAgICByZXR1cm4gdHJ1ZTsKICB9CiAgCiAgZnVuY3Rpb24g
+b25Gb2N1cygpIHsKICAgIF9mb2N1cy5zZXRJc0ZvY3VzZWQodHJ1ZSk7CiAgfQoKICBmdW5jdGlv
+biBvbkJsdXIoKSB7CiAgICBfZm9jdXMuc2V0SXNGb2N1c2VkKGZhbHNlKTsKICB9CgogIGZ1bmN0
+aW9uIHNldFRyYWNrZWRpdG9yTWluTWF4Q2FsbGJhY2soKQogIHsKICAgIHRyeSB7CiAgICAgIHZh
+ciB3aW5kb3dNaW5NYXggPSBDb21wb25lbnRzLmNsYXNzZXNbIkBzb25nYmlyZG5lc3QuY29tL1Nv
+bmdiaXJkL1dpbmRvd01pbk1heDsxIl07CiAgICAgIGlmICh3aW5kb3dNaW5NYXgpIHsKICAgICAg
+ICB2YXIgc2VydmljZSA9IHdpbmRvd01pbk1heC5nZXRTZXJ2aWNlKENvbXBvbmVudHMuaW50ZXJm
+YWNlcy5zYklXaW5kb3dNaW5NYXgpOwogICAgICAgIGlmIChzZXJ2aWNlKQogICAgICAgICAgc2Vy
+dmljZS5zZXRDYWxsYmFjayhkb2N1bWVudCwgU0JUcmFja2VkaXRvcldpbmRvd01pbk1heENCKTsK
+ICAgICAgfQogICAgfQogICAgY2F0Y2ggKGVycikgewogICAgICAvLyBObyBjb21wb25lbnQKICAg
+ICAgZHVtcCgiRXJyb3IuIHRyYWNrZWRpdG9yLnh1bDpzZXRNaW5NYXhDYWxsYmFjaygpIFxuICIg
+KyBlcnIgKyAiXG4iKTsKICAgIH0KICB9CgogIHZhciBTQlRyYWNrZWRpdG9yV2luZG93TWluTWF4
+Q0IgPSAKICB7CiAgICAvLyBTaHJpbmsgdW50aWwgdGhlIGJveCBkb2Vzbid0IG1hdGNoIHRoZSB3
+aW5kb3csIHRoZW4gc3RvcC4KICAgIF9taW53aWR0aDogLTEsCiAgICBfY3NzbWlud2lkdGg6IC0x
+LAogICAgR2V0TWluV2lkdGg6IGZ1bmN0aW9uKCkKICAgIHsKICAgICAgaWYgKHRoaXMuX2Nzc21p
+bndpZHRoID09IC0xKSB7CiAgICAgICAgdGhpcy5fY3NzbWlud2lkdGggPSBwYXJzZUludChnZXRT
+dHlsZShkb2N1bWVudC5kb2N1bWVudEVsZW1lbnQsICJtaW4td2lkdGgiKSk7CiAgICAgIH0KICAg
+ICAgCiAgICAgIC8vIGZpbmQgdGhlIGNvbnRhaW5lciBlbGVtZW50IC0gYnV0IHNpbmNlIHdlIG1h
+eSBiZSBpbiBwbHVja2VkLCB3ZSBoYXZlIHRvCiAgICAgIC8vIHRyeSB0aGluZ3MgaW4gdHdvIHdh
+eXMKICAgICAgCiAgICAgIHZhciBmcmFtZSA9IGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdkaWFs
+b2ctb3V0ZXItZnJhbWUnKTsgLy8gd2hlbiB1c2luZyBub24tbmF0aXZlIGRpYWxvZwogICAgICBp
+ZiAoIWZyYW1lKSB7CiAgICAgICAgLy8gYXNzdW1lIGl0J3MgdGhlIHBsYXRmb3JtIHZlcnNpb24g
+b2YgdGhlIGRpYWxvZwogICAgICAgIGZyYW1lID0gZG9jdW1lbnQuZ2V0QW5vbnltb3VzTm9kZXMo
+ZG9jdW1lbnQuZG9jdW1lbnRFbGVtZW50KVswXTsKICAgICAgfQogICAgICAvLyBJZiBtaW4gc2l6
+ZSBpcyBub3QgeWV0IGtub3duIGFuZCBpZiB0aGUgd2luZG93IHNpemUgaXMgZGlmZmVyZW50IGZy
+b20gdGhlIGRvY3VtZW50J3MgYm94IG9iamVjdCwgCiAgICAgIGlmICh0aGlzLl9taW53aWR0aCA9
+PSAtMSAmJiB3aW5kb3cuaW5uZXJXaWR0aCAhPSBmcmFtZS5ib3hPYmplY3Qud2lkdGgpCiAgICAg
+IHsgCiAgICAgICAgLy8gVGhlbiB3ZSBrbm93IHdlJ3ZlIGhpdCB0aGUgbWluaW11bSB3aWR0aCwg
+cmVjb3JkIGl0LiBCZWNhdXNlIHlvdSBjYW4ndCBxdWVyeSBpdCBkaXJlY3RseS4KICAgICAgICB0
+aGlzLl9taW53aWR0aCA9IGZyYW1lLmJveE9iamVjdC53aWR0aCArIDE7CiAgICAgIH0KICAgICAg
+cmV0dXJuIE1hdGgubWF4KHRoaXMuX21pbndpZHRoLCB0aGlzLl9jc3NtaW53aWR0aCk7CiAgICB9
+LAoKICAgIEdldE1pbkhlaWdodDogZnVuY3Rpb24oKQogICAgewogICAgICByZXR1cm4gLTE7CiAg
+ICB9LAoKICAgIEdldE1heFdpZHRoOiBmdW5jdGlvbigpCiAgICB7CiAgICAgIHJldHVybiAtMTsK
+ICAgIH0sCgogICAgR2V0TWF4SGVpZ2h0OiBmdW5jdGlvbigpCiAgICB7CiAgICAgIHJldHVybiAt
+MTsKICAgIH0sCgogICAgT25XaW5kb3dDbG9zZTogZnVuY3Rpb24oKQogICAgewogICAgICBzZXRU
+aW1lb3V0KG9uRXhpdCwgMCk7CiAgICB9LAoKICAgIFF1ZXJ5SW50ZXJmYWNlIDogZnVuY3Rpb24o
+YUlJRCkKICAgIHsKICAgICAgaWYgKCFhSUlELmVxdWFscyhDb21wb25lbnRzLmludGVyZmFjZXMu
+c2JJV2luZG93TWluTWF4Q2FsbGJhY2spICYmCiAgICAgICAgICAhYUlJRC5lcXVhbHMoQ29tcG9u
+ZW50cy5pbnRlcmZhY2VzLm5zSVN1cHBvcnRzV2Vha1JlZmVyZW5jZSkgJiYKICAgICAgICAgICFh
+SUlELmVxdWFscyhDb21wb25lbnRzLmludGVyZmFjZXMubnNJU3VwcG9ydHMpKSAKICAgICAgewog
+ICAgICAgIHRocm93IENvbXBvbmVudHMucmVzdWx0cy5OU19FUlJPUl9OT19JTlRFUkZBQ0U7CiAg
+ICAgIH0KICAgICAgCiAgICAgIHJldHVybiB0aGlzOwogICAgfQogIH0KCiAgZnVuY3Rpb24gZ2V0
+U3R5bGUoZWwsc3R5bGVQcm9wKQogIHsKICAgIHZhciB2OwogICAgaWYgKGVsKSB7CiAgICAgIHZh
+ciBzID0gZG9jdW1lbnQuZGVmYXVsdFZpZXcuZ2V0Q29tcHV0ZWRTdHlsZShlbCxudWxsKTsKICAg
+ICAgdiA9IHMuZ2V0UHJvcGVydHlWYWx1ZShzdHlsZVByb3ApOwogICAgfQogICAgcmV0dXJuIHY7
+CiAgfQogIAogIF1dPgogIDwvc2NyaXB0PgoKPC9kaWFsb2c+Cg==
+</data>
+
+          </attachment>
+      
+
+    </bug>
+
+</bugzilla>

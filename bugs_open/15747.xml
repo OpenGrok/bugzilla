@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>15747</bug_id>
+          
+          <creation_ts>2010-04-24 18:18:00 +0000</creation_ts>
+          <short_desc>RFE: use spellchecker to provide potentially correct search terms</short_desc>
+          <delta_ts>2010-04-26 12:28:31 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>webapp</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>NEW</bug_status>
+          
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>enhancement</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Hemang Lavana">HemangLavana</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          <cc>Lubos.Kosco</cc>
+    
+    <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>71931</commentid>
+            <who name="Hemang Lavana">HemangLavana</who>
+            <bug_when>2010-04-24 18:18:33 +0000</bug_when>
+            <thetext>Google&apos;s &quot;did you mean&quot; feature is very powerful. It allows users to type in search keywords with typos but also adds a line saying &quot;Did you mean to search: xxx&quot; instead of xxy.
+
+A similar feature for code search would be very useful where user may have a typo or may not be sure of what keywords to search for.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>71957</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2010-04-26 12:28:31 +0000</bug_when>
+            <thetext>Hi Hemang,
+I think this is already working partly in opengrok
+opengrok uses spell check contrib plugin for lucene to get this done and creates a special index for spellchecker, which we also use as suggest feature
+this spell check suggest list will show up when there are no hits for the query
+
+I hope to improve suggest in 1067
+If you want to have google suggest like feature, please add yourself to 1067
+
+I think I understand what you meant by this bug ...
+If there is an typo in the query, show first two results according to correct spellcheck and then the result for the &quot;faulty&quot; query
+I guess it could be done, however we need to research a bit on spellchecking and add support for e.g. english which would work flawlessly before adding it to the search page results. 
+Current spellchecker only compares the word(s) from the query with the index words, it doesn&apos;t do proper english(or other language) spellchecking.</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

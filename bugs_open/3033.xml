@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>3033</bug_id>
+          
+          <creation_ts>2008-08-22 12:24:00 +0000</creation_ts>
+          <short_desc>RFE: Opengrok should support ISO 8859-1 Latin Character set</short_desc>
+          <delta_ts>2010-04-16 11:45:30 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>analyzer</component>
+          <version>unspecified</version>
+          <rep_platform>Other</rep_platform>
+          <op_sys>Linux</op_sys>
+          <bug_status>NEW</bug_status>
+          
+          
+          
+          
+          
+          
+          <priority>P4</priority>
+          <bug_severity>normal</bug_severity>
+          <target_milestone>---</target_milestone>
+          <dependson>437</dependson>
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Bruce Furber">bruce30062</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          <cc>jorgen.austvik</cc>
+    
+    <cc>Lubos.Kosco</cc>
+    
+    <cc>roland.mainz</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>10864</commentid>
+            <who name="Bruce Furber">bruce30062</who>
+            <bug_when>2008-08-22 12:24:10 +0000</bug_when>
+            <thetext>A simple comment in a program by one our European friends will stop it from being indexed.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>12552</commentid>
+            <who name="Jorgen Austvik">jorgen.austvik</who>
+            <bug_when>2008-09-16 01:29:39 +0000</bug_when>
+            <thetext>Do you have an example file that we can test against?</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>12554</commentid>
+              <attachid>491</attachid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2008-09-16 01:43:34 +0000</bug_when>
+            <thetext>Created attachment 491
+sample 8859-2  file (name and content)
+
+feel free to rename it, most probably the name will not be accepted (but that&apos;s another bug)</thetext>
+          </long_desc>
+      
+          <attachment
+              isobsolete="0"
+              ispatch="0"
+              isprivate="0"
+              isurl="0"
+          >
+            <attachid>491</attachid>
+            <date>2008-09-16 01:43:00 +0000</date>
+            <delta_ts>2008-09-16 01:43:34 +0000</delta_ts>
+            <desc>sample 8859-2  file (name and content)</desc>
+            <filename>jožko.c</filename>
+            <type>text/plain</type>
+            <size>61</size>
+            <attacher>Lubos.Kosco</attacher>
+            
+              <data encoding="base64">Ly8gyGxvdmVrIA0KLy8NCm1haW4gKCkgew0KCWNoYXIgW109Iuhsb3ZlayBuYZ1vIHP6IHRpIjsN
+Cn0NCg==
+</data>
+
+          </attachment>
+      
+
+    </bug>
+
+</bugzilla>

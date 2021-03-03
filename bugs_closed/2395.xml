@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>2395</bug_id>
+          
+          <creation_ts>2008-07-07 07:43:00 +0000</creation_ts>
+          <short_desc>Searching fails for expressions starting by &apos;-&apos; or &apos;+&apos;</short_desc>
+          <delta_ts>2008-09-01 03:51:37 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>webapp</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXED</resolution>
+          
+          
+          <bug_file_loc>http://src.opensolaris.org/source/search?q=--finish&amp;defs=&amp;refs=&amp;path=&amp;hist=&amp;project=%2Fsfwnv</bug_file_loc>
+          
+          
+          <priority>P2</priority>
+          <bug_severity>enhancement</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Martina Tomisova">martina.tomisova</reporter>
+          <assigned_to name="Lubos Kosco">Lubos.Kosco</assigned_to>
+          
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>8713</commentid>
+            <who name="Martina Tomisova">martina.tomisova</who>
+            <bug_when>2008-07-07 07:43:01 +0000</bug_when>
+            <thetext>When using more &apos;-&apos; and &apos;+&apos; (for example --finish. +-finish, +++finish) at the beginning of the wanted expression searching fails (refers to all input boxes).
+
+The related URL contains example.
+
+Example of output (--finish in File Path):
+
+  Error:
+  path:(--finish)
+  Cannot parse &apos; path:(--finish)&apos;: Encountered &quot;-&quot; at line 1, column 8.
+  Was expecting one of:
+  &quot;(&quot; ...
+  &quot;*&quot; ...
+  &lt;QUOTED&gt; ...
+  &lt;TERM&gt; ...
+  &lt;PREFIXTERM&gt; ...
+  &lt;WILDTERM&gt; ...
+  &quot;[&quot; ...
+  &quot;{&quot; ...
+  &lt;NUMBER&gt; ...
+
+If the expression is closed at &quot; it works fine (for example &quot;--finish&quot;).
+
+My suggestion: close all such expressions to quotation marks by default</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>8726</commentid>
+            <who name="Martina Tomisova">martina.tomisova</who>
+            <bug_when>2008-07-08 02:33:56 +0000</bug_when>
+            <thetext>This seems to be related to this bug:
+
+If searching -R nothing is found however if searching &quot;-R&quot; some results are found.
+
+http://src.opensolaris.org/source/search?q=-R&amp;defs=&amp;refs=&amp;path=&amp;hist=&amp;project=%2Fsfwnv</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>9700</commentid>
+            <who name="Trond Norbye">trond.norbye</who>
+            <bug_when>2008-08-01 06:12:08 +0000</bug_when>
+            <thetext>This could be fixed in Util.buildQueryString(). Lubos suggested to me that we could fix this by doing as Google.. Add a suggestion: did you mean &quot;--finish&quot; or something :-)</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>9701</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2008-08-01 06:13:46 +0000</bug_when>
+            <thetext>We should also provide a better help with pointers to lucene syntax.
+
+Picking this up, will follow up with a review ;)</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>11539</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2008-09-01 03:51:37 +0000</bug_when>
+            <thetext>Fixed in changeset:   510:d2a1b44d5c8a
+
+targeted for release 0.7</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

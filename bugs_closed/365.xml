@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>365</bug_id>
+          
+          <creation_ts>2008-01-14 20:44:00 +0000</creation_ts>
+          <short_desc>date is missing from history output</short_desc>
+          <delta_ts>2008-01-15 11:52:36 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>webapp</component>
+          <version>unspecified</version>
+          <rep_platform>Other</rep_platform>
+          <op_sys>Linux</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXED</resolution>
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>normal</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Leo Davis">ldavis</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>1002</commentid>
+              <attachid>58</attachid>
+            <who name="Leo Davis">ldavis</who>
+            <bug_when>2008-01-14 20:44:41 +0000</bug_when>
+            <thetext>Created attachment 58
+patch to display date
+
+The date is missing in history output in the current trunk.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>1013</commentid>
+            <who name="Trond Norbye">trond.norbye</who>
+            <bug_when>2008-01-15 11:52:36 +0000</bug_when>
+            <thetext>Applied patch in changeset a925a1069fbd</thetext>
+          </long_desc>
+      
+          <attachment
+              isobsolete="0"
+              ispatch="1"
+              isprivate="0"
+              isurl="0"
+          >
+            <attachid>58</attachid>
+            <date>2008-01-14 20:44:00 +0000</date>
+            <delta_ts>2008-01-14 20:44:41 +0000</delta_ts>
+            <desc>patch to display date</desc>
+            <filename>history-date.patch</filename>
+            <type>text/plain</type>
+            <size>731</size>
+            <attacher>ldavis</attacher>
+            
+              <data encoding="base64">IyBIRyBjaGFuZ2VzZXQgcGF0Y2gKIyBVc2VyIExlbyBEYXZpcyA8bGRhdmlzQGZvbml4LmNvbT4K
+IyBEYXRlIDEyMDAzNzIwMTkgMjUyMDAKIyBOb2RlIElEIDgyMTZlZGEyM2U1ZWExN2NmMDc0OTE4
+YWE4YTY0YjI1MWMwY2IxZmYKIyBQYXJlbnQgIDhhMzYzNjgxNTlhMGY1OWVjMjhiMDg1NmI4YWJk
+NjdjZmMzYjYxYTUKRml4IGZvciBkYXRlIG5vdCBiZWluZyBkaXNwbGF5ZWQgaW4gaGlzdG9yeS4K
+CndlYi9oaXN0b3J5LmpzcCAtLSBmaXhlZCByZXZlcnNlZCB0ZXN0IGFuZCB0eXBvIGluIG91dHB1
+dC4KCmRpZmYgLXIgOGEzNjM2ODE1OWEwIC1yIDgyMTZlZGEyM2U1ZSB3ZWIvaGlzdG9yeS5qc3AK
+LS0tIGEvd2ViL2hpc3RvcnkuanNwCU1vbiBKYW4gMTQgMTk6MjA6NDYgMjAwOCAtMDcwMAorKysg
+Yi93ZWIvaGlzdG9yeS5qc3AJTW9uIEphbiAxNCAyMTo0MDoxOSAyMDA4IC0wNzAwCkBAIC04OSwx
+MCArODksMTAgQEAgd2hpbGUgKGhyLm5leHQoKSkgewogfQogJT48dGQ+PCUgCiAgICAgICAgIERh
+dGUgZGF0ZSA9IGhyLmdldERhdGUoKTsgCi0gICAgICAgIGlmIChkYXRlID09IG51bGwpIHsKKyAg
+ICAgICAgaWYgKGRhdGUgIT0gbnVsbCkgewogICAgICAgICAgICAgJT48JT1kZi5mb3JtYXQoZGF0
+ZSklPjwlCiAgICAgICAgIH0gZWxzZSB7Ci0gICAgICAgICAgICAlPiZuYnNwPCUKKyAgICAgICAg
+ICAgICU+Jm5ic3A7PCUKICAgICAgICAgfQogJT4mbmJzcDs8L3RkPgogPHRkPgo=
+</data>
+
+          </attachment>
+      
+
+    </bug>
+
+</bugzilla>

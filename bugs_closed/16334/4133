@@ -1,0 +1,124 @@
+2010-06-19 23:20:57
+Full thread dump Java HotSpot(TM) Client VM (16.3-b01 mixed mode, sharing):
+
+"Thread-2" daemon prio=6 tid=0x019cbc00 nid=0xbf8 runnable [0x041ff000]
+   java.lang.Thread.State: RUNNABLE
+	at java.io.FileInputStream.readBytes(Native Method)
+	at java.io.FileInputStream.read(Unknown Source)
+	at sun.nio.cs.StreamDecoder.readBytes(Unknown Source)
+	at sun.nio.cs.StreamDecoder.implRead(Unknown Source)
+	at sun.nio.cs.StreamDecoder.read(Unknown Source)
+	- locked <0x23ca1a10> (a java.io.InputStreamReader)
+	at java.io.InputStreamReader.read(Unknown Source)
+	at java.io.BufferedReader.fill(Unknown Source)
+	at java.io.BufferedReader.readLine(Unknown Source)
+	- locked <0x23ca1a10> (a java.io.InputStreamReader)
+	at java.io.BufferedReader.readLine(Unknown Source)
+	at org.opensolaris.opengrok.analysis.Ctags$1.run(Ctags.java:93)
+	at java.lang.Thread.run(Unknown Source)
+
+   Locked ownable synchronizers:
+	- None
+
+"pool-1-thread-1" prio=6 tid=0x019cb400 nid=0x33c runnable [0x040ef000]
+   java.lang.Thread.State: RUNNABLE
+	at java.io.FileInputStream.readBytes(Native Method)
+	at java.io.FileInputStream.read(Unknown Source)
+	at java.io.BufferedInputStream.read1(Unknown Source)
+	at java.io.BufferedInputStream.read(Unknown Source)
+	- locked <0x23c9b178> (a java.io.BufferedInputStream)
+	at sun.nio.cs.StreamDecoder.readBytes(Unknown Source)
+	at sun.nio.cs.StreamDecoder.implRead(Unknown Source)
+	at sun.nio.cs.StreamDecoder.read(Unknown Source)
+	- locked <0x23c9f728> (a java.io.InputStreamReader)
+	at java.io.InputStreamReader.read(Unknown Source)
+	at java.io.BufferedReader.fill(Unknown Source)
+	at java.io.BufferedReader.readLine(Unknown Source)
+	- locked <0x23c9f728> (a java.io.InputStreamReader)
+	at java.io.BufferedReader.readLine(Unknown Source)
+	at org.opensolaris.opengrok.analysis.Ctags.readTags(Ctags.java:147)
+	at org.opensolaris.opengrok.analysis.Ctags.doCtags(Ctags.java:138)
+	at org.opensolaris.opengrok.analysis.plain.PlainAnalyzer.analyze(PlainAnalyzer.java:90)
+	at org.opensolaris.opengrok.analysis.c.CAnalyzer.analyze(CAnalyzer.java:59)
+	at org.opensolaris.opengrok.analysis.TextAnalyzer.analyze(TextAnalyzer.java:60)
+	at org.opensolaris.opengrok.analysis.AnalyzerGuru.getDocument(AnalyzerGuru.java:251)
+	at org.opensolaris.opengrok.index.IndexDatabase.addFile(IndexDatabase.java:571)
+	at org.opensolaris.opengrok.index.IndexDatabase.indexDown(IndexDatabase.java:723)
+	at org.opensolaris.opengrok.index.IndexDatabase.update(IndexDatabase.java:335)
+	at org.opensolaris.opengrok.index.IndexDatabase$1.run(IndexDatabase.java:149)
+	at java.util.concurrent.Executors$RunnableAdapter.call(Unknown Source)
+	at java.util.concurrent.FutureTask$Sync.innerRun(Unknown Source)
+	at java.util.concurrent.FutureTask.run(Unknown Source)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(Unknown Source)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(Unknown Source)
+	at java.lang.Thread.run(Unknown Source)
+
+   Locked ownable synchronizers:
+	- <0x23fbc770> (a java.util.concurrent.locks.ReentrantLock$NonfairSync)
+
+"Low Memory Detector" daemon prio=6 tid=0x019cb000 nid=0xe9c runnable [0x00000000]
+   java.lang.Thread.State: RUNNABLE
+
+   Locked ownable synchronizers:
+	- None
+
+"CompilerThread0" daemon prio=10 tid=0x019d7800 nid=0xeb0 waiting on condition [0x00000000]
+   java.lang.Thread.State: RUNNABLE
+
+   Locked ownable synchronizers:
+	- None
+
+"Attach Listener" daemon prio=10 tid=0x019ca800 nid=0x594 waiting on condition [0x00000000]
+   java.lang.Thread.State: RUNNABLE
+
+   Locked ownable synchronizers:
+	- None
+
+"Signal Dispatcher" daemon prio=10 tid=0x019ca000 nid=0xd2c runnable [0x00000000]
+   java.lang.Thread.State: RUNNABLE
+
+   Locked ownable synchronizers:
+	- None
+
+"Finalizer" daemon prio=8 tid=0x019c5000 nid=0xea8 in Object.wait() [0x03d0f000]
+   java.lang.Thread.State: WAITING (on object monitor)
+	at java.lang.Object.wait(Native Method)
+	- waiting on <0x23fa2458> (a java.lang.ref.ReferenceQueue$Lock)
+	at java.lang.ref.ReferenceQueue.remove(Unknown Source)
+	- locked <0x23fa2458> (a java.lang.ref.ReferenceQueue$Lock)
+	at java.lang.ref.ReferenceQueue.remove(Unknown Source)
+	at java.lang.ref.Finalizer$FinalizerThread.run(Unknown Source)
+
+   Locked ownable synchronizers:
+	- None
+
+"Reference Handler" daemon prio=10 tid=0x019c0800 nid=0x98c in Object.wait() [0x03cbf000]
+   java.lang.Thread.State: WAITING (on object monitor)
+	at java.lang.Object.wait(Native Method)
+	- waiting on <0x23fa0200> (a java.lang.ref.Reference$Lock)
+	at java.lang.Object.wait(Object.java:485)
+	at java.lang.ref.Reference$ReferenceHandler.run(Unknown Source)
+	- locked <0x23fa0200> (a java.lang.ref.Reference$Lock)
+
+   Locked ownable synchronizers:
+	- None
+
+"main" prio=6 tid=0x00d89800 nid=0xe68 waiting on condition [0x002cf000]
+   java.lang.Thread.State: TIMED_WAITING (parking)
+	at sun.misc.Unsafe.park(Native Method)
+	- parking to wait for  <0x23fa24e8> (a java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject)
+	at java.util.concurrent.locks.LockSupport.parkNanos(Unknown Source)
+	at java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject.awaitNanos(Unknown Source)
+	at java.util.concurrent.ThreadPoolExecutor.awaitTermination(Unknown Source)
+	at org.opensolaris.opengrok.index.Indexer.doIndexerExecution(Indexer.java:622)
+	at org.opensolaris.opengrok.index.Indexer.main(Indexer.java:429)
+
+   Locked ownable synchronizers:
+	- None
+
+"VM Thread" prio=10 tid=0x019bf400 nid=0xb7c runnable 
+
+"VM Periodic Task Thread" prio=10 tid=0x019e9800 nid=0x88c waiting on condition 
+
+JNI global references: 1039
+

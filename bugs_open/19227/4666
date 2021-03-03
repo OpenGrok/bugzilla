@@ -1,0 +1,195 @@
+commit a95a1a480b2368dd652d421e4206a90a531c3ac0
+Author: Deniz Türkoglu <deniz@spotify.com>
+Date:   Wed Jul 4 12:32:52 2012 +0200
+
+    Make allProjects a single GET parameter
+    
+    Currently OpenGrok sends all projects one by one
+    in the GET request. This makes the request huge
+    considering we have lots of repositories.
+    
+    Added a new parameter 'allProjects' so we can create
+    reasonably sized GET requests.
+    
+    Tested on Opera, Safari, Chrome and Firefox.
+    
+    Change-Id: If6e22728c854dec470bce8f67ccfa01e25c2c945
+
+diff --git a/src/org/opensolaris/opengrok/web/PageConfig.java b/src/org/opensolaris/opengrok/web/PageConfig.java
+index cadad41..c927a59 100644
+--- a/src/org/opensolaris/opengrok/web/PageConfig.java
++++ b/src/org/opensolaris/opengrok/web/PageConfig.java
+@@ -269,6 +269,16 @@ public final class PageConfig {
+     }
+ 
+     /**
++     * Check, whether all projects are to be included in the search
++     * @return {@code true} if a request parameter {@code allprojects} with the
++     *  literal value {@code 1} was found.
++     */
++    public boolean isAllProjects() {
++        String val = req.getParameter("allprojects");
++        return val != null && val.equals("1");
++    }
++
++    /**
+      * Check, whether the request contains minimal information required to
+      * produce a valid page. If this method returns an empty string, the
+      * referred file or directory actually exists below the source root
+@@ -676,6 +686,15 @@ public final class PageConfig {
+      * </ol>
+      */
+     public SortedSet<String> getRequestedProjects() {
++        if(isAllProjects()) {
++            List<Project> allProjects = getEnv().getProjects();
++            if(allProjects != null) {
++                requestedProjects = new TreeSet<String>();
++                for (Project p : allProjects) {
++                    requestedProjects.add(p.getDescription());
++                }
++            }
++        }
+         if (requestedProjects == null) {
+             requestedProjects =
+                     getRequestedProjects("project", "OpenGrokProject");
+diff --git a/web/default/style.css b/web/default/style.css
+index 1b31e18..e5ce3f1 100644
+--- a/web/default/style.css
++++ b/web/default/style.css
+@@ -51,6 +51,14 @@ input, button {
+ 	background-color: #a3b8cb;
+ }
+ 
++.js-link {
++    color: #1F4F82;
++}
++
++.js-link:hover {
++    text-decoration: underline;
++}
++
+ /* below seems to be a problem for input boxes, where the color will overwrite the text inside, let's leave it for buttons though
+ for search and clear buttons will make it part of submit class ONLY */
+ input.submit:hover, input.submit:active,
+diff --git a/web/menu.jspf b/web/menu.jspf
+index 96f933b..63ebd7f 100644
+--- a/web/menu.jspf
++++ b/web/menu.jspf
+@@ -140,11 +140,21 @@ org.opensolaris.opengrok.web.Util"
+     if (projects.size() != 0) {
+ %>
+ <div id="ptbl">
+-    <p><label for="project">In Project(s)</label> <button tabindex="6" type="button"
+-        onclick="javascript: selectAllProjects(); return false;"
+-        >select all</button>&nbsp;<button tabindex="7" type="button"
+-        onclick="javascript: invertAllProjects(); return false;"
+-        >invert selection</button> </p>
++    <p><label for="project">In Project(s)</label>
++     <input type="checkbox" id="allprojects" name="allprojects" value="1"
++     onclick="javascript: selectAllProjects(); return true;"
++     <%
++        String allProjectsParam = request.getParameter("allprojects");
++         if (allProjectsParam != null && allProjectsParam.equals("1")) {
++    %>checked="checked"<%
++         }
++     %>
++     ></input>
++     <label class="js-link" id="allprojects-label" for="allprojects" tabindex="6">
++         select all</label>
++    &nbsp;|&nbsp;<label
++        class="js-link" onclick="javascript: invertAllProjects(); return false;"
++        >invert selection</label> </p>
+     <select tabindex="8" ondblclick="javascript: goFirstProject();"
+         onkeyup="javascript: checkEnter(event);" class="q" id="project"
+         name="project" multiple="multiple" size="<%=
+diff --git a/web/projects.jspf b/web/projects.jspf
+index 330f916..f3f5132 100644
+--- a/web/projects.jspf
++++ b/web/projects.jspf
+@@ -39,7 +39,7 @@ org.opensolaris.opengrok.configuration.Project
+     cfg.getEnv().setUrlPrefix(request.getContextPath() + Prefix.SEARCH_R + "?");
+ 
+     String projects = cfg.getRequestedProjectsAsString();
+-    if (projects.length() != 0) {
++    if (projects.length() != 0 && !cfg.isAllProjects()) {
+         Cookie cookie = new Cookie("OpenGrokProject", projects);
+         response.addCookie(cookie);
+     }
+diff --git a/web/search.jsp b/web/search.jsp
+index 0958115..2b7df85 100644
+--- a/web/search.jsp
++++ b/web/search.jsp
+@@ -46,7 +46,10 @@ include file="projects.jspf"
+             Util.appendQuery(url, "path", qb.getPath());
+             Util.appendQuery(url, "hist", qb.getHist());
+         }
+-        if (sh.projects != null && sh.projects.size() != 0) {
++        if(cfg.isAllProjects()) {
++            Util.appendQuery(url, "allprojects", "1");
++        }
++        else if (sh.projects != null && sh.projects.size() != 0) {
+             Util.appendQuery(url, "project", cfg.getRequestedProjectsAsString());
+         }
+         return url;
+diff --git a/web/utils.js b/web/utils.js
+index f6e5d73..5be93be 100644
+--- a/web/utils.js
++++ b/web/utils.js
+@@ -29,10 +29,18 @@ window.onload = function() {
+     }
+ }
+ 
++$.urlParam = function(name){
++    var results = new RegExp('[\\?&]' + name + '=([^&#]*)').exec(window.location.href);
++    return results[1] || 0;
++}
++
+ $(document).ready(function() {
+     for(var i in this.domReady) {
+         document.domReady[i]();
+     }
++    if($.urlParam('allprojects')) {
++        selectAllProjects();
++    }
+ });
+ 
+ /**
+@@ -365,19 +373,29 @@ function togglediffs() {
+ }
+ 
+ function selectAllProjects() {
+-    $("#project *").attr("selected", "selected");
++    if($('#allprojects').is(':checked')) {
++        $("#project *").attr("selected", "selected");
++        $("#project").attr('disabled','disabled');
++        $("#allprojects-label").text('select none');
++    } else {
++        $("#project *").removeAttr("selected", "selected");
++        $("#project").removeAttr('disabled');
++        $("#allprojects-label").text('select all');
++    }
+ }
+ 
+ function invertAllProjects() {
+-    $("#project *").each(
+-        function() {
+-            if ($(this).attr("selected")) {
+-                $(this).removeAttr("selected")
+-            } else {
+-                $(this).attr("selected", "true");
++    if(!$('#allprojects').is(':checked')) {
++        $("#project *").each(
++            function() {
++                if ($(this).attr("selected")) {
++                    $(this).removeAttr("selected")
++                } else {
++                    $(this).attr("selected", "true");
++                }
+             }
+-        }
+-    );
++        );
++    }
+ }
+ 
+ function goFirstProject() {

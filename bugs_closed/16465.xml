@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>16465</bug_id>
+          
+          <creation_ts>2010-07-06 12:00:00 +0000</creation_ts>
+          <short_desc>SVN history of filenames containing @ cannot be retrieved</short_desc>
+          <delta_ts>2010-09-10 12:33:18 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>scm</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>Linux</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXED</resolution>
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>normal</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter>spam</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          <cc>knut.hatlen</cc>
+    
+    <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>75120</commentid>
+            <who name="">spam</who>
+            <bug_when>2010-07-06 12:00:34 +0000</bug_when>
+            <thetext>We have test data (files) whose names contain @, but opengrok is unable to obtain their history from a Subversion repository during indexing.
+
+Problem: Failed to get history for: &quot;/var/opengrok/src/ExchangeServerArchiver_1.1.1/Shared/DevelopmentTests/TestData/RtfInlineImage2K7-231e3f08-5af2-4ec4-b909-05a9a4b874b8@&quot; Exit code: 1 
+
+From the log&apos;s record of the spawned process, I think this is because svn ignores the @, stripping it from the filename.
+
+From the commandline, it looks like a double @ is needed:
+
+-- Filename has an @
+# ls -la &apos;Shared/DevelopmentTests/TestData/RtfInlineImage2K7-231e3f08-5af2-4ec4-b909-05a9a4b874b8@&apos;
+-rw-r--r-- 1 root root 649728 Jul  5 14:16 Shared/DevelopmentTests/TestData/RtfInlineImage2K7-231e3f08-5af2-4ec4-b909-05a9a4b874b8@
+-- SVN says no history exists
+# svn log --xml -v &apos;Shared/DevelopmentTests/TestData/RtfInlineImage2K7-231e3f08-5af2-4ec4-b909-05a9a4b874b8@&apos;
+&lt;?xml version=&quot;1.0&quot;?&gt;
+&lt;log&gt;
+svn: &apos;Shared/DevelopmentTests/TestData/RtfInlineImage2K7-231e3f08-5af2-4ec4-b909-05a9a4b874b8&apos; is not under version control
+-- SVN finds history when double @ is used
+# svn log --xml -v &apos;Shared/DevelopmentTests/TestData/RtfInlineImage2K7-231e3f08-5af2-4ec4-b909-05a9a4b874b8@@&apos;
+-- correct history snipped
+
+http://src.opensolaris.org/source/xref/opengrok/trunk/src/org/opensolaris/opengrok/history/SubversionRepository.java#141
+
+svn, version 1.6.12 (r955767)
+OpenGrok 0.9</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>75123</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2010-07-06 13:04:57 +0000</bug_when>
+            <thetext>I found this mail
+http://svn.haxx.se/users/archive-2009-11/0634.shtml
+which suggests that this can be fixed by adding an @ character at the end of the file name if such a character is used in the name.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>75125</commentid>
+              <attachid>4165</attachid>
+            <who name="">spam</who>
+            <bug_when>2010-07-06 14:38:58 +0000</bug_when>
+            <thetext>Created attachment 4165
+Fixes the issue for me on my test files
+
+I applied this patch and I can now view the history of the @ files.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>75183</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2010-07-07 21:38:40 +0000</bug_when>
+            <thetext>Thanks, I&apos;m glad to hear that it worked. Trond told me he&apos;s working on a regression test for this bug, so I expect a fix and a test case will be checked in very soon.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>77503</commentid>
+            <who name="Trond Norbye">trond.norbye</who>
+            <bug_when>2010-09-10 12:33:18 +0000</bug_when>
+            <thetext>Fixed in: changeset:   1102:2b1aa9e36952</thetext>
+          </long_desc>
+      
+          <attachment
+              isobsolete="0"
+              ispatch="1"
+              isprivate="0"
+              isurl="0"
+          >
+            <attachid>4165</attachid>
+            <date>2010-07-06 14:38:00 +0000</date>
+            <delta_ts>2010-07-06 14:38:58 +0000</delta_ts>
+            <desc>Fixes the issue for me on my test files</desc>
+            <filename>16465.txt</filename>
+            <type>text/plain</type>
+            <size>583</size>
+            <attacher>spam</attacher>
+            
+              <data encoding="base64">LS0tIG9wZW5ncm9rLTAuOS1zcmMvc3JjL29yZy9vcGVuc29sYXJpcy9vcGVuZ3Jvay9oaXN0b3J5
+L1N1YnZlcnNpb25SZXBvc2l0b3J5LmphdmEgICAgIDIwMTAtMDctMDYgMTQ6MTg6MTguMDAwMDAw
+MDAwICswMTAwDQorKysgb3JpZy9vcGVuZ3Jvay0wLjktc3JjL3NyYy9vcmcvb3BlbnNvbGFyaXMv
+b3Blbmdyb2svaGlzdG9yeS9TdWJ2ZXJzaW9uUmVwb3NpdG9yeS5qYXZhICAgICAgICAyMDEwLTA1
+LTExIDEwOjEyOjQzLjAwMDAwMDAwMCArMDEwMA0KQEAgLTE0NSwxMSArMTQ1LDYgQEANCiAgICAg
+ICAgICAgICBmaWxlbmFtZSA9IGFicy5zdWJzdHJpbmcoZGlyZWN0b3J5TmFtZS5sZW5ndGgoKSAr
+IDEpOw0KICAgICAgICAgfQ0KDQotICAgICAgIGlmKGZpbGVuYW1lLmNvbnRhaW5zKCJAIikpDQot
+ICAgICAgICB7DQotICAgICAgICAgICAgZmlsZW5hbWUgPSBmaWxlbmFtZSArICJAIjsNCi0gICAg
+ICAgIH0NCi0NCiAgICAgICAgIExpc3Q8U3RyaW5nPiBjbWQgPSBuZXcgQXJyYXlMaXN0PFN0cmlu
+Zz4oKTsNCiAgICAgICAgIGNtZC5hZGQoZ2V0Q29tbWFuZCgpKTsNCiAgICAgICAgIGNtZC5hZGQo
+ImxvZyIpOw0KDQoNCg==
+</data>
+
+          </attachment>
+      
+
+    </bug>
+
+</bugzilla>

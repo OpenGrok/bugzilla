@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>326</bug_id>
+          
+          <creation_ts>2007-12-19 10:24:00 +0000</creation_ts>
+          <short_desc>Unable to view old revisions</short_desc>
+          <delta_ts>2007-12-25 15:52:18 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>webapp</component>
+          <version>unspecified</version>
+          <rep_platform>Other</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>WORKSFORME</resolution>
+          
+          
+          
+          
+          
+          <priority>P1</priority>
+          <bug_severity>blocker</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Stephen Lau">stevel</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>906</commentid>
+            <who name="Stephen Lau">stevel</who>
+            <bug_when>2007-12-19 10:24:05 +0000</bug_when>
+            <thetext>I&apos;m unable to pull up any old historical revisions in our Subversion history.  This used to work until recently - more worringly, I don&apos;t see anything in our log files with any sort of exception or stack trace.  Example:
+
+http://dingo.songbirdnest.com:8080/source/xref/feathers/basic-layouts/content/xul/miniplayer.xul?r=7475
+
+All it shows is &quot;There was an error!&quot;
+:(</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>907</commentid>
+            <who name="Stephen Lau">stevel</who>
+            <bug_when>2007-12-19 10:31:19 +0000</bug_when>
+            <thetext>I had to modify error.jsp to get it to show the stacktrace, but here&apos;s what I&apos;m seeing:
+
+java.lang.NullPointerException at org.opensolaris.opengrok.history.SubversionGet.mark(SubversionGet.java:98) at org.opensolaris.opengrok.analysis.AnalyzerGuru.find(AnalyzerGuru.java:452) at org.apache.jsp.list_jsp._jspService(list_jsp.java:483) at org.apache.jasper.runtime.HttpJspBase.service(HttpJspBase.java:98) at javax.servlet.http.HttpServlet.service(HttpServlet.java:803) at org.apache.jasper.servlet.JspServletWrapper.service(JspServletWrapper.java:331) at org.apache.jasper.servlet.JspServlet.serviceJspFile(JspServlet.java:329) at org.apache.jasper.servlet.JspServlet.service(JspServlet.java:265) at javax.servlet.http.HttpServlet.service(HttpServlet.java:803) at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:269) at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:188) at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:213) at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:174) at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:127) at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:117) at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:108) at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:151) at org.apache.coyote.http11.Http11Processor.process(Http11Processor.java:874) at org.apache.coyote.http11.Http11BaseProtocol$Http11ConnectionHandler.processConnection(Http11BaseProtocol.java:665) at org.apache.tomcat.util.net.PoolTcpEndpoint.processSocket(PoolTcpEndpoint.java:528) at org.apache.tomcat.util.net.LeaderFollowerWorkerThread.runIt(LeaderFollowerWorkerThread.java:81) at org.apache.tomcat.util.threads.ThreadPool$ControlRunnable.run(ThreadPool.java:689) at java.lang.Thread.run(Thread.java:595)</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>910</commentid>
+            <who name="Stephen Lau">stevel</who>
+            <bug_when>2007-12-19 11:42:35 +0000</bug_when>
+            <thetext>Here&apos;s my hacky non-Java-knowledgable attempt to debug it.
+
+The failure is coming from list.jsp:138 which attempts to call AnalyzerGuru.find() from the InputStream returned at list.jsp:130 which is grabbed from:
+
+HistoryGuru.getInstance().getRevision(resourceFile.getParent(), basename, rev);
+
+This falls through to SubversionRepository&apos;s (which implements ExternalRepository) getHistoryGet() which does:
+
+    public InputStream getHistoryGet(String parent, String basename, String rev) {
+        return new SubversionGet(parent, basename, rev);
+    }
+
+which returns the SubversionGet class, whose constructor sets SubversionGet.input = null (uninitialised)
+
+So the &quot;in&quot; InputStream passed to AnalyzerGuru.find() is a valid SubversionGet, but uninitialised so input is null.  find() then tries to do the .mark() method which passes through to SubversionGet&apos;s input.mark(), which fails because input is null.
+
+Does that make sense?</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>917</commentid>
+            <who name="Trond Norbye">trond.norbye</who>
+            <bug_when>2007-12-21 08:23:11 +0000</bug_when>
+            <thetext>Your analysis makes sense :)
+
+The SubversionGet-implementation is currently not updated to handle the Subversion refactoring. The logic with when the local input member is initialized is unchanged, so I don&apos;t know when this bug was introduced.
+
+Anywhay. The SubversionRepository must provide the working directory to the SubversionGet, and this should be fixed as well. The current implementation delays the actual fetch of the data until the caller tries to read from the stream, but this could probably be dropped if it makes the imlementation easier.</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

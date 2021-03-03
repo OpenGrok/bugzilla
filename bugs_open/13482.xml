@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>13482</bug_id>
+          
+          <creation_ts>2009-12-18 09:58:00 +0000</creation_ts>
+          <short_desc>cannot find a function (even though same one just several lines below is found), ctags prob?</short_desc>
+          <delta_ts>2011-03-02 21:59:41 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>analyzer</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>NEW</bug_status>
+          
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>normal</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Lubos Kosco">Lubos.Kosco</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          <cc>marcel.telka</cc>
+    
+    <cc>mschaffn</cc>
+    
+    <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>60306</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2009-12-18 09:58:38 +0000</bug_when>
+            <thetext>I am on ctags 5.7 too
+wondering if 5.8 can handle this OR this is a problem while we are parsing ctags ...
+
+Knut Anders Hatlen &lt;Knut.Hatlen@Sun.COM&gt; writes:
+
+&gt; &gt; Lubos Kosco &lt;Lubos.Kosco@Sun.COM&gt; writes:
+&gt; &gt;
+&gt;&gt; &gt;&gt; Hey guys
+&gt;&gt; &gt;&gt;
+&gt;&gt; &gt;&gt; I&apos;ve seen odd failures in search of definitions with 0.8.1
+&gt;&gt; &gt;&gt;
+&gt;&gt; &gt;&gt; if you look here:
+&gt;&gt; &gt;&gt; http://grok.czech.sun.com:8080/source/search?q=lm_saveconfig&amp;project=onnv-clone
+&gt;&gt; &gt;&gt; and
+&gt;&gt; &gt;&gt; http://grok.czech.sun.com:8080/source/search?project=onnv-clone&amp;defs=lm_saveconfig
+&gt;&gt; &gt;&gt;
+&gt;&gt; &gt;&gt;
+&gt;&gt; &gt;&gt; lm_saveconfig not found, funny enough lm_getconfig (just one below,
+&gt;&gt; &gt;&gt; signature is almost the same) IS FOUND ... ctags problem ?
+&gt; &gt;
+&gt; &gt; Probably. The match in lm_subr.c, shown in the first link, does not have
+&gt; &gt; &quot;function&quot; in green letters after it, which it should have had. So
+&gt; &gt; either a ctags problem, or we&apos;re not parsing it correctly.
+&gt; &gt;
+&gt;&gt; &gt;&gt; if you have a copy of onnv-clone and 0.8.1 you should be able to
+&gt;&gt; &gt;&gt; reproduce above locally too ...
+&gt;&gt; &gt;&gt; note that above code is in closed part of the gate (
+&gt;&gt; &gt;&gt; http://onnv.sfbay.sun.com/README.html , bringover part)
+&gt;&gt; &gt;&gt;
+&gt;&gt; &gt;&gt; wondering if the issue is just local or not ...
+&gt; &gt;
+&gt; &gt; I&apos;ll see if I can reproduce it.
+
+Reproduced:
+http://khepri25.norway/source/search?q=lm_saveconfig&amp;project=onnv-gate
+http://khepri25.norway/source/search?q=&amp;project=onnv-gate&amp;defs=lm_saveconfig
+
+I&apos;m not on the most recent ctags (using the one in IPS, ver 5.7).</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>81555</commentid>
+            <who name="Michael Schaffner">mschaffn</who>
+            <bug_when>2011-03-02 21:59:41 +0000</bug_when>
+            <thetext>I also have a similar problem where the lines numbers are not always correct in the search results (hyperlink takes you to the wrong line in the source file) and I am using Exuberant CTAGS 5.8.
+
+I noticed that the source files in which this happens have 0x0C (formfeed? new page?) characters in them. Can CTAGS be told to ignore non-printable characters, besides newlines?</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

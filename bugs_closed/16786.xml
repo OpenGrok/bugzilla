@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>16786</bug_id>
+          
+          <creation_ts>2010-08-12 03:45:00 +0000</creation_ts>
+          <short_desc>Control for User Information Provider URL (userPage)</short_desc>
+          <delta_ts>2010-09-07 13:48:41 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>misc</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXINSOURCE</resolution>
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>minor</bug_severity>
+          <target_milestone>0.10</target_milestone>
+          <dependson>1058</dependson>
+    
+    <dependson>3546</dependson>
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Yuriy Vasylchenko">yuriy.av</reporter>
+          <assigned_to name="Lubos Kosco">Lubos.Kosco</assigned_to>
+          <cc>Lubos.Kosco</cc>
+    
+    <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>76508</commentid>
+            <who name="Yuriy Vasylchenko">yuriy.av</who>
+            <bug_when>2010-08-12 03:45:14 +0000</bug_when>
+            <thetext>Default userPage is pointing to opensolaris site, there is no CL parameter to control this configuration setting.
+In case URI needs to be assembled from three components (prefix+username+suffix) an additional parameter userPageSuffix is needed; this is my case (see example below, &quot;companyname&quot;, &quot;username&quot; are phoney ones, request parameter User.dn must be formed exactly like in the example)
+
+The change to fix the feature is tiny but affects multiple files. I attached udiff file.
+
+Example:
+http://people.intranet.companyname.com/eGuide/servlet/eGuide?Action=Detail.get&amp;Directory.uid=GDS&amp;Object.uid=USER&amp;User.dn=cn=username,ou=Users,o=companyname</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>76509</commentid>
+              <attachid>4255</attachid>
+            <who name="Yuriy Vasylchenko">yuriy.av</who>
+            <bug_when>2010-08-12 03:48:46 +0000</bug_when>
+            <thetext>Created attachment 4255
+Proposed patch
+
+Funny that. diff file was not attached first time.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>76518</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2010-08-12 06:10:47 +0000</bug_when>
+            <thetext>as per bug 327 one can do a read only config to change the default user page ... I know awkward &amp; I hope we will fix it properly one day ...
+
+I added some other bugs, notably the one about group matching and replace, where one could use its own regexp to configure the url to be whatever you can think of ;)
+
+I think we could accept this patch as temporary one until the regexp group matching is done ... hmm?</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>77364</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2010-09-07 13:48:41 +0000</bug_when>
+            <thetext>thanks for the patch
+
+changeset:   1100:aa3097c9e756
+
+
+if you want you can help with the bugs in depends on
+it would be cool if some of them would get implemented and they would make opengrok more configurable ...</thetext>
+          </long_desc>
+      
+          <attachment
+              isobsolete="0"
+              ispatch="1"
+              isprivate="0"
+              isurl="0"
+          >
+            <attachid>4255</attachid>
+            <date>2010-08-12 03:48:00 +0000</date>
+            <delta_ts>2010-08-12 03:48:46 +0000</delta_ts>
+            <desc>Proposed patch</desc>
+            <filename>userlink_ctl.diff</filename>
+            <type>text/plain</type>
+            <size>4383</size>
+            <attacher>yuriy.av</attacher>
+            
+              <data encoding="base64">LS0tIHNyYy5vcmkvb3JnL29wZW5zb2xhcmlzL29wZW5ncm9rL2NvbmZpZ3VyYXRpb24vQ29uZmln
+dXJhdGlvbi5qYXZhCTIwMTAtMDUtMTEgMDI6MTI6NDMuMDAwMDAwMDAwIC0wNzAwCisrKyBzcmMv
+b3JnL29wZW5zb2xhcmlzL29wZW5ncm9rL2NvbmZpZ3VyYXRpb24vQ29uZmlndXJhdGlvbi5qYXZh
+CTIwMTAtMDgtMTEgMTk6NTA6MjkuMzYxOTI4NTU1IC0wNzAwCkBAIC03NCw2ICs3NCw3IEBACiAg
+ICAgcHJpdmF0ZSBib29sZWFuIGFsbG93TGVhZGluZ1dpbGRjYXJkOwogICAgIHByaXZhdGUgSWdu
+b3JlZE5hbWVzIGlnbm9yZWROYW1lczsKICAgICBwcml2YXRlIFN0cmluZyB1c2VyUGFnZTsKKyAg
+ICBwcml2YXRlIFN0cmluZyB1c2VyUGFnZVN1ZmZpeDsKICAgICBwcml2YXRlIFN0cmluZyBidWdQ
+YWdlOwogICAgIHByaXZhdGUgU3RyaW5nIGJ1Z1BhdHRlcm47CiAgICAgcHJpdmF0ZSBTdHJpbmcg
+cmV2aWV3UGFnZTsKQEAgLTMyMyw2ICszMjQsMTQgQEAKICAgICAgICAgcmV0dXJuIHVzZXJQYWdl
+OwogICAgIH0KIAorICAgIHB1YmxpYyB2b2lkIHNldFVzZXJQYWdlU3VmZml4KFN0cmluZyB1c2Vy
+UGFnZVN1ZmZpeCkgeworICAgICAgICB0aGlzLnVzZXJQYWdlU3VmZml4ID0gdXNlclBhZ2VTdWZm
+aXg7CisgICAgfQorCisgICAgcHVibGljIFN0cmluZyBnZXRVc2VyUGFnZVN1ZmZpeCgpIHsKKyAg
+ICAgICAgcmV0dXJuIHVzZXJQYWdlU3VmZml4OworICAgIH0KKwogICAgIHB1YmxpYyB2b2lkIHNl
+dEJ1Z1BhZ2UoU3RyaW5nIGJ1Z1BhZ2UpIHsKICAgICAgICAgdGhpcy5idWdQYWdlID0gYnVnUGFn
+ZTsKICAgICB9Ci0tLSBzcmMub3JpL29yZy9vcGVuc29sYXJpcy9vcGVuZ3Jvay9jb25maWd1cmF0
+aW9uL1J1bnRpbWVFbnZpcm9ubWVudC5qYXZhCTIwMTAtMDUtMTEgMDI6MTI6NDMuMDAwMDAwMDAw
+IC0wNzAwCisrKyBzcmMvb3JnL29wZW5zb2xhcmlzL29wZW5ncm9rL2NvbmZpZ3VyYXRpb24vUnVu
+dGltZUVudmlyb25tZW50LmphdmEJMjAxMC0wOC0xMSAxOTo1Mzo1My40MDgzMTQwODAgLTA3MDAK
+QEAgLTQ3MSw2ICs0NzEsMjIgQEAKICAgICB9CiAKICAgICAvKioKKyAgICAgKiBSZXR1cm5zIHRo
+ZSB1c2VyIHBhZ2Ugc3VmZml4IGZvciB0aGUgaGlzdG9yeSBsaXN0aW5nCisgICAgICogQHJldHVy
+biB0aGUgVVJMIHN0cmluZyBmcmFnbWVudCBmb2xsb3dpbmcgdGhlIHVzZXJuYW1lCisgICAgICov
+CisgICAgcHVibGljIFN0cmluZyBnZXRVc2VyUGFnZVN1ZmZpeCgpIHsKKyAgICAgICAgcmV0dXJu
+IHRocmVhZENvbmZpZy5nZXQoKS5nZXRVc2VyUGFnZVN1ZmZpeCgpOworICAgIH0KKworICAgIC8q
+KgorICAgICAqIFNldHMgdGhlIHVzZXIgcGFnZSBzdWZmaXggZm9yIHRoZSBoaXN0b3J5IGxpc3Rp
+bmcKKyAgICAgKiBAcGFyYW0gdXNlclBhZ2VTdWZmaXggdGhlIFVSTCBmcmFnbWVudCBmb2xsb3dp
+bmcgdGhlIHVzZXJuYW1lIGZyb20gaGlzdG9yeQorICAgICAqLworICAgIHB1YmxpYyB2b2lkIHNl
+dFVzZXJQYWdlU3VmZml4KFN0cmluZyB1c2VyUGFnZVN1ZmZpeCkgeworICAgICAgICB0aHJlYWRD
+b25maWcuZ2V0KCkuc2V0VXNlclBhZ2VTdWZmaXgodXNlclBhZ2VTdWZmaXgpOworICAgIH0KKwor
+ICAgIC8qKgogICAgICAqIFJldHVybnMgdGhlIGJ1ZyBwYWdlIGZvciB0aGUgaGlzdG9yeSBsaXN0
+aW5nCiAgICAgICogQHJldHVybiB0aGUgVVJMIHN0cmluZyBmcmFnbWVudCBwcmVjZWVkaW5nIHRo
+ZSBidWcgSUQKICAgICAgKi8KLS0tIHNyYy5vcmkvb3JnL29wZW5zb2xhcmlzL29wZW5ncm9rL2lu
+ZGV4L0NvbW1hbmRMaW5lT3B0aW9ucy5qYXZhCTIwMTAtMDUtMTEgMDI6MTI6NDMuMDAwMDAwMDAw
+IC0wNzAwCisrKyBzcmMvb3JnL29wZW5zb2xhcmlzL29wZW5ncm9rL2luZGV4L0NvbW1hbmRMaW5l
+T3B0aW9ucy5qYXZhCTIwMTAtMDgtMTEgMTk6MTk6MDYuMjQwOTMwNTg1IC0wNzAwCkBAIC05OCw2
+ICs5OCw4IEBACiAgICAgICAgIG9wdGlvbnMuYWRkKG5ldyBPcHRpb24oJ3MnLCAiL3BhdGgvdG8v
+c291cmNlL3Jvb3QiLCAiVGhlIHJvb3QgZGlyZWN0b3J5IG9mIHRoZSBzb3VyY2UgdHJlZSIpKTsK
+ICAgICAgICAgb3B0aW9ucy5hZGQobmV3IE9wdGlvbignZCcsICIvcGF0aC90by9kYXRhL3Jvb3Qi
+LCAiVGhlIGRpcmVjdG9yeSB3aGVyZSBPcGVuR3JvayBzdG9yZXMgdGhlIGdlbmVyYXRlZCBkYXRh
+IikpOwogICAgICAgICBvcHRpb25zLmFkZChuZXcgT3B0aW9uKCdUJywgIm51bWJlciIsICJUaGUg
+bnVtYmVyIG9mIHRocmVhZHMgdG8gdXNlIGZvciBpbmRleCBnZW5lcmF0aW9uLiBCeSBkZWZhdWx0
+IHRoZSBudW1iZXIgb2YgdGhyZWFkcyB3aWxsIGJlIHNldCB0byB0aGUgbnVtYmVyIG9mIGF2YWls
+YWJsZSBDUFVzIikpOyAgICAgICAgCisgICAgICAgIG9wdGlvbnMuYWRkKG5ldyBPcHRpb24oJ0kn
+LCAidXJsIiwgIkJhc2UgVVJMIG9mIHRoZSB1c2VyIEluZm9ybWF0aW9uIHByb3ZpZGVyLiBEZWZh
+dWx0OiBcImh0dHA6Ly93d3cub3BlbnNvbGFyaXMub3JnL3ZpZXdQcm9maWxlLmpzcGE/dXNlcm5h
+bWU9XCIiKSk7CisgICAgICAgIG9wdGlvbnMuYWRkKG5ldyBPcHRpb24oJ1gnLCAidXJsOnN1ZmZp
+eCIsICJVUkwgU3VmZml4IGZvciB0aGUgdXNlciBJbmZvcm1hdGlvbiBwcm92aWRlci4gRGVmYXVs
+dDogXCJcIiIpKTsKICAgICAgICAgb3B0aW9ucy5hZGQobmV3IE9wdGlvbignPycsIG51bGwsICJI
+ZWxwIikpOwogICAgICAgICBvcHRpb25zLmFkZChuZXcgT3B0aW9uKCdWJywgbnVsbCwgIlByaW50
+IHZlcnNpb24gYW5kIHF1aXQiKSk7CiAgICAgfQotLS0gc3JjLm9yaS9vcmcvb3BlbnNvbGFyaXMv
+b3Blbmdyb2svaW5kZXgvSW5kZXhlci5qYXZhCTIwMTAtMDUtMTEgMDI6MTI6NDMuMDAwMDAwMDAw
+IC0wNzAwCisrKyBzcmMvb3JnL29wZW5zb2xhcmlzL29wZW5ncm9rL2luZGV4L0luZGV4ZXIuamF2
+YQkyMDEwLTA4LTExIDE5OjIwOjI2LjAyODQ5MzIxNyAtMDcwMApAQCAtMzQ4LDYgKzM0OCwxMiBA
+QAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBTeXN0ZW0uZXJyLnByaW50bG4oIiAg
+ICAgICAgICAgXCItbCBvZmZcIiB3aWxsIGRpc2FibGUgbG9ja3MgaW4gTHVjZW5lIik7CiAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgfQogICAgICAgICAgICAgICAgICAgICAgICAgICAgIGJy
+ZWFrOworICAgICAgICAgICAgICAgICAgICAgICAgY2FzZSAnSSc6CisgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgZW52LnNldFVzZXJQYWdlKGdldG9wdC5nZXRPcHRhcmcoKSk7CisgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgYnJlYWs7CisgICAgICAgICAgICAgICAgICAgICAgICBjYXNl
+ICdYJzoKKyAgICAgICAgICAgICAgICAgICAgICAgICAgICBlbnYuc2V0VXNlclBhZ2VTdWZmaXgo
+Z2V0b3B0LmdldE9wdGFyZygpKTsKKyAgICAgICAgICAgICAgICAgICAgICAgICAgICBicmVhazsK
+ICAgICAgICAgICAgICAgICAgICAgICAgIGNhc2UgJ1YnOgogICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgIFN5c3RlbS5vdXQucHJpbnRsbihJbmZvLmdldEZ1bGxWZXJzaW9uKCkpOwogICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgIFN5c3RlbS5leGl0KDApOwotLS0gc3JjLm9yaS9vcmcvb3Bl
+bnNvbGFyaXMvb3Blbmdyb2svd2ViL1V0aWwuamF2YQkyMDEwLTA1LTExIDAyOjEyOjQzLjAwMDAw
+MDAwMCAtMDcwMAorKysgc3JjL29yZy9vcGVuc29sYXJpcy9vcGVuZ3Jvay93ZWIvVXRpbC5qYXZh
+CTIwMTAtMDgtMTEgMTk6MTY6MDQuMTc2MjQ1MDE4IC0wNzAwCkBAIC0zOTAsMTAgKzM5MCwxNCBA
+QAogICAgICAgICAgICAgICAgIG91dC53cml0ZSgiICIpOwogICAgICAgICAgICAgfQogICAgICAg
+ICAgICAgU3RyaW5nIGxpbmsgPSBSdW50aW1lRW52aXJvbm1lbnQuZ2V0SW5zdGFuY2UoKS5nZXRV
+c2VyUGFnZSgpOworICAgICAgICAgICAgU3RyaW5nIHN1ZmZpeCA9IFJ1bnRpbWVFbnZpcm9ubWVu
+dC5nZXRJbnN0YW5jZSgpLmdldFVzZXJQYWdlU3VmZml4KCk7CiAgICAgICAgICAgICBpZiAobGlu
+ayAhPSBudWxsICYmIGxpbmsubGVuZ3RoKCkgPiAwKSB7CiAgICAgICAgICAgICAgICAgb3V0Lndy
+aXRlKGFuY2hvckxpbmtTdGFydCk7CiAgICAgICAgICAgICAgICAgb3V0LndyaXRlKGxpbmspOwog
+ICAgICAgICAgICAgICAgIG91dC53cml0ZShVUklFbmNvZGUoYSkpOworICAgICAgICAgICAgICAg
+IGlmIChzdWZmaXggIT0gbnVsbCAmJiAwIDwgc3VmZml4Lmxlbmd0aCgpKSB7CisgICAgICAgICAg
+ICAgICAgICAgIG91dC53cml0ZShzdWZmaXgpOworICAgICAgICAgICAgICAgIH0KICAgICAgICAg
+ICAgICAgICBvdXQud3JpdGUoY2xvc2VRdW90ZWRUYWcpOwogICAgICAgICAgICAgICAgIGh0bWxp
+emUoYSwgb3V0KTsKICAgICAgICAgICAgICAgICBvdXQud3JpdGUoYW5jaG9yRW5kKTsK
+</data>
+
+          </attachment>
+      
+
+    </bug>
+
+</bugzilla>

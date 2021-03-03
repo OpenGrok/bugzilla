@@ -1,0 +1,11 @@
+cd `dirname $0`
+RESULT=`$1/test.sh $$ "$3"`
+if [ "$2" == "count" ] ; then
+	if [ "$RESULT" == "NO RESULT" ] ; then
+		echo 0
+	else
+		echo "$RESULT"|wc -l
+	fi
+	exit 0
+fi
+echo "$RESULT"

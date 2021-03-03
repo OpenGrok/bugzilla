@@ -1,0 +1,8 @@
+<OpenSearchDescription xmlns="http://a9.com/-/spec/opensearch/1.1/" xmlns:ms="http://www.mozilla.org/2006/browser/search/">
+<ShortName>CLONE_NAME@MACHINE_HOSTNAME</ShortName>
+<Description>Fulltext search of CLONE_NAME mirror on MACHINE_HOSTNAME</Description>
+<InputEncoding>UTF-8</InputEncoding>
+<Image width="16" height="16">data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAAA9lBMVEVkaGllaWpmamtoa2xrb3BtcXJydndzdndUgqFVg6J3e3xXhKNYhaNZhqRbh6VciKVdiKZdiaZ9gIFfiqdgi6hhjKiAg4RjjamFiIlpkq1qkq1rk65slK5ula%2BPkZJ8n7d%2BoLiAormbnZ6ipKWOrMGUscSpq6uWs8Wbtsixs7OgucuhusuztbWiu8y0treowM%2B7vb2rwtGyx9W0yNa%2F0NzA0dzD097F1d%2FH1uDI1%2BHV1tfM2uPP3OTT3%2BfY4%2Brk5OTk5eXf6O7g6O7h6e7m7fHs7Ozr8PTy8%2FPw9Pfy9fjz9vj29vb09%2Fn3%2Bfv4%2Bvv8%2Ff7%2B%2Fv7%2F%2F%2F9XPDRKAAAAAWJLR0QAiAUdSAAAAAlwSFlzAAALEwAACxMBAJqcGAAAAAd0SU1FB9ULChUaJACJidgAAACnSURBVHjaXc%2FXEoJADAVQ7KsodrH33nsFCzZUVO7%2F%2F4wLDDqYp8zJJHuXwV8xwNnH7GmnHE6qAS3HA3jWWEJSgg51Nx1UA1NZTHMnEyRvm%2BqS9HTwAGMiaGf8BQ3KSaBJJArveJZC3rUGGjqofI5C1zkEOkSk8OJK2kolAszIiMKWDMxXblH%2BCKUYvnxzrEJsJhjb%2FIJBnk8WdyN63379%2B1zCtrOAtT6Duz6G2x6SvwAAAABJRU5ErkJggg%3D%3D</Image>
+<ms:SearchForm>MACHINE_TOMCAT_URL/source/search?project=%2FCLONE_NAME</ms:SearchForm>
+<Url type="text/html" method="GET" template="MACHINE_TOMCAT_URL/source/search?q={searchTerms}&amp;defs=&amp;refs=&amp;path=&amp;hist=&amp;project=%2FCLONE_NAME"/>
+</OpenSearchDescription>

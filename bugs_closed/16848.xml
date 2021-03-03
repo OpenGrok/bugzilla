@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>16848</bug_id>
+          
+          <creation_ts>2010-08-19 16:15:00 +0000</creation_ts>
+          <short_desc>Search context is displayed in lower case</short_desc>
+          <delta_ts>2010-08-20 12:26:50 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>webapp</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXED</resolution>
+          
+          
+          
+          
+          
+          <priority>P2</priority>
+          <bug_severity>normal</bug_severity>
+          <target_milestone>0.10</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Knut Anders Hatlen">knut.hatlen</reporter>
+          <assigned_to name="Knut Anders Hatlen">knut.hatlen</assigned_to>
+          <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>76703</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2010-08-19 16:15:10 +0000</bug_when>
+            <thetext>After the fix for bug #15938, search results are displayed in lower case.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>76704</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2010-08-19 16:19:21 +0000</bug_when>
+            <thetext>Caused by this rule in PlainLineTokenizer.lex:
+
+{Identifier}|{Number}|{Printable}    {
+    String text = yytext().toLowerCase(Locale.getDefault());
+    markedContents.append(text);
+    return text;
+}
+
+We should not append the lower-cased text to markedContents, but rather use the original text. So change it to:
+
+{Identifier}|{Number}|{Printable}    {
+    String text = yytext();
+    markedContents.append(text);
+    return text.toLowerCase(Locale.getDefault());
+}</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>76801</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2010-08-20 12:26:50 +0000</bug_when>
+            <thetext>changeset:   1082:b17e4d0a037c</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

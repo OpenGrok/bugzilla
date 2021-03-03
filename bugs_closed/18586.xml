@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>18586</bug_id>
+          
+          <creation_ts>2011-06-20 12:12:00 +0000</creation_ts>
+          <short_desc>ArrayIndexOutOfBoundsException when indexing SQL file</short_desc>
+          <delta_ts>2011-06-28 08:13:22 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>analyzer</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXED</resolution>
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>minor</bug_severity>
+          <target_milestone>0.11</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Knut Anders Hatlen">knut.hatlen</reporter>
+          <assigned_to name="Knut Anders Hatlen">knut.hatlen</assigned_to>
+          <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>83746</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2011-06-20 12:12:47 +0000</bug_when>
+            <thetext>Indexing an SQL file with the following contents:
+
+---
+create table abcdef(
+  x int,
+  y int);
+
+insert into abcdef values (1,2), (3,4);
+---
+
+will result in this exception:
+
+13:54:07 WARNING: Failed to add file /devel/opengrokbug/src/misc/test.sql
+java.lang.ArrayIndexOutOfBoundsException: 2
+	at org.opensolaris.opengrok.analysis.JFlexXref.writeSymbolTable(JFlexXref.java:212)
+	at org.opensolaris.opengrok.analysis.JFlexXref.write(JFlexXref.java:172)
+	at org.opensolaris.opengrok.analysis.sql.SQLAnalyzer.writeXref(SQLAnalyzer.java:51)
+	at org.opensolaris.opengrok.analysis.FileAnalyzer.writeXref(FileAnalyzer.java:176)
+	at org.opensolaris.opengrok.index.IndexDatabase.addFile(IndexDatabase.java:604)
+	at org.opensolaris.opengrok.index.IndexDatabase.indexDown(IndexDatabase.java:813)
+	at org.opensolaris.opengrok.index.IndexDatabase.update(IndexDatabase.java:353)
+	at org.opensolaris.opengrok.index.IndexDatabase$1.run(IndexDatabase.java:157)
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:441)
+	at java.util.concurrent.FutureTask$Sync.innerRun(FutureTask.java:303)
+	at java.util.concurrent.FutureTask.run(FutureTask.java:138)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
+	at java.lang.Thread.run(Thread.java:662)</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>83941</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2011-06-28 08:13:22 +0000</bug_when>
+            <thetext>Fixed in changeset:   1259:e3e40aa09c40</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

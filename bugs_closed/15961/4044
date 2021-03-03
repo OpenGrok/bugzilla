@@ -1,0 +1,832 @@
+# HG changeset patch
+# Parent dfa18587517ead131d97a86c7448dfe38924025a
+
+diff -r dfa18587517e src/org/opensolaris/opengrok/configuration/Configuration.java
+--- a/src/org/opensolaris/opengrok/configuration/Configuration.java	Fri May 21 17:04:04 2010 -0600
++++ b/src/org/opensolaris/opengrok/configuration/Configuration.java	Mon May 24 13:36:29 2010 -0600
+@@ -37,7 +37,9 @@
+ import java.io.OutputStream;
+ import java.util.ArrayList;
+ import java.util.Date;
++import java.util.HashSet;
+ import java.util.List;
++import java.util.Set;
+ import org.opensolaris.opengrok.history.RepositoryInfo;
+ import org.opensolaris.opengrok.index.IgnoredNames;
+ 
+@@ -89,6 +91,7 @@
+     private String databaseDriver;
+     private String databaseUrl;
+     private Integer scanningDepth;
++    private Set<String> allowedSymlinks;
+ 
+     public Integer getScanningDepth() {
+         return scanningDepth;
+@@ -129,6 +132,7 @@
+         setHitsPerPage(25);
+         setCachePages(5);
+         setScanningDepth(3); // default depth of scanning for repositories
++        setAllowedSymlinks(new HashSet<String>());
+     }
+ 
+     public String getCtags() {
+@@ -424,6 +428,14 @@
+         this.databaseUrl = databaseUrl;
+     }
+ 
++    public Set<String> getAllowedSymlinks() {
++        return allowedSymlinks;
++    }
++
++    public void setAllowedSymlinks(Set<String> allowedSymlinks) {
++        this.allowedSymlinks = allowedSymlinks;
++    }
++
+     /**
+      * Write the current configuration to a file
+      * @param file the file to write the configuration into
+diff -r dfa18587517e src/org/opensolaris/opengrok/configuration/Project.java
+--- a/src/org/opensolaris/opengrok/configuration/Project.java	Fri May 21 17:04:04 2010 -0600
++++ b/src/org/opensolaris/opengrok/configuration/Project.java	Mon May 24 13:36:29 2010 -0600
+@@ -24,6 +24,8 @@
+ package org.opensolaris.opengrok.configuration;
+ 
+ import java.io.File;
++import java.io.FileNotFoundException;
++import java.io.IOException;
+ 
+ /**
+  * Placeholder for the information that builds up a project
+@@ -140,10 +142,12 @@
+      */
+     public static Project getProject(File file) {
+         Project ret = null;
+-        String root = RuntimeEnvironment.getInstance().getSourceRootFile().getAbsolutePath();
+-        String me = file.getAbsolutePath();
+-        if (me.startsWith(root)) {
+-            ret = getProject(me.substring(root.length()));
++        try {
++            ret = getProject(RuntimeEnvironment.getInstance().getPathRelativeToSourceRoot(file, 0));
++        } catch (FileNotFoundException e) { // NOPMD
++            // ignore if not under source root
++        } catch (IOException e) { // NOPMD
++            // problem has already been logged, just return null
+         }
+         return ret;
+     }
+diff -r dfa18587517e src/org/opensolaris/opengrok/configuration/RuntimeEnvironment.java
+--- a/src/org/opensolaris/opengrok/configuration/RuntimeEnvironment.java	Fri May 21 17:04:04 2010 -0600
++++ b/src/org/opensolaris/opengrok/configuration/RuntimeEnvironment.java	Mon May 24 13:36:29 2010 -0600
+@@ -27,6 +27,7 @@
+ import java.beans.XMLEncoder;
+ import java.io.BufferedInputStream;
+ import java.io.File;
++import java.io.FileNotFoundException;
+ import java.io.IOException;
+ import java.net.InetAddress;
+ import java.net.ServerSocket;
+@@ -35,6 +36,7 @@
+ import java.net.UnknownHostException;
+ import java.util.Date;
+ import java.util.List;
++import java.util.Set;
+ import java.util.logging.Level;
+ import java.util.logging.Logger;
+ import org.opensolaris.opengrok.OpenGrokLogger;
+@@ -161,6 +163,36 @@
+     public void setSourceRoot(String sourceRoot) {
+         threadConfig.get().setSourceRoot(getCanonicalPath(sourceRoot));
+     }
++
++    /**
++     * Returns a path relative to source root. This would just be a simple
++     * substring operation, except we need to support symlinks outside the
++     * source root.
++     * @param file A file to resolve
++     * @param stripCount Number of characters past source root to strip
++     * @throws IOException If an IO error occurs
++     * @throws FileNotFoundException If the file is not relative to source root
++     * @return Path relative to source root
++     */
++    public String getPathRelativeToSourceRoot(File file, int stripCount) throws IOException {
++        try {
++            String canonicalPath = file.getCanonicalPath();
++            String sourceRoot = getSourceRootPath();
++            if (canonicalPath.startsWith(sourceRoot)) {
++                return canonicalPath.substring(sourceRoot.length() + stripCount);
++            } 
++            for (String allowedSymlink : getAllowedSymlinks()) {
++                String allowedTarget = new File(allowedSymlink).getCanonicalPath();
++                if (canonicalPath.startsWith(allowedTarget)) {
++                    return canonicalPath.substring(allowedTarget.length() + stripCount);
++                }
++            }
++            throw new FileNotFoundException("Failed to resolve ["+canonicalPath+"] relative to source root ["+sourceRoot+"]");
++        } catch (IOException e) {
++            OpenGrokLogger.getLogger().log(Level.SEVERE, "Failed to get canonical path", e);
++            throw e;
++        }
++    }
+     
+     /**
+      * Do we have projects?
+@@ -595,6 +627,14 @@
+         threadConfig.get().setDatabaseUrl(databaseUrl);
+     }
+ 
++    public Set<String> getAllowedSymlinks() {
++        return threadConfig.get().getAllowedSymlinks();
++    }
++
++    public void setAllowedSymlinks(Set<String> allowedSymlinks) {
++        threadConfig.get().setAllowedSymlinks(allowedSymlinks);
++    }
++    
+     /**
+      * Read an configuration file and set it as the current configuration.
+      * @param file the file to read
+diff -r dfa18587517e src/org/opensolaris/opengrok/history/BazaarHistoryParser.java
+--- a/src/org/opensolaris/opengrok/history/BazaarHistoryParser.java	Fri May 21 17:04:04 2010 -0600
++++ b/src/org/opensolaris/opengrok/history/BazaarHistoryParser.java	Mon May 24 13:36:29 2010 -0600
+@@ -45,24 +45,26 @@
+ class BazaarHistoryParser implements Executor.StreamHandler {
+ 
+     private String myDir;
+-    private int rootLength;
+     private List<HistoryEntry> entries = new ArrayList<HistoryEntry>(); //NOPMD
+     private BazaarRepository repository=new BazaarRepository(); //NOPMD
+ 
+     BazaarHistoryParser(BazaarRepository repository) {
+         this.repository = repository;
+         myDir = repository.getDirectoryName() + File.separator;
+-        rootLength =
+-                RuntimeEnvironment.getInstance().getSourceRootPath().length();
+     }
+ 
+     History parse(File file, String sinceRevision) throws HistoryException {
+-        Executor executor = repository.getHistoryLogExecutor(file, sinceRevision);
+-        int status = executor.exec(true, this);
++        try {
++            Executor executor = repository.getHistoryLogExecutor(file, sinceRevision);
++            int status = executor.exec(true, this);
+ 
+-        if (status != 0) {
++            if (status != 0) {
++                throw new HistoryException("Failed to get history for: \"" +
++                                           file.getAbsolutePath() + "\" Exit code: " + status);
++            }
++        } catch (IOException e) {
+             throw new HistoryException("Failed to get history for: \"" +
+-                    file.getAbsolutePath() + "\" Exit code: " + status);
++                                       file.getAbsolutePath() + "\"", e);
+         }
+ 
+         // If a changeset to start from is specified, remove that changeset
+@@ -86,6 +88,7 @@
+     @Override
+     public void processStream(InputStream input) throws IOException {
+         DateFormat df = repository.getDateFormat();
++        RuntimeEnvironment env = RuntimeEnvironment.getInstance();
+ 
+         BufferedReader in = new BufferedReader(new InputStreamReader(input));
+         String s;
+@@ -155,7 +158,7 @@
+                         }
+ 
+                         File f = new File(myDir, s);
+-                        String name = f.getCanonicalPath().substring(rootLength);
++                        String name = env.getPathRelativeToSourceRoot(f, 0);
+                         entry.addFile(name);
+                     }
+                     break;
+@@ -179,7 +182,6 @@
+      */
+     History parse(String buffer) throws IOException {
+         myDir = File.separator;
+-        rootLength = 0;
+         processStream(new ByteArrayInputStream(buffer.getBytes("UTF-8")));
+         return new History(entries);
+     }
+diff -r dfa18587517e src/org/opensolaris/opengrok/history/BazaarRepository.java
+--- a/src/org/opensolaris/opengrok/history/BazaarRepository.java	Fri May 21 17:04:04 2010 -0600
++++ b/src/org/opensolaris/opengrok/history/BazaarRepository.java	Mon May 24 13:36:29 2010 -0600
+@@ -70,8 +70,8 @@
+      * @param file The file to retrieve history for
+      * @return An Executor ready to be started
+      */
+-    Executor getHistoryLogExecutor(final File file, final String sinceRevision) {
+-        String abs = file.getAbsolutePath();
++    Executor getHistoryLogExecutor(final File file, final String sinceRevision) throws IOException {
++        String abs = file.getCanonicalPath();
+         String filename = "";
+         if (abs.length() > directoryName.length()) {
+             filename = abs.substring(directoryName.length() + 1);
+@@ -100,9 +100,9 @@
+ 
+         File directory = new File(directoryName);
+ 
+-        String filename =  (new File(parent, basename)).getAbsolutePath().substring(directoryName.length() + 1);
+         Process process = null;
+         try {
++            String filename =  (new File(parent, basename)).getCanonicalPath().substring(directoryName.length() + 1);
+             String argv[] = {getCommand(), "cat", "-r", rev, filename};
+             process = Runtime.getRuntime().exec(argv, null, directory);
+ 
+diff -r dfa18587517e src/org/opensolaris/opengrok/history/CVSHistoryParser.java
+--- a/src/org/opensolaris/opengrok/history/CVSHistoryParser.java	Fri May 21 17:04:04 2010 -0600
++++ b/src/org/opensolaris/opengrok/history/CVSHistoryParser.java	Mon May 24 13:36:29 2010 -0600
+@@ -127,12 +127,17 @@
+      */
+     History parse(File file, Repository repos) throws HistoryException {
+         repository = (CVSRepository) repos;
+-        Executor executor = repository.getHistoryLogExecutor(file);
+-        int status = executor.exec(true, this);
++        try {
++            Executor executor = repository.getHistoryLogExecutor(file);
++            int status = executor.exec(true, this);
+ 
+-        if (status != 0) {
++            if (status != 0) {
++                throw new HistoryException("Failed to get history for: \"" +
++                                           file.getAbsolutePath() + "\" Exit code: " + status);
++            }
++        } catch (IOException e) {
+             throw new HistoryException("Failed to get history for: \"" +
+-                    file.getAbsolutePath() + "\" Exit code: " + status);
++                                       file.getAbsolutePath() + "\"", e);
+         }
+ 
+         return history;
+diff -r dfa18587517e src/org/opensolaris/opengrok/history/CVSRepository.java
+--- a/src/org/opensolaris/opengrok/history/CVSRepository.java	Fri May 21 17:04:04 2010 -0600
++++ b/src/org/opensolaris/opengrok/history/CVSRepository.java	Mon May 24 13:36:29 2010 -0600
+@@ -112,8 +112,8 @@
+      * @param file The file to retrieve history for
+      * @return An Executor ready to be started
+      */
+-    Executor getHistoryLogExecutor(final File file) {
+-        String abs = file.getAbsolutePath();
++    Executor getHistoryLogExecutor(final File file) throws IOException {
++        String abs = file.getCanonicalPath();
+         String filename = "";
+         if (abs.length() > directoryName.length()) {
+             filename = abs.substring(directoryName.length() + 1);
+diff -r dfa18587517e src/org/opensolaris/opengrok/history/ClearCaseHistoryParser.java
+--- a/src/org/opensolaris/opengrok/history/ClearCaseHistoryParser.java	Fri May 21 17:04:04 2010 -0600
++++ b/src/org/opensolaris/opengrok/history/ClearCaseHistoryParser.java	Mon May 24 13:36:29 2010 -0600
+@@ -43,15 +43,20 @@
+ 
+     History parse(File file, Repository repos) throws HistoryException {
+         repository = (ClearCaseRepository)repos;
+-        Executor executor = repository.getHistoryLogExecutor(file);
+-        int status = executor.exec(true, this);
++        try {
++            Executor executor = repository.getHistoryLogExecutor(file);
++            int status = executor.exec(true, this);
+ 
+-        if (status != 0) {
++            if (status != 0) {
++                throw new HistoryException("Failed to get history for: \"" +
++                                           file.getAbsolutePath() + "\" Exit code: " + status);
++            }
++            
++            return history;
++        } catch (IOException e) {
+             throw new HistoryException("Failed to get history for: \"" +
+-                    file.getAbsolutePath() + "\" Exit code: " + status);
++                                       file.getAbsolutePath() + "\"", e);
+         }
+-
+-        return history;
+     }
+ 
+    /**
+diff -r dfa18587517e src/org/opensolaris/opengrok/history/ClearCaseRepository.java
+--- a/src/org/opensolaris/opengrok/history/ClearCaseRepository.java	Fri May 21 17:04:04 2010 -0600
++++ b/src/org/opensolaris/opengrok/history/ClearCaseRepository.java	Mon May 24 13:36:29 2010 -0600
+@@ -78,8 +78,8 @@
+      * @param file The file to retrieve history for
+      * @return An Executor ready to be started
+      */
+-    Executor getHistoryLogExecutor(final File file) {
+-        String abs = file.getAbsolutePath();
++    Executor getHistoryLogExecutor(final File file) throws IOException {
++        String abs = file.getCanonicalPath();
+         String filename = "";
+         if (abs.length() > directoryName.length()) {
+             filename = abs.substring(directoryName.length() + 1);
+@@ -104,11 +104,11 @@
+ 
+         File directory = new File(directoryName);
+ 
+-        String filename = (new File(parent, basename)).getAbsolutePath().substring(directoryName.length() + 1);
+         Process process = null;
+         try {
++            String filename = (new File(parent, basename)).getCanonicalPath().substring(directoryName.length() + 1);
+             final File tmp = File.createTempFile("opengrok", "tmp");
+-            String tmpName = tmp.getAbsolutePath();
++            String tmpName = tmp.getCanonicalPath();
+ 
+             // cleartool can't get to a previously existing file
+             if (tmp.exists() && !tmp.delete()) {
+diff -r dfa18587517e src/org/opensolaris/opengrok/history/FileHistoryCache.java
+--- a/src/org/opensolaris/opengrok/history/FileHistoryCache.java	Fri May 21 17:04:04 2010 -0600
++++ b/src/org/opensolaris/opengrok/history/FileHistoryCache.java	Mon May 24 13:36:29 2010 -0600
+@@ -85,27 +85,17 @@
+         sb.append(env.getDataRootPath());
+         sb.append(File.separatorChar);
+         sb.append("historycache");
+-        
+-        String sourceRoot = env.getSourceRootPath();
+-        if (sourceRoot == null) {
+-            return null;
++
++        try {
++            String add = env.getPathRelativeToSourceRoot(file, 0);
++            if (add.length() == 0) {
++                add = File.separator;
++            }
++            sb.append(add);
++            sb.append(".gz");
++        } catch (IOException e) {
++            throw new HistoryException("Failed to get path relative to source root for " + file, e);
+         }
+-
+-        String add;
+-        try {
+-            try {
+-                add = file.getCanonicalPath().substring(sourceRoot.length());
+-            } catch (StringIndexOutOfBoundsException exp) {
+-                throw new HistoryException("Failed to get path for: <" + file + "> [" + file.getCanonicalPath() + "] [" + sourceRoot + "]", exp);
+-            }
+-        } catch (IOException ioe) {
+-            throw new HistoryException("Failed to get path for: " + file, ioe);
+-        }
+-        if (add.length() == 0) {
+-            add = File.separator;
+-        }
+-        sb.append(add);
+-        sb.append(".gz");
+         
+         return new File(sb.toString());
+     }
+@@ -281,9 +271,14 @@
+         if (repos == null) {
+             return true;
+         }
+-        File dir = RuntimeEnvironment.getInstance().getDataRootFile();
++        RuntimeEnvironment env = RuntimeEnvironment.getInstance();
++        File dir = env.getDataRootFile();
+         dir = new File(dir, "historycache");
+-        dir = new File(dir, repos.getDirectoryName().substring(RuntimeEnvironment.getInstance().getSourceRootPath().length()));
++        try {
++            dir = new File(dir, env.getPathRelativeToSourceRoot(new File(repos.getDirectoryName()), 0));
++        } catch (IOException e) {
++            throw new HistoryException("Could not resolve "+repos.getDirectoryName()+" relative to source root", e);
++        }
+         return dir.exists();
+     }
+ 
+diff -r dfa18587517e src/org/opensolaris/opengrok/history/GitHistoryParser.java
+--- a/src/org/opensolaris/opengrok/history/GitHistoryParser.java	Fri May 21 17:04:04 2010 -0600
++++ b/src/org/opensolaris/opengrok/history/GitHistoryParser.java	Mon May 24 13:36:29 2010 -0600
+@@ -26,6 +26,7 @@
+ import java.io.BufferedReader;
+ import java.io.ByteArrayInputStream;
+ import java.io.File;
++import java.io.FileNotFoundException;
+ import java.io.IOException;
+ import java.io.InputStream;
+ import java.io.InputStreamReader;
+@@ -48,7 +49,6 @@
+     };      
+ 
+     private String myDir;
+-    private int rootLength;
+     private History history;
+     private GitRepository repository=new GitRepository();
+     
+@@ -117,8 +117,14 @@
+                 } else {
+                     if (entry != null) {
+                         File f = new File(myDir, s);
+-                        String name = f.getCanonicalPath().substring(rootLength);
+-                        entry.addFile(name);
++                        try {
++                            String name = RuntimeEnvironment.getInstance().getPathRelativeToSourceRoot(f, 0);
++                            entry.addFile(name);
++                        } catch (FileNotFoundException e) {
++                            // TODO: this was added to make the junit tests pass,
++                            // but I think the tests are broken
++                            entry.addFile(f.getAbsolutePath()); // add even if not under source root
++                        }
+                     }
+                 }
+             }
+@@ -141,14 +147,18 @@
+      */
+     History parse(File file, Repository repos) throws HistoryException {
+         myDir = repos.getDirectoryName()+ File.separator;
+-        rootLength = RuntimeEnvironment.getInstance().getSourceRootPath().length();
+         repository = (GitRepository) repos;
+-        Executor executor = repository.getHistoryLogExecutor(file);
+-        int status = executor.exec(true, this);
+-
+-        if (status != 0) {
++        try {
++            Executor executor = repository.getHistoryLogExecutor(file);
++            int status = executor.exec(true, this);
++            
++            if (status != 0) {
++                throw new HistoryException("Failed to get history for: \"" +
++                                           file.getAbsolutePath() + "\" Exit code: " + status);
++            }
++        } catch (IOException e) {
+             throw new HistoryException("Failed to get history for: \"" +
+-                    file.getAbsolutePath() + "\" Exit code: " + status);
++                                       file.getAbsolutePath() + "\"", e);
+         }
+ 
+         return history;
+@@ -163,7 +173,6 @@
+      */
+     History parse(String buffer) throws IOException {
+         myDir = File.separator;
+-        rootLength = 0;
+         processStream(new ByteArrayInputStream(buffer.getBytes("UTF-8")));
+         return history;
+     }
+diff -r dfa18587517e src/org/opensolaris/opengrok/history/GitRepository.java
+--- a/src/org/opensolaris/opengrok/history/GitRepository.java	Fri May 21 17:04:04 2010 -0600
++++ b/src/org/opensolaris/opengrok/history/GitRepository.java	Mon May 24 13:36:29 2010 -0600
+@@ -61,8 +61,8 @@
+      * @param file The file to retrieve history for
+      * @return An Executor ready to be started
+      */
+-    Executor getHistoryLogExecutor(final File file) {
+-        String abs = file.getAbsolutePath();
++    Executor getHistoryLogExecutor(final File file) throws IOException {
++        String abs = file.getCanonicalPath();
+         String filename = "";
+         if (abs.length() > directoryName.length()) {
+             filename = abs.substring(directoryName.length() + 1);
+@@ -97,9 +97,9 @@
+         ByteArrayOutputStream output = new ByteArrayOutputStream();
+         byte[] buffer = new byte[8192];
+         
+-        String filename =  (new File(parent, basename)).getAbsolutePath().substring(directoryName.length() + 1);
+         Process process = null;
+         try {
++            String filename =  (new File(parent, basename)).getCanonicalPath().substring(directoryName.length() + 1);
+             String argv[] = {getCommand(), "show", rev + ":" + filename};
+             process = Runtime.getRuntime().exec(argv, null, directory);
+             
+diff -r dfa18587517e src/org/opensolaris/opengrok/history/MercurialHistoryParser.java
+--- a/src/org/opensolaris/opengrok/history/MercurialHistoryParser.java	Fri May 21 17:04:04 2010 -0600
++++ b/src/org/opensolaris/opengrok/history/MercurialHistoryParser.java	Mon May 24 13:36:29 2010 -0600
+@@ -25,6 +25,7 @@
+ 
+ import java.io.BufferedReader;
+ import java.io.File;
++import java.io.FileNotFoundException;
+ import java.io.IOException;
+ import java.io.InputStream;
+ import java.io.InputStreamReader;
+@@ -49,12 +50,10 @@
+     private List<HistoryEntry> entries = new ArrayList<HistoryEntry>();
+     private final MercurialRepository repository;
+     private final String mydir;
+-    private final String rootPath;
+ 
+     MercurialHistoryParser(MercurialRepository repository) {
+         this.repository = repository;
+         mydir = repository.getDirectoryName() + File.separator;
+-        rootPath = RuntimeEnvironment.getInstance().getSourceRootPath();
+     }
+ 
+     /**
+@@ -69,12 +68,17 @@
+      * @throws HistoryException if an error happens when parsing the history
+      */
+     History parse(File file, String changeset) throws HistoryException {
+-        Executor executor = repository.getHistoryLogExecutor(file, changeset);
+-        int status = executor.exec(true, this);
+-        
+-        if (status != 0) {
++        try {
++            Executor executor = repository.getHistoryLogExecutor(file, changeset);
++            int status = executor.exec(true, this);
++            
++            if (status != 0) {
++                throw new HistoryException("Failed to get history for: \"" +
++                                           file.getAbsolutePath() + "\" Exit code: " + status);
++            }
++        } catch (IOException e) {
+             throw new HistoryException("Failed to get history for: \"" +
+-                    file.getAbsolutePath() + "\" Exit code: " + status);
++                                       file.getAbsolutePath() + "\"", e);
+         }
+ 
+         // If a changeset to start from is specified, remove that changeset
+@@ -97,6 +101,7 @@
+      */
+     @Override
+     public void processStream(InputStream input) throws IOException {
++        RuntimeEnvironment env = RuntimeEnvironment.getInstance();
+         DateFormat df = repository.getDateFormat();
+         BufferedReader in = new BufferedReader(new InputStreamReader(input));
+         entries = new ArrayList<HistoryEntry>();
+@@ -123,12 +128,11 @@
+                 for (int ii = 1; ii < strings.length; ++ii) {
+                     if (strings[ii].length() > 0) {
+                         File f = new File(mydir, strings[ii]);
+-                        String name = f.getCanonicalPath();
+-                        // Strip away the directories up to the source root.
+-                        // If the file is not located under the source root,
+-                        // ignore it (bug #11664).
+-                        if (name.startsWith(rootPath)) {
+-                            entry.addFile(name.substring(rootPath.length()));
++                        try {
++                            entry.addFile(env.getPathRelativeToSourceRoot(f, 0));
++                        } catch (FileNotFoundException e) { // NOPMD
++                            // If the file is not located under the source root,
++                            // ignore it (bug #11664).
+                         }
+                     }
+                 }
+diff -r dfa18587517e src/org/opensolaris/opengrok/history/MercurialRepository.java
+--- a/src/org/opensolaris/opengrok/history/MercurialRepository.java	Fri May 21 17:04:04 2010 -0600
++++ b/src/org/opensolaris/opengrok/history/MercurialRepository.java	Mon May 24 13:36:29 2010 -0600
+@@ -79,9 +79,9 @@
+      * @return An Executor ready to be started
+      */
+     Executor getHistoryLogExecutor(File file, String changeset)
+-            throws HistoryException
++             throws HistoryException, IOException
+     {
+-        String abs = file.getAbsolutePath();
++        String abs = file.getCanonicalPath();
+         String filename = "";
+         if (abs.length() > directoryName.length()) {
+             filename = abs.substring(directoryName.length() + 1);
+@@ -117,7 +117,6 @@
+ 
+         File directory = new File(directoryName);
+ 
+-        String filename =  (new File(parent, basename)).getAbsolutePath().substring(directoryName.length() + 1);
+         Process process = null;
+         InputStream in = null;
+         String revision = rev;
+@@ -126,6 +125,7 @@
+             revision = rev.substring(0, rev.indexOf(':'));
+         }
+         try {
++            String filename =  (new File(parent, basename)).getCanonicalPath().substring(directoryName.length() + 1);
+             String argv[] = {getCommand(), "cat", "-r", revision, filename};
+             process = Runtime.getRuntime().exec(argv, null, directory);
+             
+diff -r dfa18587517e src/org/opensolaris/opengrok/history/MonotoneHistoryParser.java
+--- a/src/org/opensolaris/opengrok/history/MonotoneHistoryParser.java	Fri May 21 17:04:04 2010 -0600
++++ b/src/org/opensolaris/opengrok/history/MonotoneHistoryParser.java	Mon May 24 13:36:29 2010 -0600
+@@ -25,6 +25,7 @@
+ 
+ import java.io.BufferedReader;
+ import java.io.File;
++import java.io.FileNotFoundException;
+ import java.io.IOException;
+ import java.io.InputStream;
+ import java.io.InputStreamReader;
+@@ -48,13 +49,10 @@
+     private List<HistoryEntry> entries = new ArrayList<HistoryEntry>(); //NOPMD
+     private final MonotoneRepository repository;
+     private final String mydir;
+-    private final int rootLength;
+ 
+     MonotoneHistoryParser(MonotoneRepository repository) {
+         this.repository = repository;
+         mydir = repository.getDirectoryName() + File.separator;
+-        rootLength =
+-                RuntimeEnvironment.getInstance().getSourceRootPath().length();
+     }
+ 
+     /**
+@@ -69,12 +67,17 @@
+      * @throws HistoryException if an error happens when parsing the history
+      */
+     History parse(File file, String changeset) throws HistoryException {
+-        Executor executor = repository.getHistoryLogExecutor(file, changeset);
+-        int status = executor.exec(true, this);
+-
+-        if (status != 0) {
++        try {
++            Executor executor = repository.getHistoryLogExecutor(file, changeset);
++            int status = executor.exec(true, this);
++            
++            if (status != 0) {
++                throw new HistoryException("Failed to get history for: \"" +
++                                           file.getAbsolutePath() + "\" Exit code: " + status);
++            }
++        } catch (IOException e) {
+             throw new HistoryException("Failed to get history for: \"" +
+-                    file.getAbsolutePath() + "\" Exit code: " + status);
++                                       file.getAbsolutePath() + "\"", e);
+         }
+ 
+         return new History(entries);
+@@ -89,6 +92,7 @@
+      */
+     @Override
+     public void processStream(InputStream input) throws IOException {
++        RuntimeEnvironment env = RuntimeEnvironment.getInstance();
+         DateFormat df = repository.getDateFormat();
+         BufferedReader in = new BufferedReader(new InputStreamReader(input));
+         String s;
+@@ -150,8 +154,11 @@
+                         String files[] = s.split(" ");
+                         for (String f : files) {
+                             File file = new File(mydir, f);
+-                            String name = file.getCanonicalPath().substring(rootLength);
+-                            entry.addFile(name);
++                            try {
++                                entry.addFile(env.getPathRelativeToSourceRoot(file, 0));
++                            } catch (FileNotFoundException e) { // NOPMD
++                                // If the file is not located under the source root, ignore it
++                            }
+                         }
+                     }
+                     break;
+diff -r dfa18587517e src/org/opensolaris/opengrok/history/MonotoneRepository.java
+--- a/src/org/opensolaris/opengrok/history/MonotoneRepository.java	Fri May 21 17:04:04 2010 -0600
++++ b/src/org/opensolaris/opengrok/history/MonotoneRepository.java	Mon May 24 13:36:29 2010 -0600
+@@ -69,12 +69,12 @@
+ 
+         File directory = new File(directoryName);
+ 
+-        String filename = (new File(parent, basename)).getAbsolutePath().substring(directoryName.length() + 1);
+         Process process = null;
+         InputStream in = null;
+         String revision = rev;
+ 
+         try {
++            String filename = (new File(parent, basename)).getCanonicalPath().substring(directoryName.length() + 1);
+             String argv[] = {getCommand(), "cat", "-r", revision, filename};
+             process = Runtime.getRuntime().exec(argv, null, directory);
+ 
+@@ -115,8 +115,8 @@
+     }
+ 
+     Executor getHistoryLogExecutor(File file, String changeset)
+-            throws HistoryException {
+-        String abs = file.getAbsolutePath();
++        throws HistoryException, IOException {
++        String abs = file.getCanonicalPath();
+         String filename = "";
+         if (abs.length() > directoryName.length()) {
+             filename = abs.substring(directoryName.length() + 1);
+diff -r dfa18587517e src/org/opensolaris/opengrok/index/CommandLineOptions.java
+--- a/src/org/opensolaris/opengrok/index/CommandLineOptions.java	Fri May 21 17:04:04 2010 -0600
++++ b/src/org/opensolaris/opengrok/index/CommandLineOptions.java	Mon May 24 13:36:29 2010 -0600
+@@ -78,6 +78,7 @@
+         options.add(new Option('P', null, "Generate a project for each of the top-level directories in source root"));
+         options.add(new Option('p', "/path/to/default/project", "This is the path to the project that should be selected by default in the web application(when no other project set either in cookie or in parameter). You should strip off the source root."));
+         options.add(new Option('Q', ON_OFF, "Turn on/off quick context scan. By default only the first 32k of a file is scanned, and a '[..all..]' link is inserted if the file is bigger. Activating this may slow the server down (Note: this is setting only affects the web application)"));
++        options.add(new Option('N', "/path/to/symlink", "Allow this symlink to be followed. Option may be repeated."));
+         options.add(new Option('n', null, "Do not generate indexes, but process all other command line options"));
+         options.add(new Option('H', null, "Generate history cache for all external repositories"));
+         options.add(new Option('h', "/path/to/repository", "Generate history cache for the specified repos (absolute path from source root)"));
+diff -r dfa18587517e src/org/opensolaris/opengrok/index/IndexDatabase.java
+--- a/src/org/opensolaris/opengrok/index/IndexDatabase.java	Fri May 21 17:04:04 2010 -0600
++++ b/src/org/opensolaris/opengrok/index/IndexDatabase.java	Mon May 24 13:36:29 2010 -0600
+@@ -608,30 +608,27 @@
+             return false;
+         }
+ 
++        String absolutePath = file.getAbsolutePath();
++
+         if (!file.canRead()) {
+-            log.warning("Warning: could not read " + file.getAbsolutePath());
++            log.warning("Warning: could not read " + absolutePath);
+             return false;
+         }
+ 
+         try {
+-            if (!file.getAbsolutePath().equals(file.getCanonicalPath())) {
+-                if (file.getParentFile().equals(file.getCanonicalFile().getParentFile())) {
+-                    // Lets support symlinks within the same directory, this
+-                    // should probably be extended to within the same repository
+-                    return true;
+-                } else {
+-                    log.warning("Warning: ignored non-local symlink " + file.getAbsolutePath() +
+-                            " -> " + file.getCanonicalPath());
+-                    return false;
+-                }
++            String canonicalPath = file.getCanonicalPath();
++            if (!absolutePath.equals(canonicalPath) && !acceptSymlink(absolutePath, canonicalPath)) {
++                log.fine("Skipped symlink '" + absolutePath +
++                            "' -> '" + canonicalPath + "'");
++                return false;
+             }
+             //below will only let go files and directories, anything else is considered special and is not added
+             if (!file.isFile() && !file.isDirectory()) {
+-                log.warning("Warning: ignored special file " + file.getAbsolutePath());
++                log.warning("Warning: ignored special file " + absolutePath);
+                     return false;
+             }
+         } catch (IOException exp) {
+-            log.warning("Warning: Failed to resolve name: " + file.getAbsolutePath());
++            log.warning("Warning: Failed to resolve name: " + absolutePath);
+             log.log(Level.FINE,"Stack Trace: ",exp);       
+         }
+ 
+@@ -650,6 +647,25 @@
+     }
+ 
+     /**
++     * Check if I should accept the path containing a symlink
++     * @param absolutePath the path with a symlink to check
++     * @param canonicalPath the canonical path to the file
++     * @return true if the file should be accepted, false otherwise
++     */
++    private boolean acceptSymlink(String absolutePath, String canonicalPath) throws IOException {
++        for (String allowedSymlink : RuntimeEnvironment.getInstance().getAllowedSymlinks()) {
++            if (absolutePath.startsWith(allowedSymlink)) {
++                String allowedTarget = new File(allowedSymlink).getCanonicalPath();
++                if (canonicalPath.startsWith(allowedTarget) &&
++                    absolutePath.substring(allowedSymlink.length()).equals(canonicalPath.substring(allowedTarget.length()))) {
++                    return true;
++                }
++            }
++        }
++        return false;
++    }
++
++    /**
+      * Generate indexes recursively
+      * @param dir the root indexDirectory to generate indexes for
+      * @param path the path
+diff -r dfa18587517e src/org/opensolaris/opengrok/index/Indexer.java
+--- a/src/org/opensolaris/opengrok/index/Indexer.java	Fri May 21 17:04:04 2010 -0600
++++ b/src/org/opensolaris/opengrok/index/Indexer.java	Mon May 24 13:36:29 2010 -0600
+@@ -30,6 +30,7 @@
+ import java.util.ArrayList;
+ import java.util.Collections;
+ import java.util.Comparator;
++import java.util.HashSet;
+ import java.util.List;
+ import java.util.concurrent.ExecutorService;
+ import java.util.concurrent.Executors;
+@@ -86,6 +87,7 @@
+             boolean searchRepositories = false;
+             ArrayList<String> subFiles = new ArrayList<String>();
+             ArrayList<String> repositories = new ArrayList<String>();
++            HashSet<String> allowedSymlinks = new HashSet<String>();
+             String configFilename = null;
+             String configHost = null;
+             boolean addProjects = false;
+@@ -167,6 +169,9 @@
+                         case 'R':
+                             // already handled
+                             break;
++                        case 'N':
++                            allowedSymlinks.add(getopt.getOptarg());
++                            break;
+                         case 'n':
+                             runIndex = false;
+                             break;
+@@ -397,6 +402,9 @@
+                 env.setDatabaseDriver(databaseDriver);
+                 env.setDatabaseUrl(databaseURL);
+ 
++                allowedSymlinks.addAll(env.getAllowedSymlinks());
++                env.setAllowedSymlinks(allowedSymlinks);
++
+                 getInstance().prepareIndexer(env, searchRepositories, addProjects,
+                         defaultProject, configFilename, refreshHistory,
+                         listFiles, createDict, subFiles, repositories);
+diff -r dfa18587517e test/org/opensolaris/opengrok/history/GitHistoryParserTest.java
+--- a/test/org/opensolaris/opengrok/history/GitHistoryParserTest.java	Fri May 21 17:04:04 2010 -0600
++++ b/test/org/opensolaris/opengrok/history/GitHistoryParserTest.java	Mon May 24 13:36:29 2010 -0600
+@@ -29,6 +29,7 @@
+ import org.junit.BeforeClass;
+ import org.junit.Test;
+ import static org.junit.Assert.*;
++import org.opensolaris.opengrok.util.TestRepository;
+ 
+ /**
+  *
+@@ -37,12 +38,15 @@
+ public class GitHistoryParserTest {
+ 
+     GitHistoryParser instance;
++    private static TestRepository repository = new TestRepository();
+ 
+     public GitHistoryParserTest() {
+     }
+ 
+     @BeforeClass
+     public static void setUpClass() throws Exception {
++        repository = new TestRepository();
++        repository.create(HistoryGuru.class.getResourceAsStream("repositories.zip"));
+     }
+ 
+     @AfterClass

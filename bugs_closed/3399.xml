@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>3399</bug_id>
+          
+          <creation_ts>2008-09-11 14:38:00 +0000</creation_ts>
+          <short_desc>Compare button in the history page brings to the search page</short_desc>
+          <delta_ts>2008-09-13 09:56:25 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>webapp</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXED</resolution>
+          
+          
+          <bug_file_loc>http://src.opensolaris.org/source/xref/opengrok/trunk/web/mast.jsp</bug_file_loc>
+          
+          
+          <priority>P2</priority>
+          <bug_severity>major</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Emilio Monti">emilmont</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          <cc>Lubos.Kosco</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>12346</commentid>
+            <who name="Emilio Monti">emilmont</who>
+            <bug_when>2008-09-11 14:38:21 +0000</bug_when>
+            <thetext>/web/mast.jsp in some conditions can generate an unbalanced &quot;form&quot; tag.
+
+The opening &quot;form&quot; tag at line 133 is always executed:
+133 &lt;form action=&quot;&lt;%=context%&gt;/search&quot;&gt;
+
+The closing &quot;form&quot; tag at line 202 is included only in some conditions:
+202 %&gt;&lt;/div&gt;&lt;/form&gt;&lt;%
+
+The condition for inclusion of the closing &quot;form&quot; tag is at line 188:
+188         if  (proj != null || !environment.hasProjects()) {
+
+When the condition at line 188 is false, the &quot;search&quot; form is closed by the closing tag of the &quot;compare&quot; tag and the &quot;compare&quot; tag remains open, this yield to the strange behavior of the &quot;compare&quot; button that redirect to the search page.
+
+Solution: move the &lt;/div&gt;&lt;/form&gt; at the same level of &lt;form&gt;, before line 206:
+206 }
+207 %&gt;
+
+By the way, mast.jsp is quite a mess, it is really difficult to spot a bug in it, there should be some way to simplify it.
+A good start would be improving the indentation of the code.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>12441</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2008-09-13 09:56:25 +0000</bug_when>
+            <thetext>Fixed in changeset:   581:60bc23609b15
+
+I did a small indentation fix, but the larger plan is to rewrite web from scratch, maybe using jsf, will see (we can schedule it into roadmap ... )</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

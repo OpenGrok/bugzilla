@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>14953</bug_id>
+          
+          <creation_ts>2010-03-01 14:52:00 +0000</creation_ts>
+          <short_desc>history index for CVS repos should only include default branch if CVS/Tag is set</short_desc>
+          <delta_ts>2010-05-07 12:07:19 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>indexer</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXINSOURCE</resolution>
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>major</bug_severity>
+          <target_milestone>0.9</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Vladimir Kotal">vladimir.kotal</reporter>
+          <assigned_to name="Lubos Kosco">Lubos.Kosco</assigned_to>
+          <cc>Lubos.Kosco</cc>
+    
+    <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>68029</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2010-03-01 14:52:27 +0000</bug_when>
+            <thetext>Because of lack of proper support for CVS branches in OpenGrok we usually have set of checkout&apos;ed branches which are indexed. This provides way how to view given branch in OpenGrok. However, history of the files still has the complete history, including other branches.
+
+The cause is most likely that &apos;cvs log&apos; is run without the -b option (Only list revisions on the default branch) when generating the history index.
+
+Hence, if &apos;CVS/Tag&apos; file in the mirrored repository contains non-empty string, OpenGrok indexer should run &apos;cvs log&apos; with &apos;-b&apos;. This will constrain the history to the given branch.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>69687</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2010-03-19 16:23:59 +0000</bug_when>
+            <thetext>changeset:   959:ed0c15c53fb0</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>71323</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2010-04-13 21:52:55 +0000</bug_when>
+            <thetext>It&apos;s still lurking in 0.9rc1.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>71514</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2010-04-16 09:31:42 +0000</bug_when>
+            <thetext>changeset:   983:67a5f1e1fad4</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>72623</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2010-05-06 11:04:44 +0000</bug_when>
+            <thetext>Actually, using -b displays default branch (HEAD).
+
+The real fix is to execute &apos;cvs log -rREV&apos; where REV comes from the first line of CVS/Tag file (with the &apos;T&apos; prefix stripped). The -b option should not be used at all.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>72652</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2010-05-07 12:07:19 +0000</bug_when>
+            <thetext>changeset:   999:cc623758547a</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

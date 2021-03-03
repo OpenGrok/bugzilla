@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>353</bug_id>
+          
+          <creation_ts>2008-01-10 14:47:00 +0000</creation_ts>
+          <short_desc>annotate should contain links to specific revision history information</short_desc>
+          <delta_ts>2011-01-05 08:38:58 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>webapp</component>
+          <version>unspecified</version>
+          <rep_platform>Other</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>ACCEPTED</bug_status>
+          
+          
+          
+          
+          
+          
+          <priority>P4</priority>
+          <bug_severity>enhancement</bug_severity>
+          <target_milestone>---</target_milestone>
+          <dependson>352</dependson>
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Stephen Lau">stevel</reporter>
+          <assigned_to name="Lubos Kosco">Lubos.Kosco</assigned_to>
+          <cc>knut.hatlen</cc>
+    
+    <cc>Lubos.Kosco</cc>
+    
+    <cc>opengrok-dev</cc>
+    
+    <cc>trond.norbye</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>981</commentid>
+            <who name="Stephen Lau">stevel</who>
+            <bug_when>2008-01-10 14:47:48 +0000</bug_when>
+            <thetext>Annotate currently shows the revision #, and the author for each revision.  Once 352 is completed, annotate should also have a link so that the user can see the revision information (e.g. all the files touched, and the comments, etc.) for that revision as shown in history.jsp</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>53279</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2009-10-19 11:22:23 +0000</bug_when>
+            <thetext>for what is worth I added a similar feature to opengrok, which shows a tooltip above revision with this info
+I however lack file list (but it can be easily added), the rest is there.
+Obviously a link would be nice too, just wanted to mention we have something similar to this bug already fixed (if you think the tooltip is enough, please close this bug).
+
+thnx
+L</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>78179</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2010-10-08 09:15:58 +0000</bug_when>
+            <thetext>I will use this bug to revamp tooltip so it will be faster (hash and load on demand, instead of generated tooltip into every line #)
+AND
+the tooltip should allow copy paste now</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>80283</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2011-01-05 08:38:26 +0000</bug_when>
+            <thetext>Resetting target milestone since this won&apos;t make it into 0.10.</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

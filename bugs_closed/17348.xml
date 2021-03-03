@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>17348</bug_id>
+          
+          <creation_ts>2010-11-04 06:05:00 +0000</creation_ts>
+          <short_desc>path needs to be percent encoded</short_desc>
+          <delta_ts>2010-11-05 04:46:07 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>webapp</component>
+          <version>unspecified</version>
+          <rep_platform>i86pc/amd64</rep_platform>
+          <op_sys>Linux</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>DUPLICATE</resolution>
+          <dup_id>17349</dup_id>
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>normal</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Leo Davis">ldavis</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>78934</commentid>
+            <who name="Leo Davis">ldavis</who>
+            <bug_when>2010-11-04 06:05:29 +0000</bug_when>
+            <thetext>I have the leading path for a C# source file that is like &apos; /ccb/SDK/C#/Win32/&apos;.  When the hit for a particular match is displayed the path to the directory and the file itself are correct, but the hit link is not correct.  So I get HTML generated like:
+
+&lt;tr class=&quot;dir&quot;&gt;&lt;td colspan=&quot;2&quot;&gt;&amp;nbsp;&amp;nbsp;&lt;a href=&quot;/voice/xref/ccb/SDK/C%23/Win32/&quot;&gt;/ccb/SDK/C#/Win32/&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr &gt;&lt;td class=&quot;f&quot;&gt;&lt;a href=&quot;/voice/xref/ccb/SDK/C%23/Win32/foo.cs&quot;&gt;foo.cs&lt;/a&gt;&amp;nbsp;&lt;/td&gt;&lt;td&gt;&lt;tt class=&quot;con&quot;&gt;&lt;a class=&quot;s&quot; href=&quot;/voice/xref/ccb/SDK/C#/Win32/foo.cs#322&quot;&gt;&lt;span class=&quot;l&quot;&gt;322&lt;/span&gt;...
+
+This is happening with opengrok 0.9.
+
+A patch is attached.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>78976</commentid>
+            <who name="Leo Davis">ldavis</who>
+            <bug_when>2010-11-05 04:46:07 +0000</bug_when>
+            <thetext>I tried to attach a patch twice to this bug but failed.  I didn&apos;t realize just the attachment part failed.
+
+*** This bug has been marked as a duplicate of bug 17349 ***</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

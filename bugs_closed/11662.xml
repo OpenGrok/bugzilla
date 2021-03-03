@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>11662</bug_id>
+          
+          <creation_ts>2009-10-01 09:29:00 +0000</creation_ts>
+          <short_desc>No author not handled by JDBCHistoryCache</short_desc>
+          <delta_ts>2009-10-21 22:04:16 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>scm</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXED</resolution>
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>normal</bug_severity>
+          <target_milestone>0.8</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Knut Anders Hatlen">knut.hatlen</reporter>
+          <assigned_to name="Knut Anders Hatlen">knut.hatlen</assigned_to>
+          
+          <qa_contact name="Knut Anders Hatlen">knut.hatlen</qa_contact>
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>51292</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2009-10-01 09:29:21 +0000</bug_when>
+            <thetext>If a revision has no author (like revision 1 here: http://src.opensolaris.org/source/history/jds/nimbus/) the attempt to store the revision with JDBCHistoryCache will fail because the database schema doesn&apos;t allow null for the author. We should change the schema so that it accepts null. We will also have to change the SQL queries used to retrieve the history, as they will currently not return any changeset with no associated author.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>51293</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2009-10-01 09:33:51 +0000</bug_when>
+            <thetext>Stack trace:
+
+Caused by: java.sql.SQLIntegrityConstraintViolationException: Column &apos;NAME&apos; cannot accept a NULL value.
+        at org.apache.derby.client.am.SQLExceptionFactory40.getSQLException(Unknown Source)
+        at org.apache.derby.client.am.SqlException.getSQLException(Unknown Source)
+        at org.apache.derby.client.am.PreparedStatement.executeUpdate(Unknown Source)
+        at org.opensolaris.opengrok.history.JDBCHistoryCache.getAuthors(JDBCHistoryCache.java:805)
+        at org.opensolaris.opengrok.history.JDBCHistoryCache.storeHistory(JDBCHistoryCache.java:557)
+        at org.opensolaris.opengrok.history.JDBCHistoryCache.store(JDBCHistoryCache.java:520)
+        ... 10 more</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>53699</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2009-10-21 22:04:16 +0000</bug_when>
+            <thetext>The solution in the bug description was somewhat more complex than necessary. Only needed to remove NOT NULL constraint on the author name. Also added a JUnit test case.
+
+Fixed in changeset 883:85ce3910d24d.</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

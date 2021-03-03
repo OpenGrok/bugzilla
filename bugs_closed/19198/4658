@@ -1,0 +1,43 @@
+# HG changeset patch
+# User Jan Friedel <jan.friedel@oracle.com>
+# Date 1335360945 -7200
+# Node ID 5f2430336b848002431bef6d95f127a0c12c2c6a
+# Parent  f8557d531134d19d028e116267423c4256a5aaa2
+Bug 19198 - Inadequate indentation
+
+diff -r f8557d531134 -r 5f2430336b84 OpenGrok
+--- a/OpenGrok	Mon Apr 23 17:40:30 2012 +0200
++++ b/OpenGrok	Wed Apr 25 15:35:45 2012 +0200
+@@ -242,7 +242,7 @@
+     # OPTIONAL: Web Site Look & Feel
+     #           (Options: default, offwhite and polished.
+     #            Note the quoting requirements)
+-    #SKIN='-L "default"'
++    #SKIN='-L default'
+ 
+     # OPTIONAL: Set Maximum Indexed Words Per File
+     # Note, that you might run out of memory, then either increase JVM memory
+diff -r f8557d531134 -r 5f2430336b84 web/default/style.css
+--- a/web/default/style.css	Mon Apr 23 17:40:30 2012 +0200
++++ b/web/default/style.css	Wed Apr 25 15:35:45 2012 +0200
+@@ -446,10 +446,10 @@
+ #results .l, #more .l,
+ #difftable i, del.d { /* line number/annotation block */
+ 	display: inline-block;
+-	width: 5ex;
++	width: 6ex;
+ 	text-align: right;
+-	padding-right: 1ex;
+-	margin-right: 0.2em;
++	padding: 0 1ex;
++	margin-right: .5ex;
+ 	background-color: #dddddd;
+ 	color: #666;
+ }
+@@ -633,4 +633,4 @@
+ 	background-repeat: no-repeat;
+ 	background-position: -459px 0;
+ }
+-/* ############### end of footer ############## */
+\ No newline at end of file
++/* ############### end of footer ############## */

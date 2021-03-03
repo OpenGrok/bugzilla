@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>19038</bug_id>
+          
+          <creation_ts>2011-10-31 20:12:00 +0000</creation_ts>
+          <short_desc>Clearcase file revisions from history are not served in Windows</short_desc>
+          <delta_ts>2011-10-31 20:12:20 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>scm</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>Windows</op_sys>
+          <bug_status>NEW</bug_status>
+          
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>major</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Srinivas Bss">bsssrinivas</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>85620</commentid>
+            <who name="Srinivas Bss">bsssrinivas</who>
+            <bug_when>2011-10-31 20:12:20 +0000</bug_when>
+            <thetext>OS: Windows 2003
+JDK: 1.6 Update 21
+SCM: Clearcase
+Web: Apache Tomcat 7.0
+OpenGrok Version: 0.10
+
+OpenGrok is unable to serve Clearcase revisions from history  out of the box. Tomcat just hangs while fetching the information from Clearcase and CPU spikes to 100%.
+
+After debugging, I found that drainStream() function in ClearCaseRepository.java is the root cause of the behavior. Modifying the function to get the available bytes from InputStream and then call skip() with that value resolved the issue.
+
+    private static void drainStream(InputStream in) throws IOException {
+        while (true) {
+            try  {
+            	int to_skip = in.available();
+                in.skip(to_skip);
+            } catch (IOException ioe) {
+                // ignored - stream isn&apos;t seekable, but skipped variable still has correct value.
+                OpenGrokLogger.getLogger().log(Level.FINEST, &quot;Stream not seekable&quot;, ioe);
+            }
+            if (in.read() == -1) {
+                // checked that we&apos;ve reached EOF with read()
+                break;
+            }
+        }
+        in.close();
+    }</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

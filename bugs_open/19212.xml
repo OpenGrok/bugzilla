@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>19212</bug_id>
+          
+          <creation_ts>2012-05-18 22:35:00 +0000</creation_ts>
+          <short_desc>Git&apos;s commit indicator (SHA) is too long for &quot;annotate&quot; page</short_desc>
+          <delta_ts>2012-11-02 11:55:50 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>webapp</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>NEW</bug_status>
+          
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>enhancement</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Markus Mayer">mmayer</reporter>
+          <assigned_to name="Lubos Kosco">Lubos.Kosco</assigned_to>
+          <cc>bjohnson</cc>
+    
+    <cc>opengrok-dev</cc>
+    
+    <cc>santeri.vesalainen</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>86438</commentid>
+            <who name="Markus Mayer">mmayer</who>
+            <bug_when>2012-05-18 22:35:42 +0000</bug_when>
+            <thetext>Since Git is using a 40 character hash to identify each commit (which is much longer than SVN&apos;s or Mercurial&apos;s identifiers), displaying it on the &quot;annotate&quot; page exceeds the space provided in the table, rendering the page layout ugly and making the page difficult to read.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86439</commentid>
+              <attachid>4661</attachid>
+            <who name="Markus Mayer">mmayer</who>
+            <bug_when>2012-05-18 22:38:05 +0000</bug_when>
+            <thetext>Created attachment 4661
+Proposed patch
+
+This is the solution I came up with. It works quite well with the Git repos I am using.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86640</commentid>
+            <who name="Santeri Vesalainen">santeri.vesalainen</who>
+            <bug_when>2012-11-02 11:55:50 +0000</bug_when>
+            <thetext>Or fix list.jsp &lt;style&gt; css like this (http://www.quirksmode.org/css/textoverflow.html)
+
+http://src.opensolaris.org/source/xref/opengrok/trunk/web/list.jsp#55
+
+hot replace in eg. jetty webapps\source\list.jsp or webapps/source/list.jsp
+
+
+    if (annotation != null) {
+        int r = annotation.getWidestRevision();
+        int a = annotation.getWidestAuthor();
+        cfg.addHeaderData(&quot;&lt;style type=\&quot;text/css\&quot;&gt;&quot;
+            + &quot;.blame .r { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: &quot; + (r == 0 ? 2 : r&gt;6 ? r*0.2 : r ) + &quot;em; } &quot;
+            + &quot;.blame .a { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: &quot; + (a == 0 ? 6 : a&gt;10 ? a*0.62 : a) + &quot;em; } &quot;
+            + &quot;&lt;/style&gt;&quot;);
+    }</thetext>
+          </long_desc>
+      
+          <attachment
+              isobsolete="0"
+              ispatch="1"
+              isprivate="0"
+              isurl="0"
+          >
+            <attachid>4661</attachid>
+            <date>2012-05-18 22:38:00 +0000</date>
+            <delta_ts>2012-05-18 22:38:05 +0000</delta_ts>
+            <desc>Proposed patch</desc>
+            <filename>19212.diff</filename>
+            <type>text/plain</type>
+            <size>1514</size>
+            <attacher>mmayer</attacher>
+            
+              <data encoding="base64">ZGlmZiAtciBmY2MyY2RmMWRjNmIgLXIgYTg5NzI3ZGRjODQ2IHNyYy9vcmcvb3BlbnNvbGFyaXMv
+b3Blbmdyb2svd2ViL1V0aWwuamF2YQotLS0gYS9zcmMvb3JnL29wZW5zb2xhcmlzL29wZW5ncm9r
+L3dlYi9VdGlsLmphdmEJV2VkIEFwciAyNSAxNjozODoyNiAyMDEyICswMjAwCisrKyBiL3NyYy9v
+cmcvb3BlbnNvbGFyaXMvb3Blbmdyb2svd2ViL1V0aWwuamF2YQlUaHUgTWF5IDAzIDE0OjQ1OjU0
+IDIwMTIgLTA3MDAKQEAgLTQ5OSw4ICs0OTksMTQgQEAKICAgICAgICAgICAgICAgICB9CiAgICAg
+ICAgICAgICAgICAgb3V0LndyaXRlKGNsb3NlUXVvdGVkVGFnKTsKICAgICAgICAgICAgIH0KKyAg
+ICAgICAgICAgIFN0cmluZyBkaXNwbGF5UmV2aXNpb247CisgICAgICAgICAgICBpZiAoci5sZW5n
+dGgoKSA+IDEwKSB7CisgICAgICAgICAgICAgICAgZGlzcGxheVJldmlzaW9uID0gci5zdWJzdHJp
+bmcoMCwgOCkgKyAiLi4uIjsKKyAgICAgICAgICAgIH0gZWxzZSB7CisgICAgICAgICAgICAgICAg
+ZGlzcGxheVJldmlzaW9uID0gcjsKKyAgICAgICAgICAgIH0KICAgICAgICAgICAgIFN0cmluZ0J1
+aWxkZXIgYnVmID0gbmV3IFN0cmluZ0J1aWxkZXIoKTsKLSAgICAgICAgICAgIGh0bWxpemUociwg
+YnVmKTsKKyAgICAgICAgICAgIGh0bWxpemUoZGlzcGxheVJldmlzaW9uLCBidWYpOwogICAgICAg
+ICAgICAgb3V0LndyaXRlKGJ1Zi50b1N0cmluZygpKTsKICAgICAgICAgICAgIGJ1Zi5zZXRMZW5n
+dGgoMCk7CiAgICAgICAgICAgICBpZiAoZW5hYmxlZCkgewpkaWZmIC1yIGZjYzJjZGYxZGM2YiAt
+ciBhODk3MjdkZGM4NDYgd2ViL2xpc3QuanNwCi0tLSBhL3dlYi9saXN0LmpzcAlXZWQgQXByIDI1
+IDE2OjM4OjI2IDIwMTIgKzAyMDAKKysrIGIvd2ViL2xpc3QuanNwCVRodSBNYXkgMDMgMTQ6NDU6
+NTQgMjAxMiAtMDcwMApAQCAtNTUsOSArNTUsMTIgQEAKICAgICBpZiAoYW5ub3RhdGlvbiAhPSBu
+dWxsKSB7CiAgICAgICAgIGludCByID0gYW5ub3RhdGlvbi5nZXRXaWRlc3RSZXZpc2lvbigpOwog
+ICAgICAgICBpbnQgYSA9IGFubm90YXRpb24uZ2V0V2lkZXN0QXV0aG9yKCk7CisgICAgICAgIGlm
+IChyID4gMTgpIHsKKyAgICAgICAgICAgIHIgPSAxODsKKyAgICAgICAgfQogICAgICAgICBjZmcu
+YWRkSGVhZGVyRGF0YSgiPHN0eWxlIHR5cGU9XCJ0ZXh0L2Nzc1wiPiIKICAgICAgICAgICAgICsg
+Ii5ibGFtZSAuciB7IHdpZHRoOiAiICsgKHIgPT0gMCA/IDYgOiByKSArICJleDsgfSAiCi0gICAg
+ICAgICAgICArICIuYmxhbWUgLmEgeyB3aWR0aDogIiArIChhID09IDAgPyA2IDogYSkgKyAiZXg7
+IH0gIgorICAgICAgICAgICAgKyAiLmJsYW1lIC5hIHsgd2lkdGg6ICIgKyAoYSA9PSAwID8gNiA6
+IGEgKiAwLjc1KSArICJlbTsgfSAiCiAgICAgICAgICAgICArICI8L3N0eWxlPiIpOwogICAgIH0K
+IH0KQEAgLTI3Myw0ICsyNzYsNCBAQAogCiBpbmNsdWRlIGZpbGU9ImZvb3QuanNwZiIKIAotJT4K
+XCBObyBuZXdsaW5lIGF0IGVuZCBvZiBmaWxlCislPgo=
+</data>
+
+          </attachment>
+      
+
+    </bug>
+
+</bugzilla>

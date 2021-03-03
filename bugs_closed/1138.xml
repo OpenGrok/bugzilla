@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>1138</bug_id>
+          
+          <creation_ts>2008-04-11 15:43:00 +0000</creation_ts>
+          <short_desc>revision number link is broken</short_desc>
+          <delta_ts>2008-08-31 03:23:33 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>webapp</component>
+          <version>unspecified</version>
+          <rep_platform>Other</rep_platform>
+          <op_sys>Windows</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>INVALID</resolution>
+          
+          
+          
+          
+          
+          <priority>P4</priority>
+          <bug_severity>normal</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Moisei">moisei</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          <cc>cremick</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>3668</commentid>
+            <who name="Moisei">moisei</who>
+            <bug_when>2008-04-11 15:43:27 +0000</bug_when>
+            <thetext>in the annotate view - when I click on the revision number link
+- I get &quot;error 404&quot;
+
+
+environment: windows / java 1.5 / local svn available via file://  /multiproject
+-T 12 -W &quot;%CFG_FILE%&quot; -m 150000 -v -P -p /2.0.01 -Q off -S a on -s
+&quot;%SRC_ROOT%&quot; -d &quot;%DATA_ROOT%&quot;</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>7557</commentid>
+            <who name="Trond Norbye">trond.norbye</who>
+            <bug_when>2008-06-01 14:38:13 +0000</bug_when>
+            <thetext>How does the URL look like?</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>7759</commentid>
+            <who name="Cory Remick">cremick</who>
+            <bug_when>2008-06-06 16:35:42 +0000</bug_when>
+            <thetext>Same problem for me as well, here is my URL
+
+/diff/WebServices/Payroll/Server/App_Code/Payroll.cs?r1=%2FWebServices%2FPayroll%2FServer%2FApp_Code%2FPayroll.cs%40151&amp;r2=%2FWebServices%2FPayroll%2FServer%2FApp_Code%2FPayroll.cs%40143
+
+environment: Tomcat 6 / 0.6.1 Opengrok / Windows 2003 / Java 1.5_11 / SVN / Repository and source root local 
+
+Xref and History work for file, compare doesn&apos;t.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>11520</commentid>
+            <who name="Trond Norbye">trond.norbye</who>
+            <bug_when>2008-08-31 03:23:33 +0000</bug_when>
+            <thetext>The subversion support was rewritten some time ago. Please reopen the bug if the problem still exists with the new Subversion support.</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>16137</bug_id>
+          
+          <creation_ts>2010-06-02 09:50:00 +0000</creation_ts>
+          <short_desc>Thread strategy on File parsing is not optimal</short_desc>
+          <delta_ts>2011-11-17 22:54:17 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>indexer</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>NEW</bug_status>
+          
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>minor</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter>tom</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          <cc>analogue</cc>
+    
+    <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>73807</commentid>
+            <who name="">tom</who>
+            <bug_when>2010-06-02 09:50:13 +0000</bug_when>
+            <thetext>I have 16 svn-repositories
+
+the history parsing of all repositories is parallel and I understand the strategy,
+one thread per repository.
+
+But then, the files of all repositories are inspected and my repositories have a high difference in the amount of file. The result is, that the last 4 hours one thread is working on the last repository.
+
+In my mind it would be better, to have for that step a pool of threads and a list of files to inspect and each thread takes the next file.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>85714</commentid>
+            <who name="sp">analogue</who>
+            <bug_when>2011-11-17 22:54:17 +0000</bug_when>
+            <thetext>While there is a command line option to limit the number of threads for indexing (-T n), the lack of a similar or shared option to limit the number of threads when generating the history cache is unfortunate. On a 24 core machine with with -T 4 and 20+ projects, this can bring the machine to its knees.  Please consider making the -T flag also apply to the history cache generation process.</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

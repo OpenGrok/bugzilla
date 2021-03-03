@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>4083</bug_id>
+          
+          <creation_ts>2008-10-20 03:53:00 +0000</creation_ts>
+          <short_desc>conf/logging.properties sample file should list logging levels</short_desc>
+          <delta_ts>2010-02-17 12:58:10 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>misc</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>Solaris</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXED</resolution>
+          
+          
+          
+          
+          
+          <priority>P4</priority>
+          <bug_severity>enhancement</bug_severity>
+          <target_milestone>0.8</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Vladimir Kotal">vladimir.kotal</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          <cc>jaustvik</cc>
+    
+    <cc>knut.hatlen</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>15331</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2008-10-20 03:53:42 +0000</bug_when>
+            <thetext>http://src.opensolaris.org/source/raw/opengrok/trunk/conf/logging.properties contains sample configuration for logging.
+
+It would be handy if it contained list of available logging levels (SEVERE, INFO, ...) so the users do not have to search for them.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>15332</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2008-10-20 03:55:37 +0000</bug_when>
+            <thetext>The levels are listed for example here: http://java.sun.com/j2se/1.4.2/docs/api/java/util/logging/Level.html</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>17596</commentid>
+            <who name="Jørgen Austvik">jaustvik</who>
+            <bug_when>2008-11-05 11:53:08 +0000</bug_when>
+            <thetext>Thanks for the tip! Change has been pushed.
+
+changeset:   661:2eb839186bc6
+tag:         tip
+user:        Jorgen Austvik &lt;jorgen.austvik@sun.com&gt;
+date:        Wed Nov 05 19:52:08 2008 +0100
+summary:     rfe 4083: document logging levels</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

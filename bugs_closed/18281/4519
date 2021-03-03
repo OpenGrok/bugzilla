@@ -1,0 +1,107 @@
+diff -r 09f0768a7ec1 src/org/opensolaris/opengrok/ConsoleFormatter.java
+--- a/src/org/opensolaris/opengrok/ConsoleFormatter.java	Fri May 06 21:41:59 2011 +0200
++++ b/src/org/opensolaris/opengrok/ConsoleFormatter.java	Sat May 07 06:27:43 2011 +0200
+@@ -25,6 +25,7 @@
+ 
+ import java.util.Date;
+ import java.util.logging.Formatter;
++import java.util.logging.Level;
+ import java.util.logging.LogRecord;
+ 
+ /**
+@@ -51,7 +52,7 @@
+       sb.append(" | ");
+       sb.append(formatMessage(record));
+       Throwable thrown = record.getThrown();
+-      if (null != thrown) {
++      if (null != thrown && record.getLevel().intValue() < Level.CONFIG.intValue()) {
+          sb.append(lineSeparator);
+          java.io.ByteArrayOutputStream ba=new java.io.ByteArrayOutputStream();
+          thrown.printStackTrace(new java.io.PrintStream(ba, true));
+diff -r 09f0768a7ec1 src/org/opensolaris/opengrok/FileLogFormatter.java
+--- a/src/org/opensolaris/opengrok/FileLogFormatter.java	Fri May 06 21:41:59 2011 +0200
++++ b/src/org/opensolaris/opengrok/FileLogFormatter.java	Sat May 07 06:27:43 2011 +0200
+@@ -25,6 +25,7 @@
+ 
+ import java.util.Date;
+ import java.util.logging.Formatter;
++import java.util.logging.Level;
+ import java.util.logging.LogRecord;
+ 
+ /**
+@@ -70,7 +71,7 @@
+       sb.append(": ");
+       sb.append(record.getMessage());
+       Throwable thrown = record.getThrown();
+-      if (null != thrown) {
++      if (null != thrown && record.getLevel().intValue() < Level.CONFIG.intValue()) {
+          sb.append(lineSeparator);
+          java.io.ByteArrayOutputStream ba=new java.io.ByteArrayOutputStream();
+          thrown.printStackTrace(new java.io.PrintStream(ba, true));
+diff -r 09f0768a7ec1 src/org/opensolaris/opengrok/OpenGrokLogger.java
+--- a/src/org/opensolaris/opengrok/OpenGrokLogger.java	Fri May 06 21:41:59 2011 +0200
++++ b/src/org/opensolaris/opengrok/OpenGrokLogger.java	Sat May 07 06:27:43 2011 +0200
+@@ -75,9 +75,9 @@
+      * @param level new level for console
+      */
+     public static void setOGConsoleLogLevel(Level level) {
+-        for (Enumeration e = LogManager.getLogManager().getLoggerNames();
++        for (Enumeration<String> e = LogManager.getLogManager().getLoggerNames();
+                 e.hasMoreElements();) {
+-            String loggerName = (String) e.nextElement();
++            String loggerName = e.nextElement();
+             Logger l = Logger.getLogger(loggerName);
+             Handler[] h = l.getHandlers();
+             if (!loggerName.startsWith("org.opensolaris.opengrok")) {
+@@ -191,9 +191,9 @@
+     }
+ 
+     private static void clearForeignHandlers() {
+-        for (Enumeration e = LogManager.getLogManager().getLoggerNames();
++        for (Enumeration<String> e = LogManager.getLogManager().getLoggerNames();
+                 e.hasMoreElements();) {
+-            String loggerName = (String) e.nextElement();
++            String loggerName = e.nextElement();
+             Logger l = Logger.getLogger(loggerName);
+             Handler[] h = l.getHandlers();
+             if (!loggerName.startsWith("org.opensolaris.opengrok")) {
+diff -r 09f0768a7ec1 src/org/opensolaris/opengrok/SimpleConsoleFormatter.java
+--- a/src/org/opensolaris/opengrok/SimpleConsoleFormatter.java	Fri May 06 21:41:59 2011 +0200
++++ b/src/org/opensolaris/opengrok/SimpleConsoleFormatter.java	Sat May 07 06:27:43 2011 +0200
+@@ -25,6 +25,7 @@
+ 
+ import java.util.Date;
+ import java.util.logging.Formatter;
++import java.util.logging.Level;
+ import java.util.logging.LogRecord;
+ 
+ /**
+@@ -53,7 +54,7 @@
+       sb.append(": ");
+       sb.append(formatMessage(record));
+       Throwable thrown = record.getThrown();
+-      if (null != thrown) {
++      if (null != thrown && record.getLevel().intValue() < Level.CONFIG.intValue()) {
+          sb.append(lineSeparator);
+          java.io.ByteArrayOutputStream ba=new java.io.ByteArrayOutputStream();
+          thrown.printStackTrace(new java.io.PrintStream(ba, true));
+diff -r 09f0768a7ec1 src/org/opensolaris/opengrok/SimpleFileLogFormatter.java
+--- a/src/org/opensolaris/opengrok/SimpleFileLogFormatter.java	Fri May 06 21:41:59 2011 +0200
++++ b/src/org/opensolaris/opengrok/SimpleFileLogFormatter.java	Sat May 07 06:27:43 2011 +0200
+@@ -25,6 +25,7 @@
+ 
+ import java.util.Date;
+ import java.util.logging.Formatter;
++import java.util.logging.Level;
+ import java.util.logging.LogRecord;
+ 
+ /**
+@@ -68,7 +69,7 @@
+       sb.append(": ");
+       sb.append(formatMessage(record));
+       Throwable thrown = record.getThrown();
+-      if (null != thrown) {
++      if (null != thrown && record.getLevel().intValue() < Level.CONFIG.intValue()) {
+          sb.append(lineSeparator);
+          java.io.ByteArrayOutputStream ba=new java.io.ByteArrayOutputStream();
+          thrown.printStackTrace(new java.io.PrintStream(ba, true));

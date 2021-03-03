@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>19226</bug_id>
+          
+          <creation_ts>2012-07-10 02:01:00 +0000</creation_ts>
+          <short_desc>tests need improvements/should not depend on execution order</short_desc>
+          <delta_ts>2012-07-10 02:01:15 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>tests</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>NEW</bug_status>
+          
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>normal</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Jens Elkner">jel+osbugs</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>86526</commentid>
+            <who name="Jens Elkner">jel+osbugs</who>
+            <bug_when>2012-07-10 02:01:15 +0000</bug_when>
+            <thetext>Several tests especially with singletons seem to assume an/rely on test execution order, which in turn results sometimes in test failures/errors
+(e.g. HistoryGuruTest.bug16465() ).
+
+Also it seems, that many tests succeed just by accident because one or more test(s) have been run before, which aligned things ...
+RuntimeEnvironmentTest is an outstanding example for this.
+
+Perhaps it is better to give these singletons a package scoped destroy() method, which resets the internal instance var back to null ... Also one could use introspection in the test to &quot;reset&quot; the current instance/send it to nirwana to get a virgin instance for the test.
+
+Last but not least, if not obvious, it should be documented, what is tested or why the test is needed. E.g. RuntimeEnvironmentTest.testRegister() doesn&apos;t test RuntimeEnvironment.register(), but something different and thus should be documented ...</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

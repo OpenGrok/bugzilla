@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>3561</bug_id>
+          
+          <creation_ts>2008-09-23 12:49:00 +0000</creation_ts>
+          <short_desc>&quot;Did you mean:&quot;  should give a suggestion, or not be displayed.</short_desc>
+          <delta_ts>2008-09-23 13:10:27 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>webapp</component>
+          <version>unspecified</version>
+          <rep_platform>Other</rep_platform>
+          <op_sys>Linux</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXED</resolution>
+          
+          
+          
+          
+          
+          <priority>P4</priority>
+          <bug_severity>minor</bug_severity>
+          <target_milestone>0.7</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Zach Carter">z.carter</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>13010</commentid>
+            <who name="Zach Carter">z.carter</who>
+            <bug_when>2008-09-23 12:49:29 +0000</bug_when>
+            <thetext>When a file path search is made, and the file does not exist, I get a message like this:
+
+&quot;
+Did you mean:
+
+Your search path:&quot;sys syscall . ph&quot; did not match any files.
+
+...
+
+&quot; 
+
+This is fine, except for the &quot;Did you mean:&quot; part.  If it&apos;s going to say &quot;Did you mean:&quot;, it should probably suggest an alternate search.
+
+If there is no suggestion, it should probably not say anything there.
+
+This behaviour was observed in the 0.7beta
+
+thanks!
+
+-Zach</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>13012</commentid>
+            <who name="Trond Norbye">trond.norbye</who>
+            <bug_when>2008-09-23 13:03:01 +0000</bug_when>
+            <thetext>We should just move the printing of &quot;Did you mean&quot; on line 237 in search.jsp to the first time we try to print some matching results.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>13013</commentid>
+            <who name="Trond Norbye">trond.norbye</who>
+            <bug_when>2008-09-23 13:10:27 +0000</bug_when>
+            <thetext>Fixed in: changeset:   603:c492f2357b9a</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

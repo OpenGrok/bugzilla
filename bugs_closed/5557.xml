@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>5557</bug_id>
+          
+          <creation_ts>2008-12-02 07:31:00 +0000</creation_ts>
+          <short_desc>Opengrok is not showing the latest changeset of a file</short_desc>
+          <delta_ts>2009-08-03 03:12:18 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>webapp</component>
+          <version>unspecified</version>
+          <rep_platform>Other</rep_platform>
+          <op_sys>Solaris</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXED</resolution>
+          
+          
+          
+          
+          
+          <priority>P2</priority>
+          <bug_severity>critical</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Mark Phalan">mark.phalan</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>22296</commentid>
+            <who name="Mark Phalan">mark.phalan</who>
+            <bug_when>2008-12-02 07:31:46 +0000</bug_when>
+            <thetext>When the following file is viewed using opengrok from src.opensolaris.org the latest changeset/revision of the file isn&apos;t shown:
+
+http://src.opensolaris.org/source/history/onnv/onnv-gate/usr/src/lib/gss_mechs/mech_krb5/et/krb5_err.c
+
+Instead it is showing a previous revision. The latest revision of the file can be viewed only by manually selecting the latest changeset for e.g.
+
+http://src.opensolaris.org/source/xref/onnv/onnv-gate/usr/src/lib/gss_mechs/mech_krb5/et/krb5_err.c?r=8089
+
+This is pretty serious and renders code browsing via opengrok useless in some situations.
+
+This may be related to 5042.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>22309</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2008-12-02 09:05:37 +0000</bug_when>
+            <thetext>Hmm
+
+src.opensolaris.org is on old opengrok (pre 0.6)
+grok.czech is latest stable (0.7)
+
+(version of opengrok is in html header of the page)
+
+it seems this is fixed in 0.7
+e.g. look at annotations:
+http://grok.czech.sun.com:8080/source/xref/onnv-clone/usr/src/lib/gss_mechs/mech_krb5/et/krb5_err.c?a=true
+
+8089 can be found in annotations ... even with your name ... why is it not showing up in history is a mystery :)
+(maybe some history parsing bug)
+
+feel free to close this bug
+src.opensolaris.org is supposed to be updated soon, till then you can use grok.czech as a workaround</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>45656</commentid>
+            <who name="Trond Norbye">trond.norbye</who>
+            <bug_when>2009-08-03 03:12:18 +0000</bug_when>
+            <thetext>According to Lubos this bug is fixed in 0.7 so I&apos;m closing this bug.</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

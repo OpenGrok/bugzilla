@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>17349</bug_id>
+          
+          <creation_ts>2010-11-04 06:05:00 +0000</creation_ts>
+          <short_desc>path needs to be percent encoded</short_desc>
+          <delta_ts>2010-11-05 04:46:07 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>webapp</component>
+          <version>unspecified</version>
+          <rep_platform>i86pc/amd64</rep_platform>
+          <op_sys>Linux</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXINSOURCE</resolution>
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>normal</bug_severity>
+          <target_milestone>0.10</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Leo Davis">ldavis</reporter>
+          <assigned_to name="Lubos Kosco">Lubos.Kosco</assigned_to>
+          <cc>Lubos.Kosco</cc>
+    
+    <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>78935</commentid>
+            <who name="Leo Davis">ldavis</who>
+            <bug_when>2010-11-04 06:05:43 +0000</bug_when>
+            <thetext>I have the leading path for a C# source file that is like &apos; /ccb/SDK/C#/Win32/&apos;.  When the hit for a particular match is displayed the path to the directory and the file itself are correct, but the hit link is not correct.  So I get HTML generated like:
+
+&lt;tr class=&quot;dir&quot;&gt;&lt;td colspan=&quot;2&quot;&gt;&amp;nbsp;&amp;nbsp;&lt;a href=&quot;/voice/xref/ccb/SDK/C%23/Win32/&quot;&gt;/ccb/SDK/C#/Win32/&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr &gt;&lt;td class=&quot;f&quot;&gt;&lt;a href=&quot;/voice/xref/ccb/SDK/C%23/Win32/foo.cs&quot;&gt;foo.cs&lt;/a&gt;&amp;nbsp;&lt;/td&gt;&lt;td&gt;&lt;tt class=&quot;con&quot;&gt;&lt;a class=&quot;s&quot; href=&quot;/voice/xref/ccb/SDK/C#/Win32/foo.cs#322&quot;&gt;&lt;span class=&quot;l&quot;&gt;322&lt;/span&gt;...
+
+This is happening with opengrok 0.9.
+
+A patch is attached.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>78936</commentid>
+              <attachid>4369</attachid>
+            <who name="Leo Davis">ldavis</who>
+            <bug_when>2010-11-04 06:06:24 +0000</bug_when>
+            <thetext>Created attachment 4369
+patch to fix the problem described</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>78937</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2010-11-04 08:53:06 +0000</bug_when>
+            <thetext>thanks Leo
+accepting the patch, will push later today
+
+your SCA is OS0110
+
+cheers
+Lubos</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>78938</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2010-11-04 09:14:39 +0000</bug_when>
+            <thetext>changeset:   1119:f2944a37c7ef</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>78975</commentid>
+            <who name="Leo Davis">ldavis</who>
+            <bug_when>2010-11-05 04:45:19 +0000</bug_when>
+            <thetext>*** Bug 17347 has been marked as a duplicate of this bug. ***</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>78977</commentid>
+            <who name="Leo Davis">ldavis</who>
+            <bug_when>2010-11-05 04:46:07 +0000</bug_when>
+            <thetext>*** Bug 17348 has been marked as a duplicate of this bug. ***</thetext>
+          </long_desc>
+      
+          <attachment
+              isobsolete="0"
+              ispatch="0"
+              isprivate="0"
+              isurl="0"
+          >
+            <attachid>4369</attachid>
+            <date>2010-11-04 06:06:00 +0000</date>
+            <delta_ts>2010-11-04 06:06:24 +0000</delta_ts>
+            <desc>patch to fix the problem described</desc>
+            <filename>fix-percent-encoding.patch</filename>
+            <type>text/plain</type>
+            <size>2048</size>
+            <attacher>ldavis</attacher>
+            
+              <data encoding="base64">IyBIRyBjaGFuZ2VzZXQgcGF0Y2gKIyBQYXJlbnQgMzRiYjVkMzljZTZjZDliNmMwYmFhY2UwMGZj
+NDgwMzE2ODUyNGI3NwoKZGlmZiAtciAzNGJiNWQzOWNlNmMgc3JjL29yZy9vcGVuc29sYXJpcy9v
+cGVuZ3Jvay9zZWFyY2gvY29udGV4dC9Db250ZXh0LmphdmEKLS0tIGEvc3JjL29yZy9vcGVuc29s
+YXJpcy9vcGVuZ3Jvay9zZWFyY2gvY29udGV4dC9Db250ZXh0LmphdmEJV2VkIE5vdiAwMyAyMzo1
+NzowNyAyMDEwIC0wNjAwCisrKyBiL3NyYy9vcmcvb3BlbnNvbGFyaXMvb3Blbmdyb2svc2VhcmNo
+L2NvbnRleHQvQ29udGV4dC5qYXZhCVRodSBOb3YgMDQgMDA6MDA6MzYgMjAxMCAtMDYwMApAQCAt
+MTQ3LDggKzE0Nyw4IEBACiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBhbnl0
+aGluZyA9IHRydWU7CiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIH0gZWxzZSB7CiAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBvdXQud3JpdGUoIjxhIGNsYXNzPVwi
+c1wiIGhyZWY9XCIiKTsKLSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIG91dC53
+cml0ZSh1cmxQcmVmaXgpOwotICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgb3V0
+LndyaXRlKHBhdGgpOworICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgb3V0Lndy
+aXRlKFV0aWwuVVJJRW5jb2RlUGF0aCh1cmxQcmVmaXgpKTsKKyAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgIG91dC53cml0ZShVdGlsLlVSSUVuY29kZVBhdGgocGF0aCkpOwogICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgb3V0LndyaXRlKCIjIik7CiAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICBvdXQud3JpdGUoZGVzY1sxXSk7CiAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICBvdXQud3JpdGUoIlwiPjxzcGFuIGNsYXNzPVwi
+bFwiPiIpOwpAQCAtMjEzLDkgKzIxMyw5IEBACiAgICAgICAgICAgICAgICAgcmV0dXJuIGFueXRo
+aW5nOwogICAgICAgICAgICAgfQogCi0gICAgICAgICAgICB0b2tlbnMucmVJbml0KGJ1ZmZlciwg
+Y2hhcnNSZWFkLCBvdXQsIHVybFByZWZpeCArIHBhdGggKyAiIyIsIG1hdGNoaW5nVGFncyk7Cisg
+ICAgICAgICAgICB0b2tlbnMucmVJbml0KGJ1ZmZlciwgY2hhcnNSZWFkLCBvdXQsIFV0aWwuVVJJ
+RW5jb2RlUGF0aCh1cmxQcmVmaXggKyBwYXRoKSArICIjIiwgbWF0Y2hpbmdUYWdzKTsKICAgICAg
+ICAgfSBlbHNlIHsKLSAgICAgICAgICAgIHRva2Vucy5yZUluaXQoaW4sIG91dCwgdXJsUHJlZml4
+ICsgcGF0aCArICIjIiwgbWF0Y2hpbmdUYWdzKTsKKyAgICAgICAgICAgIHRva2Vucy5yZUluaXQo
+aW4sIG91dCwgVXRpbC5VUklFbmNvZGVQYXRoKHVybFByZWZpeCArIHBhdGgpICsgIiMiLCBtYXRj
+aGluZ1RhZ3MpOwogICAgICAgICB9CiAKICAgICAgICAgaWYgKGhpdHMgIT0gbnVsbCkgewpAQCAt
+MjQ2LDcgKzI0Niw3IEBACiAgICAgICAgICAgICBhbnl0aGluZyA9IG1hdGNoZWRMaW5lcyA+IDA7
+CiAgICAgICAgICAgICB0b2tlbnMuZHVtcFJlc3QoKTsKICAgICAgICAgICAgIGlmIChsaW0gJiYg
+KHRydW5jYXRlZCB8fCBtYXRjaGVkTGluZXMgPT0gMTApICYmIG91dCAhPSBudWxsKSB7Ci0gICAg
+ICAgICAgICAgICAgb3V0LndyaXRlKCImbmJzcDsgJm5ic3A7IFs8YSBocmVmPVwiIiArIG1vcmVQ
+cmVmaXggKyBwYXRoICsgIj8iICsgcXVlcnlBc1VSSSArICJcIj5hbGw8L2E+Li4uXSIpOworICAg
+ICAgICAgICAgICAgIG91dC53cml0ZSgiJm5ic3A7ICZuYnNwOyBbPGEgaHJlZj1cIiIgKyBVdGls
+LlVSSUVuY29kZVBhdGgobW9yZVByZWZpeCArIHBhdGgpICsgIj8iICsgcXVlcnlBc1VSSSArICJc
+Ij5hbGw8L2E+Li4uXSIpOwogICAgICAgICAgICAgfQogICAgICAgICB9IGNhdGNoIChJT0V4Y2Vw
+dGlvbiBlKSB7CiAgICAgICAgICAgICBPcGVuR3Jva0xvZ2dlci5nZXRMb2dnZXIoKS5sb2coTGV2
+ZWwuV0FSTklORywgIkNvdWxkIG5vdCBnZXQgY29udGV4dCBmb3IgIiArIHBhdGgsIGUpOwo=
+</data>
+
+          </attachment>
+      
+
+    </bug>
+
+</bugzilla>

@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>16764</bug_id>
+          
+          <creation_ts>2010-08-09 23:40:00 +0000</creation_ts>
+          <short_desc>Perforce source annotation - the date is one month ahead, time information is not available</short_desc>
+          <delta_ts>2010-08-13 14:56:41 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>scm</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXINSOURCE</resolution>
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>minor</bug_severity>
+          <target_milestone>0.10</target_milestone>
+          <dependson>16660</dependson>
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Yuriy Vasylchenko">yuriy.av</reporter>
+          <assigned_to name="Lubos Kosco">Lubos.Kosco</assigned_to>
+          <cc>Lubos.Kosco</cc>
+    
+    <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>76385</commentid>
+            <who name="Yuriy Vasylchenko">yuriy.av</who>
+            <bug_when>2010-08-09 23:40:33 +0000</bug_when>
+            <thetext>In Perforce date format, the month value is &quot;1&quot;-, not &quot;0&quot;-based.
+Time information will be available if &quot;-t&quot; flag was specified for p4 commands (some of them :)
+UDiff of the fixed source based on version 0.9:
+
+
+
+--- src.ori/org/opensolaris/opengrok/history/PerforceHistoryParser.java 2010-05-11 02:12:43.000000000 -0700
++++ src/org/opensolaris/opengrok/history/PerforceHistoryParser.java     2010-08-09 16:00:29.900603765 -0700
+@@ -70,6 +70,7 @@
+         ArrayList&lt;String&gt; cmd = new ArrayList&lt;String&gt;();
+         cmd.add(&quot;p4&quot;);
+         cmd.add(&quot;changes&quot;);
++        cmd.add(&quot;-t&quot;);
+         cmd.add(&quot;...&quot;);
+ 
+         Executor executor = new Executor(cmd, file.getCanonicalFile());
+@@ -81,7 +82,7 @@
+         ArrayList&lt;String&gt; cmd = new ArrayList&lt;String&gt;();
+         cmd.add(&quot;p4&quot;);
+         cmd.add(&quot;filelog&quot;);
+-        cmd.add(&quot;-l&quot;);
++        cmd.add(&quot;-lt&quot;);
+         cmd.add(file.getName() + ((rev == null) ? &quot;&quot; : &quot;#&quot;+rev));
+         Executor executor = new Executor(cmd, file.getCanonicalFile().getParentFile());
+         executor.exec();
+@@ -89,8 +90,8 @@
+         return parseFileLog(executor.getOutputReader());
+     }
+ 
+-    private final static Pattern REVISION_PATTERN = Pattern.compile(&quot;#(\\d+) change \\d+ \\S+ on (\\d{4})/(\\d{2})/(\\d{2}) by ([^@]+)&quot;);
+-    private final static Pattern CHANGE_PATTERN = Pattern.compile(&quot;Change (\\d+) on (\\d{4})/(\\d{2})/(\\d{2}) by ([^@]+)@\\S* &apos;([^&apos;]*)&apos;&quot;);
++    private final static Pattern REVISION_PATTERN = Pattern.compile(&quot;#(\\d+) change \\d+ \\S+ on (\\d{4})/(\\d{2})/(\\d{2}) (\\d{2}):(\\d{2}):(\\d{2}) by ([^@]+)&quot;);
++    private final static Pattern CHANGE_PATTERN = Pattern.compile(&quot;Change (\\d+) on (\\d{4})/(\\d{2})/(\\d{2}) (\\d{2}):(\\d{2}):(\\d{2}) by ([^@]+)@\\S* &apos;([^&apos;]*)&apos;&quot;);
+     
+     /**
+      * Parses the history in the given string. The given reader will be closed.
+@@ -114,12 +115,16 @@
+                 HistoryEntry entry = new HistoryEntry();
+                 entry.setRevision(matcher.group(1));
+                 int year = Integer.parseInt(matcher.group(2));
+-                int month = Integer.parseInt(matcher.group(3));
++                int month = Integer.parseInt(matcher.group(3))-1;
+                 int day = Integer.parseInt(matcher.group(4));
+-                Calendar calendar = new GregorianCalendar(year, month, day);
++                int hour = Integer.parseInt(matcher.group(5));
++                int minute = Integer.parseInt(matcher.group(6));
++                int second = Integer.parseInt(matcher.group(7));
++                Calendar calendar = new GregorianCalendar(year, month, day,
++                                                          hour, minute, second);
+                 entry.setDate(calendar.getTime());
+-                entry.setAuthor(matcher.group(5));
+-                entry.setMessage(matcher.group(6).trim());
++                entry.setAuthor(matcher.group(8));
++                entry.setMessage(matcher.group(9).trim());
+                 entry.setActive(true);
+                 entries.add(entry);
+             }
+@@ -153,11 +158,15 @@
+                 entry = new HistoryEntry();
+                 entry.setRevision(matcher.group(1));
+                 int year = Integer.parseInt(matcher.group(2));
+-                int month = Integer.parseInt(matcher.group(3));
++                int month = Integer.parseInt(matcher.group(3))-1;
+                 int day = Integer.parseInt(matcher.group(4));
+-                Calendar calendar = new GregorianCalendar(year, month, day);
++                int hour = Integer.parseInt(matcher.group(5));
++                int minute = Integer.parseInt(matcher.group(6));
++                int second = Integer.parseInt(matcher.group(7));
++                Calendar calendar = new GregorianCalendar(year, month, day,
++                                                          hour, minute, second);
+                 entry.setDate(calendar.getTime());
+-                entry.setAuthor(matcher.group(5));
++                entry.setAuthor(matcher.group(8));
+                 entry.setActive(true);
+             } else {
+                 if (entry != null) {</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>76400</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2010-08-10 06:04:54 +0000</bug_when>
+            <thetext>16660 fixed part of this ...</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>76558</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2010-08-13 14:56:41 +0000</bug_when>
+            <thetext>changeset:   1077:99eea97f7285
+
+better tests would be needed, I just fixed existing ones to not trigger a prob ...</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

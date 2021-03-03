@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>18166</bug_id>
+          
+          <creation_ts>2011-04-15 18:25:00 +0000</creation_ts>
+          <short_desc>Attempting to create the History cache for Clearcase repositories throwing SQL Errors</short_desc>
+          <delta_ts>2011-04-22 16:50:14 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>scm</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>Linux</op_sys>
+          <bug_status>NEW</bug_status>
+          
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>major</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Dana">ultimav</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>82310</commentid>
+            <who name="Dana">ultimav</who>
+            <bug_when>2011-04-15 18:25:50 +0000</bug_when>
+            <thetext>Using grok - January 2011 update 0.10
+Redhat: 2.6.18-238.1.1.el5
+Clearcase: 7.1.2.1 (Using a snapshot view )
+Subversion: 1.6.15 
+
+The index throws the following SQL error when creating history for a repository. The history itself is being retrieval correctly from Clearcase..
+
+I added a HistoryEntry.dump() right before the on line 733 in the JDBCHistoryCache class, before handleSQLException(sqle, i);
+
+Subversion works correctly..
+
+
+------&gt; log excerpt...
+
+
+Apr 15, 2011 12:24:15 PM org.opensolaris.opengrok.history.Repository getHistory
+WARNING: Incremental history retrieval is not implemented for ClearCaseRepository.
+Apr 15, 2011 12:24:15 PM org.opensolaris.opengrok.history.Repository getHistory
+WARNING: Falling back to slower full history retrieval.
+Apr 15, 2011 12:24:15 PM org.opensolaris.opengrok.util.Executor exec
+FINE: Executing command [/opt/IBM/RationalSDLC/clearcase/bin/cleartool, lshistory, -dir, -fmt, %e
+%Nd
+%Fu (%u)
+%Vn
+%Nc
+.
+, ] in directory /indexstore/rps/cc/vobs/CGSCommon
+
+
+Apr 15, 2011 12:24:34 PM org.opensolaris.opengrok.util.Executor exec
+FINE: Executing command [/opt/IBM/RationalSDLC/clearcase/bin/cleartool, lshistory, -dir, -fmt, %e
+%Nd
+%Fu (%u)
+%Vn
+%Nc
+.
+, ] in directory /indexstore/rps/cc/vobs/CGSCommon
+
+
+
+Apr 15, 2011 12:24:34 PM org.opensolaris.opengrok.history.HistoryEntry dump
+FINE: HistoryEntry : revision       = /main/0
+Apr 15, 2011 12:24:34 PM org.opensolaris.opengrok.history.HistoryEntry dump
+FINE: HistoryEntry : date           = 4/27/07 2:15 PM
+Apr 15, 2011 12:24:34 PM org.opensolaris.opengrok.history.HistoryEntry dump
+FINE: HistoryEntry : author         = CLEARCASE.ADMIN (ccadmin)
+Apr 15, 2011 12:24:34 PM org.opensolaris.opengrok.history.HistoryEntry dump
+FINE: HistoryEntry : active         = True
+Apr 15, 2011 12:24:34 PM org.opensolaris.opengrok.history.HistoryEntry dump
+FINE: HistoryEntry : message        =
+Apr 15, 2011 12:24:34 PM org.opensolaris.opengrok.history.HistoryGuru createCache
+WARNING: An error occured while creating cache for /indexstore/rps/cc/vobs/CGSCommon (ClearCaseRepository)
+org.opensolaris.opengrok.history.HistoryException: java.sql.SQLIntegrityConstraintViolationException: The statement was aborted because it would have c
+aused a duplicate key value in a unique or primary key constraint or unique index identified by &apos;CHANGESETS_REPO_REV_UNIQUE&apos; defined on &apos;CHANGESETS&apos;.
+        at org.opensolaris.opengrok.history.JDBCHistoryCache.store(JDBCHistoryCache.java:607)
+        at org.opensolaris.opengrok.history.Repository.createCache(Repository.java:224)
+        at org.opensolaris.opengrok.history.HistoryGuru.createCache(HistoryGuru.java:434)
+        at org.opensolaris.opengrok.history.HistoryGuru.ensureHistoryCacheExists(HistoryGuru.java:554)
+        at org.opensolaris.opengrok.index.IndexDatabase.update(IndexDatabase.java:337)
+        at org.opensolaris.opengrok.index.IndexDatabase$1.run(IndexDatabase.java:157)
+        at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:441)
+        at java.util.concurrent.FutureTask$Sync.innerRun(FutureTask.java:303)
+        at java.util.concurrent.FutureTask.run(FutureTask.java:138)
+        at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
+        at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
+        at java.lang.Thread.run(Thread.java:662)
+
+Caused by: java.sql.SQLIntegrityConstraintViolationException: The statement was aborted because it would have caused a duplicate key value in a unique
+or primary key constraint or unique index identified by &apos;CHANGESETS_REPO_REV_UNIQUE&apos; defined on &apos;CHANGESETS&apos;.
+        at org.apache.derby.client.am.SQLExceptionFactory40.getSQLException(Unknown Source)
+        at org.apache.derby.client.am.SqlException.getSQLException(Unknown Source)
+        at org.apache.derby.client.am.PreparedStatement.executeUpdate(Unknown Source)
+        at org.opensolaris.opengrok.history.JDBCHistoryCache.storeHistory(JDBCHistoryCache.java:702)
+        at org.opensolaris.opengrok.history.JDBCHistoryCache.store(JDBCHistoryCache.java:602)
+        ... 11 more
+Caused by: org.apache.derby.client.am.SqlException: The statement was aborted because it would have caused a duplicate key value in a unique or primary
+ key constraint or unique index identified by &apos;CHANGESETS_REPO_REV_UNIQUE&apos; defined on &apos;CHANGESETS&apos;.
+        at org.apache.derby.client.am.Statement.completeExecute(Unknown Source)
+        at org.apache.derby.client.net.NetStatementReply.parseEXCSQLSTTreply(Unknown Source)
+        at org.apache.derby.client.net.NetStatementReply.readExecute(Unknown Source)
+        at org.apache.derby.client.net.StatementReply.readExecute(Unknown Source)
+        at org.apache.derby.client.net.NetPreparedStatement.readExecute_(Unknown Source)
+        at org.apache.derby.client.am.PreparedStatement.readExecute(Unknown Source)
+        at org.apache.derby.client.am.PreparedStatement.flowExecute(Unknown Source)
+        at org.apache.derby.client.am.PreparedStatement.executeUpdateX(Unknown Source)
+        ... 14 more
+
+
+
+
+Output from the history command above...
+
+$ cleartool lshistory -dir -fmt &apos;%e\n%Nd\n%Fu (%u)\n%Vn\n%Nc\n.\n&apos; .
+create directory version
+20081203.104450
+Lee (L306834)
+/main/2
+Uncataloged directory element &quot;ris.cgs.dbp.1_0&quot;.
+.
+create directory version
+20070507.161140
+Lee (l306834)
+/main/1
+Added directory element &quot;ris.cgs.dbp.1_0&quot;.
+.
+create directory version
+20070427.141519
+CLEARCASE.ADMIN (ccadmin)
+/main/0
+
+.
+create branch
+20070427.141519
+CLEARCASE.ADMIN (ccadmin)
+/main
+
+.
+create directory element
+20070427.141519
+CLEARCASE.ADMIN (ccadmin)
+
+Predefined directory element for root of versioned object base.
+.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>82448</commentid>
+            <who name="Dana">ultimav</who>
+            <bug_when>2011-04-22 16:50:14 +0000</bug_when>
+            <thetext>I did a little more research and starting from a clean cachedb, and running the indexer with a slightly modified org.opensolaris.opengrok.jdbc.InsertQuery.
+I added a DebuggablePreparedStatement to capture the actual SQL. 
+
+It seems that during the storeHistory(conn,history,repository) for a clearcase repository it never gets passed adding the Changeset inserts.. No fileschange/dirchanges are ever added during the parsing of the history for a given directory or repository.. Using SquirrelSQL I have looked in the derby database and I can only find references to a clearcase repository in REPOSITORIES, CHANGESETS, AUTHORS.</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

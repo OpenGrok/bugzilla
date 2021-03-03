@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>19176</bug_id>
+          
+          <creation_ts>2012-02-15 13:52:00 +0000</creation_ts>
+          <short_desc>need a way how to limit the size of files processed by indexer</short_desc>
+          <delta_ts>2012-02-16 12:26:12 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>indexer</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>NEW</bug_status>
+          
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>enhancement</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Vladimir Kotal">vladimir.kotal</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          <cc>knut.hatlen</cc>
+    
+    <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>86202</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2012-02-15 13:52:01 +0000</bug_when>
+            <thetext>Recent reindexing with 0.11 revealed that the indexer cannot cope with larger files and just blows up (JAVA_OPTS is default, set to 2 GB):
+
+2012-02-15 14:30:53.572+0100 INFO t15 DefaultIndexChangedListener.fileAdd: Add: /foo.cpio (PlainAnalyzer)
+2012-02-15 14:31:43.178+0100 SEVERE t15 IndexDatabase$1.run: Problem updating lucene index database: 
+java.lang.OutOfMemoryError: Java heap space
+	at java.util.Arrays.copyOf(Arrays.java:2882)
+	at org.opensolaris.opengrok.analysis.plain.PlainAnalyzer.analyze(PlainAnalyzer.java:77)
+	at org.opensolaris.opengrok.analysis.TextAnalyzer.analyze(TextAnalyzer.java:60)
+	at org.opensolaris.opengrok.analysis.AnalyzerGuru.getDocument(AnalyzerGuru.java:262)
+	at org.opensolaris.opengrok.index.IndexDatabase.addFile(IndexDatabase.java:584)
+	at org.opensolaris.opengrok.index.IndexDatabase.indexDown(IndexDatabase.java:814)
+	at org.opensolaris.opengrok.index.IndexDatabase.indexDown(IndexDatabase.java:787)
+	at org.opensolaris.opengrok.index.IndexDatabase.indexDown(IndexDatabase.java:787)
+	at org.opensolaris.opengrok.index.IndexDatabase.update(IndexDatabase.java:354)
+	at org.opensolaris.opengrok.index.IndexDatabase$1.run(IndexDatabase.java:158)
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:441)
+	at java.util.concurrent.FutureTask$Sync.innerRun(FutureTask.java:303)
+	at java.util.concurrent.FutureTask.run(FutureTask.java:138)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
+	at java.lang.Thread.run(Thread.java:662)
+
+2012-02-15 14:31:43.194+0100 INFO t10 Indexer.sendToConfigHost: Send configuration to: localhost:2424
+2012-02-15 14:31:44.488+0100 INFO t10 Indexer.sendToConfigHost: Configuration update routine done, check log output for errors.
+
+
+$ du -sh /foo.cpio
+ 311M	/foo.cpio
+
+
+There should be an option which would allow us to say that files larger than xy bytes should be ignored by the indexer (similar to the -i option for filenames).</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86203</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2012-02-15 13:54:37 +0000</bug_when>
+            <thetext>Maybe there should even be some sane default, like 100 MB.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86209</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2012-02-16 12:26:12 +0000</bug_when>
+            <thetext>The analyzers don&apos;t really need to read the entire file into memory, they could also operate on streams. The reason why they do read the file into memory, I think, is to avoid reading every file twice (once to add it to the Lucene indexes, and once to build the xref). I&apos;m not sure how important this optimization is (should run some experiments to see).</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

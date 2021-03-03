@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>9407</bug_id>
+          
+          <creation_ts>2009-06-10 09:25:00 +0000</creation_ts>
+          <short_desc>set limit for directory traversal during search for repositories</short_desc>
+          <delta_ts>2010-05-12 13:54:02 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>scm</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXINSOURCE</resolution>
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>enhancement</bug_severity>
+          <target_milestone>0.9</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Vladimir Kotal">vladimir.kotal</reporter>
+          <assigned_to name="Lubos Kosco">Lubos.Kosco</assigned_to>
+          <cc>Lubos.Kosco</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>41303</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2009-06-10 09:25:44 +0000</bug_when>
+            <thetext>During the initial phase of the run (using -s with directory which stores multiple directories with source code), OpenGrok traverses the directories and is searching for projects.
+
+In our case, next to normal Mercurial/Teamware repositories there is a bunch of directories which are not SCM managed (but we want to have them accessible via OpenGrok anyway). OpenGrok spends lots of time traversing those directories.
+
+It would be nice if there was a configuration option to limit the depth of the traversal.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>41462</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2009-06-12 02:27:55 +0000</bug_when>
+            <thetext>scanning repos seems to take a long time
+
+so I guess a fix for this could either be a limit of scanning depth
+
+OR
+
+allowlist or blocklist for scanner (e.g. don&apos;t scan project directory &quot;oldies&quot; , since those are old gates and there will be no recent scm found)
+
+hmm ?</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>41463</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2009-06-12 02:50:11 +0000</bug_when>
+            <thetext>Both sound good; personally I&apos;d prefer the configurable limit (less maintenance burden for opengrok admin).</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>57959</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2009-12-02 09:59:25 +0000</bug_when>
+            <thetext>BTW this is from 2x2GHz CPU system with fast storage backend (RAIDZ2 on Storage Tek 3510 connected via Fibre Channel) and 30 gigabytes of source files:
+
+Loading the default instance configuration ...
+Scanning for repositories...
+Done searching for repositories (478s)</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>72329</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2010-04-30 15:37:49 +0000</bug_when>
+            <thetext>changeset:   993:bf9f34520d38
+
+I did preliminary testing, default depth is set to 4 directories from source root
+above changeset also improved stating of non existent files so hopefully that improves the times for scanning
+
+I am not closing this bug, since I&apos;d like to get verification from submitter ;)</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>72556</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2010-05-05 13:26:18 +0000</bug_when>
+            <thetext>- before:
+
+Refreshing OpenGrok indexes
+Loading the default instance configuration ...
+Scanning for repositories...
+Done searching for repositories (583s)
+
+- after:
+
+Refreshing OpenGrok indexes
+Loading the default instance configuration ...
+Scanning for repositories...
+Done searching for repositories (18s)</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>19173</bug_id>
+          
+          <creation_ts>2012-02-14 01:10:00 +0000</creation_ts>
+          <short_desc>remove &quot;ghost&quot; option x handling</short_desc>
+          <delta_ts>2012-02-16 11:31:22 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>indexer</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXED</resolution>
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>minor</bug_severity>
+          <target_milestone>next</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Jens Elkner">jel+osbugs</reporter>
+          <assigned_to name="Jens Elkner">jel+osbugs</assigned_to>
+          <cc>knut.hatlen</cc>
+    
+    <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>86188</commentid>
+              <attachid>4628</attachid>
+            <who name="Jens Elkner">jel+osbugs</who>
+            <bug_when>2012-02-14 01:10:04 +0000</bug_when>
+            <thetext>Created attachment 4628
+patch
+
+minor cleanup + msg alignment</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86199</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2012-02-15 09:49:27 +0000</bug_when>
+            <thetext>I&apos;m not sure I think all the changes made to the log messages are improvements, as the old messages look more descriptive than the new ones. But those changes don&apos;t look related to the x option, so perhaps it&apos;s better to limit this bug to the removal of that option?</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86208</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2012-02-16 11:31:22 +0000</bug_when>
+            <thetext>I pushed the part of the patch that removes the &apos;x&apos; option.
+changeset:   1334:a0021b62e814</thetext>
+          </long_desc>
+      
+          <attachment
+              isobsolete="0"
+              ispatch="1"
+              isprivate="0"
+              isurl="0"
+          >
+            <attachid>4628</attachid>
+            <date>2012-02-14 01:10:00 +0000</date>
+            <delta_ts>2012-02-14 01:10:17 +0000</delta_ts>
+            <desc>patch</desc>
+            <filename>indexer.patch</filename>
+            <type>text/plain</type>
+            <size>2340</size>
+            <attacher>jel+osbugs</attacher>
+            
+              <data encoding="base64">IyBIRyBjaGFuZ2VzZXQgcGF0Y2gKIyBVc2VyIGplbCtvcGVuZ3Jva0Bjcy51bmktbWFnZGVidXJn
+LmRlCiMgRGF0ZSAxMzI5MTgxNTg5IC0zNjAwCiMgTm9kZSBJRCA1YzNhYTQ2ODllNWM1NTgxZTZh
+OTM3M2VhZWUyMjdhYzY2NzVlZGU2CiMgUGFyZW50ICAxZjUxYTU5ZmRhODAxYTVlNzUzZTk5OGE4
+ZDJiYTUwN2U2MjczYTcwCnJlbW92ZSAiZ2hvc3QiIG9wdGlvbiB4IGhhbmRsaW5nCgpkaWZmIC1y
+IDFmNTFhNTlmZGE4MCAtciA1YzNhYTQ2ODllNWMgc3JjL29yZy9vcGVuc29sYXJpcy9vcGVuZ3Jv
+ay9pbmRleC9JbmRleGVyLmphdmEKLS0tIGEvc3JjL29yZy9vcGVuc29sYXJpcy9vcGVuZ3Jvay9p
+bmRleC9JbmRleGVyLmphdmEJTW9uIEZlYiAxMyAwNjo0NDo1MCAyMDEyICswMTAwCisrKyBiL3Ny
+Yy9vcmcvb3BlbnNvbGFyaXMvb3Blbmdyb2svaW5kZXgvSW5kZXhlci5qYXZhCVR1ZSBGZWIgMTQg
+MDI6MDY6MjkgMjAxMiArMDEwMApAQCAtMTQ1LDExICsxNDUsNiBAQAogICAgICAgICAgICAgICAg
+IGdldG9wdC5yZXNldCgpOwogICAgICAgICAgICAgICAgIHdoaWxlICgoY21kID0gZ2V0b3B0Lmdl
+dE9wdCgpKSAhPSAtMSkgewogICAgICAgICAgICAgICAgICAgICBzd2l0Y2ggKGNtZCkgewotICAg
+ICAgICAgICAgICAgICAgICAgICAgY2FzZSAneCc6Ci0gICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgY3JlYXRlRGljdCA9IHRydWU7Ci0gICAgICAgICAgICAgICAgICAgICAgICAgICAgcnVuSW5k
+ZXggPSBmYWxzZTsKLSAgICAgICAgICAgICAgICAgICAgICAgICAgICBicmVhazsKLQogICAgICAg
+ICAgICAgICAgICAgICAgICAgY2FzZSAncSc6CiAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+Y2ZnLnNldFZlcmJvc2UoZmFsc2UpOwogICAgICAgICAgICAgICAgICAgICAgICAgICAgIE9wZW5H
+cm9rTG9nZ2VyLnNldE9HQ29uc29sZUxvZ0xldmVsKExldmVsLldBUk5JTkcpOwpAQCAtNTUyLDcg
+KzU0Nyw3IEBACiAgICAgICAgICAgICBsb25nIHN0YXJ0ID0gU3lzdGVtLmN1cnJlbnRUaW1lTWls
+bGlzKCk7CiAgICAgICAgICAgICBIaXN0b3J5R3VydS5nZXRJbnN0YW5jZSgpLmFkZFJlcG9zaXRv
+cmllcyhlbnYuZ2V0U291cmNlUm9vdFBhdGgoKSk7CiAgICAgICAgICAgICBsb25nIHRpbWUgPSAo
+U3lzdGVtLmN1cnJlbnRUaW1lTWlsbGlzKCkgLSBzdGFydCkgLyAxMDAwOwotICAgICAgICAgICAg
+bG9nLmxvZyhMZXZlbC5JTkZPLCAiRG9uZSBzY2FubmluZyBmb3IgcmVwb3NpdG9yaWVzIHswfXMi
+LCB0aW1lKTsKKyAgICAgICAgICAgIGxvZy5sb2coTGV2ZWwuSU5GTywgIkRvbmUgKHswfXMpIiwg
+dGltZSk7CiAgICAgICAgICAgICBpZiAobGlzdFJlcG9QYXRoZXMgfHwgIXphcENhY2hlLmlzRW1w
+dHkoKSkgewogICAgICAgICAgICAgICAgIExpc3Q8UmVwb3NpdG9yeUluZm8+IHJlcG9zID0gZW52
+LmdldFJlcG9zaXRvcmllcygpOwogICAgICAgICAgICAgICAgIFN0cmluZyBwcmVmaXggPSAgZW52
+LmdldFNvdXJjZVJvb3RQYXRoKCk7CkBAIC02ODgsNyArNjgzLDcgQEAKICAgICAgICAgICAgIElu
+ZGV4Q2hhbmdlZExpc3RlbmVyIHByb2dyZXNzKQogICAgICAgICAgICAgdGhyb3dzIElPRXhjZXB0
+aW9uIHsKICAgICAgICAgUnVudGltZUVudmlyb25tZW50IGVudiA9IFJ1bnRpbWVFbnZpcm9ubWVu
+dC5nZXRJbnN0YW5jZSgpLnJlZ2lzdGVyKCk7Ci0gICAgICAgIGxvZy5pbmZvKCJTdGFydGluZyBp
+bmRleGluZyAuLi4iKTsKKyAgICAgICAgbG9nLmluZm8oIlN0YXJ0IGluZGV4aW5nIC4uLiIpOwog
+CiAgICAgICAgIEV4ZWN1dG9yU2VydmljZSBleGVjdXRvciA9IEV4ZWN1dG9ycy5uZXdGaXhlZFRo
+cmVhZFBvb2wobm9UaHJlYWRzKTsKIApAQCAtNzYyLDYgKzc1Nyw3IEBACiAgICAgICAgICAgICAg
+ICAgbG9nLmxvZyhMZXZlbC5GSU5FLCAiZG9JbmRleGVyRXhlY3V0aW9uIiwgZXhwKTsKICAgICAg
+ICAgICAgIH0KICAgICAgICB9CisgICAgICAgbG9nLmluZm8oIkRvbmUuIik7CiAgICAgfQogCiAg
+ICAgcHVibGljIHZvaWQgc2VuZFRvQ29uZmlnSG9zdChSdW50aW1lRW52aXJvbm1lbnQgZW52LCBT
+dHJpbmcgY29uZmlnSG9zdCkgewpAQCAtNzg3LDcgKzc4Myw3IEBACiAgICAgICAgICAgICAgICAg
+c2Iuc2V0TGVuZ3RoKHNiLmxlbmd0aCgpLTIpOwogICAgICAgICAgICAgICAgIGxvZy53YXJuaW5n
+KHNiLnRvU3RyaW5nKCkpOwogICAgICAgICAgICAgfQotICAgICAgICAgICAgbG9nLmluZm8oIkNv
+bmZpZ3VyYXRpb24gdXBkYXRlIHJvdXRpbmUgZG9uZSwgY2hlY2sgbG9nIG91dHB1dCBmb3IgZXJy
+b3JzLiIpOworICAgICAgICAgICAgbG9nLmluZm8oIkRvbmUuIik7CiAgICAgICAgIH0KICAgICB9
+CiAK
+</data>
+
+          </attachment>
+      
+
+    </bug>
+
+</bugzilla>

@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>19219</bug_id>
+          
+          <creation_ts>2012-06-25 20:39:00 +0000</creation_ts>
+          <short_desc>GitHistoryParserTest test cases can&apos;t be compiled because derby.jar is missing for compilation</short_desc>
+          <delta_ts>2013-02-10 16:09:41 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>tests</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>WORKSFORME</resolution>
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>critical</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Stanislav Kozina">skozina</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          <cc>knut.hatlen</cc>
+    
+    <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>86495</commentid>
+            <who name="Stanislav Kozina">skozina</who>
+            <bug_when>2012-06-25 20:39:05 +0000</bug_when>
+            <thetext>I tried to run all test cases in GitHistoryParserTest class and got following output:
+
+compile-test:
+Non-existing path &quot;/home/ersin/opengrok/opengrok-tag/lib/derby.jar&quot; provided.
+Have no file for /home/ersin/opengrok/opengrok-tag/lib/derby.jar
+
+When I downloaded Apache Derby and put the jar file into lib directory, the test cases were finally able to compile.
+
+Perhaps derby.jar is missing in the distribution tar ball?</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86563</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2012-07-18 18:02:18 +0000</bug_when>
+            <thetext>derby.jar shouldn&apos;t be required for building the tests. It&apos;s only used when running the tests, and it&apos;s optional, so the test that needs it (JDBCHistoryCacheTest) skips it if it&apos;s not there.
+
+I just verified that I could build trunk and run the tests in my environment, without having derby.jar in the lib directory.
+
+Which command did you run when you saw this problem?</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86676</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2013-02-10 16:09:41 +0000</bug_when>
+            <thetext>Closing since there is not enough information to reproduce the problem, and the reporter seems to have found a workaround in his environment.</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

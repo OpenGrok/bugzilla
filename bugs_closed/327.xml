@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>327</bug_id>
+          
+          <creation_ts>2007-12-19 10:42:00 +0000</creation_ts>
+          <short_desc>USER_PAGE, BUG_PAGE, BUG_PATTERN configuration variables don&apos;t exist anymore</short_desc>
+          <delta_ts>2008-11-08 06:58:26 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>webapp</component>
+          <version>unspecified</version>
+          <rep_platform>Other</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXED</resolution>
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>major</bug_severity>
+          <target_milestone>0.8</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Stephen Lau">stevel</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          <cc>christian.lins</cc>
+    
+    <cc>Lubos.Kosco</cc>
+    
+    <cc>vitezslav.batrla</cc>
+    
+    <cc>vladimir.kotal</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>908</commentid>
+            <who name="Stephen Lau">stevel</who>
+            <bug_when>2007-12-19 10:42:00 +0000</bug_when>
+            <thetext>They used to.
+Now they don&apos;t.
+Makes me sad.
+:(</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>920</commentid>
+            <who name="Trond Norbye">trond.norbye</who>
+            <bug_when>2007-12-25 14:30:59 +0000</bug_when>
+            <thetext>The settings have been removed from the web.xml file, and moved into the configuration file (but unfortunately there is no command line options to specify them).
+
+For now you must manually edit the config-file and add entries like:
+  &lt;void property=&quot;bugPage&quot;&gt; 
+   &lt;string&gt;http://the.bug.url&lt;/string&gt; 
+  &lt;/void&gt; 
+  &lt;void property=&quot;bugPattern&quot;&gt; 
+   &lt;string&gt;CR[123456789]{6}&lt;/string&gt; 
+  &lt;/void&gt; 
+  &lt;void property=&quot;userPage&quot;&gt; 
+   &lt;string&gt;http://the.user.page.url&lt;/string&gt; 
+  &lt;/void&gt; 
+
+We are currently discussing if we should split this into a &quot;per-project-setting&quot; so it will not be fixed on trunk before we have decided what we want to do...</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>3734</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2008-04-14 01:16:12 +0000</bug_when>
+            <thetext>+1 for adding these options into per project
++1 for having a global(default) setup if project doesn&apos;t contain special links/pattern
+
+Also they should exist on CLI, or they should be somehow easily to specify, the way of adding them after config. xml generation is too awkward and can not be easily automated. Also config xml is always refreshed in use cases when new projects are added/deleted, hence there really must be a way to change those variables easily (or at LEAST the global-default ones)</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>11110</commentid>
+            <who name="vita">vitezslav.batrla</who>
+            <bug_when>2008-08-26 06:11:50 +0000</bug_when>
+            <thetext>I use this workaround to automatically customize user and bug page.
+My configuration is split to two files:
+
+1) readonly /etc/opengrok/readonly_configuration.xml 
+2) readwrite /etc/opengrok/configuration.xml
+
+The content of read only file looks like:
+&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt; 
+&lt;java version=&quot;1.6.0_06&quot; class=&quot;java.beans.XMLDecoder&quot;&gt; 
+ &lt;object class=&quot;org.opensolaris.opengrok.configuration.Configuration&quot;&gt; 
+  &lt;void property=&quot;userPage&quot;&gt;
+   &lt;string&gt;http://namefinder/NameFinder?nfquery=&lt;/string&gt;
+  &lt;/void&gt;
+  &lt;void property=&quot;bugPage&quot;&gt; 
+   &lt;string&gt;http://monaco.sfbay/detail.jsf?cr=&lt;/string&gt; 
+  &lt;/void&gt; 
+ &lt;/object&gt; 
+&lt;/java&gt;
+
+And below is snippet of script which runs indexer. Note 2 -R and 1 -W options.
+
+DATA_ROOT=/opt/opengrok/cache
+
+&lt;snip&gt;
+
+CONFIGXML=$DATA_ROOT/configuration.xml
+
+READWRITE_CONFIG=&quot;&quot;
+if [ -f $CONFIGXML ]; then
+    READWRITE_CONFIG=&quot;-R $CONFIGXML&quot;
+fi
+
+READONLY_CONFIG=&quot;&quot;
+if [ -f /etc/opengrok/readonly_configuration.xml ]; then
+    READONLY_CONFIG=&quot;-R /etc/opengrok/readonly_configuration.xml&quot;
+fi
+
+java ${DEBUG_JVM} ${JAVA_OPTS} ${PROPERTIES} -jar ${PROGDIR}/opengrok.jar ${SCAN
+_FOR_REPOS} ${IGNORED_FILES} -m ${WLIMIT} -c ${EXUB_CTAGS} -U ${WEBAPP_URL} -P -
+v -s ${SRC_ROOT} $READONLY_CONFIG $READWRITE_CONFIG -W $CONFIGXML -d ${DATA_ROOT
+} ${MAXSYMLINKDEPTH}
+
+This allows me to remove configuration.xml and all data in DATA_ROOT, without having to manually customize user page again (after configuration.xml is re-created by opengrok&apos;s -W option).</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>11521</commentid>
+            <who name="Trond Norbye">trond.norbye</who>
+            <bug_when>2008-08-31 03:30:41 +0000</bug_when>
+            <thetext>Set the priority to P3 because we have a workaround...</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>18071</commentid>
+            <who name="Trond Norbye">trond.norbye</who>
+            <bug_when>2008-11-08 06:58:26 +0000</bug_when>
+            <thetext>You may use the new client to set these variables now.</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

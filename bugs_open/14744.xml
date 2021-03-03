@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>14744</bug_id>
+          
+          <creation_ts>2010-02-23 09:16:00 +0000</creation_ts>
+          <short_desc>if the def is in the file itself limit new ref search to the file</short_desc>
+          <delta_ts>2010-02-23 09:37:22 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>analyzer</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>NEW</bug_status>
+          
+          
+          
+          
+          
+          
+          <priority>P4</priority>
+          <bug_severity>minor</bug_severity>
+          <target_milestone>---</target_milestone>
+          <dependson>3435</dependson>
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Lubos Kosco">Lubos.Kosco</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          <cc>knut.hatlen</cc>
+    
+    <cc>opengrok-dev</cc>
+    
+    <cc>zdenek.kotala</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>67212</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2010-02-23 09:16:18 +0000</bug_when>
+            <thetext>3435 fixed the generation of links for refs search when multiple definitions found
+the link generated could be limited just to the file itself, when we know the definition is there (this way we will just see local definitions, hence hiding overloaded/overrided ones)</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>67213</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2010-02-23 09:37:22 +0000</bug_when>
+            <thetext>Changing component to analyzer, since that&apos;s where the links are generated.</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

@@ -1,0 +1,43 @@
+diff -r fcc2cdf1dc6b -r a89727ddc846 src/org/opensolaris/opengrok/web/Util.java
+--- a/src/org/opensolaris/opengrok/web/Util.java	Wed Apr 25 16:38:26 2012 +0200
++++ b/src/org/opensolaris/opengrok/web/Util.java	Thu May 03 14:45:54 2012 -0700
+@@ -499,8 +499,14 @@
+                 }
+                 out.write(closeQuotedTag);
+             }
++            String displayRevision;
++            if (r.length() > 10) {
++                displayRevision = r.substring(0, 8) + "...";
++            } else {
++                displayRevision = r;
++            }
+             StringBuilder buf = new StringBuilder();
+-            htmlize(r, buf);
++            htmlize(displayRevision, buf);
+             out.write(buf.toString());
+             buf.setLength(0);
+             if (enabled) {
+diff -r fcc2cdf1dc6b -r a89727ddc846 web/list.jsp
+--- a/web/list.jsp	Wed Apr 25 16:38:26 2012 +0200
++++ b/web/list.jsp	Thu May 03 14:45:54 2012 -0700
+@@ -55,9 +55,12 @@
+     if (annotation != null) {
+         int r = annotation.getWidestRevision();
+         int a = annotation.getWidestAuthor();
++        if (r > 18) {
++            r = 18;
++        }
+         cfg.addHeaderData("<style type=\"text/css\">"
+             + ".blame .r { width: " + (r == 0 ? 6 : r) + "ex; } "
+-            + ".blame .a { width: " + (a == 0 ? 6 : a) + "ex; } "
++            + ".blame .a { width: " + (a == 0 ? 6 : a * 0.75) + "em; } "
+             + "</style>");
+     }
+ }
+@@ -273,4 +276,4 @@
+ 
+ include file="foot.jspf"
+ 
+-%>
+\ No newline at end of file
++%>

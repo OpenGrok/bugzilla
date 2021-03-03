@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>17945</bug_id>
+          
+          <creation_ts>2011-02-28 17:21:00 +0000</creation_ts>
+          <short_desc>highlighting in c sources broken when #error Don&apos;t  - &quot; &apos; &quot; will break the highlight</short_desc>
+          <delta_ts>2011-04-24 16:20:10 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>indexer</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>NEW</bug_status>
+          
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>minor</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Lubos Kosco">Lubos.Kosco</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          <cc>knut.hatlen</cc>
+    
+    <cc>opengrok-dev</cc>
+    
+    <cc>zdenek.kotala</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>81471</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2011-02-28 17:21:10 +0000</bug_when>
+            <thetext>http://src.opensolaris.org/source/xref/onnv/onnv-gate/usr/src/common/bignum/bignumimpl.c#1465
+
+analyzer thinks &quot; &apos; &quot; starts a string, but it doesn&apos;t ...</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>82460</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2011-04-24 16:20:10 +0000</bug_when>
+            <thetext>Is the file well-formed? I tried to compile a file that contained only this single line:
+
+#error Don&apos;t use 64-bit chunks without defining UMUL64
+
+The Sun Studio compiler printed these error messages:
+
+&quot;test.c&quot;, line 1: bad token in #error directive: &apos;t use 64-bit chunks without defining UMUL64
+&quot;test.c&quot;, line 1: #error: Don&apos;t use 64-bit chunks without defining UMUL64
+
+Note the first message: &quot;bad token in #error directive&quot;.
+
+I also found this in the docs for gcc&apos;s pre-processor:
+
+&quot;The line must consist of complete tokens. It is wisest to make the argument of these directives be a single string constant; this avoids problems with apostrophes and the like.&quot;
+
+http://gcc.gnu.org/onlinedocs/cpp/Diagnostics.html</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

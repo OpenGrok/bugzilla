@@ -1,0 +1,326 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>18242</bug_id>
+          
+          <creation_ts>2011-05-03 18:29:00 +0000</creation_ts>
+          <short_desc>RFE: Need to add an authentication step prior to browsing source</short_desc>
+          <delta_ts>2011-09-22 01:01:27 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>misc</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>REOPENED</bug_status>
+          
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>enhancement</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter>bruce.hill</reporter>
+          <assigned_to name="Lubos Kosco">Lubos.Kosco</assigned_to>
+          <cc>brendan.lynch</cc>
+    
+    <cc>bruce.hill</cc>
+    
+    <cc>Darren.Moffat</cc>
+    
+    <cc>James.McPherson</cc>
+    
+    <cc>joshua</cc>
+    
+    <cc>knut.hatlen</cc>
+    
+    <cc>Lubos.Kosco</cc>
+    
+    <cc>martin.walsh</cc>
+    
+    <cc>opengrok-dev</cc>
+    
+    <cc>vaishak.suvarna</cc>
+    
+    <cc>vladimir.kotal</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>82580</commentid>
+            <who name="">bruce.hill</who>
+            <bug_when>2011-05-03 18:29:39 +0000</bug_when>
+            <thetext>Would like to see the ability to secure access to the source code that OpenGrok is presenting for browsing. 
+Need to add a way to redirect access to authentication via https.
+
+This could require changes to the project, or updating of documentation on how to accomplish this.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>82585</commentid>
+            <who name="Darren J Moffat">Darren.Moffat</who>
+            <bug_when>2011-05-03 22:08:36 +0000</bug_when>
+            <thetext>I&apos;m not sure that doing authentication (and particularly authentication without a subsequent authorisation and audit system too) in the opengrok application is the correct way to solve this.
+
+Why can&apos;t the hosting webserver/application server authentication and access control system be used for this ? What aren&apos;t they providing that requires this be pushed up into the opengrok app ?
+
+I&apos;ve always thought of opengrok as &quot;web browser&quot; cscope and there is no way we would add authentication into the UNIX cscope command.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>82587</commentid>
+            <who name="James C. McPherson">James.McPherson</who>
+            <bug_when>2011-05-03 22:26:11 +0000</bug_when>
+            <thetext>Implementing closedgrok seems to be the wrong thing to do. Especially when
+we already have the infrastructure built in to apache / S1WS / etc to do 
+authentication against LDAP and LDAPS, which can be turned on really easily
+with a few lines in the server&apos;s configuration file.
+
+Bruce - have a read of http://httpd.apache.org/docs/2.2/mod/mod_authnz_ldap.html
+for examples.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>82600</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2011-05-04 08:47:58 +0000</bug_when>
+            <thetext>I understand that the first phase should be leveraging existing pieces to do auth in opengrok - so tomcat auth(either through pam or other pluggable means) and ssl
+
+so first phase should be a documentation page on how to achieve above
+
+
+Second phase is something which is already in place on opensolaris.org - restricting access per project
+for which the web application has to be adjusted slightly (to have users per project which have access) - opensolaris.org implementation is not that pluggable and I am curious how much can be leveraged and taken upstream ...
+
+someone correct me if wrong
+L</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>82601</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2011-05-04 12:54:06 +0000</bug_when>
+            <thetext>tomcat and ldap - http://blog.mc-thias.org/?title=tomcat_ldap_authentication&amp;more=1&amp;c=1&amp;tb=1&amp;pb=1
+
+tomcat proxy(in case we will redirect the queries through some other machine or use different outer server name) - http://tomcat.apache.org/tomcat-6.0-doc/proxy-howto.html</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>82614</commentid>
+            <who name="Vaishak Suvarna">vaishak.suvarna</who>
+            <bug_when>2011-05-04 22:22:30 +0000</bug_when>
+            <thetext>(In reply to comment #4)
+&gt; tomcat and ldap -
+&gt; http://blog.mc-thias.org/?title=tomcat_ldap_authentication&amp;more=1&amp;c=1&amp;tb=1&amp;pb=1
+&gt; 
+&gt; tomcat proxy(in case we will redirect the queries through some other machine or
+&gt; use different outer server name) -
+&gt; http://tomcat.apache.org/tomcat-6.0-doc/proxy-howto.html
+
+I don&apos;t think the documentation regarding the proxy set-up is complete atleast from opengrok perspective. All the opengrok links will be broken when accessing via a proxy (e.g from apache webserver). I assume you need some additional apache modules which can automatically resolve the broken links</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>82624</commentid>
+            <who name="Vaishak Suvarna">vaishak.suvarna</who>
+            <bug_when>2011-05-04 22:55:56 +0000</bug_when>
+            <thetext>(In reply to comment #4)
+&gt; tomcat and ldap -
+&gt; http://blog.mc-thias.org/?title=tomcat_ldap_authentication&amp;more=1&amp;c=1&amp;tb=1&amp;pb=1
+&gt; 
+
+The tomcat ldap authentication &amp; access restriction (by group/roles etc) can be configured only at opengrok instance level not for the directories within that particular opengrok webpapp. 
+
+For e.g if the opengrok webpapp has multiple projects, within the same instance then I am not sure if its possible to restrict access using the tomcat default authentication features.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>82634</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2011-05-05 07:58:51 +0000</bug_when>
+            <thetext>(In reply to comment #6)
+&gt; (In reply to comment #4)
+&gt; &gt; tomcat and ldap -
+&gt; &gt; http://blog.mc-thias.org/?title=tomcat_ldap_authentication&amp;more=1&amp;c=1&amp;tb=1&amp;pb=1
+&gt; &gt; 
+&gt; 
+&gt; The tomcat ldap authentication &amp; access restriction (by group/roles etc) can be
+&gt; configured only at opengrok instance level not for the directories within that
+&gt; particular opengrok webpapp. 
+&gt; 
+&gt; For e.g if the opengrok webpapp has multiple projects, within the same instance
+&gt; then I am not sure if its possible to restrict access using the tomcat default
+&gt; authentication features.
+
+yes, you&apos;re correct, most probably that will have to be next phase(second one) which can allow per project access ...
+(adding Martin in case he has some input on lessons learned)</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>82639</commentid>
+            <who name="Martin Walsh">martin.walsh</who>
+            <bug_when>2011-05-05 09:21:23 +0000</bug_when>
+            <thetext>(In reply to comment #3)
+&gt; 
+&gt; Second phase is something which is already in place on opensolaris.org -
+&gt; restricting access per project
+&gt; for which the web application has to be adjusted slightly (to have users per
+&gt; project which have access) - opensolaris.org implementation is not that
+&gt; pluggable and I am curious how much can be leveraged and taken upstream ...
+&gt; 
+
+I don&apos;t think much can be taken upstream, as the implementation is very specific to what we needed to achieve. The main part of access control was done with a servlet filter, allowing us to control access before/after the request/response has been handled by OpenGrok.  This was pretty simple, and required no changes to the actual application.  Application changes were required to prevent certain projects from being displayed in project listings etc, such as the /xref/ servlet. 
+
+I am happy to help with the second phase, if required.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>82640</commentid>
+            <who name="Martin Walsh">martin.walsh</who>
+            <bug_when>2011-05-05 09:27:19 +0000</bug_when>
+            <thetext>(In reply to comment #7)
+&gt; (In reply to comment #6)
+&gt; &gt; (In reply to comment #4)
+&gt; &gt; &gt; tomcat and ldap -
+&gt; &gt; &gt; http://blog.mc-thias.org/?title=tomcat_ldap_authentication&amp;more=1&amp;c=1&amp;tb=1&amp;pb=1
+&gt; &gt; &gt; 
+&gt; &gt; 
+&gt; &gt; The tomcat ldap authentication &amp; access restriction (by group/roles etc) can be
+&gt; &gt; configured only at opengrok instance level not for the directories within that
+&gt; &gt; particular opengrok webpapp. 
+&gt; &gt; 
+&gt; &gt; For e.g if the opengrok webpapp has multiple projects, within the same instance
+&gt; &gt; then I am not sure if its possible to restrict access using the tomcat default
+&gt; &gt; authentication features.
+&gt; 
+&gt; yes, you&apos;re correct, most probably that will have to be next phase(second one)
+&gt; which can allow per project access ...
+&gt; (adding Martin in case he has some input on lessons learned)
+
+As an intermediary step, if just access controls are required, a simple servlet filter should be able to achieve this by manipulating the request/response.  This would however still list hidden projects in the webapp, returning a HTTP 403 if selected.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>82641</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2011-05-05 11:32:08 +0000</bug_when>
+            <thetext>(In reply to comment #7)
+&gt; (In reply to comment #6)
+&gt; &gt; (In reply to comment #4)
+&gt; &gt; &gt; tomcat and ldap -
+&gt; &gt; &gt; http://blog.mc-thias.org/?title=tomcat_ldap_authentication&amp;more=1&amp;c=1&amp;tb=1&amp;pb=1
+&gt; &gt; &gt; 
+&gt; &gt; 
+&gt; &gt; The tomcat ldap authentication &amp; access restriction (by group/roles etc) can be
+&gt; &gt; configured only at opengrok instance level not for the directories within that
+&gt; &gt; particular opengrok webpapp. 
+&gt; &gt; 
+&gt; &gt; For e.g if the opengrok webpapp has multiple projects, within the same instance
+&gt; &gt; then I am not sure if its possible to restrict access using the tomcat default
+&gt; &gt; authentication features.
+&gt; 
+&gt; yes, you&apos;re correct, most probably that will have to be next phase(second one)
+&gt; which can allow per project access ...
+&gt; (adding Martin in case he has some input on lessons learned)
+
+Not mentioning per project-group access.. (https://defect.opensolaris.org/bz/show_bug.cgi?id=17189)</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>82642</commentid>
+            <who name="Trond Norbye">trond.norbye</who>
+            <bug_when>2011-05-05 11:59:29 +0000</bug_when>
+            <thetext>I don&apos;t think this kind of configuration is a common use case for the average deployment of an OpenGrok server, so I&apos;d hate to add a ton of code that adds complexity to the code base. All of the logic for the authorization stuff should be stored and maintained _outside_ the OpenGrok project and the OpenGrok core should not be modified to achieve this (That means that you would have to use the operating systems facilities to protect someone from running searches through the CLI).
+
+We should define an interface the web front-end would call that checks the access for each page hit and update the JSF files to check the access..
+
+All of the code, documentation and configuration for how to set this up should live in its own repository.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>82682</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2011-05-06 08:36:08 +0000</bug_when>
+            <thetext>I agree with Trond. Adding an actual implementation of authentication and authorization in OpenGrok would open a can of worms. It would be better to let the servlet container handle the authentication and provide hooks in the webapp to check against the ACL. In its simplest form, OpenGrok could have this interface:
+
+interface AccessControl {
+    boolean canAccess(String user, String path);
+}
+
+And those who need access control would point the webapp to their own implementation that checked the ACL wherever it&apos;s stored and in whichever format (in a database, XML file, on an LDAP server, ...).
+
+Doing the actual filtering/blocking inside the webapp using such an interface shouldn&apos;t be too tricky, I think.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>82683</commentid>
+            <who name="Trond Norbye">trond.norbye</who>
+            <bug_when>2011-05-06 09:07:44 +0000</bug_when>
+            <thetext>What about:
+
+interface AccessControl {
+    boolean canAccess(javax.servlet.http.HttpServletRequest request, String path)
+}
+
+We would then call canAccess(request, NULL) top of all of the JSP files to see if the user got access to that specific page (this could filter out all navigation in the xrefs). In addition we would call canAccess for all of the different projects we&apos;re going to add in the menu list (this will help up don&apos;t reveal any project names they shouldn&apos;t see), and canAccess for all of the files we&apos;re adding for search results (this won&apos;t give the one-liner hit). 
+
+I suggest we just pass the complete request object to avoid having to patch this later on if someone wants to add additional checks...</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>82684</commentid>
+            <who name="Trond Norbye">trond.norbye</who>
+            <bug_when>2011-05-06 13:33:14 +0000</bug_when>
+            <thetext>I added an initial shot at this in changeset:   1173:813a4561226a
+
+It would be nice if someone who needs this feature could check it it solves their needs?</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>82689</commentid>
+            <who name="Trond Norbye">trond.norbye</who>
+            <bug_when>2011-05-06 19:43:42 +0000</bug_when>
+            <thetext>One should use a Filter (as in : http://download.oracle.com/javaee/5/api/javax/servlet/Filter.html ) instead to achieve this.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>82690</commentid>
+            <who name="Trond Norbye">trond.norbye</who>
+            <bug_when>2011-05-06 19:45:19 +0000</bug_when>
+            <thetext>(please reopen the bug if it is impossible to achieve the desired functionality by using a Filter)</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>82759</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2011-05-08 06:01:38 +0000</bug_when>
+            <thetext>reopening, I would like to document info gathered in this bug in the code/doc of the product itself (since bugzilla might go away, but this info should stick with opengrok to save time for future bugs like this)</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>85342</commentid>
+            <who name="Joshua Kugler">joshua</who>
+            <bug_when>2011-09-22 01:01:27 +0000</bug_when>
+            <thetext>A feature such as this would be very beneficial.  I was directed to this issue report by knut.hatlen@oracle.com when I asked:
+
+&gt; Can the opengrok search front-end be configured to honor permissions 
+&gt; from a repository?  In other words, not show code to the user if that 
+&gt; user could not read that part of the repository?
+
+I first became aware of this feature while searching for full-text indexers for our SVN repository.  Other SVN indexers may have this feature, but I first read about it at http://svn-search.sourceforge.net/  Not only will it search the repository, but it will only show files to which the logged-in-user has access.
+
+I *LIKE* that feature. But what I like about OpenGrok is the code cross referencing it does.  And the fact that it is maintained.
+
+I would love to add the feature, but I know *no* Java. :(
+
+So, reading over this bug, it seems that it started as a discussion regarding simple authentication, but then progressed into the &quot;authorization&quot; functionality I describe above.  If so, I&apos;ll leave this right here. If not, let me know, and I&apos;ll open a new bug. :)</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

@@ -1,0 +1,83 @@
+diff -r bdab6a143036 -r 47f85a79b50f src/org/opensolaris/opengrok/analysis/AnalyzerGuru.java
+--- a/src/org/opensolaris/opengrok/analysis/AnalyzerGuru.java	Thu Feb 26 09:17:27 2009 +0100
++++ b/src/org/opensolaris/opengrok/analysis/AnalyzerGuru.java	Sat Mar 21 23:56:38 2009 +0100
+@@ -216,7 +216,7 @@
+         Document doc = new Document();
+         String date = DateTools.timeToString(file.lastModified(), DateTools.Resolution.MILLISECOND);
+         doc.add(new Field("u", Util.uid(path, date), Field.Store.YES, Field.Index.UN_TOKENIZED));
+-        doc.add(new Field("fullpath", file.getAbsolutePath(), Field.Store.YES, Field.Index.TOKENIZED));
++        doc.add(new Field("fullpath", file.getAbsolutePath(), Field.Store.NO, Field.Index.UN_TOKENIZED));
+ 
+         try {
+             HistoryReader hr = HistoryGuru.getInstance().getHistoryReader(file);
+@@ -247,7 +247,6 @@
+             }
+             fa.analyze(doc, in);
+         }
+-        doc.removeField("fullpath");
+ 
+         return doc;
+     }
+diff -r bdab6a143036 -r 47f85a79b50f web/search.jsp
+--- a/web/search.jsp	Thu Feb 26 09:17:27 2009 +0100
++++ b/web/search.jsp	Sat Mar 21 23:56:38 2009 +0100
+@@ -59,13 +59,14 @@
+ 
+ final String LASTMODTIME = "lastmodtime";
+ final String RELEVANCY = "relevancy";
++final String BY_PATH = "fullpath";
+ 
+ Cookie[] cookies = request.getCookies();
+ if (cookies != null) {
+     for (Cookie cookie : cookies) {
+         if (cookie.getName().equals("OpenGrok/sorting")) {
+             sort = cookie.getValue();
+-            if (!LASTMODTIME.equals(sort) && !RELEVANCY.equals(sort)) {
++            if (!LASTMODTIME.equals(sort) && !RELEVANCY.equals(sort) && !BY_PATH.equals(sort)) {
+                 sort = null;
+             }
+             break;
+@@ -79,6 +80,8 @@
+         sort = LASTMODTIME;
+     } else if (RELEVANCY.equals(sortParam)) {
+         sort = RELEVANCY;
++    } else if (BY_PATH.equals(sortParam)) {
++        sort = BY_PATH;
+     }
+     if (sort != null) {
+         Cookie cookie = new Cookie("OpenGrok/sorting", sort);
+@@ -148,8 +151,10 @@
+             ireader = IndexReader.open(root);
+             searcher = new IndexSearcher(ireader);
+ 
+-            if ("lastmodtime".equals(sort)) {
++            if (LASTMODTIME.equals(sort)) {
+                 hits = searcher.search(query, new Sort("date", true));
++            } else if (BY_PATH.equals(sort)) {
++                hits = searcher.search(query, new Sort(BY_PATH));
+             } else {
+                 hits = searcher.search(query);
+             }
+@@ -203,14 +208,18 @@
+                 url.append(querys.substring(0, idx));
+             }
+         }
++ 
++        %>Sort by: <%
+         url.append("sort=");
+         
+         if (sort == null || RELEVANCY.equals(sort)) {
+-           url.append(LASTMODTIME);
+-           %><b>Sort by relevance</b> <a href="<%=url.toString()%>">Sort by last modified time</a><%
++           %><b>relevance</b> | <a href="<%=url.toString()+LASTMODTIME%>">last modified time</a> | <a href="<%=url.toString()+BY_PATH%>">path</a><%
++        } else if (LASTMODTIME.equals(sort)) {
++           %><a href="<%=url.toString()+RELEVANCY%>">relevance</a> | <b>last modified time</b> | <a href="<%=url.toString()+BY_PATH%>">path</a><%
++        } else if (BY_PATH.equals(sort)) {
++           %><a href="<%=url.toString()+RELEVANCY%>">relevance</a> | <a href="<%=url.toString()+LASTMODTIME%>">last modified time</a> | <b>path</b><%
+         } else {
+-           url.append(RELEVANCY);
+-           %><a href="<%=url.toString()%>">Sort by relevance</a> <b>Sort by last modified time</b><%
++           %><a href="<%=url.toString()+RELEVANCY%>">relevance</a> | <a href="<%=url.toString()+LASTMODTIME%>">last modified time</a> | <a href="<%=url.toString()+BY_PATH%>">path</a><%
+         }
+       } %></td></tr></table>
+ </div>

@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>2996</bug_id>
+          
+          <creation_ts>2008-08-21 01:36:00 +0000</creation_ts>
+          <short_desc>Unparseable date in Mercurial repos</short_desc>
+          <delta_ts>2010-02-17 12:57:28 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>indexer</component>
+          <version>unspecified</version>
+          <rep_platform>Other</rep_platform>
+          <op_sys>Solaris</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXED</resolution>
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>major</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Vladimir Kotal">vladimir.kotal</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          <cc>knut.hatlen</cc>
+    
+    <cc>Lubos.Kosco</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>10718</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2008-08-21 01:36:10 +0000</bug_when>
+            <thetext>During parsing of ONNV Mercurial repository I am getting tons of messages similar to the following:
+
+Failed to parse /ws-local/onnv-clone/usr/src/cmd/clinfo/clinfo.c
+java.text.ParseException: Unparseable date: &quot;2005-06-14 00:00 -0700&quot;
+        at java.text.DateFormat.parse(DateFormat.java:337)
+        at org.opensolaris.opengrok.history.MercurialHistoryParser.parse(MercurialHistoryParser.java:83)
+        at org.opensolaris.opengrok.history.HistoryCache.get(HistoryCache.java:82)
+        at org.opensolaris.opengrok.history.HistoryGuru.getHistoryReader(HistoryGuru.java:216)
+        at org.opensolaris.opengrok.analysis.AnalyzerGuru.getDocument(AnalyzerGuru.java:215)
+        at org.opensolaris.opengrok.index.IndexDatabase.addFile(IndexDatabase.java:412)
+        at org.opensolaris.opengrok.index.IndexDatabase.indexDown(IndexDatabase.java:497)
+        at org.opensolaris.opengrok.index.IndexDatabase.indexDown(IndexDatabase.java:483)
+        at org.opensolaris.opengrok.index.IndexDatabase.indexDown(IndexDatabase.java:483)
+        at org.opensolaris.opengrok.index.IndexDatabase.indexDown(IndexDatabase.java:483)
+        at org.opensolaris.opengrok.index.IndexDatabase.indexDown(IndexDatabase.java:483)
+        at org.opensolaris.opengrok.index.IndexDatabase.update(IndexDatabase.java:231)
+        at org.opensolaris.opengrok.index.IndexDatabase$1.run(IndexDatabase.java:123)
+        at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:441)
+        at java.util.concurrent.FutureTask$Sync.innerRun(FutureTask.java:303)
+        at java.util.concurrent.FutureTask.run(FutureTask.java:138)
+        at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:885)
+        at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:907)
+        at java.lang.Thread.run(Thread.java:619)
+java.io.IOException: Error while constructing HistoryReader
+        at org.opensolaris.opengrok.history.HistoryGuru.getHistoryReader(HistoryGuru.java:224)
+        at org.opensolaris.opengrok.analysis.AnalyzerGuru.getDocument(AnalyzerGuru.java:215)
+        at org.opensolaris.opengrok.index.IndexDatabase.addFile(IndexDatabase.java:412)
+        at org.opensolaris.opengrok.index.IndexDatabase.indexDown(IndexDatabase.java:497)
+        at org.opensolaris.opengrok.index.IndexDatabase.indexDown(IndexDatabase.java:483)
+        at org.opensolaris.opengrok.index.IndexDatabase.indexDown(IndexDatabase.java:483)
+        at org.opensolaris.opengrok.index.IndexDatabase.indexDown(IndexDatabase.java:483)
+        at org.opensolaris.opengrok.index.IndexDatabase.indexDown(IndexDatabase.java:483)
+        at org.opensolaris.opengrok.index.IndexDatabase.update(IndexDatabase.java:231)
+        at org.opensolaris.opengrok.index.IndexDatabase$1.run(IndexDatabase.java:123)
+        at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:441)
+        at java.util.concurrent.FutureTask$Sync.innerRun(FutureTask.java:303)
+        at java.util.concurrent.FutureTask.run(FutureTask.java:138)
+        at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:885)
+        at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:907)
+        at java.lang.Thread.run(Thread.java:619)
+Caused by: java.text.ParseException: Unparseable date: &quot;2005-06-14 00:00 -0700&quot;
+        at java.text.DateFormat.parse(DateFormat.java:337)
+        at org.opensolaris.opengrok.history.MercurialHistoryParser.parse(MercurialHistoryParser.java:83)
+        at org.opensolaris.opengrok.history.HistoryCache.get(HistoryCache.java:82)
+        at org.opensolaris.opengrok.history.HistoryGuru.getHistoryReader(HistoryGuru.java:216)
+        ... 15 more
+Adding: /onnv-clone/usr/src/cmd/cmd-crypto/Makefile (ShAnalyzer)
+
+
+According to Lubos, this seems like locale related bug.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>10719</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2008-08-21 01:37:49 +0000</bug_when>
+            <thetext>This happens on OpenGrok 0.6.1 installed from Solaris pkg.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>10722</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2008-08-21 01:52:17 +0000</bug_when>
+            <thetext>And the system is running with the following date settings:
+
+$ date
+Thu Aug 21 10:46:38 CEST 2008
+$ grep -v &apos;^#&apos; /etc/TIMEZONE
+TZ=CET
+CMASK=022</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>10723</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2008-08-21 01:57:04 +0000</bug_when>
+            <thetext>Thanks for  tz info , could you provide locale info too ?
+(
+# su - &lt;user_who_runs_indexing&gt;
+$ locale
+$ tail -6 /etc/default/init
+)
+
+according to http://java.sun.com/j2se/1.5.0/docs/api/java/text/DateFormat.html
+we don&apos;t set explicit locale/timezone/dateformat ... I&apos;d say we can safely
+assume that repos we use should be set to C locale :
+http://src.opensolaris.org/source/xref/opengrok/trunk/src/org/opensolaris/opengrok/history/MercurialHistoryParser.java#55
+
+it seems that locale = C for user running the indexing should be a workaround</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>10727</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2008-08-21 02:30:32 +0000</bug_when>
+            <thetext>The user who runs the indexing already has locale set to &apos;C&apos;:
+
+$ locale
+LANG=C
+LC_CTYPE=&quot;C&quot;
+LC_NUMERIC=&quot;C&quot;
+LC_TIME=&quot;C&quot;
+LC_COLLATE=&quot;C&quot;
+LC_MONETARY=&quot;C&quot;
+LC_MESSAGES=&quot;C&quot;
+LC_ALL=
+$ tail -6 /etc/default/init
+# Lines of this file should be of the form VAR=value, where VAR is one of
+# TZ, LANG, CMASK, or any of the LC_* environment variables.  value may
+# be enclosed in double quotes (&quot;) or single quotes (&apos;).
+#
+TZ=CET
+CMASK=022</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>10728</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2008-08-21 02:40:35 +0000</bug_when>
+            <thetext>I found the root cause - it was the following entry in indexing user&apos;s ~/.hgrc:
+
+logtemplate = &apos;changeset:   {rev}:{node|short}\nuser:        {author}\ndate:        {date|isodate}\n\nmodified:    {files}\nadded:       {file_adds}\ndeleted:     {file_dels}\nlog:{desc}\n--------------------------------------------------------------------\n&apos;
+
+This is the difference between default date format and isodate format:
+
+- isodate:
+
+  changeset:   0:33fd7100aa45
+  user:        Vladimir Kotal &lt;Vladimir.Kotal@Sun.COM&gt;
+  date:        2008-08-21 11:35 +0200
+
+- default date:
+
+  changeset:   0:33fd7100aa45
+  tag:         tip
+  user:        Vladimir Kotal &lt;Vladimir.Kotal@Sun.COM&gt;
+  date:        Thu Aug 21 11:35:13 2008 +0200
+
+Hence, OpenGrok should support both default date and isodate format
+since both are standard in Mercurial.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>10743</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2008-08-21 05:38:17 +0000</bug_when>
+            <thetext>switching to CAUSEKNOWN since the root cause is known.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>10958</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2008-08-25 06:19:56 +0000</bug_when>
+            <thetext>Fixed in changeset 461: 93fccdcf2639
+as part of Bug #2966 
+
+can you please verify it works (now hg uses an explicit template, so it doesn&apos;t matter what kind of date format you use in you .hgrc)
+
+if it works kindly close this bug ;)
+
+Cheers</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

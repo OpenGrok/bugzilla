@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>4081</bug_id>
+          
+          <creation_ts>2008-10-20 02:21:00 +0000</creation_ts>
+          <short_desc>index (format) should be versioned for easier updates / problem detection when index format(or lucene version) changes</short_desc>
+          <delta_ts>2011-01-05 16:55:30 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>indexer</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>NEW</bug_status>
+          
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>major</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Lubos Kosco">Lubos.Kosco</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          <cc>vladimir.kotal</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>15323</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2008-10-20 02:21:17 +0000</bug_when>
+            <thetext>(11:17:04) Knuth Anders Hatlen: perhaps we should have an index format version and throw a more meaningful exception on startup: &quot;Index is stored in an old format. Please recreate it from scratch.&quot;
+(11:17:32) Taz: alas I think we have something like that already
+(11:17:38) Taz: doesn&apos;t lucene store this somewhere ?
+(11:18:10) Taz: lucene version however might be different from version of what we store in it
+(11:19:00) Taz: I will file a bug on this, hmm ?
+(11:19:13) Knuth Anders Hatlen: Please do so!
+(11:19:57) Knuth Anders Hatlen: and yes, I think the Lucene index version is another issue (which lucence hopefully already handles for us)</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>80294</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2011-01-05 16:55:30 +0000</bug_when>
+            <thetext>so this bug is basically mainly about version of xrefs and historycache, if I get it correctly ...</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

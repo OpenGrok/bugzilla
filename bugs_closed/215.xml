@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>215</bug_id>
+          
+          <creation_ts>2007-11-14 06:31:00 +0000</creation_ts>
+          <short_desc>&quot;Search only in &lt;dir&gt;&quot; is in conflict with project implementation</short_desc>
+          <delta_ts>2008-02-15 04:12:15 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>webapp</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXED</resolution>
+          
+          
+          
+          
+          
+          <priority>P2</priority>
+          <bug_severity>normal</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Martin Man">mman</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          <cc>Lubos.Kosco</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>591</commentid>
+            <who name="Martin Man">mman</who>
+            <bug_when>2007-11-14 06:31:22 +0000</bug_when>
+            <thetext>Steps to reproduce:
+
+1) go to src.opensolaris.org
+2) select caiman as a project
+3) full search for &quot;test&quot; to obtain some results
+4) click one of the results to obtain the directory listing
+6) click the very-top-level xref to see listing of all projects
+7) descend to the czosug project
+8) search for &quot;martin&quot; and limit search to the &quot;czosug&quot; directory
+9) pres search, the result will be:
+
+Your search +full:martin +path:czosug +project:caiman did not match any files. 
+
+Expected behavior:
+
++project is dropped from the search query as soon as you leave the project boundary via xref traversal</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>603</commentid>
+            <who name="Trond Norbye">trond.norbye</who>
+            <bug_when>2007-11-15 08:06:37 +0000</bug_when>
+            <thetext>This was fixed 21-Aug-2007 in revision 123 of the repository. http://src.opensolaris.org/source is not running the latest version of opengrok.
+
+The current problem is that the search is not limited to _just_ the specified directories, but also to include all sub-directories.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>609</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2007-11-15 09:45:32 +0000</bug_when>
+            <thetext>Trond ... (also talking about 172 &amp; 107)
+I think we should get project variable out to URL ... this would save a lot of problems with this regard ... (also solve this bug ;) )
+
+I don&apos;t know why we hide it, but I see no problem having it in URL as it will be more complaint with the rest of opengrok implementation, hmm?</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>610</commentid>
+            <who name="Trond Norbye">trond.norbye</who>
+            <bug_when>2007-11-15 11:32:20 +0000</bug_when>
+            <thetext>Adding the project to the URL would do the trick, but that would require all xref&apos;s to be updated. Unfortunately we don&apos;t create an AST from the parsers, but render the file instead (so we need to add this logic in all of the xref&apos;ers)
+
+When I first added the feature I was not sure how I wanted the feature to work, so I just added it to a cookie so it would be easy to change it later on ;-)</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

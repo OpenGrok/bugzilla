@@ -1,0 +1,817 @@
+java       1357       root   56r      REG               8,17 2550663342    4999207 /home/opengrok/data/source2/index/project16/_9m.cfs
+java       1357       root   57r      REG               8,17  115422018    5013770 /home/opengrok/data/source2/spellIndex/project4/_x.cfs
+java       1357       root   64r      REG               8,17  267016211    4714048 /home/opengrok/data/source1/spellIndex/project1.A.0.49/_2i.cfs
+java       1357       root   65r      REG               8,17  266689099    5023494 /home/opengrok/data/source2/spellIndex/project2/_42.cfs (deleted)
+java       1357       root   66r      REG               8,17  251445239    5012362 /home/opengrok/data/source2/spellIndex/project6/_2m.cfs
+java       1357       root   67r      REG               8,17  266561667    5014134 /home/opengrok/data/source2/spellIndex/project5/_40.cfs
+java       1357       root   68r      REG               8,17  266689099    5023494 /home/opengrok/data/source2/spellIndex/project2/_42.cfs (deleted)
+java       1357       root   69r      REG               8,17  266689099    5023494 /home/opengrok/data/source2/spellIndex/project2/_42.cfs (deleted)
+java       1357       root   70r      REG               8,17  203011211    5010624 /home/opengrok/data/source2/spellIndex/project15/_2b.cfs
+java       1357       root   71r      REG               8,17  275328214    5023488 /home/opengrok/data/source2/spellIndex/project1/_46.cfs (deleted)
+java       1357       root   72r      REG               8,17  275328214    5023488 /home/opengrok/data/source2/spellIndex/project1/_46.cfs (deleted)
+java       1357       root   73r      REG               8,17  266689099    5023494 /home/opengrok/data/source2/spellIndex/project2/_42.cfs (deleted)
+java       1357       root   74r      REG               8,17  251445239    5012362 /home/opengrok/data/source2/spellIndex/project6/_2m.cfs
+java       1357       root   75r      REG               8,17  275328214    5023488 /home/opengrok/data/source2/spellIndex/project1/_46.cfs (deleted)
+java       1357       root   76r      REG               8,17  275328214    5023488 /home/opengrok/data/source2/spellIndex/project1/_46.cfs (deleted)
+java       1357       root   77r      REG               8,17  275328214    5023488 /home/opengrok/data/source2/spellIndex/project1/_46.cfs (deleted)
+java       1357       root   78r      REG               8,17  115422018    5013770 /home/opengrok/data/source2/spellIndex/project4/_x.cfs
+java       1357       root   81r      REG               8,17  115422018    5013770 /home/opengrok/data/source2/spellIndex/project4/_x.cfs
+java       1357       root   82r      REG               8,17  115422018    5013770 /home/opengrok/data/source2/spellIndex/project4/_x.cfs
+java       1357       root   83r      REG               8,17  339136814    5014138 /home/opengrok/data/source2/spellIndex/project12/_43.cfs (deleted)
+java       1357       root   84r      REG               8,17  266689099    5023494 /home/opengrok/data/source2/spellIndex/project2/_42.cfs (deleted)
+java       1357       root   85r      REG               8,17  115422018    5013770 /home/opengrok/data/source2/spellIndex/project4/_x.cfs
+java       1357       root   87r      REG               8,17  275328214    5023488 /home/opengrok/data/source2/spellIndex/project1/_46.cfs (deleted)
+java       1357       root   88r      REG               8,17  275328214    5023488 /home/opengrok/data/source2/spellIndex/project1/_46.cfs (deleted)
+java       1357       root   89r      REG               8,17  339136814    5014138 /home/opengrok/data/source2/spellIndex/project12/_43.cfs (deleted)
+java       1357       root   90r      REG               8,17  266689099    5023494 /home/opengrok/data/source2/spellIndex/project2/_42.cfs (deleted)
+java       1357       root   92r      REG               8,17  266689099    5023494 /home/opengrok/data/source2/spellIndex/project2/_42.cfs (deleted)
+java       1357       root   93r      REG               8,17  280043928    4995298 /home/opengrok/data/source2/spellIndex/project16/_30.cfs
+java       1357       root   94r      REG               8,17  266561667    5014134 /home/opengrok/data/source2/spellIndex/project5/_40.cfs
+java       1357       root   95r      REG               8,17  266561667    5014134 /home/opengrok/data/source2/spellIndex/project5/_40.cfs
+java       1357       root   96r      REG               8,17  115422018    5013770 /home/opengrok/data/source2/spellIndex/project4/_x.cfs
+java       1357       root   97r      REG               8,17  115422018    5013770 /home/opengrok/data/source2/spellIndex/project4/_x.cfs
+java       1357       root   98r      REG               8,17  115422018    5013770 /home/opengrok/data/source2/spellIndex/project4/_x.cfs
+java       1357       root   99r      REG               8,17  115422018    5013770 /home/opengrok/data/source2/spellIndex/project4/_x.cfs
+java       1357       root  100r      REG               8,17  115422018    5013770 /home/opengrok/data/source2/spellIndex/project4/_x.cfs
+java       1357       root  101r      REG               8,17   80199571   31743348 /home/opengrok/data/source2/spellIndex/project10/_q.cfs
+java       1357       root  104r      REG               8,17  266561667    5014134 /home/opengrok/data/source2/spellIndex/project5/_40.cfs
+java       1357       root  105r      REG               8,17  115422018    5013770 /home/opengrok/data/source2/spellIndex/project4/_x.cfs
+java       1357       root  106r      REG               8,17  266689099    5023494 /home/opengrok/data/source2/spellIndex/project2/_42.cfs (deleted)
+java       1357       root  107r      REG               8,17  266561667    5014134 /home/opengrok/data/source2/spellIndex/project5/_40.cfs
+java       1357       root  108r      REG               8,17  266561667    5014134 /home/opengrok/data/source2/spellIndex/project5/_40.cfs
+java       1357       root  109r      REG               8,17  280043928    4995298 /home/opengrok/data/source2/spellIndex/project16/_30.cfs
+java       1357       root  110r      REG               8,17  266561667    5014134 /home/opengrok/data/source2/spellIndex/project5/_40.cfs
+java       1357       root  111r      REG               8,17  115422018    5013770 /home/opengrok/data/source2/spellIndex/project4/_x.cfs
+java       1357       root  112r      REG               8,17  266561667    5014134 /home/opengrok/data/source2/spellIndex/project5/_40.cfs
+java       1357       root  113r      REG               8,17  280043928    4995298 /home/opengrok/data/source2/spellIndex/project16/_30.cfs
+java       1357       root  115r      REG               8,17  115422018    5013770 /home/opengrok/data/source2/spellIndex/project4/_x.cfs
+java       1357       root  117r      REG               8,17  266689099    5023494 /home/opengrok/data/source2/spellIndex/project2/_42.cfs (deleted)
+java       1357       root  118r      REG               8,17  266689099    5023494 /home/opengrok/data/source2/spellIndex/project2/_42.cfs (deleted)
+java       1357       root  119r      REG               8,17  280043928    4995298 /home/opengrok/data/source2/spellIndex/project16/_30.cfs
+java       1357       root  121r      REG               8,17  115422018    5013770 /home/opengrok/data/source2/spellIndex/project4/_x.cfs
+java       1357       root  122r      REG               8,17  203011211    5010624 /home/opengrok/data/source2/spellIndex/project15/_2b.cfs
+java       1357       root  123r      REG               8,17  115422018    5013770 /home/opengrok/data/source2/spellIndex/project4/_x.cfs
+java       1357       root  124r      REG               8,17  266689099    5023494 /home/opengrok/data/source2/spellIndex/project2/_42.cfs (deleted)
+java       1357       root  125r      REG               8,17  266689099    5023494 /home/opengrok/data/source2/spellIndex/project2/_42.cfs (deleted)
+java       1357       root  126r      REG               8,17  275328214    5023488 /home/opengrok/data/source2/spellIndex/project1/_46.cfs (deleted)
+java       1357       root  127r      REG               8,17  275328214    5023488 /home/opengrok/data/source2/spellIndex/project1/_46.cfs (deleted)
+java       1357       root  129r      REG               8,17  115422018    5013770 /home/opengrok/data/source2/spellIndex/project4/_x.cfs
+java       1357       root  130r      REG               8,17  115422018    5013770 /home/opengrok/data/source2/spellIndex/project4/_x.cfs
+java       1357       root  131r      REG               8,17  115422018    5013770 /home/opengrok/data/source2/spellIndex/project4/_x.cfs
+java       1357       root  132r      REG               8,17  275328214    5023488 /home/opengrok/data/source2/spellIndex/project1/_46.cfs (deleted)
+java       1357       root  133r      REG               8,17  263728132    5011899 /home/opengrok/data/source2/spellIndex/project7/_2u.cfs
+java       1357       root  134r      REG               8,17  203011211    5010624 /home/opengrok/data/source2/spellIndex/project15/_2b.cfs
+java       1357       root  136r      REG               8,17  266689099    5023494 /home/opengrok/data/source2/spellIndex/project2/_42.cfs (deleted)
+java       1357       root  137r      REG               8,17  115422018    5013770 /home/opengrok/data/source2/spellIndex/project4/_x.cfs
+java       1357       root  138r      REG               8,17  115422018    5013770 /home/opengrok/data/source2/spellIndex/project4/_x.cfs
+java       1357       root  139r      REG               8,17   98897776    5012225 /home/opengrok/data/source2/spellIndex/project3/_y.cfs
+java       1357       root  140r      REG               8,17  115422018    5013770 /home/opengrok/data/source2/spellIndex/project4/_x.cfs
+java       1357       root  141r      REG               8,17  275328214    5023488 /home/opengrok/data/source2/spellIndex/project1/_46.cfs (deleted)
+java       1357       root  143r      REG               8,17  263728132    5011899 /home/opengrok/data/source2/spellIndex/project7/_2u.cfs
+java       1357       root  145r      REG               8,17  266561667    5014134 /home/opengrok/data/source2/spellIndex/project5/_40.cfs
+java       1357       root  146r      REG               8,17  275328214    5023488 /home/opengrok/data/source2/spellIndex/project1/_46.cfs (deleted)
+java       1357       root  147r      REG               8,17  266561667    5014134 /home/opengrok/data/source2/spellIndex/project5/_40.cfs
+java       1357       root  148r      REG               8,17  266561667    5014134 /home/opengrok/data/source2/spellIndex/project5/_40.cfs
+java       1357       root  149r      REG               8,17  115422018    5013770 /home/opengrok/data/source2/spellIndex/project4/_x.cfs
+java       1357       root  150r      REG               8,17  266561667    5014134 /home/opengrok/data/source2/spellIndex/project5/_40.cfs
+java       1357       root  151r      REG               8,17  266561667    5014134 /home/opengrok/data/source2/spellIndex/project5/_40.cfs
+java       1357       root  152r      REG               8,17  266561667    5014134 /home/opengrok/data/source2/spellIndex/project5/_40.cfs
+java       1357       root  153r      REG               8,17  266561667    5014134 /home/opengrok/data/source2/spellIndex/project5/_40.cfs
+java       1357       root  154r      REG               8,17  266561667    5014134 /home/opengrok/data/source2/spellIndex/project5/_40.cfs
+java       1357       root  155r      REG               8,17  266561667    5014134 /home/opengrok/data/source2/spellIndex/project5/_40.cfs
+java       1357       root  156r      REG               8,17  266561667    5014134 /home/opengrok/data/source2/spellIndex/project5/_40.cfs
+java       1357       root  157r      REG               8,17  266689099    5023494 /home/opengrok/data/source2/spellIndex/project2/_42.cfs (deleted)
+java       1357       root  158r      REG               8,17  266561667    5014134 /home/opengrok/data/source2/spellIndex/project5/_40.cfs
+java       1357       root  159r      REG               8,17  266689099    5023494 /home/opengrok/data/source2/spellIndex/project2/_42.cfs (deleted)
+java       1357       root  160r      REG               8,17  266561667    5014134 /home/opengrok/data/source2/spellIndex/project5/_40.cfs
+java       1357       root  161r      REG               8,17  275328214    5023488 /home/opengrok/data/source2/spellIndex/project1/_46.cfs (deleted)
+java       1357       root  162r      REG               8,17  266561667    5014134 /home/opengrok/data/source2/spellIndex/project5/_40.cfs
+java       1357       root  163r      REG               8,17  266689099    5023494 /home/opengrok/data/source2/spellIndex/project2/_42.cfs (deleted)
+java       1357       root  164r      REG               8,17  266689099    5023494 /home/opengrok/data/source2/spellIndex/project2/_42.cfs (deleted)
+java       1357       root  165r      REG               8,17  275328214    5023488 /home/opengrok/data/source2/spellIndex/project1/_46.cfs (deleted)
+java       1357       root  166r      REG               8,17  266561667    5014134 /home/opengrok/data/source2/spellIndex/project5/_40.cfs
+java       1357       root  167r      REG               8,17  275328214    5023488 /home/opengrok/data/source2/spellIndex/project1/_46.cfs (deleted)
+java       1357       root  168r      REG               8,17  275328214    5023488 /home/opengrok/data/source2/spellIndex/project1/_46.cfs (deleted)
+java       1357       root  169r      REG               8,17  266689099    5023494 /home/opengrok/data/source2/spellIndex/project2/_42.cfs (deleted)
+java       1357       root  170u      REG               8,17  221723169   18901023 /home/opengrok/data/source1/spellIndex/project1.A.0.128/_2i.cfs
+java       1357       root  171r      REG               8,17  266689099    5023494 /home/opengrok/data/source2/spellIndex/project2/_42.cfs (deleted)
+java       1357       root  172r      REG               8,17  266689099    5023494 /home/opengrok/data/source2/spellIndex/project2/_42.cfs (deleted)
+java       1357       root  173r      REG               8,17  115422018    5013770 /home/opengrok/data/source2/spellIndex/project4/_x.cfs
+java       1357       root  174r      REG               8,17  266561667    5014134 /home/opengrok/data/source2/spellIndex/project5/_40.cfs
+java       1357       root  175r      REG               8,17  266561667    5014134 /home/opengrok/data/source2/spellIndex/project5/_40.cfs
+java       1357       root  176r      REG               8,17  266561667    5014134 /home/opengrok/data/source2/spellIndex/project5/_40.cfs
+java       1357       root  177r      REG               8,17  275328214    5023488 /home/opengrok/data/source2/spellIndex/project1/_46.cfs (deleted)
+java       1357       root  178r      REG               8,17  266689099    5023494 /home/opengrok/data/source2/spellIndex/project2/_42.cfs (deleted)
+java       1357       root  179r      REG               8,17  266561667    5014134 /home/opengrok/data/source2/spellIndex/project5/_40.cfs
+java       1357       root  180r      REG               8,17  266689099    5023494 /home/opengrok/data/source2/spellIndex/project2/_42.cfs (deleted)
+java       1357       root  181r      REG               8,17  266689099    5023494 /home/opengrok/data/source2/spellIndex/project2/_42.cfs (deleted)
+java       1357       root  182r      REG               8,17  266561667    5014134 /home/opengrok/data/source2/spellIndex/project5/_40.cfs
+java       1357       root  183r      REG               8,17  266689099    5023494 /home/opengrok/data/source2/spellIndex/project2/_42.cfs (deleted)
+java       1357       root  184r      REG               8,17  275328214    5023488 /home/opengrok/data/source2/spellIndex/project1/_46.cfs (deleted)
+java       1357       root  185r      REG               8,17  275328214    5023488 /home/opengrok/data/source2/spellIndex/project1/_46.cfs (deleted)
+java       1357       root  186r      REG               8,17  266689099    5023494 /home/opengrok/data/source2/spellIndex/project2/_42.cfs (deleted)
+java       1357       root  187r      REG               8,17  266689099    5023494 /home/opengrok/data/source2/spellIndex/project2/_42.cfs (deleted)
+java       1357       root  188r      REG               8,17  266689099    5023494 /home/opengrok/data/source2/spellIndex/project2/_42.cfs (deleted)
+java       1357       root  189r      REG               8,17 1046875689    5014191 /home/opengrok/data/source2/index/project13/_46.cfs
+java       1357       root  190r      REG               8,17  275328214    5023488 /home/opengrok/data/source2/spellIndex/project1/_46.cfs (deleted)
+java       1357       root  191r      REG               8,17  275328214    5023488 /home/opengrok/data/source2/spellIndex/project1/_46.cfs (deleted)
+java       1357       root  192r      REG               8,17  266689099    5023494 /home/opengrok/data/source2/spellIndex/project2/_42.cfs (deleted)
+java       1357       root  193r      REG               8,17  266561667    5014134 /home/opengrok/data/source2/spellIndex/project5/_40.cfs
+java       1357       root  194r      REG               8,17  266689099    5023494 /home/opengrok/data/source2/spellIndex/project2/_42.cfs (deleted)
+java       1357       root  195r      REG               8,17  266689099    5023494 /home/opengrok/data/source2/spellIndex/project2/_42.cfs (deleted)
+java       1357       root  196r      REG               8,17  266689099    5023494 /home/opengrok/data/source2/spellIndex/project2/_42.cfs (deleted)
+java       1357       root  197r      REG               8,17  251445239    5012362 /home/opengrok/data/source2/spellIndex/project6/_2m.cfs
+java       1357       root  198r      REG               8,17  275328214    5023488 /home/opengrok/data/source2/spellIndex/project1/_46.cfs (deleted)
+java       1357       root  199r      REG               8,17 2672088530    5014132 /home/opengrok/data/source2/index/project12/_bq.cfs (deleted)
+java       1357       root  200r      REG               8,17  543546666    5013795 /home/opengrok/data/source2/index/project4/_30.cfs
+java       1357       root  201r      REG               8,17  275328214    5023488 /home/opengrok/data/source2/spellIndex/project1/_46.cfs (deleted)
+java       1357       root  202r      REG               8,17 1046875689    5014191 /home/opengrok/data/source2/index/project13/_46.cfs
+java       1357       root  203r      REG               8,17  266561667    5014134 /home/opengrok/data/source2/spellIndex/project5/_40.cfs
+java       1357       root  204r      REG               8,17  266689099    5023494 /home/opengrok/data/source2/spellIndex/project2/_42.cfs (deleted)
+java       1357       root  205r      REG               8,17  266689099    5023494 /home/opengrok/data/source2/spellIndex/project2/_42.cfs (deleted)
+java       1357       root  206r      REG               8,17  275328214    5023488 /home/opengrok/data/source2/spellIndex/project1/_46.cfs (deleted)
+java       1357       root  207r      REG               8,17   80199571   31743348 /home/opengrok/data/source2/spellIndex/project10/_q.cfs
+java       1357       root  208r      REG               8,17  275328214    5023488 /home/opengrok/data/source2/spellIndex/project1/_46.cfs (deleted)
+java       1357       root  209r      REG               8,17  221776811   19189905 /home/opengrok/data/source1/spellIndex/project1.A.0.132/_2i.cfs
+java       1357       root  212r      REG               8,17  266689099    5023494 /home/opengrok/data/source2/spellIndex/project2/_42.cfs (deleted)
+java       1357       root  213r      REG               8,17  266689099    5023494 /home/opengrok/data/source2/spellIndex/project2/_42.cfs (deleted)
+java       1357       root  214r      REG               8,17  266689099    5023494 /home/opengrok/data/source2/spellIndex/project2/_42.cfs (deleted)
+java       1357       root  215r      REG               8,17   80199571   31743348 /home/opengrok/data/source2/spellIndex/project10/_q.cfs
+java       1357       root  216r      REG               8,17  266689099    5023494 /home/opengrok/data/source2/spellIndex/project2/_42.cfs (deleted)
+java       1357       root  217r      REG               8,17  266689099    5023494 /home/opengrok/data/source2/spellIndex/project2/_42.cfs (deleted)
+java       1357       root  218r      REG               8,17  266561667    5014134 /home/opengrok/data/source2/spellIndex/project5/_40.cfs
+java       1357       root  219r      REG               8,17  266689099    5023494 /home/opengrok/data/source2/spellIndex/project2/_42.cfs (deleted)
+java       1357       root  221r      REG               8,17  266689099    5023494 /home/opengrok/data/source2/spellIndex/project2/_42.cfs (deleted)
+java       1357       root  222r      REG               8,17  266689099    5023494 /home/opengrok/data/source2/spellIndex/project2/_42.cfs (deleted)
+java       1357       root  223r      REG               8,17  275328214    5023488 /home/opengrok/data/source2/spellIndex/project1/_46.cfs (deleted)
+java       1357       root  224r      REG               8,17  275328214    5023488 /home/opengrok/data/source2/spellIndex/project1/_46.cfs (deleted)
+java       1357       root  225r      REG               8,17  251445239    5012362 /home/opengrok/data/source2/spellIndex/project6/_2m.cfs
+java       1357       root  226r      REG               8,17  266689099    5023494 /home/opengrok/data/source2/spellIndex/project2/_42.cfs (deleted)
+java       1357       root  227r      REG               8,17  339136814    5014138 /home/opengrok/data/source2/spellIndex/project12/_43.cfs (deleted)
+java       1357       root  228r      REG               8,17  266689099    5023494 /home/opengrok/data/source2/spellIndex/project2/_42.cfs (deleted)
+java       1357       root  229r      REG               8,17   80199571   31743348 /home/opengrok/data/source2/spellIndex/project10/_q.cfs
+java       1357       root  231r      REG               8,17  266689099    5023494 /home/opengrok/data/source2/spellIndex/project2/_42.cfs (deleted)
+java       1357       root  232r      REG               8,17  266689099    5023494 /home/opengrok/data/source2/spellIndex/project2/_42.cfs (deleted)
+java       1357       root  233r      REG               8,17  266689099    5023494 /home/opengrok/data/source2/spellIndex/project2/_42.cfs (deleted)
+java       1357       root  234r      REG               8,17  266689099    5023494 /home/opengrok/data/source2/spellIndex/project2/_42.cfs (deleted)
+java       1357       root  235r      REG               8,17  266689099    5023494 /home/opengrok/data/source2/spellIndex/project2/_42.cfs (deleted)
+java       1357       root  236r      REG               8,17  275328214    5023488 /home/opengrok/data/source2/spellIndex/project1/_46.cfs (deleted)
+java       1357       root  237r      REG               8,17  275328214    5023488 /home/opengrok/data/source2/spellIndex/project1/_46.cfs (deleted)
+java       1357       root  238r      REG               8,17  251445239    5012362 /home/opengrok/data/source2/spellIndex/project6/_2m.cfs
+java       1357       root  239r      REG               8,17  266689099    5023494 /home/opengrok/data/source2/spellIndex/project2/_42.cfs (deleted)
+java       1357       root  240r      REG               8,17  221776811   19189905 /home/opengrok/data/source1/spellIndex/project1.A.0.132/_2i.cfs
+java       1357       root  242r      REG               8,17  275328214    5023488 /home/opengrok/data/source2/spellIndex/project1/_46.cfs (deleted)
+java       1357       root  243r      REG               8,17   80199571   31743348 /home/opengrok/data/source2/spellIndex/project10/_q.cfs
+java       1357       root  244r      REG               8,17  221776811   19189905 /home/opengrok/data/source1/spellIndex/project1.A.0.132/_2i.cfs
+java       1357       root  247r      REG               8,17   80199571   31743348 /home/opengrok/data/source2/spellIndex/project10/_q.cfs
+java       1357       root  249r      REG               8,17  275328214    5023488 /home/opengrok/data/source2/spellIndex/project1/_46.cfs (deleted)
+java       1357       root  250r      REG               8,17  115422018    5013770 /home/opengrok/data/source2/spellIndex/project4/_x.cfs
+java       1357       root  251r      REG               8,17  251445239    5012362 /home/opengrok/data/source2/spellIndex/project6/_2m.cfs
+java       1357       root  252r      REG               8,17  266689099    5023494 /home/opengrok/data/source2/spellIndex/project2/_42.cfs (deleted)
+java       1357       root  253r      REG               8,17  251445239    5012362 /home/opengrok/data/source2/spellIndex/project6/_2m.cfs
+java       1357       root  254r      REG               8,17  266689099    5023494 /home/opengrok/data/source2/spellIndex/project2/_42.cfs (deleted)
+java       1357       root  255r      REG               8,17  275328214    5023488 /home/opengrok/data/source2/spellIndex/project1/_46.cfs (deleted)
+java       1357       root  256r      REG               8,17  275328214    5023488 /home/opengrok/data/source2/spellIndex/project1/_46.cfs (deleted)
+java       1357       root  257r      REG               8,17  266561667    5014134 /home/opengrok/data/source2/spellIndex/project5/_40.cfs
+java       1357       root  258r      REG               8,17  275328214    5023488 /home/opengrok/data/source2/spellIndex/project1/_46.cfs (deleted)
+java       1357       root  259r      REG               8,17  275328214    5023488 /home/opengrok/data/source2/spellIndex/project1/_46.cfs (deleted)
+java       1357       root  260r      REG               8,17  266561667    5014134 /home/opengrok/data/source2/spellIndex/project5/_40.cfs
+java       1357       root  261r      REG               8,17  203011211    5010624 /home/opengrok/data/source2/spellIndex/project15/_2b.cfs
+java       1357       root  262r      REG               8,17  275328214    5023488 /home/opengrok/data/source2/spellIndex/project1/_46.cfs (deleted)
+java       1357       root  264r      REG               8,17  275328214    5023488 /home/opengrok/data/source2/spellIndex/project1/_46.cfs (deleted)
+java       1357       root  265r      REG               8,17  280043928    4995298 /home/opengrok/data/source2/spellIndex/project16/_30.cfs
+java       1357       root  266r      REG               8,17  266689099    5023494 /home/opengrok/data/source2/spellIndex/project2/_42.cfs (deleted)
+java       1357       root  267r      REG               8,17  266689099    5023494 /home/opengrok/data/source2/spellIndex/project2/_42.cfs (deleted)
+java       1357       root  268r      REG               8,17  266689099    5023494 /home/opengrok/data/source2/spellIndex/project2/_42.cfs (deleted)
+java       1357       root  269r      REG               8,17  251445239    5012362 /home/opengrok/data/source2/spellIndex/project6/_2m.cfs
+java       1357       root  270r      REG               8,17  266689099    5023494 /home/opengrok/data/source2/spellIndex/project2/_42.cfs (deleted)
+java       1357       root  271r      REG               8,17  251445239    5012362 /home/opengrok/data/source2/spellIndex/project6/_2m.cfs
+java       1357       root  272r      REG               8,17  115422018    5013770 /home/opengrok/data/source2/spellIndex/project4/_x.cfs
+java       1357       root  273r      REG               8,17  275328214    5023488 /home/opengrok/data/source2/spellIndex/project1/_46.cfs (deleted)
+java       1357       root  274r      REG               8,17  115422018    5013770 /home/opengrok/data/source2/spellIndex/project4/_x.cfs
+java       1357       root  275r      REG               8,17  275328214    5023488 /home/opengrok/data/source2/spellIndex/project1/_46.cfs (deleted)
+java       1357       root  276r      REG               8,17  266689099    5023494 /home/opengrok/data/source2/spellIndex/project2/_42.cfs (deleted)
+java       1357       root  278r      REG               8,17   95941498    4994191 /home/opengrok/data/source2/spellIndex/project11/_z.cfs
+java       1357       root  279r      REG               8,17  266689099    5023494 /home/opengrok/data/source2/spellIndex/project2/_42.cfs (deleted)
+java       1357       root  280r      REG               8,17  275328214    5023488 /home/opengrok/data/source2/spellIndex/project1/_46.cfs (deleted)
+java       1357       root  281r      REG               8,17  275328214    5023488 /home/opengrok/data/source2/spellIndex/project1/_46.cfs (deleted)
+java       1357       root  282r      REG               8,17  275328214    5023488 /home/opengrok/data/source2/spellIndex/project1/_46.cfs (deleted)
+java       1357       root  283r      REG               8,17  266689099    5023494 /home/opengrok/data/source2/spellIndex/project2/_42.cfs (deleted)
+java       1357       root  284r      REG               8,17  275328214    5023488 /home/opengrok/data/source2/spellIndex/project1/_46.cfs (deleted)
+java       1357       root  285r      REG               8,17  266689099    5023494 /home/opengrok/data/source2/spellIndex/project2/_42.cfs (deleted)
+java       1357       root  286r      REG               8,17  266561667    5014134 /home/opengrok/data/source2/spellIndex/project5/_40.cfs
+java       1357       root  287r      REG               8,17   95941498    4994191 /home/opengrok/data/source2/spellIndex/project11/_z.cfs
+java       1357       root  288r      REG               8,17  266689099    5023494 /home/opengrok/data/source2/spellIndex/project2/_42.cfs (deleted)
+java       1357       root  289r      REG               8,17  275328214    5023488 /home/opengrok/data/source2/spellIndex/project1/_46.cfs (deleted)
+java       1357       root  290r      REG               8,17  266689099    5023494 /home/opengrok/data/source2/spellIndex/project2/_42.cfs (deleted)
+java       1357       root  291r      REG               8,17 2550663342    4999207 /home/opengrok/data/source2/index/project16/_9m.cfs
+java       1357       root  292r      REG               8,17 2565739576    5011952 /home/opengrok/data/source2/index/project14/_a0.cfs
+java       1357       root  293r      REG               8,17  266689099    5023494 /home/opengrok/data/source2/spellIndex/project2/_42.cfs (deleted)
+java       1357       root  294r      REG               8,17  266689099    5023494 /home/opengrok/data/source2/spellIndex/project2/_42.cfs (deleted)
+java       1357       root  295r      REG               8,17  275328214    5023488 /home/opengrok/data/source2/spellIndex/project1/_46.cfs (deleted)
+java       1357       root  296r      REG               8,17 1046875689    5014191 /home/opengrok/data/source2/index/project13/_46.cfs
+java       1357       root  297r      REG               8,17  266689099    5023494 /home/opengrok/data/source2/spellIndex/project2/_42.cfs (deleted)
+java       1357       root  298r      REG               8,17  266689099    5023494 /home/opengrok/data/source2/spellIndex/project2/_42.cfs (deleted)
+java       1357       root  299r      REG               8,17  266689099    5023494 /home/opengrok/data/source2/spellIndex/project2/_42.cfs (deleted)
+java       1357       root  300r      REG               8,17 1324277413    5023493 /home/opengrok/data/source2/index/project2/_6o.cfs (deleted)
+java       1357       root  301r      REG               8,17  221723169   18901023 /home/opengrok/data/source1/spellIndex/project1.A.0.128/_2i.cfs
+java       1357       root  302r      REG               8,17  266689099    5023494 /home/opengrok/data/source2/spellIndex/project2/_42.cfs (deleted)
+java       1357       root  303r      REG               8,17  275328214    5023488 /home/opengrok/data/source2/spellIndex/project1/_46.cfs (deleted)
+java       1357       root  305r      REG               8,17  275328214    5023488 /home/opengrok/data/source2/spellIndex/project1/_46.cfs (deleted)
+java       1357       root  306r      REG               8,17  221723169   18901023 /home/opengrok/data/source1/spellIndex/project1.A.0.128/_2i.cfs
+java       1357       root  307r      REG               8,17  275328214    5023488 /home/opengrok/data/source2/spellIndex/project1/_46.cfs (deleted)
+java       1357       root  308r      REG               8,17  275328214    5023488 /home/opengrok/data/source2/spellIndex/project1/_46.cfs (deleted)
+java       1357       root  310r      REG               8,17  275328214    5023488 /home/opengrok/data/source2/spellIndex/project1/_46.cfs (deleted)
+java       1357       root  311r      REG               8,17 1382669180    5023500 /home/opengrok/data/source2/index/project1/_6x.cfs (deleted)
+java       1357       root  312r      REG               8,17  266689099    5023494 /home/opengrok/data/source2/spellIndex/project2/_42.cfs (deleted)
+java       1357       root  313r      REG               8,17 1325053179    5023521 /home/opengrok/data/source2/index/project5/_6n.cfs (deleted)
+java       1357       root  314r      REG               8,17  251445239    5012362 /home/opengrok/data/source2/spellIndex/project6/_2m.cfs
+java       1357       root  315r      REG               8,17 1382669180    5023500 /home/opengrok/data/source2/index/project1/_6x.cfs (deleted)
+java       1357       root  316r      REG               8,17  266689099    5023494 /home/opengrok/data/source2/spellIndex/project2/_42.cfs (deleted)
+java       1357       root  317r      REG               8,17  275328214    5023488 /home/opengrok/data/source2/spellIndex/project1/_46.cfs (deleted)
+java       1357       root  318r      REG               8,17 2672088530    5014132 /home/opengrok/data/source2/index/project12/_bq.cfs (deleted)
+java       1357       root  319r      REG               8,17  555419011   31724939 /home/opengrok/data/source2/index/project10/_29.cfs (deleted)
+java       1357       root  320r      REG               8,17  398404577    5014163 /home/opengrok/data/source2/index/project11/_23.cfs
+java       1357       root  321r      REG               8,17  339136814    5014138 /home/opengrok/data/source2/spellIndex/project12/_43.cfs (deleted)
+java       1357       root  322r      REG               8,17  543546666    5013795 /home/opengrok/data/source2/index/project4/_30.cfs
+java       1357       root  323r      REG               8,17  275328214    5023488 /home/opengrok/data/source2/spellIndex/project1/_46.cfs (deleted)
+java       1357       root  324r      REG               8,17  275328214    5023488 /home/opengrok/data/source2/spellIndex/project1/_46.cfs (deleted)
+java       1357       root  325r      REG               8,17  554842778    5014142 /home/opengrok/data/source2/index/project3/_2p.cfs
+java       1357       root  326r      REG               8,17 1239250260    5023407 /home/opengrok/data/source2/index/project6/_5g.cfs (deleted)
+java       1357       root  327r      REG               8,17 1160403793    5012429 /home/opengrok/data/source2/index/project15/_46.cfs (deleted)
+java       1357       root  328r      REG               8,17  251445239    5012362 /home/opengrok/data/source2/spellIndex/project6/_2m.cfs
+java       1357       root  329r      REG               8,17  263728132    5011899 /home/opengrok/data/source2/spellIndex/project7/_2u.cfs
+java       1357       root  330r      REG               8,17  235088095    5004933 /home/opengrok/data/source2/spellIndex/project13/_2a.cfs
+java       1357       root  332r      REG               8,17  266689099    5023494 /home/opengrok/data/source2/spellIndex/project2/_42.cfs (deleted)
+java       1357       root  333r      REG               8,17  266689099    5023494 /home/opengrok/data/source2/spellIndex/project2/_42.cfs (deleted)
+java       1357       root  334r      REG               8,17  203011211    5010624 /home/opengrok/data/source2/spellIndex/project15/_2b.cfs
+java       1357       root  335r      REG               8,17  266689099    5023494 /home/opengrok/data/source2/spellIndex/project2/_42.cfs (deleted)
+java       1357       root  336r      REG               8,17  266689099    5023494 /home/opengrok/data/source2/spellIndex/project2/_42.cfs (deleted)
+java       1357       root  337r      REG               8,17  266689099    5023494 /home/opengrok/data/source2/spellIndex/project2/_42.cfs (deleted)
+java       1357       root  338r      REG               8,17  275328214    5023488 /home/opengrok/data/source2/spellIndex/project1/_46.cfs (deleted)
+java       1357       root  339r      REG               8,17 2550663342    4999207 /home/opengrok/data/source2/index/project16/_9m.cfs
+java       1357       root  340r      REG               8,17  266689099    5023494 /home/opengrok/data/source2/spellIndex/project2/_42.cfs (deleted)
+java       1357       root  341r      REG               8,17  266689099    5023494 /home/opengrok/data/source2/spellIndex/project2/_42.cfs (deleted)
+java       1357       root  342r      REG               8,17 2550663342    4999207 /home/opengrok/data/source2/index/project16/_9m.cfs
+java       1357       root  343r      REG               8,17 2565739576    5011952 /home/opengrok/data/source2/index/project14/_a0.cfs
+java       1357       root  344r      REG               8,17  280043928    4995298 /home/opengrok/data/source2/spellIndex/project16/_30.cfs
+java       1357       root  346r      REG               8,17 1046875689    5014191 /home/opengrok/data/source2/index/project13/_46.cfs
+java       1357       root  347r      REG               8,17 1324277413    5023493 /home/opengrok/data/source2/index/project2/_6o.cfs (deleted)
+java       1357       root  348r      REG               8,17 1325053179    5023521 /home/opengrok/data/source2/index/project5/_6n.cfs (deleted)
+java       1357       root  349r      REG               8,17 1382669180    5023500 /home/opengrok/data/source2/index/project1/_6x.cfs (deleted)
+java       1357       root  350r      REG               8,17 2672088530    5014132 /home/opengrok/data/source2/index/project12/_bq.cfs (deleted)
+java       1357       root  351r      REG               8,17  275328214    5023488 /home/opengrok/data/source2/spellIndex/project1/_46.cfs (deleted)
+java       1357       root  352r      REG               8,17  555419011   31724939 /home/opengrok/data/source2/index/project10/_29.cfs (deleted)
+java       1357       root  353r      REG               8,17  398404577    5014163 /home/opengrok/data/source2/index/project11/_23.cfs
+java       1357       root  354r      REG               8,17  543546666    5013795 /home/opengrok/data/source2/index/project4/_30.cfs
+java       1357       root  355r      REG               8,17  554842778    5014142 /home/opengrok/data/source2/index/project3/_2p.cfs
+java       1357       root  356r      REG               8,17 1239250260    5023407 /home/opengrok/data/source2/index/project6/_5g.cfs (deleted)
+java       1357       root  357r      REG               8,17 1160403793    5012429 /home/opengrok/data/source2/index/project15/_46.cfs (deleted)
+java       1357       root  358r      REG               8,17 2550663342    4999207 /home/opengrok/data/source2/index/project16/_9m.cfs
+java       1357       root  359r      REG               8,17  280043928    4995298 /home/opengrok/data/source2/spellIndex/project16/_30.cfs
+java       1357       root  361r      REG               8,17  346663271    4980967 /home/opengrok/data/source2/spellIndex/project14/_34.cfs
+java       1357       root  362r      REG               8,17  235088095    5004933 /home/opengrok/data/source2/spellIndex/project13/_2a.cfs
+java       1357       root  363r      REG               8,17  266689099    5023494 /home/opengrok/data/source2/spellIndex/project2/_42.cfs (deleted)
+java       1357       root  364r      REG               8,17  266561667    5014134 /home/opengrok/data/source2/spellIndex/project5/_40.cfs
+java       1357       root  365r      REG               8,17  275328214    5023488 /home/opengrok/data/source2/spellIndex/project1/_46.cfs (deleted)
+java       1357       root  366r      REG               8,17  339136814    5014138 /home/opengrok/data/source2/spellIndex/project12/_43.cfs (deleted)
+java       1357       root  367r      REG               8,17   80199571   31743348 /home/opengrok/data/source2/spellIndex/project10/_q.cfs
+java       1357       root  369r      REG               8,17   95941498    4994191 /home/opengrok/data/source2/spellIndex/project11/_z.cfs
+java       1357       root  370r      REG               8,17  115422018    5013770 /home/opengrok/data/source2/spellIndex/project4/_x.cfs
+java       1357       root  371r      REG               8,17   98897776    5012225 /home/opengrok/data/source2/spellIndex/project3/_y.cfs
+java       1357       root  372r      REG               8,17  251445239    5012362 /home/opengrok/data/source2/spellIndex/project6/_2m.cfs
+java       1357       root  373r      REG               8,17  203011211    5010624 /home/opengrok/data/source2/spellIndex/project15/_2b.cfs
+java       1357       root  375r      REG               8,17  263728132    5011899 /home/opengrok/data/source2/spellIndex/project7/_2u.cfs
+java       1357       root  377r      REG               8,17 2565739576    5011952 /home/opengrok/data/source2/index/project14/_a0.cfs
+java       1357       root  378r      REG               8,17 1046875689    5014191 /home/opengrok/data/source2/index/project13/_46.cfs
+java       1357       root  379r      REG               8,17 1324277413    5023493 /home/opengrok/data/source2/index/project2/_6o.cfs (deleted)
+java       1357       root  380r      REG               8,17 1325053179    5023521 /home/opengrok/data/source2/index/project5/_6n.cfs (deleted)
+java       1357       root  381r      REG               8,17 1382669180    5023500 /home/opengrok/data/source2/index/project1/_6x.cfs (deleted)
+java       1357       root  382r      REG               8,17 2672088530    5014132 /home/opengrok/data/source2/index/project12/_bq.cfs (deleted)
+java       1357       root  383r      REG               8,17  555419011   31724939 /home/opengrok/data/source2/index/project10/_29.cfs (deleted)
+java       1357       root  384r      REG               8,17  398404577    5014163 /home/opengrok/data/source2/index/project11/_23.cfs
+java       1357       root  385r      REG               8,17  543546666    5013795 /home/opengrok/data/source2/index/project4/_30.cfs
+java       1357       root  386r      REG               8,17  554842778    5014142 /home/opengrok/data/source2/index/project3/_2p.cfs
+java       1357       root  387r      REG               8,17 1239250260    5023407 /home/opengrok/data/source2/index/project6/_5g.cfs (deleted)
+java       1357       root  388r      REG               8,17 1160403793    5012429 /home/opengrok/data/source2/index/project15/_46.cfs (deleted)
+java       1357       root  390r      REG               8,17  280043928    4995298 /home/opengrok/data/source2/spellIndex/project16/_30.cfs
+java       1357       root  392r      REG               8,17  346663271    4980967 /home/opengrok/data/source2/spellIndex/project14/_34.cfs
+java       1357       root  393r      REG               8,17  235088095    5004933 /home/opengrok/data/source2/spellIndex/project13/_2a.cfs
+java       1357       root  394r      REG               8,17  266689099    5023494 /home/opengrok/data/source2/spellIndex/project2/_42.cfs (deleted)
+java       1357       root  395r      REG               8,17  266561667    5014134 /home/opengrok/data/source2/spellIndex/project5/_40.cfs
+java       1357       root  396r      REG               8,17  275328214    5023488 /home/opengrok/data/source2/spellIndex/project1/_46.cfs (deleted)
+java       1357       root  397r      REG               8,17  339136814    5014138 /home/opengrok/data/source2/spellIndex/project12/_43.cfs (deleted)
+java       1357       root  398r      REG               8,17   80199571   31743348 /home/opengrok/data/source2/spellIndex/project10/_q.cfs
+java       1357       root  400r      REG               8,17   95941498    4994191 /home/opengrok/data/source2/spellIndex/project11/_z.cfs
+java       1357       root  401r      REG               8,17  115422018    5013770 /home/opengrok/data/source2/spellIndex/project4/_x.cfs
+java       1357       root  402r      REG               8,17   98897776    5012225 /home/opengrok/data/source2/spellIndex/project3/_y.cfs
+java       1357       root  403r      REG               8,17  251445239    5012362 /home/opengrok/data/source2/spellIndex/project6/_2m.cfs
+java       1357       root  404r      REG               8,17  203011211    5010624 /home/opengrok/data/source2/spellIndex/project15/_2b.cfs
+java       1357       root  406r      REG               8,17  263728132    5011899 /home/opengrok/data/source2/spellIndex/project7/_2u.cfs
+java       1357       root  408r      REG               8,17 2565739576    5011952 /home/opengrok/data/source2/index/project14/_a0.cfs
+java       1357       root  409r      REG               8,17 1046875689    5014191 /home/opengrok/data/source2/index/project13/_46.cfs
+java       1357       root  410r      REG               8,17 1324277413    5023493 /home/opengrok/data/source2/index/project2/_6o.cfs (deleted)
+java       1357       root  411r      REG               8,17 1325053179    5023521 /home/opengrok/data/source2/index/project5/_6n.cfs (deleted)
+java       1357       root  412r      REG               8,17 1382669180    5023500 /home/opengrok/data/source2/index/project1/_6x.cfs (deleted)
+java       1357       root  413r      REG               8,17 2672088530    5014132 /home/opengrok/data/source2/index/project12/_bq.cfs (deleted)
+java       1357       root  414r      REG               8,17  555419011   31724939 /home/opengrok/data/source2/index/project10/_29.cfs (deleted)
+java       1357       root  415r      REG               8,17  398404577    5014163 /home/opengrok/data/source2/index/project11/_23.cfs
+java       1357       root  416r      REG               8,17  543546666    5013795 /home/opengrok/data/source2/index/project4/_30.cfs
+java       1357       root  417r      REG               8,17  554842778    5014142 /home/opengrok/data/source2/index/project3/_2p.cfs
+java       1357       root  418r      REG               8,17 1239250260    5023407 /home/opengrok/data/source2/index/project6/_5g.cfs (deleted)
+java       1357       root  419r      REG               8,17 1160403793    5012429 /home/opengrok/data/source2/index/project15/_46.cfs (deleted)
+java       1357       root  420r      REG               8,17  275328214    5023488 /home/opengrok/data/source2/spellIndex/project1/_46.cfs (deleted)
+java       1357       root  421r      REG               8,17  275328214    5023488 /home/opengrok/data/source2/spellIndex/project1/_46.cfs (deleted)
+java       1357       root  422r      REG               8,17  275328214    5023488 /home/opengrok/data/source2/spellIndex/project1/_46.cfs (deleted)
+java       1357       root  423r      REG               8,17  251445239    5012362 /home/opengrok/data/source2/spellIndex/project6/_2m.cfs
+java       1357       root  424r      REG               8,17  203011211    5010624 /home/opengrok/data/source2/spellIndex/project15/_2b.cfs
+java       1357       root  425r      REG               8,17  115422018    5013770 /home/opengrok/data/source2/spellIndex/project4/_x.cfs
+java       1357       root  426r      REG               8,17  251445239    5012362 /home/opengrok/data/source2/spellIndex/project6/_2m.cfs
+java       1357       root  427r      REG               8,17  251445239    5012362 /home/opengrok/data/source2/spellIndex/project6/_2m.cfs
+java       1357       root  428r      REG               8,17  222060770    5023354 /home/opengrok/data/source1/spellIndex/project1.A.0.174/_2i.cfs
+java       1357       root  429r      REG               8,17  251445239    5012362 /home/opengrok/data/source2/spellIndex/project6/_2m.cfs
+java       1357       root  430r      REG               8,17  251445239    5012362 /home/opengrok/data/source2/spellIndex/project6/_2m.cfs
+java       1357       root  432r      REG               8,17  222060770    5023354 /home/opengrok/data/source1/spellIndex/project1.A.0.174/_2i.cfs
+java       1357       root  435r      REG               8,17   98897776    5012225 /home/opengrok/data/source2/spellIndex/project3/_y.cfs
+java       1357       root  436r      REG               8,17  275328214    5023488 /home/opengrok/data/source2/spellIndex/project1/_46.cfs (deleted)
+java       1357       root  437r      REG               8,17   95941498    4994191 /home/opengrok/data/source2/spellIndex/project11/_z.cfs
+java       1357       root  438r      REG               8,17   95941498    4994191 /home/opengrok/data/source2/spellIndex/project11/_z.cfs
+java       1357       root  439r      REG               8,17  203011211    5010624 /home/opengrok/data/source2/spellIndex/project15/_2b.cfs
+java       1357       root  440r      REG               8,17  251445239    5012362 /home/opengrok/data/source2/spellIndex/project6/_2m.cfs
+java       1357       root  441r      REG               8,17   95941498    4994191 /home/opengrok/data/source2/spellIndex/project11/_z.cfs
+java       1357       root  443r      REG               8,17   95941498    4994191 /home/opengrok/data/source2/spellIndex/project11/_z.cfs
+java       1357       root  444r      REG               8,17  275328214    5023488 /home/opengrok/data/source2/spellIndex/project1/_46.cfs (deleted)
+java       1357       root  445r      REG               8,17  275328214    5023488 /home/opengrok/data/source2/spellIndex/project1/_46.cfs (deleted)
+java       1357       root  446r      REG               8,17  266689099    5023494 /home/opengrok/data/source2/spellIndex/project2/_42.cfs (deleted)
+java       1357       root  447r      REG               8,17  275328214    5023488 /home/opengrok/data/source2/spellIndex/project1/_46.cfs (deleted)
+java       1357       root  448r      REG               8,17  275328214    5023488 /home/opengrok/data/source2/spellIndex/project1/_46.cfs (deleted)
+java       1357       root  449r      REG               8,17  203011211    5010624 /home/opengrok/data/source2/spellIndex/project15/_2b.cfs
+java       1357       root  451r      REG               8,17  275328214    5023488 /home/opengrok/data/source2/spellIndex/project1/_46.cfs (deleted)
+java       1357       root  452r      REG               8,17  275328214    5023488 /home/opengrok/data/source2/spellIndex/project1/_46.cfs (deleted)
+java       1357       root  453r      REG               8,17  115422018    5013770 /home/opengrok/data/source2/spellIndex/project4/_x.cfs
+java       1357       root  454r      REG               8,17  275328214    5023488 /home/opengrok/data/source2/spellIndex/project1/_46.cfs (deleted)
+java       1357       root  455r      REG               8,17  266689099    5023494 /home/opengrok/data/source2/spellIndex/project2/_42.cfs (deleted)
+java       1357       root  456r      REG               8,17  266689099    5023494 /home/opengrok/data/source2/spellIndex/project2/_42.cfs (deleted)
+java       1357       root  457r      REG               8,17  266689099    5023494 /home/opengrok/data/source2/spellIndex/project2/_42.cfs (deleted)
+java       1357       root  458r      REG               8,17  266689099    5023494 /home/opengrok/data/source2/spellIndex/project2/_42.cfs (deleted)
+java       1357       root  459r      REG               8,17  275328214    5023488 /home/opengrok/data/source2/spellIndex/project1/_46.cfs (deleted)
+java       1357       root  460r      REG               8,17  266689099    5023494 /home/opengrok/data/source2/spellIndex/project2/_42.cfs (deleted)
+java       1357       root  461r      REG               8,17  115422018    5013770 /home/opengrok/data/source2/spellIndex/project4/_x.cfs
+java       1357       root  462r      REG               8,17  266689099    5023494 /home/opengrok/data/source2/spellIndex/project2/_42.cfs (deleted)
+java       1357       root  463r      REG               8,17  266689099    5023494 /home/opengrok/data/source2/spellIndex/project2/_42.cfs (deleted)
+java       1357       root  464r      REG               8,17  275328214    5023488 /home/opengrok/data/source2/spellIndex/project1/_46.cfs (deleted)
+java       1357       root  465r      REG               8,17  266689099    5023494 /home/opengrok/data/source2/spellIndex/project2/_42.cfs (deleted)
+java       1357       root  466r      REG               8,17  266689099    5023494 /home/opengrok/data/source2/spellIndex/project2/_42.cfs (deleted)
+java       1357       root  467r      REG               8,17  266689099    5023494 /home/opengrok/data/source2/spellIndex/project2/_42.cfs (deleted)
+java       1357       root  468r      REG               8,17  266689099    5023494 /home/opengrok/data/source2/spellIndex/project2/_42.cfs (deleted)
+java       1357       root  469r      REG               8,17  266689099    5023494 /home/opengrok/data/source2/spellIndex/project2/_42.cfs (deleted)
+java       1357       root  470r      REG               8,17  266689099    5023494 /home/opengrok/data/source2/spellIndex/project2/_42.cfs (deleted)
+java       1357       root  471r      REG               8,17  251445239    5012362 /home/opengrok/data/source2/spellIndex/project6/_2m.cfs
+java       1357       root  472r      REG               8,17  266689099    5023494 /home/opengrok/data/source2/spellIndex/project2/_42.cfs (deleted)
+java       1357       root  473r      REG               8,17  275328214    5023488 /home/opengrok/data/source2/spellIndex/project1/_46.cfs (deleted)
+java       1357       root  474r      REG               8,17  266689099    5023494 /home/opengrok/data/source2/spellIndex/project2/_42.cfs (deleted)
+java       1357       root  475r      REG               8,17  275328214    5023488 /home/opengrok/data/source2/spellIndex/project1/_46.cfs (deleted)
+java       1357       root  476r      REG               8,17  266689099    5023494 /home/opengrok/data/source2/spellIndex/project2/_42.cfs (deleted)
+java       1357       root  477r      REG               8,17  266689099    5023494 /home/opengrok/data/source2/spellIndex/project2/_42.cfs (deleted)
+java       1357       root  478r      REG               8,17  266689099    5023494 /home/opengrok/data/source2/spellIndex/project2/_42.cfs (deleted)
+java       1357       root  479r      REG               8,17  266689099    5023494 /home/opengrok/data/source2/spellIndex/project2/_42.cfs (deleted)
+java       1357       root  480r      REG               8,17  266689099    5023494 /home/opengrok/data/source2/spellIndex/project2/_42.cfs (deleted)
+java       1357       root  481r      REG               8,17  275328214    5023488 /home/opengrok/data/source2/spellIndex/project1/_46.cfs (deleted)
+java       1357       root  482r      REG               8,17  266689099    5023494 /home/opengrok/data/source2/spellIndex/project2/_42.cfs (deleted)
+java       1357       root  483r      REG               8,17  266689099    5023494 /home/opengrok/data/source2/spellIndex/project2/_42.cfs (deleted)
+java       1357       root  484r      REG               8,17  266698132    4980806 /home/opengrok/data/source2/spellIndex/project2/_44.cfs
+java       1357       root  485r      REG               8,17  263728132    5011899 /home/opengrok/data/source2/spellIndex/project7/_2u.cfs
+java       1357       root  487r      REG               8,17  263728132    5011899 /home/opengrok/data/source2/spellIndex/project7/_2u.cfs
+java       1357       root  489r      REG               8,17  339136814    5014138 /home/opengrok/data/source2/spellIndex/project12/_43.cfs (deleted)
+java       1357       root  490r      REG               8,17  251445239    5012362 /home/opengrok/data/source2/spellIndex/project6/_2m.cfs
+java       1357       root  491r      REG               8,17  251445239    5012362 /home/opengrok/data/source2/spellIndex/project6/_2m.cfs
+java       1357       root  492r      REG               8,17  221723169   18901023 /home/opengrok/data/source1/spellIndex/project1.A.0.128/_2i.cfs
+java       1357       root  494r      REG               8,17  221723169   18901023 /home/opengrok/data/source1/spellIndex/project1.A.0.128/_2i.cfs
+java       1357       root  496r      REG               8,17  266698132    4980806 /home/opengrok/data/source2/spellIndex/project2/_44.cfs
+java       1357       root  497r      REG               8,17  266698132    4980806 /home/opengrok/data/source2/spellIndex/project2/_44.cfs
+java       1357       root  498r      REG               8,17  266698132    4980806 /home/opengrok/data/source2/spellIndex/project2/_44.cfs
+java       1357       root  499r      REG               8,17  266698132    4980806 /home/opengrok/data/source2/spellIndex/project2/_44.cfs
+java       1357       root  500r      REG               8,17  266698132    4980806 /home/opengrok/data/source2/spellIndex/project2/_44.cfs
+java       1357       root  502r      REG               8,17  266698132    4980806 /home/opengrok/data/source2/spellIndex/project2/_44.cfs
+java       1357       root  503r      REG               8,17  221723169   18901023 /home/opengrok/data/source1/spellIndex/project1.A.0.128/_2i.cfs
+java       1357       root  505r      REG               8,17  275330374    5014321 /home/opengrok/data/source2/spellIndex/project1/_48.cfs
+java       1357       root  506r      REG               8,17  266698132    4980806 /home/opengrok/data/source2/spellIndex/project2/_44.cfs
+java       1357       root  507r      REG               8,17  275330374    5014321 /home/opengrok/data/source2/spellIndex/project1/_48.cfs
+java       1357       root  508r      REG               8,17  339138617    5023411 /home/opengrok/data/source2/spellIndex/project12/_45.cfs
+java       1357       root  509r      REG               8,17  221723169   18901023 /home/opengrok/data/source1/spellIndex/project1.A.0.128/_2i.cfs
+java       1357       root  511r      REG               8,17  190138400    7776982 /home/opengrok/data/release/source3/spellIndex/project1.A.1.125/_26.cfs
+java       1357       root  512r      REG               8,17  339138617    5023411 /home/opengrok/data/source2/spellIndex/project12/_45.cfs
+java       1357       root  514r      REG               8,17  266698132    4980806 /home/opengrok/data/source2/spellIndex/project2/_44.cfs
+java       1357       root  515r      REG               8,17  266698132    4980806 /home/opengrok/data/source2/spellIndex/project2/_44.cfs
+java       1357       root  516r      REG               8,17  266698132    4980806 /home/opengrok/data/source2/spellIndex/project2/_44.cfs
+java       1357       root  517r      REG               8,17  222060770    5023354 /home/opengrok/data/source1/spellIndex/project1.A.0.174/_2i.cfs
+java       1357       root  518r      REG               8,17  266698132    4980806 /home/opengrok/data/source2/spellIndex/project2/_44.cfs
+java       1357       root  519r      REG               8,17  266698132    4980806 /home/opengrok/data/source2/spellIndex/project2/_44.cfs
+java       1357       root  520r      REG               8,17  266698132    4980806 /home/opengrok/data/source2/spellIndex/project2/_44.cfs
+java       1357       root  521r      REG               8,17  266698132    4980806 /home/opengrok/data/source2/spellIndex/project2/_44.cfs
+java       1357       root  522r      REG               8,17  266698132    4980806 /home/opengrok/data/source2/spellIndex/project2/_44.cfs
+java       1357       root  523r      REG               8,17  275330374    5014321 /home/opengrok/data/source2/spellIndex/project1/_48.cfs
+java       1357       root  524r      REG               8,17  266698132    4980806 /home/opengrok/data/source2/spellIndex/project2/_44.cfs
+java       1357       root  525r      REG               8,17  266561667    5014134 /home/opengrok/data/source2/spellIndex/project5/_40.cfs
+java       1357       root  527r      REG               8,17  275330374    5014321 /home/opengrok/data/source2/spellIndex/project1/_48.cfs
+java       1357       root  528r      REG               8,17  275330374    5014321 /home/opengrok/data/source2/spellIndex/project1/_48.cfs
+java       1357       root  529r      REG               8,17   98897776    5012225 /home/opengrok/data/source2/spellIndex/project3/_y.cfs
+java       1357       root  530r      REG               8,17  266698132    4980806 /home/opengrok/data/source2/spellIndex/project2/_44.cfs
+java       1357       root  531r      REG               8,17  115422018    5013770 /home/opengrok/data/source2/spellIndex/project4/_x.cfs
+java       1357       root  532r      REG               8,17  275330374    5014321 /home/opengrok/data/source2/spellIndex/project1/_48.cfs
+java       1357       root  533r      REG               8,17  275330374    5014321 /home/opengrok/data/source2/spellIndex/project1/_48.cfs
+java       1357       root  534r      REG               8,17  266698132    4980806 /home/opengrok/data/source2/spellIndex/project2/_44.cfs
+java       1357       root  535r      REG               8,17  275330374    5014321 /home/opengrok/data/source2/spellIndex/project1/_48.cfs
+java       1357       root  536r      REG               8,17  275330374    5014321 /home/opengrok/data/source2/spellIndex/project1/_48.cfs
+java       1357       root  537r      REG               8,17  266698132    4980806 /home/opengrok/data/source2/spellIndex/project2/_44.cfs
+java       1357       root  538r      REG               8,17  266698132    4980806 /home/opengrok/data/source2/spellIndex/project2/_44.cfs
+java       1357       root  539r      REG               8,17  275330374    5014321 /home/opengrok/data/source2/spellIndex/project1/_48.cfs
+java       1357       root  540r      REG               8,17  275330374    5014321 /home/opengrok/data/source2/spellIndex/project1/_48.cfs
+java       1357       root  541r      REG               8,17  275330374    5014321 /home/opengrok/data/source2/spellIndex/project1/_48.cfs
+java       1357       root  542r      REG               8,17  275330374    5014321 /home/opengrok/data/source2/spellIndex/project1/_48.cfs
+java       1357       root  543r      REG               8,17  275330374    5014321 /home/opengrok/data/source2/spellIndex/project1/_48.cfs
+java       1357       root  544r      REG               8,17   80199571   31743348 /home/opengrok/data/source2/spellIndex/project10/_q.cfs
+java       1357       root  545r      REG               8,17  275330374    5014321 /home/opengrok/data/source2/spellIndex/project1/_48.cfs
+java       1357       root  546r      REG               8,17  221776811   19189905 /home/opengrok/data/source1/spellIndex/project1.A.0.132/_2i.cfs
+java       1357       root  549r      REG               8,17  275330374    5014321 /home/opengrok/data/source2/spellIndex/project1/_48.cfs
+java       1357       root  550r      REG               8,17  275330374    5014321 /home/opengrok/data/source2/spellIndex/project1/_48.cfs
+java       1357       root  551r      REG               8,17  339138617    5023411 /home/opengrok/data/source2/spellIndex/project12/_45.cfs
+java       1357       root  552r      REG               8,17 1324364403    5028548 /home/opengrok/data/source2/index/project2/_6q.cfs (deleted)
+java       1357       root  553r      REG               8,17 1325054952    5023486 /home/opengrok/data/source2/index/project5/_6p.cfs
+java       1357       root  554r      REG               8,17  251445239    5012362 /home/opengrok/data/source2/spellIndex/project6/_2m.cfs
+java       1357       root  555r      REG               8,17  339138617    5023411 /home/opengrok/data/source2/spellIndex/project12/_45.cfs
+java       1357       root  556r      REG               8,17  266561667    5014134 /home/opengrok/data/source2/spellIndex/project5/_40.cfs
+java       1357       root  557r      REG               8,17  339138617    5023411 /home/opengrok/data/source2/spellIndex/project12/_45.cfs
+java       1357       root  558r      REG               8,17  251445239    5012362 /home/opengrok/data/source2/spellIndex/project6/_2m.cfs
+java       1357       root  559r      REG               8,17  266698132    4980806 /home/opengrok/data/source2/spellIndex/project2/_44.cfs
+java       1357       root  560r      REG               8,17  266698132    4980806 /home/opengrok/data/source2/spellIndex/project2/_44.cfs
+java       1357       root  561r      REG               8,17  275330374    5014321 /home/opengrok/data/source2/spellIndex/project1/_48.cfs
+java       1357       root  562r      REG               8,17  275330374    5014321 /home/opengrok/data/source2/spellIndex/project1/_48.cfs
+java       1357       root  563r      REG               8,17  222060770    5023354 /home/opengrok/data/source1/spellIndex/project1.A.0.174/_2i.cfs
+java       1357       root  564r      REG               8,17  221910343   18616274 /home/opengrok/data/source1/spellIndex/project1.A.0.164/_2i.cfs
+java       1357       root  567r      REG               8,17  280043928    4995298 /home/opengrok/data/source2/spellIndex/project16/_30.cfs
+java       1357       root  568r      REG               8,17  275330374    5014321 /home/opengrok/data/source2/spellIndex/project1/_48.cfs
+java       1357       root  569r      REG               8,17  275330374    5014321 /home/opengrok/data/source2/spellIndex/project1/_48.cfs
+java       1357       root  571r      REG               8,17  266698132    4980806 /home/opengrok/data/source2/spellIndex/project2/_44.cfs
+java       1357       root  572r      REG               8,17  346663271    4980967 /home/opengrok/data/source2/spellIndex/project14/_34.cfs
+java       1357       root  573r      REG               8,17  221723169   18901023 /home/opengrok/data/source1/spellIndex/project1.A.0.128/_2i.cfs
+java       1357       root  574r      REG               8,17  235088095    5004933 /home/opengrok/data/source2/spellIndex/project13/_2a.cfs
+java       1357       root  576r      REG               8,17  275330374    5014321 /home/opengrok/data/source2/spellIndex/project1/_48.cfs
+java       1357       root  577r      REG               8,17  275330374    5014321 /home/opengrok/data/source2/spellIndex/project1/_48.cfs
+java       1357       root  578r      REG               8,17  275330374    5014321 /home/opengrok/data/source2/spellIndex/project1/_48.cfs
+java       1357       root  579r      REG               8,17  266698132    4980806 /home/opengrok/data/source2/spellIndex/project2/_44.cfs
+java       1357       root  580r      REG               8,17  266698132    4980806 /home/opengrok/data/source2/spellIndex/project2/_44.cfs
+java       1357       root  581r      REG               8,17  266698132    4980806 /home/opengrok/data/source2/spellIndex/project2/_44.cfs
+java       1357       root  582r      REG               8,17  221776811   19189905 /home/opengrok/data/source1/spellIndex/project1.A.0.132/_2i.cfs
+java       1357       root  583r      REG               8,17  266698132    4980806 /home/opengrok/data/source2/spellIndex/project2/_44.cfs
+java       1357       root  584r      REG               8,17  266698132    4980806 /home/opengrok/data/source2/spellIndex/project2/_44.cfs
+java       1357       root  585r      REG               8,17  266698132    4980806 /home/opengrok/data/source2/spellIndex/project2/_44.cfs
+java       1357       root  586r      REG               8,17  266561667    5014134 /home/opengrok/data/source2/spellIndex/project5/_40.cfs
+java       1357       root  588r      REG               8,17  266698132    4980806 /home/opengrok/data/source2/spellIndex/project2/_44.cfs
+java       1357       root  589r      REG               8,17  275330374    5014321 /home/opengrok/data/source2/spellIndex/project1/_48.cfs
+java       1357       root  590r      REG               8,17  266561667    5014134 /home/opengrok/data/source2/spellIndex/project5/_40.cfs
+java       1357       root  591r      REG               8,17 1324362701    5028558 /home/opengrok/data/source2/index/project2/_6s.cfs
+java       1357       root  592r      REG               8,17  275330374    5014321 /home/opengrok/data/source2/spellIndex/project1/_48.cfs
+java       1357       root  593r      REG               8,17  266698132    4980806 /home/opengrok/data/source2/spellIndex/project2/_44.cfs
+java       1357       root  594r      REG               8,17  275330374    5014321 /home/opengrok/data/source2/spellIndex/project1/_48.cfs
+java       1357       root  595r      REG               8,17  266698132    4980806 /home/opengrok/data/source2/spellIndex/project2/_44.cfs
+java       1357       root  596r      REG               8,17  275330374    5014321 /home/opengrok/data/source2/spellIndex/project1/_48.cfs
+java       1357       root  597r      REG               8,17  275330374    5014321 /home/opengrok/data/source2/spellIndex/project1/_48.cfs
+java       1357       root  598r      REG               8,17  266698132    4980806 /home/opengrok/data/source2/spellIndex/project2/_44.cfs
+java       1357       root  599r      REG               8,17  275330374    5014321 /home/opengrok/data/source2/spellIndex/project1/_48.cfs
+java       1357       root  600r      REG               8,17  275330374    5014321 /home/opengrok/data/source2/spellIndex/project1/_48.cfs
+java       1357       root  601r      REG               8,17  275330374    5014321 /home/opengrok/data/source2/spellIndex/project1/_48.cfs
+java       1357       root  602r      REG               8,17  275330374    5014321 /home/opengrok/data/source2/spellIndex/project1/_48.cfs
+java       1357       root  603r      REG               8,17  275330374    5014321 /home/opengrok/data/source2/spellIndex/project1/_48.cfs
+java       1357       root  604r      REG               8,17  275330374    5014321 /home/opengrok/data/source2/spellIndex/project1/_48.cfs
+java       1357       root  605r      REG               8,17  266698132    4980806 /home/opengrok/data/source2/spellIndex/project2/_44.cfs
+java       1357       root  606r      REG               8,17  266698132    4980806 /home/opengrok/data/source2/spellIndex/project2/_44.cfs
+java       1357       root  607r      REG               8,17  275330374    5014321 /home/opengrok/data/source2/spellIndex/project1/_48.cfs
+java       1357       root  608r      REG               8,17  275330374    5014321 /home/opengrok/data/source2/spellIndex/project1/_48.cfs
+java       1357       root  609r      REG               8,17  275330374    5014321 /home/opengrok/data/source2/spellIndex/project1/_48.cfs
+java       1357       root  610r      REG               8,17  266698132    4980806 /home/opengrok/data/source2/spellIndex/project2/_44.cfs
+java       1357       root  611r      REG               8,17  275330374    5014321 /home/opengrok/data/source2/spellIndex/project1/_48.cfs
+java       1357       root  612r      REG               8,17  275330374    5014321 /home/opengrok/data/source2/spellIndex/project1/_48.cfs
+java       1357       root  613r      REG               8,17  339138617    5023411 /home/opengrok/data/source2/spellIndex/project12/_45.cfs
+java       1357       root  614r      REG               8,17  266561667    5014134 /home/opengrok/data/source2/spellIndex/project5/_40.cfs
+java       1357       root  615r      REG               8,17  275330374    5014321 /home/opengrok/data/source2/spellIndex/project1/_48.cfs
+java       1357       root  616r      REG               8,17  275330374    5014321 /home/opengrok/data/source2/spellIndex/project1/_48.cfs
+java       1357       root  617r      REG               8,17  266698132    4980806 /home/opengrok/data/source2/spellIndex/project2/_44.cfs
+java       1357       root  618r      REG               8,17  275330374    5014321 /home/opengrok/data/source2/spellIndex/project1/_48.cfs
+java       1357       root  619r      REG               8,17  275330374    5014321 /home/opengrok/data/source2/spellIndex/project1/_48.cfs
+java       1357       root  620r      REG               8,17  275330374    5014321 /home/opengrok/data/source2/spellIndex/project1/_48.cfs
+java       1357       root  621r      REG               8,17  203011211    5010624 /home/opengrok/data/source2/spellIndex/project15/_2b.cfs
+java       1357       root  623r      REG               8,17  275330374    5014321 /home/opengrok/data/source2/spellIndex/project1/_48.cfs
+java       1357       root  624r      REG               8,17  275330374    5014321 /home/opengrok/data/source2/spellIndex/project1/_48.cfs
+java       1357       root  625r      REG               8,17  275330374    5014321 /home/opengrok/data/source2/spellIndex/project1/_48.cfs
+java       1357       root  626r      REG               8,17  275330374    5014321 /home/opengrok/data/source2/spellIndex/project1/_48.cfs
+java       1357       root  627r      REG               8,17  275330374    5014321 /home/opengrok/data/source2/spellIndex/project1/_48.cfs
+java       1357       root  628r      REG               8,17  275330374    5014321 /home/opengrok/data/source2/spellIndex/project1/_48.cfs
+java       1357       root  629r      REG               8,17  275330374    5014321 /home/opengrok/data/source2/spellIndex/project1/_48.cfs
+java       1357       root  630r      REG               8,17  275330374    5014321 /home/opengrok/data/source2/spellIndex/project1/_48.cfs
+java       1357       root  631r      REG               8,17  275330374    5014321 /home/opengrok/data/source2/spellIndex/project1/_48.cfs
+java       1357       root  632r      REG               8,17  266698132    4980806 /home/opengrok/data/source2/spellIndex/project2/_44.cfs
+java       1357       root  633r      REG               8,17  275330374    5014321 /home/opengrok/data/source2/spellIndex/project1/_48.cfs
+java       1357       root  634r      REG               8,17  266698132    4980806 /home/opengrok/data/source2/spellIndex/project2/_44.cfs
+java       1357       root  635r      REG               8,17  266698132    4980806 /home/opengrok/data/source2/spellIndex/project2/_44.cfs
+java       1357       root  636r      REG               8,17  266698132    4980806 /home/opengrok/data/source2/spellIndex/project2/_44.cfs
+java       1357       root  637r      REG               8,17  275330374    5014321 /home/opengrok/data/source2/spellIndex/project1/_48.cfs
+java       1357       root  638r      REG               8,17  275330374    5014321 /home/opengrok/data/source2/spellIndex/project1/_48.cfs
+java       1357       root  639r      REG               8,17  275330374    5014321 /home/opengrok/data/source2/spellIndex/project1/_48.cfs
+java       1357       root  640r      REG               8,17  275330374    5014321 /home/opengrok/data/source2/spellIndex/project1/_48.cfs
+java       1357       root  641r      REG               8,17  275330374    5014321 /home/opengrok/data/source2/spellIndex/project1/_48.cfs
+java       1357       root  642r      REG               8,17  275330374    5014321 /home/opengrok/data/source2/spellIndex/project1/_48.cfs
+java       1357       root  643r      REG               8,17  275330374    5014321 /home/opengrok/data/source2/spellIndex/project1/_48.cfs
+java       1357       root  644r      REG               8,17  266698132    4980806 /home/opengrok/data/source2/spellIndex/project2/_44.cfs
+java       1357       root  645r      REG               8,17  266698132    4980806 /home/opengrok/data/source2/spellIndex/project2/_44.cfs
+java       1357       root  646r      REG               8,17  275330374    5014321 /home/opengrok/data/source2/spellIndex/project1/_48.cfs
+java       1357       root  647r      REG               8,17  266698132    4980806 /home/opengrok/data/source2/spellIndex/project2/_44.cfs
+java       1357       root  648r      REG               8,17  275330374    5014321 /home/opengrok/data/source2/spellIndex/project1/_48.cfs
+java       1357       root  649r      REG               8,17  275330374    5014321 /home/opengrok/data/source2/spellIndex/project1/_48.cfs
+java       1357       root  650r      REG               8,17  275330374    5014321 /home/opengrok/data/source2/spellIndex/project1/_48.cfs
+java       1357       root  651r      REG               8,17  266698132    4980806 /home/opengrok/data/source2/spellIndex/project2/_44.cfs
+java       1357       root  652r      REG               8,17  275330374    5014321 /home/opengrok/data/source2/spellIndex/project1/_48.cfs
+java       1357       root  653r      REG               8,17  266698132    4980806 /home/opengrok/data/source2/spellIndex/project2/_44.cfs
+java       1357       root  654r      REG               8,17  266698132    4980806 /home/opengrok/data/source2/spellIndex/project2/_44.cfs
+java       1357       root  655r      REG               8,17  266698132    4980806 /home/opengrok/data/source2/spellIndex/project2/_44.cfs
+java       1357       root  657r      REG               8,17  235088095    5004933 /home/opengrok/data/source2/spellIndex/project13/_2a.cfs
+java       1357       root  658r      REG               8,17  275330374    5014321 /home/opengrok/data/source2/spellIndex/project1/_48.cfs
+java       1357       root  659r      REG               8,17  266698132    4980806 /home/opengrok/data/source2/spellIndex/project2/_44.cfs
+java       1357       root  660r      REG               8,17  266698132    4980806 /home/opengrok/data/source2/spellIndex/project2/_44.cfs
+java       1357       root  661r      REG               8,17  275330374    5014321 /home/opengrok/data/source2/spellIndex/project1/_48.cfs
+java       1357       root  662r      REG               8,17 1046875689    5014191 /home/opengrok/data/source2/index/project13/_46.cfs
+java       1357       root  663r      REG               8,17  266698132    4980806 /home/opengrok/data/source2/spellIndex/project2/_44.cfs
+java       1357       root  664r      REG               8,17  266698132    4980806 /home/opengrok/data/source2/spellIndex/project2/_44.cfs
+java       1357       root  665r      REG               8,17 2550663342    4999207 /home/opengrok/data/source2/index/project16/_9m.cfs
+java       1357       root  666r      REG               8,17  266561667    5014134 /home/opengrok/data/source2/spellIndex/project5/_40.cfs
+java       1357       root  667r      REG               8,17 2565739576    5011952 /home/opengrok/data/source2/index/project14/_a0.cfs
+java       1357       root  668r      REG               8,17 1324362701    5028558 /home/opengrok/data/source2/index/project2/_6s.cfs
+java       1357       root  669r      REG               8,17 1325054952    5023486 /home/opengrok/data/source2/index/project5/_6p.cfs
+java       1357       root  670r      REG               8,17 1382580477    5023416 /home/opengrok/data/source2/index/project1/_71.cfs
+java       1357       root  671r      REG               8,17 2672087571    5023443 /home/opengrok/data/source2/index/project12/_bs.cfs
+java       1357       root  672r      REG               8,17  555418844   31762553 /home/opengrok/data/source2/index/project10/_2b.cfs
+java       1357       root  673r      REG               8,17  398404577    5014163 /home/opengrok/data/source2/index/project11/_23.cfs
+java       1357       root  674r      REG               8,17  543546666    5013795 /home/opengrok/data/source2/index/project4/_30.cfs
+java       1357       root  675r      REG               8,17  554842778    5014142 /home/opengrok/data/source2/index/project3/_2p.cfs
+java       1357       root  676r      REG               8,17 1239252607    5028587 /home/opengrok/data/source2/index/project6/_5i.cfs
+java       1357       root  677r      REG               8,17 1160403383    5028589 /home/opengrok/data/source2/index/project15/_48.cfs
+java       1357       root  678r      REG               8,17  266698132    4980806 /home/opengrok/data/source2/spellIndex/project2/_44.cfs
+java       1357       root  679r      REG               8,17  266561667    5014134 /home/opengrok/data/source2/spellIndex/project5/_40.cfs
+java       1357       root  680r      REG               8,17  275330374    5014321 /home/opengrok/data/source2/spellIndex/project1/_48.cfs
+java       1357       root  681r      REG               8,17  339138617    5023411 /home/opengrok/data/source2/spellIndex/project12/_45.cfs
+java       1357       root  682r      REG               8,17   80199571   31743348 /home/opengrok/data/source2/spellIndex/project10/_q.cfs
+java       1357       root  684r      REG               8,17   95941498    4994191 /home/opengrok/data/source2/spellIndex/project11/_z.cfs
+java       1357       root  685r      REG               8,17  115422018    5013770 /home/opengrok/data/source2/spellIndex/project4/_x.cfs
+java       1357       root  686r      REG               8,17   98897776    5012225 /home/opengrok/data/source2/spellIndex/project3/_y.cfs
+java       1357       root  687r      REG               8,17  251445239    5012362 /home/opengrok/data/source2/spellIndex/project6/_2m.cfs
+java       1357       root  688r      REG               8,17  203011211    5010624 /home/opengrok/data/source2/spellIndex/project15/_2b.cfs
+java       1357       root  690r      REG               8,17  263728132    5011899 /home/opengrok/data/source2/spellIndex/project7/_2u.cfs
+java       1357       root  692r      REG               8,17  266698132    4980806 /home/opengrok/data/source2/spellIndex/project2/_44.cfs
+java       1357       root  693r      REG               8,17  266698132    4980806 /home/opengrok/data/source2/spellIndex/project2/_44.cfs
+java       1357       root  694r      REG               8,17  266698132    4980806 /home/opengrok/data/source2/spellIndex/project2/_44.cfs
+java       1357       root  695r      REG               8,17  266698132    4980806 /home/opengrok/data/source2/spellIndex/project2/_44.cfs
+java       1357       root  696r      REG               8,17  266698132    4980806 /home/opengrok/data/source2/spellIndex/project2/_44.cfs
+java       1357       root  697r      REG               8,17  266561667    5014134 /home/opengrok/data/source2/spellIndex/project5/_40.cfs
+java       1357       root  698r      REG               8,17  266698132    4980806 /home/opengrok/data/source2/spellIndex/project2/_44.cfs
+java       1357       root  699r      REG               8,17   98897776    5012225 /home/opengrok/data/source2/spellIndex/project3/_y.cfs
+java       1357       root  700r      REG               8,17  266698132    4980806 /home/opengrok/data/source2/spellIndex/project2/_44.cfs
+java       1357       root  701r      REG               8,17  266698132    4980806 /home/opengrok/data/source2/spellIndex/project2/_44.cfs
+java       1357       root  702r      REG               8,17  266698132    4980806 /home/opengrok/data/source2/spellIndex/project2/_44.cfs
+java       1357       root  703r      REG               8,17  266698132    4980806 /home/opengrok/data/source2/spellIndex/project2/_44.cfs
+java       1357       root  704r      REG               8,17  115422018    5013770 /home/opengrok/data/source2/spellIndex/project4/_x.cfs
+java       1357       root  705r      REG               8,17  266698132    4980806 /home/opengrok/data/source2/spellIndex/project2/_44.cfs
+java       1357       root  706r      REG               8,17  266561667    5014134 /home/opengrok/data/source2/spellIndex/project5/_40.cfs
+java       1357       root  707r      REG               8,17  266561667    5014134 /home/opengrok/data/source2/spellIndex/project5/_40.cfs
+java       1357       root  708r      REG               8,17   95941498    4994191 /home/opengrok/data/source2/spellIndex/project11/_z.cfs
+java       1357       root  709r      REG               8,17  339138617    5023411 /home/opengrok/data/source2/spellIndex/project12/_45.cfs
+java       1357       root  710r      REG               8,17  339138617    5023411 /home/opengrok/data/source2/spellIndex/project12/_45.cfs
+java       1357       root  711r      REG               8,17  339138617    5023411 /home/opengrok/data/source2/spellIndex/project12/_45.cfs
+java       1357       root  712r      REG               8,17  251445239    5012362 /home/opengrok/data/source2/spellIndex/project6/_2m.cfs
+java       1357       root  713r      REG               8,17  235088095    5004933 /home/opengrok/data/source2/spellIndex/project13/_2a.cfs
+java       1357       root  714r      REG               8,17  346663271    4980967 /home/opengrok/data/source2/spellIndex/project14/_34.cfs
+java       1357       root  715r      REG               8,17  263728132    5011899 /home/opengrok/data/source2/spellIndex/project7/_2u.cfs
+java       1357       root  716r      REG               8,17   80199571   31743348 /home/opengrok/data/source2/spellIndex/project10/_q.cfs
+java       1357       root  718r      REG               8,17   95941498    4994191 /home/opengrok/data/source2/spellIndex/project11/_z.cfs
+java       1357       root  719r      REG               8,17  266698132    4980806 /home/opengrok/data/source2/spellIndex/project2/_44.cfs
+java       1357       root  720r      REG               8,17  266698132    4980806 /home/opengrok/data/source2/spellIndex/project2/_44.cfs
+java       1357       root  721r      REG               8,17  266698132    4980806 /home/opengrok/data/source2/spellIndex/project2/_44.cfs
+java       1357       root  722r      REG               8,17  266698132    4980806 /home/opengrok/data/source2/spellIndex/project2/_44.cfs
+java       1357       root  723r      REG               8,17  266698132    4980806 /home/opengrok/data/source2/spellIndex/project2/_44.cfs
+java       1357       root  724r      REG               8,17  266698132    4980806 /home/opengrok/data/source2/spellIndex/project2/_44.cfs
+java       1357       root  725r      REG               8,17  266698132    4980806 /home/opengrok/data/source2/spellIndex/project2/_44.cfs
+java       1357       root  726r      REG               8,17  266698132    4980806 /home/opengrok/data/source2/spellIndex/project2/_44.cfs
+java       1357       root  727r      REG               8,17  266698132    4980806 /home/opengrok/data/source2/spellIndex/project2/_44.cfs
+java       1357       root  728r      REG               8,17  275330374    5014321 /home/opengrok/data/source2/spellIndex/project1/_48.cfs
+java       1357       root  729r      REG               8,17  275330374    5014321 /home/opengrok/data/source2/spellIndex/project1/_48.cfs
+java       1357       root  730r      REG               8,17  266698132    4980806 /home/opengrok/data/source2/spellIndex/project2/_44.cfs
+java       1357       root  731r      REG               8,17  275330374    5014321 /home/opengrok/data/source2/spellIndex/project1/_48.cfs
+java       1357       root  732r      REG               8,17  275330374    5014321 /home/opengrok/data/source2/spellIndex/project1/_48.cfs
+java       1357       root  733r      REG               8,17  275330374    5014321 /home/opengrok/data/source2/spellIndex/project1/_48.cfs
+java       1357       root  734r      REG               8,17  203011211    5010624 /home/opengrok/data/source2/spellIndex/project15/_2b.cfs
+java       1357       root  735r      REG               8,17  266698132    4980806 /home/opengrok/data/source2/spellIndex/project2/_44.cfs
+java       1357       root  736r      REG               8,17  203011211    5010624 /home/opengrok/data/source2/spellIndex/project15/_2b.cfs
+java       1357       root  738r      REG               8,17  266698132    4980806 /home/opengrok/data/source2/spellIndex/project2/_44.cfs
+java       1357       root  739r      REG               8,17  275330374    5014321 /home/opengrok/data/source2/spellIndex/project1/_48.cfs
+java       1357       root  740r      REG               8,17  275330374    5014321 /home/opengrok/data/source2/spellIndex/project1/_48.cfs
+java       1357       root  741r      REG               8,17  275330374    5014321 /home/opengrok/data/source2/spellIndex/project1/_48.cfs
+java       1357       root  742r      REG               8,17  266561667    5014134 /home/opengrok/data/source2/spellIndex/project5/_40.cfs
+java       1357       root  743r      REG               8,17  266698132    4980806 /home/opengrok/data/source2/spellIndex/project2/_44.cfs
+java       1357       root  744r      REG               8,17   95941498    4994191 /home/opengrok/data/source2/spellIndex/project11/_z.cfs
+java       1357       root  745r      REG               8,17  266698132    4980806 /home/opengrok/data/source2/spellIndex/project2/_44.cfs
+java       1357       root  746r      REG               8,17  266698132    4980806 /home/opengrok/data/source2/spellIndex/project2/_44.cfs
+java       1357       root  747r      REG               8,17   95941498    4994191 /home/opengrok/data/source2/spellIndex/project11/_z.cfs
+java       1357       root  748r      REG               8,17   95941498    4994191 /home/opengrok/data/source2/spellIndex/project11/_z.cfs
+java       1357       root  749r      REG               8,17   95941498    4994191 /home/opengrok/data/source2/spellIndex/project11/_z.cfs
+java       1357       root  750r      REG               8,17 1324362701    5028558 /home/opengrok/data/source2/index/project2/_6s.cfs
+java       1357       root  751r      REG               8,17  266561667    5014134 /home/opengrok/data/source2/spellIndex/project5/_40.cfs
+java       1357       root  752r      REG               8,17  266561667    5014134 /home/opengrok/data/source2/spellIndex/project5/_40.cfs
+java       1357       root  754r      REG               8,17  275330374    5014321 /home/opengrok/data/source2/spellIndex/project1/_48.cfs
+java       1357       root  755r      REG               8,17  266561667    5014134 /home/opengrok/data/source2/spellIndex/project5/_40.cfs
+java       1357       root  756r      REG               8,17  203011211    5010624 /home/opengrok/data/source2/spellIndex/project15/_2b.cfs
+java       1357       root  757r      REG               8,17  266561667    5014134 /home/opengrok/data/source2/spellIndex/project5/_40.cfs
+java       1357       root  759r      REG               8,17  203011211    5010624 /home/opengrok/data/source2/spellIndex/project15/_2b.cfs
+java       1357       root  761r      REG               8,17  266698132    4980806 /home/opengrok/data/source2/spellIndex/project2/_44.cfs
+java       1357       root  762r      REG               8,17  203011211    5010624 /home/opengrok/data/source2/spellIndex/project15/_2b.cfs
+java       1357       root  764r      REG               8,17  203011211    5010624 /home/opengrok/data/source2/spellIndex/project15/_2b.cfs
+java       1357       root  766r      REG               8,17  251445239    5012362 /home/opengrok/data/source2/spellIndex/project6/_2m.cfs
+java       1357       root  767r      REG               8,17  266698132    4980806 /home/opengrok/data/source2/spellIndex/project2/_44.cfs
+java       1357       root  768r      REG               8,17  251445239    5012362 /home/opengrok/data/source2/spellIndex/project6/_2m.cfs
+java       1357       root  769r      REG               8,17  266698132    4980806 /home/opengrok/data/source2/spellIndex/project2/_44.cfs
+java       1357       root  770r      REG               8,17  263728132    5011899 /home/opengrok/data/source2/spellIndex/project7/_2u.cfs
+java       1357       root  772r      REG               8,17  263728132    5011899 /home/opengrok/data/source2/spellIndex/project7/_2u.cfs
+java       1357       root  774r      REG               8,17  203011211    5010624 /home/opengrok/data/source2/spellIndex/project15/_2b.cfs
+java       1357       root  776r      REG               8,17  263728132    5011899 /home/opengrok/data/source2/spellIndex/project7/_2u.cfs
+java       1357       root  778r      REG               8,17  275330374    5014321 /home/opengrok/data/source2/spellIndex/project1/_48.cfs
+java       1357       root  780r      REG               8,17  263728132    5011899 /home/opengrok/data/source2/spellIndex/project7/_2u.cfs
+java       1357       root  781r      REG               8,17  263728132    5011899 /home/opengrok/data/source2/spellIndex/project7/_2u.cfs
+java       1357       root  783r      REG               8,17  263728132    5011899 /home/opengrok/data/source2/spellIndex/project7/_2u.cfs
+java       1357       root  785u      REG               8,17 1382580477    5023416 /home/opengrok/data/source2/index/project1/_71.cfs
+java       1357       root  786r      REG               8,17  251445239    5012362 /home/opengrok/data/source2/spellIndex/project6/_2m.cfs
+java       1357       root  787r      REG               8,17  266698132    4980806 /home/opengrok/data/source2/spellIndex/project2/_44.cfs
+java       1357       root  789r      REG               8,17  263728132    5011899 /home/opengrok/data/source2/spellIndex/project7/_2u.cfs
+java       1357       root  790u      REG               8,17  266698132    4980806 /home/opengrok/data/source2/spellIndex/project2/_44.cfs
+java       1357       root  791r      REG               8,17  266698132    4980806 /home/opengrok/data/source2/spellIndex/project2/_44.cfs
+java       1357       root  792r      REG               8,17  263728132    5011899 /home/opengrok/data/source2/spellIndex/project7/_2u.cfs
+java       1357       root  793r      REG               8,17  266698132    4980806 /home/opengrok/data/source2/spellIndex/project2/_44.cfs
+java       1357       root  796r      REG               8,17  263728132    5011899 /home/opengrok/data/source2/spellIndex/project7/_2u.cfs
+java       1357       root  798r      REG               8,17  275330374    5014321 /home/opengrok/data/source2/spellIndex/project1/_48.cfs
+java       1357       root  799r      REG               8,17  115422018    5013770 /home/opengrok/data/source2/spellIndex/project4/_x.cfs
+java       1357       root  800r      REG               8,17  275330374    5014321 /home/opengrok/data/source2/spellIndex/project1/_48.cfs
+java       1357       root  801r      REG               8,17  263728132    5011899 /home/opengrok/data/source2/spellIndex/project7/_2u.cfs
+java       1357       root  803r      REG               8,17  275330374    5014321 /home/opengrok/data/source2/spellIndex/project1/_48.cfs
+java       1357       root  804r      REG               8,17  115422018    5013770 /home/opengrok/data/source2/spellIndex/project4/_x.cfs
+java       1357       root  805r      REG               8,17  275330374    5014321 /home/opengrok/data/source2/spellIndex/project1/_48.cfs
+java       1357       root  806u      REG               8,17  275330374    5014321 /home/opengrok/data/source2/spellIndex/project1/_48.cfs
+java       1357       root  807r      REG               8,17  275330374    5014321 /home/opengrok/data/source2/spellIndex/project1/_48.cfs
+java       1357       root  808u      REG               8,17  263728132    5011899 /home/opengrok/data/source2/spellIndex/project7/_2u.cfs
+java       1357       root  809u      REG               8,17  275330374    5014321 /home/opengrok/data/source2/spellIndex/project1/_48.cfs
+java       1357       root  811r      REG               8,17  275330374    5014321 /home/opengrok/data/source2/spellIndex/project1/_48.cfs
+java       1357       root  812r      REG               8,17  275330374    5014321 /home/opengrok/data/source2/spellIndex/project1/_48.cfs
+java       1357       root  813r      REG               8,17  275330374    5014321 /home/opengrok/data/source2/spellIndex/project1/_48.cfs
+java       1357       root  814r      REG               8,17  266698132    4980806 /home/opengrok/data/source2/spellIndex/project2/_44.cfs
+java       1357       root  815r      REG               8,17  811612023   18901032 /home/opengrok/data/source1/index/project1.A.0.128/_50.cfs
+java       1357       root  816r      REG               8,17  263728132    5011899 /home/opengrok/data/source2/spellIndex/project7/_2u.cfs
+java       1357       root  817r      REG               8,17  266698132    4980806 /home/opengrok/data/source2/spellIndex/project2/_44.cfs
+java       1357       root  819r      REG               8,17  251445239    5012362 /home/opengrok/data/source2/spellIndex/project6/_2m.cfs
+java       1357       root  820r      REG               8,17  275330374    5014321 /home/opengrok/data/source2/spellIndex/project1/_48.cfs
+java       1357       root  821r      REG               8,17  275330374    5014321 /home/opengrok/data/source2/spellIndex/project1/_48.cfs
+java       1357       root  823r      REG               8,17  263728132    5011899 /home/opengrok/data/source2/spellIndex/project7/_2u.cfs
+java       1357       root  825r      REG               8,17  275330374    5014321 /home/opengrok/data/source2/spellIndex/project1/_48.cfs
+java       1357       root  826r      REG               8,17  339138617    5023411 /home/opengrok/data/source2/spellIndex/project12/_45.cfs
+java       1357       root  827r      REG               8,17  275330374    5014321 /home/opengrok/data/source2/spellIndex/project1/_48.cfs
+java       1357       root  828r      REG               8,17  266698132    4980806 /home/opengrok/data/source2/spellIndex/project2/_44.cfs
+java       1357       root  829r      REG               8,17  266698132    4980806 /home/opengrok/data/source2/spellIndex/project2/_44.cfs
+java       1357       root  830r      REG               8,17  811985846   19189918 /home/opengrok/data/source1/index/project1.A.0.132/_50.cfs
+java       1357       root  832r      REG               8,17  266698132    4980806 /home/opengrok/data/source2/spellIndex/project2/_44.cfs
+java       1357       root  833r      REG               8,17  275330374    5014321 /home/opengrok/data/source2/spellIndex/project1/_48.cfs
+java       1357       root  834r      REG               8,17  814269708   18616282 /home/opengrok/data/source1/index/project1.A.0.164/_52.cfs
+java       1357       root  836r      REG               8,17  339138617    5023411 /home/opengrok/data/source2/spellIndex/project12/_45.cfs
+java       1357       root  837r      REG               8,17  275330374    5014321 /home/opengrok/data/source2/spellIndex/project1/_48.cfs
+java       1357       root  838r      REG               8,17  346663271    4980967 /home/opengrok/data/source2/spellIndex/project14/_34.cfs
+java       1357       root  839r      REG               8,17   98897776    5012225 /home/opengrok/data/source2/spellIndex/project3/_y.cfs
+java       1357       root  840r      REG               8,17  814856239    5023362 /home/opengrok/data/source1/index/project1.A.0.174/_52.cfs
+java       1357       root  841r      REG               8,17  221723169   18901023 /home/opengrok/data/source1/spellIndex/project1.A.0.128/_2i.cfs
+java       1357       root  844r      REG               8,17 1315741498    4714090 /home/opengrok/data/source1/index/project1.A.0.49/_51.cfs
+java       1357       root  845r      REG               8,17 1332230240    4714044 /home/opengrok/data/source1/index/project1.A.0.63/_4u.cfs
+java       1357       root  846r      REG               8,17  266698132    4980806 /home/opengrok/data/source2/spellIndex/project2/_44.cfs
+java       1357       root  847r      REG               8,17  339138617    5023411 /home/opengrok/data/source2/spellIndex/project12/_45.cfs
+java       1357       root  848r      REG               8,17  339138617    5023411 /home/opengrok/data/source2/spellIndex/project12/_45.cfs
+java       1357       root  849r      REG               8,17  266698132    4980806 /home/opengrok/data/source2/spellIndex/project2/_44.cfs
+java       1357       root  850r      REG               8,17  266698132    4980806 /home/opengrok/data/source2/spellIndex/project2/_44.cfs
+java       1357       root  851r      REG               8,17  275330374    5014321 /home/opengrok/data/source2/spellIndex/project1/_48.cfs
+java       1357       root  852r      REG               8,17  275330374    5014321 /home/opengrok/data/source2/spellIndex/project1/_48.cfs
+java       1357       root  853r      REG               8,17  275330374    5014321 /home/opengrok/data/source2/spellIndex/project1/_48.cfs
+java       1357       root  854u      REG               8,17  266698132    4980806 /home/opengrok/data/source2/spellIndex/project2/_44.cfs
+java       1357       root  855r      REG               8,17   98897776    5012225 /home/opengrok/data/source2/spellIndex/project3/_y.cfs
+java       1357       root  856r      REG               8,17   98897776    5012225 /home/opengrok/data/source2/spellIndex/project3/_y.cfs
+java       1357       root  857r      REG               8,17  221723169   18901023 /home/opengrok/data/source1/spellIndex/project1.A.0.128/_2i.cfs
+java       1357       root  859r      REG               8,17  266561667    5014134 /home/opengrok/data/source2/spellIndex/project5/_40.cfs
+java       1357       root  860r      REG               8,17  221776811   19189905 /home/opengrok/data/source1/spellIndex/project1.A.0.132/_2i.cfs
+java       1357       root  861r      REG               8,17   98897776    5012225 /home/opengrok/data/source2/spellIndex/project3/_y.cfs
+java       1357       root  863r      REG               8,17  266698132    4980806 /home/opengrok/data/source2/spellIndex/project2/_44.cfs
+java       1357       root  864r      REG               8,17  203011211    5010624 /home/opengrok/data/source2/spellIndex/project15/_2b.cfs
+java       1357       root  865r      REG               8,17  269044185    4714043 /home/opengrok/data/source1/spellIndex/project1.A.0.85/_2i.cfs
+java       1357       root  866r      REG               8,17  221910343   18616274 /home/opengrok/data/source1/spellIndex/project1.A.0.164/_2i.cfs
+java       1357       root  868r      REG               8,17  222060770    5023354 /home/opengrok/data/source1/spellIndex/project1.A.0.174/_2i.cfs
+java       1357       root  870r      REG               8,17  216775458    4714049 /home/opengrok/data/source1/spellIndex/project1.A.0.63/_2g.cfs
+java       1357       root  872r      REG               8,17  269044185    4714043 /home/opengrok/data/source1/spellIndex/project1.A.0.85/_2i.cfs
+java       1357       root  873r      REG               8,17   98897776    5012225 /home/opengrok/data/source2/spellIndex/project3/_y.cfs
+java       1357       root  874r      REG               8,17   98897776    5012225 /home/opengrok/data/source2/spellIndex/project3/_y.cfs
+java       1357       root  875r      REG               8,17   98897776    5012225 /home/opengrok/data/source2/spellIndex/project3/_y.cfs
+java       1357       root  876r      REG               8,17   98897776    5012225 /home/opengrok/data/source2/spellIndex/project3/_y.cfs
+java       1357       root  878r      REG               8,17  266698132    4980806 /home/opengrok/data/source2/spellIndex/project2/_44.cfs
+java       1357       root  879r      REG               8,17  269044185    4714043 /home/opengrok/data/source1/spellIndex/project1.A.0.85/_2i.cfs
+java       1357       root  880r      REG               8,17  266698132    4980806 /home/opengrok/data/source2/spellIndex/project2/_44.cfs
+java       1357       root  881r      REG               8,17  269044185    4714043 /home/opengrok/data/source1/spellIndex/project1.A.0.85/_2i.cfs
+java       1357       root  882r      REG               8,17  266698132    4980806 /home/opengrok/data/source2/spellIndex/project2/_44.cfs
+java       1357       root  883r      REG               8,17  115422018    5013770 /home/opengrok/data/source2/spellIndex/project4/_x.cfs
+java       1357       root  884r      REG               8,17  266698132    4980806 /home/opengrok/data/source2/spellIndex/project2/_44.cfs
+java       1357       root  885r      REG               8,17  266698132    4980806 /home/opengrok/data/source2/spellIndex/project2/_44.cfs
+java       1357       root  886r      REG               8,17  266698132    4980806 /home/opengrok/data/source2/spellIndex/project2/_44.cfs
+java       1357       root  887r      REG               8,17  266698132    4980806 /home/opengrok/data/source2/spellIndex/project2/_44.cfs
+java       1357       root  888r      REG               8,17  266698132    4980806 /home/opengrok/data/source2/spellIndex/project2/_44.cfs
+java       1357       root  889r      REG               8,17  266698132    4980806 /home/opengrok/data/source2/spellIndex/project2/_44.cfs
+java       1357       root  890r      REG               8,17  275330374    5014321 /home/opengrok/data/source2/spellIndex/project1/_48.cfs
+java       1357       root  891u      REG               8,17  203011211    5010624 /home/opengrok/data/source2/spellIndex/project15/_2b.cfs
+java       1357       root  893r      REG               8,17  251445239    5012362 /home/opengrok/data/source2/spellIndex/project6/_2m.cfs
+java       1357       root  894r      REG               8,17  222060770    5023354 /home/opengrok/data/source1/spellIndex/project1.A.0.174/_2i.cfs
+java       1357       root  896r      REG               8,17  275330374    5014321 /home/opengrok/data/source2/spellIndex/project1/_48.cfs
+java       1357       root  897r      REG               8,17  275330374    5014321 /home/opengrok/data/source2/spellIndex/project1/_48.cfs
+java       1357       root  898r      REG               8,17  275330374    5014321 /home/opengrok/data/source2/spellIndex/project1/_48.cfs
+java       1357       root  899r      REG               8,17  263728132    5011899 /home/opengrok/data/source2/spellIndex/project7/_2u.cfs
+java       1357       root  901r      REG               8,17  811612023   18901032 /home/opengrok/data/source1/index/project1.A.0.128/_50.cfs
+java       1357       root  903r      REG               8,17  811985846   19189918 /home/opengrok/data/source1/index/project1.A.0.132/_50.cfs
+java       1357       root  905r      REG               8,17  814269708   18616282 /home/opengrok/data/source1/index/project1.A.0.164/_52.cfs
+java       1357       root  907r      REG               8,17  814856239    5023362 /home/opengrok/data/source1/index/project1.A.0.174/_52.cfs
+java       1357       root  909r      REG               8,17 1315741498    4714090 /home/opengrok/data/source1/index/project1.A.0.49/_51.cfs
+java       1357       root  910r      REG               8,17 1332230240    4714044 /home/opengrok/data/source1/index/project1.A.0.63/_4u.cfs
+java       1357       root  911r      REG               8,17  266698132    4980806 /home/opengrok/data/source2/spellIndex/project2/_44.cfs
+java       1357       root  912r      REG               8,17   98897776    5012225 /home/opengrok/data/source2/spellIndex/project3/_y.cfs
+java       1357       root  913r      REG               8,17  275330374    5014321 /home/opengrok/data/source2/spellIndex/project1/_48.cfs
+java       1357       root  914r      REG               8,17  266698132    4980806 /home/opengrok/data/source2/spellIndex/project2/_44.cfs
+java       1357       root  915r      REG               8,17  266698132    4980806 /home/opengrok/data/source2/spellIndex/project2/_44.cfs
+java       1357       root  916r      REG               8,17  275330374    5014321 /home/opengrok/data/source2/spellIndex/project1/_48.cfs
+java       1357       root  917r      REG               8,17  266561667    5014134 /home/opengrok/data/source2/spellIndex/project5/_40.cfs
+java       1357       root  918r      REG               8,17  275330374    5014321 /home/opengrok/data/source2/spellIndex/project1/_48.cfs
+java       1357       root  919r      REG               8,17   98897776    5012225 /home/opengrok/data/source2/spellIndex/project3/_y.cfs
+java       1357       root  920r      REG               8,17   98897776    5012225 /home/opengrok/data/source2/spellIndex/project3/_y.cfs
+java       1357       root  921r      REG               8,17  222060770    5023354 /home/opengrok/data/source1/spellIndex/project1.A.0.174/_2i.cfs
+java       1357       root  922r      REG               8,17  221910343   18616274 /home/opengrok/data/source1/spellIndex/project1.A.0.164/_2i.cfs
+java       1357       root  923r      REG               8,17  266698132    4980806 /home/opengrok/data/source2/spellIndex/project2/_44.cfs
+java       1357       root  924r      REG               8,17  115422018    5013770 /home/opengrok/data/source2/spellIndex/project4/_x.cfs
+java       1357       root  925r      REG               8,17  266698132    4980806 /home/opengrok/data/source2/spellIndex/project2/_44.cfs
+java       1357       root  926r      REG               8,17  115422018    5013770 /home/opengrok/data/source2/spellIndex/project4/_x.cfs
+java       1357       root  927r      REG               8,17  275330374    5014321 /home/opengrok/data/source2/spellIndex/project1/_48.cfs
+java       1357       root  929r      REG               8,17  275330374    5014321 /home/opengrok/data/source2/spellIndex/project1/_48.cfs
+java       1357       root  931r      REG               8,17  266698132    4980806 /home/opengrok/data/source2/spellIndex/project2/_44.cfs
+java       1357       root  932r      REG               8,17  266561667    5014134 /home/opengrok/data/source2/spellIndex/project5/_40.cfs
+java       1357       root  933r      REG               8,17  115422018    5013770 /home/opengrok/data/source2/spellIndex/project4/_x.cfs
+java       1357       root  934r      REG               8,17  266561667    5014134 /home/opengrok/data/source2/spellIndex/project5/_40.cfs
+java       1357       root  935r      REG               8,17  266561667    5014134 /home/opengrok/data/source2/spellIndex/project5/_40.cfs
+java       1357       root  936r      REG               8,17  222060770    5023354 /home/opengrok/data/source1/spellIndex/project1.A.0.174/_2i.cfs
+java       1357       root  938r      REG               8,17  222060770    5023354 /home/opengrok/data/source1/spellIndex/project1.A.0.174/_2i.cfs
+java       1357       root  939r      REG               8,17  266698132    4980806 /home/opengrok/data/source2/spellIndex/project2/_44.cfs
+java       1357       root  940r      REG               8,17  222060770    5023354 /home/opengrok/data/source1/spellIndex/project1.A.0.174/_2i.cfs
+java       1357       root  943r      REG               8,17  266698132    4980806 /home/opengrok/data/source2/spellIndex/project2/_44.cfs
+java       1357       root  944r      REG               8,17  266698132    4980806 /home/opengrok/data/source2/spellIndex/project2/_44.cfs
+java       1357       root  945r      REG               8,17  275330374    5014321 /home/opengrok/data/source2/spellIndex/project1/_48.cfs
+java       1357       root  947r      REG               8,17  251445239    5012362 /home/opengrok/data/source2/spellIndex/project6/_2m.cfs
+java       1357       root  948r      REG               8,17  275330374    5014321 /home/opengrok/data/source2/spellIndex/project1/_48.cfs
+java       1357       root  950r      REG               8,17  222060770    5023354 /home/opengrok/data/source1/spellIndex/project1.A.0.174/_2i.cfs
+java       1357       root  952r      REG               8,17  221776811   19189905 /home/opengrok/data/source1/spellIndex/project1.A.0.132/_2i.cfs
+java       1357       root  953r      REG               8,17   98897776    5012225 /home/opengrok/data/source2/spellIndex/project3/_y.cfs
+java       1357       root  954r      REG               8,17  222060770    5023354 /home/opengrok/data/source1/spellIndex/project1.A.0.174/_2i.cfs
+java       1357       root  955r      REG               8,17  266698132    4980806 /home/opengrok/data/source2/spellIndex/project2/_44.cfs
+java       1357       root  956r      REG               8,17  275330374    5014321 /home/opengrok/data/source2/spellIndex/project1/_48.cfs
+java       1357       root  957r      REG               8,17  811612023   18901032 /home/opengrok/data/source1/index/project1.A.0.128/_50.cfs
+java       1357       root  958r      REG               8,17  275330374    5014321 /home/opengrok/data/source2/spellIndex/project1/_48.cfs
+java       1357       root  959r      REG               8,17  267016211    4714048 /home/opengrok/data/source1/spellIndex/project1.A.0.49/_2i.cfs
+java       1357       root  960r      REG               8,17  811612023   18901032 /home/opengrok/data/source1/index/project1.A.0.128/_50.cfs
+java       1357       root  961r      REG               8,17  266698132    4980806 /home/opengrok/data/source2/spellIndex/project2/_44.cfs
+java       1357       root  963r      REG               8,17  251445239    5012362 /home/opengrok/data/source2/spellIndex/project6/_2m.cfs
+java       1357       root  965r      REG               8,17  275330374    5014321 /home/opengrok/data/source2/spellIndex/project1/_48.cfs
+java       1357       root  966r      REG               8,17  275330374    5014321 /home/opengrok/data/source2/spellIndex/project1/_48.cfs
+java       1357       root  967r      REG               8,17  251445239    5012362 /home/opengrok/data/source2/spellIndex/project6/_2m.cfs
+java       1357       root  971r      REG               8,17  811985846   19189918 /home/opengrok/data/source1/index/project1.A.0.132/_50.cfs
+java       1357       root  973r      REG               8,17  814269708   18616282 /home/opengrok/data/source1/index/project1.A.0.164/_52.cfs
+java       1357       root  975r      REG               8,17  814856239    5023362 /home/opengrok/data/source1/index/project1.A.0.174/_52.cfs
+java       1357       root  977r      REG               8,17 1315741498    4714090 /home/opengrok/data/source1/index/project1.A.0.49/_51.cfs
+java       1357       root  978r      REG               8,17 1332230240    4714044 /home/opengrok/data/source1/index/project1.A.0.63/_4u.cfs
+java       1357       root  982r      REG               8,17  216775458    4714049 /home/opengrok/data/source1/spellIndex/project1.A.0.63/_2g.cfs
+java       1357       root  984r      REG               8,17  269044185    4714043 /home/opengrok/data/source1/spellIndex/project1.A.0.85/_2i.cfs
+java       1357       root  985r      REG               8,17  811985846   19189918 /home/opengrok/data/source1/index/project1.A.0.132/_50.cfs
+java       1357       root  987r      REG               8,17  814269708   18616282 /home/opengrok/data/source1/index/project1.A.0.164/_52.cfs
+java       1357       root  989r      REG               8,17  814856239    5023362 /home/opengrok/data/source1/index/project1.A.0.174/_52.cfs
+java       1357       root  991r      REG               8,17 1315741498    4714090 /home/opengrok/data/source1/index/project1.A.0.49/_51.cfs
+java       1357       root  992r      REG               8,17 1332230240    4714044 /home/opengrok/data/source1/index/project1.A.0.63/_4u.cfs
+java       1357       root  993r      REG               8,17  221723169   18901023 /home/opengrok/data/source1/spellIndex/project1.A.0.128/_2i.cfs
+java       1357       root  994r      REG               8,17  221723169   18901023 /home/opengrok/data/source1/spellIndex/project1.A.0.128/_2i.cfs
+java       1357       root  996r      REG               8,17  221776811   19189905 /home/opengrok/data/source1/spellIndex/project1.A.0.132/_2i.cfs
+java       1357       root  998r      REG               8,17  221910343   18616274 /home/opengrok/data/source1/spellIndex/project1.A.0.164/_2i.cfs
+java       1357       root 1000r      REG               8,17  222060770    5023354 /home/opengrok/data/source1/spellIndex/project1.A.0.174/_2i.cfs
+java       1357       root 1002r      REG               8,17  267016211    4714048 /home/opengrok/data/source1/spellIndex/project1.A.0.49/_2i.cfs
+java       1357       root 1003r      REG               8,17  216775458    4714049 /home/opengrok/data/source1/spellIndex/project1.A.0.63/_2g.cfs
+java       1357       root 1005r      REG               8,17  269044185    4714043 /home/opengrok/data/source1/spellIndex/project1.A.0.85/_2i.cfs
+java       1357       root 1007r      REG               8,17  221723169   18901023 /home/opengrok/data/source1/spellIndex/project1.A.0.128/_2i.cfs
+java       1357       root 1009r      REG               8,17 1382580477    5023416 /home/opengrok/data/source2/index/project1/_71.cfs
+java       1357       root 1021r      REG               8,17  811612023   18901032 /home/opengrok/data/source1/index/project1.A.0.128/_50.cfs

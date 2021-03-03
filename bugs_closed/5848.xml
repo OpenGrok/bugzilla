@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>5848</bug_id>
+          
+          <creation_ts>2008-12-16 04:53:00 +0000</creation_ts>
+          <short_desc>trimmed diff link results in NULL pointer dereference</short_desc>
+          <delta_ts>2010-01-27 12:47:02 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>webapp</component>
+          <version>unspecified</version>
+          <rep_platform>Other</rep_platform>
+          <op_sys>Solaris</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXED</resolution>
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>minor</bug_severity>
+          <target_milestone>0.9</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Vladimir Kotal">vladimir.kotal</reporter>
+          <assigned_to name="Lubos Kosco">Lubos.Kosco</assigned_to>
+          <cc>Lubos.Kosco</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>23694</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2008-12-16 04:53:27 +0000</bug_when>
+            <thetext>When viewing the diffs from history view, the URL looks e.g. like this:
+
+http://grok.czech.sun.com:8080/source/diff/onnv-clone/usr/src/cmd/ssh/etc/sshd_config?r2=%2Fonnv-clone%2Fusr%2Fsrc%2Fcmd%2Fssh%2Fetc%2Fsshd_config%408298%3A2ae6e4b6b7ed&amp;r1=%2Fonnv-clone%2Fusr%2Fsrc%2Fcmd%2Fssh%2Fetc%2Fsshd_config%406288%3A65c8136c6b0b
+
+After the URL is trimmed to:
+
+http://grok.czech.sun.com:8080/source/diff/onnv-clone/usr/src/cmd/ssh/etc/sshd_config
+
+it hits an exception:
+
+---
+There was an error!
+
+java.lang.NullPointerException
+	at org.apache.jsp.diff_jsp._jspService(diff_jsp.java:446)
+	at org.apache.jasper.runtime.HttpJspBase.service(Unknown Source)
+	at javax.servlet.http.HttpServlet.service(Unknown Source)
+	at org.apache.jasper.servlet.JspServletWrapper.service(Unknown Source)
+	at org.apache.jasper.servlet.JspServlet.serviceJspFile(Unknown Source)
+	at org.apache.jasper.servlet.JspServlet.service(Unknown Source)
+	at javax.servlet.http.HttpServlet.service(Unknown Source)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(Unknown Source)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(Unknown Source)
+	at org.apache.catalina.core.StandardWrapperValve.invoke(Unknown Source)
+	at org.apache.catalina.core.StandardContextValve.invoke(Unknown Source)
+	at org.apache.catalina.core.StandardHostValve.invoke(Unknown Source)
+	at org.apache.catalina.valves.ErrorReportValve.invoke(Unknown Source)
+	at org.apache.catalina.core.StandardEngineValve.invoke(Unknown Source)
+	at org.apache.catalina.connector.CoyoteAdapter.service(Unknown Source)
+	at org.apache.coyote.http11.Http11Processor.process(Unknown Source)
+	at org.apache.coyote.http11.Http11BaseProtocol$Http11ConnectionHandler.processConnection(Unknown Source)
+	at org.apache.tomcat.util.net.PoolTcpEndpoint.processSocket(Unknown Source)
+	at org.apache.tomcat.util.net.LeaderFollowerWorkerThread.runIt(Unknown Source)
+	at org.apache.tomcat.util.threads.ThreadPool$ControlRunnable.run(Unknown Source)
+	at java.lang.Thread.run(Thread.java:619)
+
+
+null 
+---
+
+The exception should be handled gracefully.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>63779</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2010-01-26 14:58:48 +0000</bug_when>
+            <thetext>if you don&apos;t choose any revision and just hit the compare button you get this exception
+this should be fixed</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>63963</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2010-01-27 12:47:02 +0000</bug_when>
+            <thetext>in
+
+changeset:   940:d059bc43cfbf
+
+error will be shown now(as originally designed):
+
+Please pick two revisions to compare the changed from the history
+
+instead of NPE</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

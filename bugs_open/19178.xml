@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>19178</bug_id>
+          
+          <creation_ts>2012-02-17 06:14:00 +0000</creation_ts>
+          <short_desc>Too many open files - related to dtags.eftar</short_desc>
+          <delta_ts>2012-04-16 00:23:48 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>indexer</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>Linux</op_sys>
+          <bug_status>ACCEPTED</bug_status>
+          
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>normal</bug_severity>
+          <target_milestone>next</target_milestone>
+          <dependson>19169</dependson>
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Ragesh Nair">Ragesh.X.Nair</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          <cc>jel+osbugs</cc>
+    
+    <cc>Lubos.Kosco</cc>
+    
+    <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>86218</commentid>
+            <who name="Ragesh Nair">Ragesh.X.Nair</who>
+            <bug_when>2012-02-17 06:14:11 +0000</bug_when>
+            <thetext>We have upgrade our OpenGrok setup to latest 0.11 release and we found that there are too many open files left open while running Opengrok.
+
+We have Ubuntu 64 bit 11.10 oneiric where OpenGrok is deployed in Apache 7. 
+
+Its all same as the one we filed earlier https://defect.opensolaris.org/bz/show_bug.cgi?id=17127 but &quot;data/index/dtags.eftar (deleted)&quot; is what getting accumulated this time.
+
+# lsof|grep dtags | wc -l
+4448
+
+java      30882    tomcat7   42r      REG               8,17         32   95472116 /OUR/data/index/dtags.eftar (deleted)
+java      30882    tomcat7   43r      REG               8,17         32   95472116 /OUR/data/index/dtags.eftar (deleted)
+java      30882    tomcat7   44r      REG               8,17         32   95472116 /OUR/data/index/dtags.eftar (deleted)
+
+Above are seen in many numbers.
+
+Please do the needful and let me know if you need any more information in this regard.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86219</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2012-02-17 09:02:41 +0000</bug_when>
+            <thetext>we have a mitigation for this in http://defect.opensolaris.org/bz/show_bug.cgi?id=19169
+
+however it seems in 0.11 we don&apos;t get web/pageconfig.jspf#33 executed properly</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86220</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2012-02-17 09:30:18 +0000</bug_when>
+            <thetext>a quick remedy might be to 
+move /OUR/data/index/dtags.eftar aside until we release a fix ...</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86400</commentid>
+            <who name="Jens Elkner">jel+osbugs</who>
+            <bug_when>2012-04-16 00:23:48 +0000</bug_when>
+            <thetext>see http://defect.opensolaris.org/bz/show_bug.cgi?id=19194</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

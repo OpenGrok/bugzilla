@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>107</bug_id>
+          
+          <creation_ts>2007-11-02 00:43:00 +0000</creation_ts>
+          <short_desc>If no project is selected you get an odd error when searching</short_desc>
+          <delta_ts>2007-11-08 06:24:53 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>webapp</component>
+          <version>unspecified</version>
+          <rep_platform>i86pc/amd64</rep_platform>
+          <op_sys>Solaris</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>DUPLICATE</resolution>
+          <dup_id>172</dup_id>
+          
+          
+          
+          
+          <priority>P4</priority>
+          <bug_severity>minor</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Lubos Kosco">Lubos.Kosco</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>208</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2007-11-02 00:43:29 +0000</bug_when>
+            <thetext>How to reproduce: 
+1) start a new browser with clean session (no previous searches from opengrok webapp)
+2) don&apos;t select any project and do a search
+
+3) browser will say:  There was an error!
+
+What error? :) ?
+I kinda assumed that every single project will be searched ... 
+
+I am using stable opengrok 0.5 with apache tomcat 6.0.14 on S10u4 , browser was Firefox 2.0.0.8 from Windows Vista</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>474</commentid>
+            <who name="Trond Norbye">trond.norbye</who>
+            <bug_when>2007-11-08 06:24:53 +0000</bug_when>
+            <thetext>This seems like a duplicate of #172
+
+*** This bug has been marked as a duplicate of bug 172 ***</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

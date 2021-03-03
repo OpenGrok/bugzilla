@@ -1,0 +1,139 @@
+/*
+	Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+	Ut auctor sapien sit amet mauris imperdiet congue.
+	Maecenas posuere sodales velit, nec ullamcorper magna pulvinar suscipit.
+	Vivamus scelerisque felis a leo sodales semper.
+	Donec tincidunt sapien dui, dignissim gravida nisi.
+	Aliquam tincidunt sem et urna pulvinar scelerisque.
+	Proin pharetra sem massa, in suscipit urna.
+	Cras rutrum fringilla arcu, nec bibendum lacus congue id.
+	Sed non magna in leo accumsan condimentum.
+	Vestibulum posuere nulla nec ligula eleifend a ullamcorper velit ultrices.
+	Sed id eros a odio blandit condimentum nec vel ipsum.
+	Morbi blandit neque nec nisi blandit egestas.
+	Etiam cursus sem eu mi vehicula porttitor.
+	Ut eget libero nec dolor ultrices dapibus at vitae ipsum.
+	Proin vitae lectus libero, ut porttitor metus.
+	Vestibulum aliquet porttitor urna, lobortis tempus mi convallis eu.
+	Sed sed justo risus, in luctus augue.
+	Ut fermentum lorem eu purus interdum fringilla.
+	Morbi a mi in eros scelerisque sodales.
+	Phasellus vel nisi in nulla commodo dictum id in leo.
+	Duis vehicula massa at justo consequat eu vehicula diam auctor.
+	Sed vel libero metus, et eleifend odio.
+	Integer quis diam luctus eros scelerisque volutpat at ac lectus.
+	Nunc mollis sem at eros consectetur vestibulum.
+	Fusce scelerisque justo in libero sagittis accumsan vitae ut tellus.
+	Nullam aliquet feugiat ligula, in imperdiet orci dictum eget.
+	Aenean in nulla eget felis elementum volutpat.
+	Nunc suscipit dictum elit, nec ultricies diam pretium eget.
+	Mauris id dui arcu, vel aliquet lacus.
+	Nunc tristique feugiat purus, nec varius tellus facilisis in.
+	Quisque pretium imperdiet nibh, vel dignissim dui sodales at.
+	Curabitur ut massa in elit posuere adipiscing.
+	Praesent in nibh risus, sed scelerisque diam.
+	Donec ultrices tellus in ipsum porta aliquet pellentesque est tempus.
+	Donec bibendum eros tristique dui pellentesque porttitor sit amet non quam.
+	Donec nec urna eu risus tempor pellentesque id id nunc.
+	Morbi in orci leo, sed rhoncus nulla.
+	Ut sit amet risus in sem lacinia lacinia vitae a purus.
+	Etiam quis magna urna, non suscipit nisl.
+	Vestibulum fermentum sodales nisi, eu dictum leo varius quis.
+	Ut nec ligula at felis ultricies malesuada.
+	Sed vitae mi sed orci molestie ultricies nec in odio.
+	Integer adipiscing nisi eget odio lacinia at accumsan dolor bibendum.
+	Cras vel dolor ac felis ultrices porttitor.
+	Proin iaculis ipsum ut mi ultrices vel aliquet odio dignissim.
+	In sit amet sapien in neque iaculis suscipit ac sodales libero.
+	Duis egestas tellus eu felis placerat a dapibus justo ultricies.
+	Sed a lectus dui, dignissim interdum lacus.
+	Mauris in velit eu nunc imperdiet auctor sed sed nisi.
+	Mauris eget lorem non dolor rutrum adipiscing in sed diam.
+	Mauris semper aliquam nisl, eget auctor tellus porttitor a.
+	Suspendisse tristique ante in nunc mollis at consectetur erat auctor.
+	Phasellus molestie mollis sem, eu consequat mi laoreet et.
+	Vestibulum sit amet mauris dolor, sit amet cursus massa.
+	Curabitur pretium metus in dui interdum in condimentum mauris gravida.
+	Aenean in tellus sit amet arcu tempus auctor.
+	Aenean malesuada egestas odio, vel ultrices nisi sagittis id.
+	Donec id est at massa placerat commodo.
+	Pellentesque facilisis nibh ac elit venenatis non viverra mi porta.
+	Ut blandit lacus eu mauris vulputate sollicitudin.
+	Nullam fermentum faucibus enim, eget consequat metus rutrum ut.
+	Donec vitae libero sed turpis ultricies posuere.
+	Cras gravida sapien ut mauris porttitor ac luctus sem pulvinar.
+*/
+class A {
+public: 
+    void function();
+};
+
+/*
+	Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+	Ut auctor sapien sit amet mauris imperdiet congue.
+	Maecenas posuere sodales velit, nec ullamcorper magna pulvinar suscipit.
+	Vivamus scelerisque felis a leo sodales semper.
+	Donec tincidunt sapien dui, dignissim gravida nisi.
+	Aliquam tincidunt sem et urna pulvinar scelerisque.
+	Proin pharetra sem massa, in suscipit urna.
+	Cras rutrum fringilla arcu, nec bibendum lacus congue id.
+	Sed non magna in leo accumsan condimentum.
+	Vestibulum posuere nulla nec ligula eleifend a ullamcorper velit ultrices.
+	Sed id eros a odio blandit condimentum nec vel ipsum.
+	Morbi blandit neque nec nisi blandit egestas.
+	Etiam cursus sem eu mi vehicula porttitor.
+	Ut eget libero nec dolor ultrices dapibus at vitae ipsum.
+	Proin vitae lectus libero, ut porttitor metus.
+	Vestibulum aliquet porttitor urna, lobortis tempus mi convallis eu.
+	Sed sed justo risus, in luctus augue.
+	Ut fermentum lorem eu purus interdum fringilla.
+	Morbi a mi in eros scelerisque sodales.
+	Phasellus vel nisi in nulla commodo dictum id in leo.
+	Duis vehicula massa at justo consequat eu vehicula diam auctor.
+	Sed vel libero metus, et eleifend odio.
+	Integer quis diam luctus eros scelerisque volutpat at ac lectus.
+	Nunc mollis sem at eros consectetur vestibulum.
+	Fusce scelerisque justo in libero sagittis accumsan vitae ut tellus.
+	Nullam aliquet feugiat ligula, in imperdiet orci dictum eget.
+	Aenean in nulla eget felis elementum volutpat.
+	Nunc suscipit dictum elit, nec ultricies diam pretium eget.
+	Mauris id dui arcu, vel aliquet lacus.
+	Nunc tristique feugiat purus, nec varius tellus facilisis in.
+	Quisque pretium imperdiet nibh, vel dignissim dui sodales at.
+	Curabitur ut massa in elit posuere adipiscing.
+	Praesent in nibh risus, sed scelerisque diam.
+	Donec ultrices tellus in ipsum porta aliquet pellentesque est tempus.
+	Donec bibendum eros tristique dui pellentesque porttitor sit amet non quam.
+	Donec nec urna eu risus tempor pellentesque id id nunc.
+	Morbi in orci leo, sed rhoncus nulla.
+	Ut sit amet risus in sem lacinia lacinia vitae a purus.
+	Etiam quis magna urna, non suscipit nisl.
+	Vestibulum fermentum sodales nisi, eu dictum leo varius quis.
+	Ut nec ligula at felis ultricies malesuada.
+	Sed vitae mi sed orci molestie ultricies nec in odio.
+	Integer adipiscing nisi eget odio lacinia at accumsan dolor bibendum.
+	Cras vel dolor ac felis ultrices porttitor.
+	Proin iaculis ipsum ut mi ultrices vel aliquet odio dignissim.
+	In sit amet sapien in neque iaculis suscipit ac sodales libero.
+	Duis egestas tellus eu felis placerat a dapibus justo ultricies.
+	Sed a lectus dui, dignissim interdum lacus.
+	Mauris in velit eu nunc imperdiet auctor sed sed nisi.
+	Mauris eget lorem non dolor rutrum adipiscing in sed diam.
+	Mauris semper aliquam nisl, eget auctor tellus porttitor a.
+	Suspendisse tristique ante in nunc mollis at consectetur erat auctor.
+	Phasellus molestie mollis sem, eu consequat mi laoreet et.
+	Vestibulum sit amet mauris dolor, sit amet cursus massa.
+	Curabitur pretium metus in dui interdum in condimentum mauris gravida.
+	Aenean in tellus sit amet arcu tempus auctor.
+	Aenean malesuada egestas odio, vel ultrices nisi sagittis id.
+	Donec id est at massa placerat commodo.
+	Pellentesque facilisis nibh ac elit venenatis non viverra mi porta.
+	Ut blandit lacus eu mauris vulputate sollicitudin.
+	Nullam fermentum faucibus enim, eget consequat metus rutrum ut.
+	Donec vitae libero sed turpis ultricies posuere.
+	Cras gravida sapien ut mauris porttitor ac luctus sem pulvinar.
+*/
+
+void A::function()
+{
+}

@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>6641</bug_id>
+          
+          <creation_ts>2009-02-13 09:08:00 +0000</creation_ts>
+          <short_desc>.txx file extension should be included in the list for C++ analyzer</short_desc>
+          <delta_ts>2010-04-16 09:31:59 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>analyzer</component>
+          <version>unspecified</version>
+          <rep_platform>Other</rep_platform>
+          <op_sys>Linux</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXED</resolution>
+          
+          
+          
+          
+          
+          <priority>P4</priority>
+          <bug_severity>enhancement</bug_severity>
+          <target_milestone>0.9</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Andrey">fedorov</reporter>
+          <assigned_to name="Lubos Kosco">Lubos.Kosco</assigned_to>
+          <cc>Lubos.Kosco</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>27733</commentid>
+            <who name="Andrey">fedorov</who>
+            <bug_when>2009-02-13 09:08:08 +0000</bug_when>
+            <thetext>I suggest that the list of file extensions for C++ analyzer includes .txx. This is an extension commonly used for C++ templated classes. Seems like a trivial, but very practical feature to be included, since adding extra extensions require a bit of pokng, and rebuilding the source.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>62925</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2010-01-20 08:08:26 +0000</bug_when>
+            <thetext>as a temporary workaround 
+option for indexer -A &quot;ext:analyzer&quot; can be used
+(need to put it after the opengrok.jar is called)</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>71517</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2010-04-16 09:31:59 +0000</bug_when>
+            <thetext>changeset:   983:67a5f1e1fad4</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

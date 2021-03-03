@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>17169</bug_id>
+          
+          <creation_ts>2010-10-06 09:26:00 +0000</creation_ts>
+          <short_desc>enable wildcard prefix search in OpenGrok script by default</short_desc>
+          <delta_ts>2010-10-06 10:55:44 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>indexer</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXINSOURCE</resolution>
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>minor</bug_severity>
+          <target_milestone>0.10</target_milestone>
+          
+          <blocked>17128</blocked>
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Lubos Kosco">Lubos.Kosco</reporter>
+          <assigned_to name="Lubos Kosco">Lubos.Kosco</assigned_to>
+          <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>78117</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2010-10-06 09:26:18 +0000</bug_when>
+            <thetext>seems people from community have positive experience with wildcard prefix search as well and the impact is not that big(seems newer lucene upgrades made this work slightly better and faster)
+
+internal testing of this feature for past 2 years also shows it&apos;s quite stable, so making it enabled by default</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>78118</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2010-10-06 09:27:04 +0000</bug_when>
+            <thetext>accepting part of the patch from  17128</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>78123</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2010-10-06 10:55:44 +0000</bug_when>
+            <thetext>changeset:   1109:e9c8f617cba5</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

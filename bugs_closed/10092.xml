@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>10092</bug_id>
+          
+          <creation_ts>2009-07-16 09:55:00 +0000</creation_ts>
+          <short_desc>PlainAnalyzer fails to index file with characters x&apos;80&apos; thru x&apos;FF&apos;</short_desc>
+          <delta_ts>2010-04-16 11:44:47 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>analyzer</component>
+          <version>unspecified</version>
+          <rep_platform>Other</rep_platform>
+          <op_sys>Linux</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXED</resolution>
+          
+          
+          
+          
+          
+          <priority>P4</priority>
+          <bug_severity>normal</bug_severity>
+          <target_milestone>0.9</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Bruce Furber">bruce30062</reporter>
+          <assigned_to name="Knut Anders Hatlen">knut.hatlen</assigned_to>
+          <cc>Lubos.Kosco</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>44083</commentid>
+            <who name="Bruce Furber">bruce30062</who>
+            <bug_when>2009-07-16 09:55:06 +0000</bug_when>
+            <thetext>INFO: Starting indexExecution
+Remove stale file: /gal/devl/r/rr55uav4.asm
+Jul 16, 2009 12:40:31 PM org.opensolaris.opengrok.analysis.plain.PlainAnalyzer a                                             nalyze
+WARNING: An error occured while analyzing stream.
+sun.io.MalformedInputException
+        at sun.io.ByteToCharUTF8.convert(ByteToCharUTF8.java:262)
+        at sun.nio.cs.StreamDecoder$ConverterSD.convertInto(StreamDecoder.java:3                                             16)
+        at sun.nio.cs.StreamDecoder$ConverterSD.implRead(StreamDecoder.java:366)
+        at sun.nio.cs.StreamDecoder.read(StreamDecoder.java:252)
+        at java.io.InputStreamReader.read(InputStreamReader.java:212)
+        at org.opensolaris.opengrok.analysis.plain.PlainAnalyzer.analyze(PlainAn                                             alyzer.java:85)
+        at org.opensolaris.opengrok.analysis.AnalyzerGuru.getDocument(AnalyzerGu                                             ru.java:246)
+        at org.opensolaris.opengrok.index.IndexDatabase.addFile(IndexDatabase.ja                                             va:458)
+        at org.opensolaris.opengrok.index.IndexDatabase.indexDown(IndexDatabase.                                             java:578)
+        at org.opensolaris.opengrok.index.IndexDatabase.indexDown(IndexDatabase.                                             java:561)
+        at org.opensolaris.opengrok.index.IndexDatabase.indexDown(IndexDatabase.                                             java:561)
+        at org.opensolaris.opengrok.index.IndexDatabase.indexDown(IndexDatabase.                                             java:561)
+        at org.opensolaris.opengrok.index.IndexDatabase.update(IndexDatabase.jav                                             a:251)
+        at org.opensolaris.opengrok.index.IndexDatabase$1.run(IndexDatabase.java                                             :139)
+        at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:43                                             2)
+        at java.util.concurrent.FutureTask$Sync.innerRun(FutureTask.java:284)
+        at java.util.concurrent.FutureTask.run(FutureTask.java:138)
+        at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExec                                             utor.java:665)
+        at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor                                             .java:690)
+        at java.lang.Thread.run(Thread.java:810)
+Adding: /gal/devl/r/rr55uav4.asm (PlainAnalyzer)
+Jul 16, 2009 12:40:42 PM org.opensolaris.opengrok.index.IndexDatabase optimize</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>44103</commentid>
+            <who name="Bruce Furber">bruce30062</who>
+            <bug_when>2009-07-16 12:29:49 +0000</bug_when>
+            <thetext>The file in question had a single broken bar ¦ x&apos;A6&apos; in it</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>64940</commentid>
+            <who name="Bruce Furber">bruce30062</who>
+            <bug_when>2010-02-03 13:21:37 +0000</bug_when>
+            <thetext>It would be a big improvement if it simply treated characters outside the range or x&apos;20&apos; thru x&apos;7F&apos; as whitespace.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>71528</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2010-04-16 11:43:51 +0000</bug_when>
+            <thetext>xref analyzers are now Unicode compatible in a way that they parse every character which is not an ISO control char:
+
+http://src.opensolaris.org/source/xref/opengrok/trunk/src/org/opensolaris/opengrok/analysis/JFlexXref.java#116
+
+if it&apos;s an ISO control char, it&apos;s ignored
+
+hence closing this bug</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>71529</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2010-04-16 11:44:47 +0000</bug_when>
+            <thetext>oh, forgot to mention that bug #437 holds more on similar issues</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

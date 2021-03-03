@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>11661</bug_id>
+          
+          <creation_ts>2009-10-01 09:24:00 +0000</creation_ts>
+          <short_desc>Invalid author link when revision has no author</short_desc>
+          <delta_ts>2009-10-24 08:05:06 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>webapp</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXED</resolution>
+          
+          
+          
+          
+          
+          <priority>P4</priority>
+          <bug_severity>minor</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Knut Anders Hatlen">knut.hatlen</reporter>
+          <assigned_to name="Knut Anders Hatlen">knut.hatlen</assigned_to>
+          
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>51291</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2009-10-01 09:24:10 +0000</bug_when>
+            <thetext>Some revisions have no author associated with them, for instance when a Subversion repository is created from a CVS repository with cvs2svn. See revision 1 here for an example: http://src.opensolaris.org/source/history/jds/nimbus/
+
+HistoryEntry.getAuthor() returns null, but the webapp treats it the same way as the string &quot;null&quot; and creates an invalid link to revision &quot;null&quot;. Instead, it should show the text &quot;no author&quot; (or something similar) and not create a link.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>54052</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2009-10-24 08:03:57 +0000</bug_when>
+            <thetext>Fixed in changeset 885:82c5dc2d7f19.</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>11825</bug_id>
+          
+          <creation_ts>2009-10-08 14:35:00 +0000</creation_ts>
+          <short_desc>improve analyzers to include &quot; or &lt; to string literals</short_desc>
+          <delta_ts>2009-10-08 23:30:17 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>analyzer</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>NEW</bug_status>
+          
+          
+          
+          
+          
+          
+          <priority>P4</priority>
+          <bug_severity>enhancement</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          <blocked>11440</blocked>
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Lubos Kosco">Lubos.Kosco</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          <cc>bruce30062</cc>
+    
+    <cc>knut.hatlen</cc>
+    
+    <cc>wilson.jim.r</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>51973</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2009-10-08 14:35:56 +0000</bug_when>
+            <thetext>I don&apos;t know about &lt; or &gt;, but I&apos;ve had users approach me about
+finding double quotes.  The use case is: I want to find all
+occurrances of &quot;example&quot; as a string, but I don&apos;t want to find
+classes, namespaces, variables, etc - just string literals.
+
+The angle brackets request may be the same - I want to find all
+occurrences of &lt;body&gt; but I don&apos;t want anything other than tags.
+
+Just my $0.02
+
+-- Jim R. Wilson (jimbojw | trephine.org)
+
+On Fri, Sep 18, 2009 at 4:04 AM, Lubos Kosco &lt;Lubos.Kosco@sun.com&gt; wrote:
+&gt; &gt; Knut Anders Hatlen wrote:
+&gt;&gt; &gt;&gt;
+&gt;&gt; &gt;&gt; Lubos Kosco &lt;Lubos.Kosco@Sun.COM&gt; writes:
+&gt;&gt; &gt;&gt;
+&gt;&gt; &gt;&gt;
+&gt;&gt;&gt; &gt;&gt;&gt;
+&gt;&gt;&gt; &gt;&gt;&gt; Garcia-Duque, Manuel wrote:
+&gt;&gt;&gt; &gt;&gt;&gt;
+&gt;&gt;&gt;&gt; &gt;&gt;&gt;&gt;
+&gt;&gt;&gt;&gt; &gt;&gt;&gt;&gt; I&apos;m trying to search for &quot;&lt;&quot; in opengrok 0.7 (repository Subversion).
+&gt;&gt;&gt;&gt; &gt;&gt;&gt;&gt; However, the search seems to discard that character &apos;&lt;&apos;.
+&gt;&gt;&gt;&gt; &gt;&gt;&gt;&gt;
+&gt;&gt;&gt; &gt;&gt;&gt;
+&gt;&gt;&gt; &gt;&gt;&gt; The other thing is that I don&apos;t recall that we do index &quot;&lt;&quot; as a
+&gt;&gt;&gt; &gt;&gt;&gt; searchable token ... or do we ?
+&gt;&gt;&gt; &gt;&gt;&gt; Trond, kah, got clues ?
+&gt;&gt;&gt; &gt;&gt;&gt;
+&gt;&gt; &gt;&gt;
+&gt;&gt; &gt;&gt; I don&apos;t think we do currently, except for the Lisp tokenizer, as you
+&gt;&gt; &gt;&gt; said (and perhaps the SQL tokenizer? I haven&apos;t checked), where &apos;&lt;&apos; may
+&gt;&gt; &gt;&gt; be part of a symbol. Most languages don&apos;t accept &apos;&lt;&apos; as part of a
+&gt;&gt; &gt;&gt; symbol/keyword, but we could of course make the tokenizers for those
+&gt;&gt; &gt;&gt; other languages return &apos;&lt;&apos; and other operators as separate tokens too. I
+&gt;&gt; &gt;&gt; don&apos;t see many good reasons not to, except that those tokens probably
+&gt;&gt; &gt;&gt; have very low selectivity in most cases (matches most files and don&apos;t
+&gt;&gt; &gt;&gt; narrow the search much).
+&gt;&gt; &gt;&gt;
+&gt; &gt;
+&gt; &gt; agree on the same, use of &quot;&lt;&quot; in search query doesn&apos;t make much sense,
+&gt; &gt; unless Manuel has got a really good use case, hmm ?
+&gt; &gt;
+&gt; &gt; --
+&gt; &gt; L
+&gt; &gt;
+&gt;&gt; &gt;&gt;
+&gt;&gt;&gt; &gt;&gt;&gt;
+&gt;&gt;&gt; &gt;&gt;&gt; (seems C/C++ or java doesn&apos;t do it:
+&gt;&gt;&gt; &gt;&gt;&gt;
+&gt;&gt;&gt; &gt;&gt;&gt; http://src.opensolaris.org/source/xref/opengrok/trunk/src/org/opensolaris/opengrok/analysis/c/CSymbolTokenizer.lex
+&gt;&gt;&gt; &gt;&gt;&gt; , ...
+&gt;&gt;&gt; &gt;&gt;&gt; but it seems
+&gt;&gt;&gt; &gt;&gt;&gt; only lisp tokenizer does it
+&gt;&gt;&gt; &gt;&gt;&gt;
+&gt;&gt;&gt; &gt;&gt;&gt; http://src.opensolaris.org/source/xref/opengrok/trunk/src/org/opensolaris/opengrok/analysis/lisp/LispSymbolTokenizer.lex#59
+&gt;&gt;&gt; &gt;&gt;&gt; )
+&gt;&gt;&gt; &gt;&gt;&gt;
+&gt;&gt; &gt;&gt;
+&gt;&gt; &gt;&gt;
+&gt; &gt;
+&gt; &gt; _______________________________________________
+&gt; &gt; opengrok-discuss mailing list
+&gt; &gt; opengrok-discuss@opensolaris.org
+&gt; &gt; http://mail.opensolaris.org/mailman/listinfo/opengrok-discuss
+&gt; &gt;</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>52017</commentid>
+            <who name="Jim R. Wilson">wilson.jim.r</who>
+            <bug_when>2009-10-08 18:01:49 +0000</bug_when>
+            <thetext>What would be nice (IMO) is to have the indexer keep both a punctuation aware and a punctuation agnostic index.  As of the time of this writing, the index is completely punctuation agnostic, making it impossible to match things such as XML tags.
+
+That particular approach may be overkill.  I&apos;m not enough of a Lucene expert to comment intelligently on whether there may be a better way to achieve the same effect.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>52047</commentid>
+            <who name="Bruce Furber">bruce30062</who>
+            <bug_when>2009-10-08 23:30:17 +0000</bug_when>
+            <thetext>While you are at it would be nice to document how special characters are handled. Some like + are indexed separately while _ is treated as a normal character. Some are ignored and treated as white space.</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

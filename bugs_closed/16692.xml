@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>16692</bug_id>
+          
+          <creation_ts>2010-07-30 15:55:00 +0000</creation_ts>
+          <short_desc>Index files left open after multiple project search</short_desc>
+          <delta_ts>2010-08-03 15:24:09 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>webapp</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXED</resolution>
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>major</bug_severity>
+          <target_milestone>0.10</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Neil Bartley">neil.bartley</reporter>
+          <assigned_to name="Knut Anders Hatlen">knut.hatlen</assigned_to>
+          <cc>knut.hatlen</cc>
+    
+    <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>76046</commentid>
+            <who name="Neil Bartley">neil.bartley</who>
+            <bug_when>2010-07-30 15:55:59 +0000</bug_when>
+            <thetext>This issue is present in both OpenGrok 0.9 and the current development version.
+
+When searching over more than one project, it seems that all the data/index entry for each project (except the last one in the list) is left open.
+
+Case 1 - search over a single project.
+
+$ sudo /etc/init.d/tomcat5.5 restart
+$ sudo lsof -p 22087 | grep opengrok | grep -v &apos;opengrok.jar&apos;
+java    22087 tomcat55  cwd    DIR   254,0     4096  148462 /var/opengrok/src
+
+# Search over proj1
+
+$ sudo lsof -p 22087 | grep opengrok | grep -v &apos;opengrok.jar&apos;
+java    22087 tomcat55  cwd    DIR      254,0     4096  148462 /var/opengrok/src
+
+Case 2 - search over three projects.
+
+$ sudo /etc/init.d/tomcat5.5 restart
+Stopping Tomcat servlet engine: tomcat5.5 ..
+Starting Tomcat servlet engine: tomcat5.5.
+$ sudo lsof -p 21944 | grep opengrok | grep -v &apos;opengrok.jar&apos;
+java    21944 tomcat55  cwd    DIR   254,0     4096  148462 /var/opengrok/src
+
+# Search over proj1, proj2, proj3.
+
+c$ sudo lsof -p 21944 | grep opengrok | grep -v &apos;opengrok.jar&apos;
+java    21944 tomcat55  cwd    DIR      254,0     4096  148462 /var/opengrok/src
+java    21944 tomcat55   76r   REG      254,0    37061  149622 /var/opengrok/data/index/proj1/_4.cfs
+java    21944 tomcat55   78r   REG      254,0   110756  149846 /var/opengrok/data/index/proj2/_2.cfs
+
+Case 3 - search over ten projects.
+
+$ sudo lsof -p 21944 | grep opengrok | grep -v &apos;opengrok.jar&apos;
+java    21944 tomcat55  cwd    DIR   254,0     4096  148462 /var/opengrok/src
+
+# Search over proj1 to proj10.
+
+$ sudo lsof -p 22087 | grep opengrok | grep -v &apos;opengrok.jar&apos;
+java    22087 tomcat55  cwd    DIR      254,0     4096  148462 /var/opengrok/src
+java    22087 tomcat55   76r   REG      254,0    37061  149622 /var/opengrok/data/index/proj1/_4.cfs
+java    22087 tomcat55   78r   REG      254,0   110756  149846 /var/opengrok/data/index/proj2/_2.cfs
+java    22087 tomcat55   79r   REG      254,0    24836  164110 /var/opengrok/data/index/proj3/_0.cfs
+java    22087 tomcat55   80r   REG      254,0    36562  149508 /var/opengrok/data/index/proj4/_2.cfs
+java    22087 tomcat55   81r   REG      254,0    54341  150457 /var/opengrok/data/index/proj5/_0.cfs
+java    22087 tomcat55   82r   REG      254,0  3875465  150238 /var/opengrok/data/index/proj6/_2.cfs
+java    22087 tomcat55   83r   REG      254,0    11895  150460 /var/opengrok/data/index/proj7/_0.cfs
+java    22087 tomcat55   84r   REG      254,0    65141  149877 /var/opengrok/data/index/proj8/_4.cfs
+java    22087 tomcat55   85r   REG      254,0   385471  149836 /var/opengrok/data/index/proj9/_4.cfs
+
+Once the system open file limit is exceeded the following message is displayed to the user:
+
+Error: directory &apos;/var/opengrok/data/index/projX&apos; exists and is a directory, but cannot be listed: list() returned null
+
+I&apos;ve increased the open file limit to 65536 for now but this is only a stop-gap.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>76171</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2010-08-03 15:23:43 +0000</bug_when>
+            <thetext>Checked in a fix that makes the webapp close all the index files when searching multiple projects.
+
+changeset:   1061:3b798fad36ed</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

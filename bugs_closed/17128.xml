@@ -1,0 +1,789 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>17128</bug_id>
+          
+          <creation_ts>2010-09-28 10:17:00 +0000</creation_ts>
+          <short_desc>add more syntax highlighting styles and list all definitions/functions</short_desc>
+          <delta_ts>2011-01-05 08:01:10 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>webapp</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXED</resolution>
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>enhancement</bug_severity>
+          <target_milestone>0.10</target_milestone>
+          <dependson>17169</dependson>
+    
+    <dependson>17294</dependson>
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Lubos Kosco">Lubos.Kosco</reporter>
+          <assigned_to name="Lubos Kosco">Lubos.Kosco</assigned_to>
+          <cc>jaustvik</cc>
+    
+    <cc>knut.hatlen</cc>
+    
+    <cc>Lubos.Kosco</cc>
+    
+    <cc>opengrok-dev</cc>
+    
+    <cc>trond.norbye</cc>
+    
+    <cc>vladimir.kotal</cc>
+    
+    <cc>zdenek.kotala</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>77947</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2010-09-28 10:17:48 +0000</bug_when>
+            <thetext>cicicici@gmail.com wrote:
+
+I got a local patch to do that, so I can have more colors in the style.css.
+If people think it is useful for the community, I will work on committing it to the tree.
+btw, OpenGrok is awesome!
+
+
+List (x means extended):
+
+a.d {color:#936; font-weight:bold; text-decoration:none;} /* definitions */
+
+a.xm {color:#c66; font-weight:bold; text-decoration:none;} /* macro */
+
+a.xa {color:#60c; font-weight:bold; text-decoration:none;} /* argument */
+a.xl {color:#963; font-weight:bold; text-decoration:none;} /* local */
+a.xv {color:#c30; font-weight:bold; text-decoration:none;} /* variable */
+
+a.xc {color:#909; font-weight:bold; font-style:italic; text-decoration:none;} /* class */
+a.xi {color:#909; font-weight:bold; font-style:italic; text-decoration:none;} /* interface */
+a.xn {color:#909; font-weight:bold; font-style:italic; text-decoration:none;} /* namespace */
+
+a.xe {color:#909; font-weight:bold; font-style:italic; text-decoration:none;} /* enum */
+a.xer {color:#909; font-weight:bold; font-style:italic; text-decoration:none;} /* enumerator */
+a.xs {color:#909; font-weight:bold; font-style:italic; text-decoration:none;} /* struct */
+a.xt {color:#909; font-weight:bold; font-style:italic; text-decoration:none;} /* typedef */
+a.xts {color:#909; font-weight:bold; font-style:italic; text-decoration:none;} /* typedefs */
+a.xu {color:#909; font-weight:bold; font-style:italic; text-decoration:none;} /* union */
+
+a.xfld {color:#090; font-weight:bold; text-decoration:none;} /* field */
+a.xmb {color:#090; font-weight:bold; text-decoration:none;} /* member */
+
+a.xf {color:#00f; font-weight:bold; text-decoration:none;} /* function */
+a.xmt {color:#00f; font-weight:bold; text-decoration:none;} /* method */
+a.xsr {color:#00f; font-weight:bold; text-decoration:none;} /* subroutine */
+-- This message posted from opensolaris.org _______________________________________________ opengrok-discuss mailing list opengrok-discuss@opensolaris.org http://mail.opensolaris.org/mailman/listinfo/opengrok-discuss</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>77948</commentid>
+              <attachid>4313</attachid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2010-09-28 10:19:00 +0000</bug_when>
+            <thetext>Created attachment 4313
+highlight_styles
+
+The patch is upon commit 1106.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>77949</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2010-09-28 10:19:45 +0000</bug_when>
+            <thetext>OS0474 is the SCA for cicicici@gmail.com</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>77987</commentid>
+            <who name="Jørgen Austvik">jaustvik</who>
+            <bug_when>2010-09-29 07:22:35 +0000</bug_when>
+            <thetext>Would it be possible to implement this as an alternative CSS style?
+http://www.w3.org/Style/Examples/007/alternatives.html
+http://www.alistapart.com/articles/alternate/
+
+The proposed patch seems to touch a lot of areas, are all about syntax highlighting.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>78072</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2010-10-04 14:19:59 +0000</bug_when>
+            <thetext>ok, so I got some feedback collected on this:
+
+1) will remove the opengrok wildcard prefix option turned on by default and have it in separate bug (I think it&apos;s ok to do it, but not together with this patch)
+
+2) this should be optional to be turned on, hence by default the page will show like it is, after a button click the right frame with highlight and methods/variables will be shown - to save load time - load only on demand (since this is not a feature all people would want to be loaded especially when their source file has ~300kB in size ;) )
+
+3) small probs - e.g. highlight highlights even when no text entered , multiple highlight not intuitive
+
+4) found that in c analyzer we miss undef as keyword - hence all macros will show twice - once for define and once for undef ...
+
+5) enhancement of this feature - show functions/methods for a whole directory (e.g. to see all methods in a kernel module ...)</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>78116</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2010-10-06 09:22:53 +0000</bug_when>
+            <thetext>other things to do:
+
+fix logging inside the patch
+add the styles for other themes
+standardize the styles, or make them alternative as Jorgen suggested
+
+we shall accept the patch and rework it, obviously if cicicici@gmail.com wants to finish off the comments, we would be more than happy about it!
+
+I am also splitting the OpenGrok wildcard prefix search and have it in separate bug, since it will be a change worth release notes ...</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>78121</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2010-10-06 10:38:48 +0000</bug_when>
+            <thetext>ok, accepted the patch without .hgignore , modified test suite for anchor tests
+and by default the list is not shown
+
+changeset:   1108:96d5b2a264bf</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>79089</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2010-11-10 12:56:38 +0000</bug_when>
+            <thetext>if annotate is enabled, the LIST button shows as empty
+(seems like style problems)</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>79175</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2010-11-15 09:19:19 +0000</bug_when>
+            <thetext>List is also empty if you pick some revision from the history view. Looks like it&apos;s because we&apos;re missing the information from ctags when the webapp generates xrefs on the fly. That probably also means the list will be empty for all xrefs if we&apos;re running in economical mode (passed -e option to the indexer), but I haven&apos;t tested this.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>79385</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2010-11-19 23:07:39 +0000</bug_when>
+            <thetext>I have a patch in my sandbox that makes the information from ctags available in annotation view and in economical mode too (fetched from the Lucene index). Will push shortly. This will not fix it for the case where we fetch a specific revision from the history, though, as we only have tags for the latest revision in the index.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>79411</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2010-11-21 16:47:57 +0000</bug_when>
+            <thetext>Pushed changeset:   1127:ee113b57d30c</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>79462</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2010-11-23 14:46:50 +0000</bug_when>
+            <thetext>added new styles to other themes
+
+changeset:   1128:55d1decb3071</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>79506</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2010-11-24 13:23:35 +0000</bug_when>
+            <thetext>turning off highlight for release</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>79513</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2010-11-24 14:38:34 +0000</bug_when>
+            <thetext>changeset:   1129:5fbf9ff335b5
+for the disable of highlighter + rename of List to Navigate</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>80121</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2010-12-27 22:49:38 +0000</bug_when>
+            <thetext>changeset:   1145:1925a1334ede
+Sort symbols in navigation panel
+Remove non-standard HTML attribute &quot;ln&quot;</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>80122</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2010-12-27 23:01:25 +0000</bug_when>
+            <thetext>In JFlexXref, we have this code:
+
+            } else if (type.startsWith(&quot;enum&quot;)) {
+                style_class = &quot;xe&quot;;
+            } else if (type.startsWith(&quot;enumerator&quot;)) {
+                style_class = &quot;xer&quot;;
+
+Since &quot;enumerator&quot; starts with &quot;enum&quot;, we&apos;ll never use the &quot;xer&quot; style class. Similarly, we have:
+
+            } else if (type.startsWith(&quot;typedef&quot;)) {
+                style_class = &quot;xt&quot;;
+            } else if (type.startsWith(&quot;typedefs&quot;)) {
+                style_class = &quot;xts&quot;;
+
+Here, &quot;typedefs&quot; starts with &quot;typedef&quot;, so the &quot;xts&quot; style class won&apos;t be used.
+
+Should we remove the checks for &quot;enumerator&quot; and &quot;typedefs&quot; from JFlexXref, and remove the &quot;xer&quot; and &quot;xts&quot; styles from the style sheets?</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>80123</commentid>
+            <who name="Trond Norbye">trond.norbye</who>
+            <bug_when>2010-12-27 23:04:14 +0000</bug_when>
+            <thetext>(In reply to comment #15)
+&gt; In JFlexXref, we have this code:
+&gt; 
+&gt;             } else if (type.startsWith(&quot;enum&quot;)) {
+&gt;                 style_class = &quot;xe&quot;;
+&gt;             } else if (type.startsWith(&quot;enumerator&quot;)) {
+&gt;                 style_class = &quot;xer&quot;;
+&gt; 
+&gt; Since &quot;enumerator&quot; starts with &quot;enum&quot;, we&apos;ll never use the &quot;xer&quot; style class.
+&gt; Similarly, we have:
+&gt; 
+&gt;             } else if (type.startsWith(&quot;typedef&quot;)) {
+&gt;                 style_class = &quot;xt&quot;;
+&gt;             } else if (type.startsWith(&quot;typedefs&quot;)) {
+&gt;                 style_class = &quot;xts&quot;;
+&gt; 
+&gt; Here, &quot;typedefs&quot; starts with &quot;typedef&quot;, so the &quot;xts&quot; style class won&apos;t be used.
+&gt; 
+&gt; Should we remove the checks for &quot;enumerator&quot; and &quot;typedefs&quot; from JFlexXref, and
+&gt; remove the &quot;xer&quot; and &quot;xts&quot; styles from the style sheets?
+
+Or reverse the test (check for enumerator before enum etc)</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>80124</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2010-12-27 23:37:04 +0000</bug_when>
+            <thetext>&gt; Or reverse the test (check for enumerator before enum etc)
+
+Right :)
+
+I guess my real question was: Does distinguishing between &quot;enum&quot; and &quot;enumerator&quot; add any value? It sounds like they represent same thing more or less (and indeed their style definitions are identical). &quot;typedef&quot; and &quot;typedefs&quot; also sound like similar concepts. If there&apos;s no significant differences between these types, collapsing them into a single type may be a reasonable simplification.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>80125</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2010-12-27 23:39:01 +0000</bug_when>
+            <thetext>changeset:   1146:f83dcb57c659
+Moved style for symbol list to the style sheets.
+(The original &lt;style&gt; tag was not allowed in the body of the document
+and broke HTML validation.)</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>80126</commentid>
+            <who name="Trond Norbye">trond.norbye</who>
+            <bug_when>2010-12-27 23:43:07 +0000</bug_when>
+            <thetext>(In reply to comment #17)
+&gt; &gt; Or reverse the test (check for enumerator before enum etc)
+&gt; 
+&gt; Right :)
+&gt; 
+&gt; I guess my real question was: Does distinguishing between &quot;enum&quot; and
+&gt; &quot;enumerator&quot; add any value? It sounds like they represent same thing more or
+&gt; less (and indeed their style definitions are identical). &quot;typedef&quot; and
+&gt; &quot;typedefs&quot; also sound like similar concepts. If there&apos;s no significant
+&gt; differences between these types, collapsing them into a single type may be a
+&gt; reasonable simplification.
+
+Hehe.. Do you really expect me to read between the lines? I didn&apos;t  ;)</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>80160</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2010-12-29 21:21:12 +0000</bug_when>
+            <thetext>
+there is a small subtle difference between those two, so the test should be reversed, seems like my typo, sorry :(
+
+(In reply to comment #19)
+&gt; (In reply to comment #17)
+&gt; &gt; &gt; Or reverse the test (check for enumerator before enum etc)
+&gt; &gt; 
+&gt; &gt; Right :)
+&gt; &gt; 
+&gt; &gt; I guess my real question was: Does distinguishing between &quot;enum&quot; and
+&gt; &gt; &quot;enumerator&quot; add any value? It sounds like they represent same thing more or
+&gt; &gt; less (and indeed their style definitions are identical). &quot;typedef&quot; and
+&gt; &gt; &quot;typedefs&quot; also sound like similar concepts. If there&apos;s no significant
+&gt; &gt; differences between these types, collapsing them into a single type may be a
+&gt; &gt; reasonable simplification.
+&gt; 
+&gt; Hehe.. Do you really expect me to read between the lines? I didn&apos;t  ;)</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>80191</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2010-12-31 17:32:32 +0000</bug_when>
+            <thetext>(In reply to comment #20)
+&gt; there is a small subtle difference between those two, so the test should be
+&gt; reversed, seems like my typo, sorry :(
+
+Thanks, will fix that.
+
+While we&apos;re at it... &quot;enumerator&quot; and &quot;typedefs&quot; are not added to the navigation panel, whereas &quot;enum&quot; and &quot;typedef&quot; are. Is this difference intentional?</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>80192</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2010-12-31 19:23:35 +0000</bug_when>
+            <thetext>changeset:   1147:ee2a460cb482
+Distinguish between styles for enum/enumerator and typedef/typedefs</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>80193</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2010-12-31 19:27:46 +0000</bug_when>
+            <thetext>(In reply to comment #21)
+&gt; (In reply to comment #20)
+&gt; &gt; there is a small subtle difference between those two, so the test should be
+&gt; &gt; reversed, seems like my typo, sorry :(
+&gt; 
+&gt; Thanks, will fix that.
+&gt; 
+&gt; While we&apos;re at it... &quot;enumerator&quot; and &quot;typedefs&quot; are not added to the
+&gt; navigation panel, whereas &quot;enum&quot; and &quot;typedef&quot; are. Is this difference
+&gt; intentional?
+
+yes, this is intentional
+the navigate panel serves only interesting types (which you would expect there)
+by far not all ...</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>80277</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2011-01-05 08:01:10 +0000</bug_when>
+            <thetext>Closing this bug now for 0.10. Further improvements can go into separate reports.</thetext>
+          </long_desc>
+      
+          <attachment
+              isobsolete="0"
+              ispatch="1"
+              isprivate="0"
+              isurl="0"
+          >
+            <attachid>4313</attachid>
+            <date>2010-09-28 10:19:00 +0000</date>
+            <delta_ts>2010-09-28 10:19:00 +0000</delta_ts>
+            <desc>highlight_styles</desc>
+            <filename>opengrok-dev_cici_color-highlight-progress_1106.patch</filename>
+            <type>text/plain</type>
+            <size>22244</size>
+            <attacher>Lubos.Kosco</attacher>
+            
+              <data encoding="base64">ZGlmZiAtLWdpdCBhLy5oZ2lnbm9yZSBiLy5oZ2lnbm9yZQotLS0gYS8uaGdpZ25vcmUKKysrIGIv
+LmhnaWdub3JlCkBAIC0yNywzICsyNyw0IEBACiBsaWIvanJjcy5qYXIKIGRlcmJ5LmxvZwogbmJw
+cm9qZWN0L2dlbmZpbGVzLnByb3BlcnRpZXMKK2xpYi9qdW5pdC00LjguMi5qYXIKZGlmZiAtLWdp
+dCBhL09wZW5Hcm9rIGIvT3Blbkdyb2sKLS0tIGEvT3Blbkdyb2sKKysrIGIvT3Blbkdyb2sKQEAg
+LTYzLDkgKzYzLDE0IEBACiAjCiAjIFJ1bnRpbWUgQ29uZmlndXJhdGlvbgogIwotCitpZiBbIC1m
+ICIvYmluL3VuYW1lIiBdCit0aGVuCiBPU19OQU1FPSJgL2Jpbi91bmFtZSAtc2AiCiBPU19WRVJT
+SU9OPSJgL2Jpbi91bmFtZSAtcmAiCitlbHNlCitPU19OQU1FPSJgL3Vzci9iaW4vdW5hbWUgLXNg
+IgorT1NfVkVSU0lPTj0iYC91c3IvYmluL3VuYW1lIC1yYCIKK2ZpCiAKICMgVE9ETzogSGFuZGxl
+IHN5bWxpbmtzIGNvcnJlY3RseSAoZXNwZWNpYWxseSBpbiAkezB9KQogU0NSSVBUX0RJUkVDVE9S
+WT0iYGRpcm5hbWUgJHswfWAiCkBAIC0xOTMsNyArMTk4LDcgQEAKIAogICAgICMgT1BUSU9OQUw6
+IEFsbG93IExlYWRpbmcgV2lsZGNhcmQgU2VhcmNoZXMKICAgICAjICAgICAgICAgICAoZGVmYXVs
+dDogb2ZmKQotICAgICNMRUFESU5HX1dJTERDQVJEPSItYSBvbiIKKyAgICBMRUFESU5HX1dJTERD
+QVJEPSItYSBvbiIKIAogICAgICMgT1BUSU9OQUw6IFdlYiBTaXRlIExvb2sgJiBGZWVsCiAgICAg
+IyAgICAgICAgICAgKE9wdGlvbnM6IGRlZmF1bHQsIG9mZndoaXRlIGFuZCBwb2xpc2hlZC4KZGlm
+ZiAtLWdpdCBhL3NyYy9vcmcvb3BlbnNvbGFyaXMvb3Blbmdyb2svYW5hbHlzaXMvRGVmaW5pdGlv
+bnMuamF2YSBiL3NyYy9vcmcvb3BlbnNvbGFyaXMvb3Blbmdyb2svYW5hbHlzaXMvRGVmaW5pdGlv
+bnMuamF2YQotLS0gYS9zcmMvb3JnL29wZW5zb2xhcmlzL29wZW5ncm9rL2FuYWx5c2lzL0RlZmlu
+aXRpb25zLmphdmEKKysrIGIvc3JjL29yZy9vcGVuc29sYXJpcy9vcGVuZ3Jvay9hbmFseXNpcy9E
+ZWZpbml0aW9ucy5qYXZhCkBAIC0zNSwxMCArMzUsMjIgQEAKIGltcG9ydCBqYXZhLnV0aWwuTGlz
+dDsKIGltcG9ydCBqYXZhLnV0aWwuTWFwOwogaW1wb3J0IGphdmEudXRpbC5TZXQ7CitpbXBvcnQg
+amF2YS51dGlsLkl0ZXJhdG9yOwogCiBwdWJsaWMgY2xhc3MgRGVmaW5pdGlvbnMgaW1wbGVtZW50
+cyBTZXJpYWxpemFibGUgewogICAgIHByaXZhdGUgZmluYWwgc3RhdGljIGxvbmcgc2VyaWFsVmVy
+c2lvblVJRCA9IDExOTE3MDM4MDEwMDc3Nzk0ODlMOwogCisgICAgLy8gUGVyIGxpbmUgc3ltIC0+
+IHRhZ3MgbWFwcGluZworICAgIHB1YmxpYyBzdGF0aWMgY2xhc3MgTGluZVRhZ01hcCBpbXBsZW1l
+bnRzIFNlcmlhbGl6YWJsZSB7CisgICAgICAgIHByaXZhdGUgZmluYWwgTWFwPFN0cmluZywgU2V0
+PFRhZz4+IHN5bV90YWdzOworCisgICAgICAgIHByb3RlY3RlZCBMaW5lVGFnTWFwKCkgeworICAg
+ICAgICAgICAgdGhpcy5zeW1fdGFncyA9IG5ldyBIYXNoTWFwPFN0cmluZywgU2V0PFRhZz4+KCk7
+CisgICAgICAgIH0KKyAgICB9OworICAgIC8vIGxpbmUgLT4gdGFnX21hcAorICAgIHByaXZhdGUg
+ZmluYWwgTWFwPEludGVnZXIsIExpbmVUYWdNYXA+IGxpbmVfbWFwczsKKwogICAgIC8qKiBNYXAg
+ZnJvbSBzeW1ib2wgdG8gdGhlIGxpbmUgbnVtYmVycyBvbiB3aGljaCB0aGUgc3ltYm9sIGlzIGRl
+ZmluZWQuICovCiAgICAgcHJpdmF0ZSBmaW5hbCBNYXA8U3RyaW5nLCBTZXQ8SW50ZWdlcj4+IHN5
+bWJvbHM7CiAgICAgLyoqIExpc3Qgb2YgYWxsIHRoZSB0YWdzLiAqLwpAQCAtNDYsNiArNTgsNyBA
+QAogCiAgICAgcHVibGljIERlZmluaXRpb25zKCkgewogICAgICAgICBzeW1ib2xzID0gbmV3IEhh
+c2hNYXA8U3RyaW5nLCBTZXQ8SW50ZWdlcj4+KCk7CisgICAgICAgIGxpbmVfbWFwcyA9IG5ldyBI
+YXNoTWFwPEludGVnZXIsIExpbmVUYWdNYXA+KCk7CiAgICAgICAgIHRhZ3MgPSBuZXcgQXJyYXlM
+aXN0PFRhZz4oKTsKICAgICB9CiAKQEAgLTcyLDkgKzg1LDMxIEBACiAgICAgICogQHBhcmFtIGxp
+bmVOdW1iZXIgdGhlIGxpbmUgdG8gY2hlY2sKICAgICAgKiBAcmV0dXJuIHtAY29kZSB0cnVlfSBp
+ZmYge0Bjb2RlIHN5bWJvbH0gaXMgZGVmaW5lZCBvbiB0aGUgc3BlY2lmaWVkIGxpbmUKICAgICAg
+Ki8KLSAgICBwdWJsaWMgYm9vbGVhbiBoYXNEZWZpbml0aW9uQXQoU3RyaW5nIHN5bWJvbCwgaW50
+IGxpbmVOdW1iZXIpIHsKKyAgICBwdWJsaWMgYm9vbGVhbiBoYXNEZWZpbml0aW9uQXQoU3RyaW5n
+IHN5bWJvbCwgaW50IGxpbmVOdW1iZXIsIFN0cmluZ1tdIHN0cnMpIHsKICAgICAgICAgU2V0PElu
+dGVnZXI+IGxpbmVzID0gc3ltYm9scy5nZXQoc3ltYm9sKTsKLSAgICAgICAgcmV0dXJuIGxpbmVz
+ICE9IG51bGwgJiYgbGluZXMuY29udGFpbnMobGluZU51bWJlcik7CisgICAgICAgIGlmIChzdHJz
+Lmxlbmd0aCA+IDApIHsKKyAgICAgICAgICAgIHN0cnNbMF0gPSAibm9uZSI7CisgICAgICAgIH0K
+KworICAgICAgICAvLyBHZXQgdGFnIGluZm8KKyAgICAgICAgaWYgKGxpbmVzICE9IG51bGwgJiYg
+bGluZXMuY29udGFpbnMobGluZU51bWJlcikpIHsKKyAgICAgICAgICAgIExpbmVUYWdNYXAgbGlu
+ZV9tYXAgPSBsaW5lX21hcHMuZ2V0KGxpbmVOdW1iZXIpOworICAgICAgICAgICAgaWYgKGxpbmVf
+bWFwICE9IG51bGwpIHsKKyAgICAgICAgICAgICAgICBTZXQ8VGFnPiB0YWdzID0gbGluZV9tYXAu
+c3ltX3RhZ3MuZ2V0KHN5bWJvbCk7CisgICAgICAgICAgICAgICAgSXRlcmF0b3IgaXQgPSB0YWdz
+Lml0ZXJhdG9yKCk7CisgICAgICAgICAgICAgICAgd2hpbGUgKGl0Lmhhc05leHQoKSkgeworICAg
+ICAgICAgICAgICAgICAgICBUYWcgdGFnID0gKFRhZylpdC5uZXh0KCk7CisgICAgICAgICAgICAg
+ICAgICAgIGlmIChzdHJzLmxlbmd0aCA+IDApIHsKKyAgICAgICAgICAgICAgICAgICAgICAgIHN0
+cnNbMF0gPSB0YWcudHlwZTsKKyAgICAgICAgICAgICAgICAgICAgfQorICAgICAgICAgICAgICAg
+ICAgICAvLyBBc3N1bWUgdGhlIGZpcnN0IG9uZQorICAgICAgICAgICAgICAgICAgICBicmVhazsK
+KyAgICAgICAgICAgICAgICB9CisgICAgICAgICAgICB9CisgICAgICAgICAgICByZXR1cm4gdHJ1
+ZTsKKyAgICAgICAgfQorCisgICAgICAgIHJldHVybiBmYWxzZTsKICAgICB9CiAKICAgICAvKioK
+QEAgLTEzNSwxMyArMTcwLDI5IEBACiAgICAgICAgIGZpbmFsIFN0cmluZyBpbnRlcm5lZFN5bWJv
+bCA9IHN5bWJvbC5pbnRlcm4oKTsKICAgICAgICAgZmluYWwgU3RyaW5nIGludGVybmVkVHlwZSA9
+IHR5cGUuaW50ZXJuKCk7CiAgICAgICAgIGZpbmFsIFN0cmluZyBpbnRlcm5lZFRleHQgPSB0ZXh0
+LmludGVybigpOwotICAgICAgICB0YWdzLmFkZChuZXcgVGFnKGxpbmUsIGludGVybmVkU3ltYm9s
+LCBpbnRlcm5lZFR5cGUsIGludGVybmVkVGV4dCkpOworICAgICAgICBUYWcgbmV3X3RhZyA9IG5l
+dyBUYWcobGluZSwgaW50ZXJuZWRTeW1ib2wsIGludGVybmVkVHlwZSwgaW50ZXJuZWRUZXh0KTsK
+KyAgICAgICAgdGFncy5hZGQobmV3X3RhZyk7CiAgICAgICAgIFNldDxJbnRlZ2VyPiBsaW5lcyA9
+IHN5bWJvbHMuZ2V0KGludGVybmVkU3ltYm9sKTsKICAgICAgICAgaWYgKGxpbmVzID09IG51bGwp
+IHsKICAgICAgICAgICAgIGxpbmVzID0gbmV3IEhhc2hTZXQ8SW50ZWdlcj4oKTsKICAgICAgICAg
+ICAgIHN5bWJvbHMucHV0KGludGVybmVkU3ltYm9sLCBsaW5lcyk7CiAgICAgICAgIH0KICAgICAg
+ICAgbGluZXMuYWRkKGxpbmUpOworCisgICAgICAgIC8vIEdldCBwZXIgbGluZSBtYXAKKyAgICAg
+ICAgTGluZVRhZ01hcCBsaW5lX21hcCA9IGxpbmVfbWFwcy5nZXQobGluZSk7CisgICAgICAgIGlm
+IChsaW5lX21hcCA9PSBudWxsKSB7CisgICAgICAgICAgICBsaW5lX21hcCA9IG5ldyBMaW5lVGFn
+TWFwKCk7CisgICAgICAgICAgICBsaW5lX21hcHMucHV0KGxpbmUsIGxpbmVfbWFwKTsKKyAgICAg
+ICAgfQorCisgICAgICAgIC8vIEluc2VydCBzeW0tPnRhZyBtYXAgZm9yIHRoaXMgbGluZQorICAg
+ICAgICBTZXQ8VGFnPiB0YWdzID0gbGluZV9tYXAuc3ltX3RhZ3MuZ2V0KGludGVybmVkU3ltYm9s
+KTsKKyAgICAgICAgaWYgKHRhZ3MgPT0gbnVsbCkgeworICAgICAgICAgICAgdGFncyA9IG5ldyBI
+YXNoU2V0PFRhZz4oKTsKKyAgICAgICAgICAgIGxpbmVfbWFwLnN5bV90YWdzLnB1dChpbnRlcm5l
+ZFN5bWJvbCwgdGFncyk7CisgICAgICAgIH0KKyAgICAgICAgdGFncy5hZGQobmV3X3RhZyk7CiAg
+ICAgfQogCiAgICAgLyoqCmRpZmYgLS1naXQgYS9zcmMvb3JnL29wZW5zb2xhcmlzL29wZW5ncm9r
+L2FuYWx5c2lzL0pGbGV4WHJlZi5qYXZhIGIvc3JjL29yZy9vcGVuc29sYXJpcy9vcGVuZ3Jvay9h
+bmFseXNpcy9KRmxleFhyZWYuamF2YQotLS0gYS9zcmMvb3JnL29wZW5zb2xhcmlzL29wZW5ncm9r
+L2FuYWx5c2lzL0pGbGV4WHJlZi5qYXZhCisrKyBiL3NyYy9vcmcvb3BlbnNvbGFyaXMvb3Blbmdy
+b2svYW5hbHlzaXMvSkZsZXhYcmVmLmphdmEKQEAgLTE0NCwzMCArMTQ0LDk1IEBACiAgICAqLwog
+ICBwcm90ZWN0ZWQgdm9pZCB3cml0ZVN5bWJvbChTdHJpbmcgc3ltYm9sLCBTZXQ8U3RyaW5nPiBr
+ZXl3b3JkcywgaW50IGxpbmUpCiAgICAgICAgICAgdGhyb3dzIElPRXhjZXB0aW9uIHsKKyAgICAg
+IFN0cmluZ1tdIHN0cnMgPSBuZXcgU3RyaW5nWzFdOworICAgICAgc3Ryc1swXSA9ICIiOworCiAg
+ICAgICBpZiAoa2V5d29yZHMhPW51bGwgJiYga2V5d29yZHMuY29udGFpbnMoc3ltYm9sKSkgewog
+ICAgICAgICAgIC8vIFRoaXMgaXMgYSBrZXl3b3JkLCBzbyB3ZSBkb24ndCBjcmVhdGUgYSBsaW5r
+LgogICAgICAgICAgIG91dC5hcHBlbmQoIjxiPiIpLmFwcGVuZChzeW1ib2wpLmFwcGVuZCgiPC9i
+PiIpOwogCi0gICAgICB9IGVsc2UgaWYgKGRlZnMgIT0gbnVsbCAmJiBkZWZzLmhhc0RlZmluaXRp
+b25BdChzeW1ib2wsIGxpbmUpKSB7CisgICAgICB9IGVsc2UgaWYgKGRlZnMgIT0gbnVsbCAmJiBk
+ZWZzLmhhc0RlZmluaXRpb25BdChzeW1ib2wsIGxpbmUsIHN0cnMpKSB7CiAgICAgICAgICAgLy8g
+VGhpcyBpcyB0aGUgZGVmaW5pdGlvbiBvZiB0aGUgc3ltYm9sLgorICAgICAgICAgIFN0cmluZyB0
+eXBlID0gc3Ryc1swXTsKKyAgICAgICAgICBTdHJpbmcgc3R5bGVfY2xhc3MgPSAiZCI7CisKKyAg
+ICAgICAgICBpZiAodHlwZS5zdGFydHNXaXRoKCJtYWNybyIpKSB7CisgICAgICAgICAgICAgIHN0
+eWxlX2NsYXNzID0gInhtIjsKKyAgICAgICAgICB9CisgICAgICAgICAgZWxzZSBpZiAodHlwZS5z
+dGFydHNXaXRoKCJhcmd1bWVudCIpKSB7CisgICAgICAgICAgICAgIHN0eWxlX2NsYXNzID0gInhh
+IjsKKyAgICAgICAgICB9CisgICAgICAgICAgZWxzZSBpZiAodHlwZS5zdGFydHNXaXRoKCJsb2Nh
+bCIpKSB7CisgICAgICAgICAgICAgIHN0eWxlX2NsYXNzID0gInhsIjsKKyAgICAgICAgICB9Cisg
+ICAgICAgICAgZWxzZSBpZiAodHlwZS5zdGFydHNXaXRoKCJ2YXJpYWJsZSIpKSB7CisgICAgICAg
+ICAgICAgIHN0eWxlX2NsYXNzID0gInh2IjsKKyAgICAgICAgICB9CisgICAgICAgICAgZWxzZSBp
+ZiAodHlwZS5zdGFydHNXaXRoKCJjbGFzcyIpKSB7CisgICAgICAgICAgICAgIHN0eWxlX2NsYXNz
+ID0gInhjIjsKKyAgICAgICAgICB9CisgICAgICAgICAgZWxzZSBpZiAodHlwZS5zdGFydHNXaXRo
+KCJpbnRlcmZhY2UiKSkgeworICAgICAgICAgICAgICBzdHlsZV9jbGFzcyA9ICJ4aSI7CisgICAg
+ICAgICAgfQorICAgICAgICAgIGVsc2UgaWYgKHR5cGUuc3RhcnRzV2l0aCgibmFtZXNwYWNlIikp
+IHsKKyAgICAgICAgICAgICAgc3R5bGVfY2xhc3MgPSAieG4iOworICAgICAgICAgIH0KKyAgICAg
+ICAgICBlbHNlIGlmICh0eXBlLnN0YXJ0c1dpdGgoImVudW0iKSkgeworICAgICAgICAgICAgICBz
+dHlsZV9jbGFzcyA9ICJ4ZSI7CisgICAgICAgICAgfQorICAgICAgICAgIGVsc2UgaWYgKHR5cGUu
+c3RhcnRzV2l0aCgiZW51bWVyYXRvciIpKSB7CisgICAgICAgICAgICAgIHN0eWxlX2NsYXNzID0g
+InhlciI7CisgICAgICAgICAgfQorICAgICAgICAgIGVsc2UgaWYgKHR5cGUuc3RhcnRzV2l0aCgi
+c3RydWN0IikpIHsKKyAgICAgICAgICAgICAgc3R5bGVfY2xhc3MgPSAieHMiOworICAgICAgICAg
+IH0KKyAgICAgICAgICBlbHNlIGlmICh0eXBlLnN0YXJ0c1dpdGgoInR5cGVkZWYiKSkgeworICAg
+ICAgICAgICAgICBzdHlsZV9jbGFzcyA9ICJ4dCI7CisgICAgICAgICAgfQorICAgICAgICAgIGVs
+c2UgaWYgKHR5cGUuc3RhcnRzV2l0aCgidHlwZWRlZnMiKSkgeworICAgICAgICAgICAgICBzdHls
+ZV9jbGFzcyA9ICJ4dHMiOworICAgICAgICAgIH0KKyAgICAgICAgICBlbHNlIGlmICh0eXBlLnN0
+YXJ0c1dpdGgoInVuaW9uIikpIHsKKyAgICAgICAgICAgICAgc3R5bGVfY2xhc3MgPSAieHUiOwor
+ICAgICAgICAgIH0KKyAgICAgICAgICBlbHNlIGlmICh0eXBlLnN0YXJ0c1dpdGgoImZpZWxkIikp
+IHsKKyAgICAgICAgICAgICAgc3R5bGVfY2xhc3MgPSAieGZsZCI7CisgICAgICAgICAgfQorICAg
+ICAgICAgIGVsc2UgaWYgKHR5cGUuc3RhcnRzV2l0aCgibWVtYmVyIikpIHsKKyAgICAgICAgICAg
+ICAgc3R5bGVfY2xhc3MgPSAieG1iIjsKKyAgICAgICAgICB9CisgICAgICAgICAgZWxzZSBpZiAo
+dHlwZS5zdGFydHNXaXRoKCJmdW5jdGlvbiIpKSB7CisgICAgICAgICAgICAgIHN0eWxlX2NsYXNz
+ID0gInhmIjsKKyAgICAgICAgICB9CisgICAgICAgICAgZWxzZSBpZiAodHlwZS5zdGFydHNXaXRo
+KCJtZXRob2QiKSkgeworICAgICAgICAgICAgICBzdHlsZV9jbGFzcyA9ICJ4bXQiOworICAgICAg
+ICAgIH0KKyAgICAgICAgICBlbHNlIGlmICh0eXBlLnN0YXJ0c1dpdGgoInN1YnJvdXRpbmUiKSkg
+eworICAgICAgICAgICAgICBzdHlsZV9jbGFzcyA9ICJ4c3IiOworICAgICAgICAgIH0KIAogICAg
+ICAgICAgIC8vIDEpIENyZWF0ZSBhbiBhbmNob3IgZm9yIGRpcmVjdCBsaW5rcy4gKFBlcmhhcHMs
+IHdlIHNob3VsZCBvbmx5CiAgICAgICAgICAgLy8gICAgZG8gdGhpcyB3aGVuIHRoZXJlJ3MgZXhh
+Y3RseSBvbmUgZGVmaW5pdGlvbiBvZiB0aGUgc3ltYm9sIGluCiAgICAgICAgICAgLy8gICAgdGhp
+cyBmaWxlPyBPdGhlcndpc2UsIHdlIG1heSBlbmQgdXAgd2l0aCBtdWx0aXBsZSBhbmNob3JzIHdp
+dGgKICAgICAgICAgICAvLyAgICB0aGUgc2FtZSBuYW1lLikKLSAgICAgICAgICBvdXQuYXBwZW5k
+KCI8YSBjbGFzcz1cImRcIiBuYW1lPVwiIikuYXBwZW5kKHN5bWJvbCkuYXBwZW5kKCJcIi8+Iik7
+CisgICAgICAgICAgb3V0LmFwcGVuZCgiPGEgY2xhc3M9XCIiKS5hcHBlbmQoc3R5bGVfY2xhc3Mp
+LmFwcGVuZCgiXCIgbmFtZT1cIiIpLmFwcGVuZChzeW1ib2wpLmFwcGVuZCgiXCIvPiIpOwogCiAg
+ICAgICAgICAgLy8gMikgQ3JlYXRlIGEgbGluayB0aGF0IHNlYXJjaGVzIGZvciBhbGwgcmVmZXJl
+bmNlcyB0byB0aGlzIHN5bWJvbC4KICAgICAgICAgICBvdXQuYXBwZW5kKCI8YSBocmVmPVwiIiku
+YXBwZW5kKHVybFByZWZpeCkuYXBwZW5kKCJyZWZzPSIpOwogICAgICAgICAgIG91dC5hcHBlbmQo
+c3ltYm9sKTsKICAgICAgICAgICBhcHBlbmRQcm9qZWN0KCk7Ci0gICAgICAgICAgb3V0LmFwcGVu
+ZCgiXCIgY2xhc3M9XCJkXCI+IikuYXBwZW5kKHN5bWJvbCkuYXBwZW5kKCI8L2E+Iik7CisgICAg
+ICAgICAgb3V0LmFwcGVuZCgiXCIgY2xhc3M9XCIiKS5hcHBlbmQoc3R5bGVfY2xhc3MpLmFwcGVu
+ZCgiXCIgIikKKyAgICAgICAgICAgICAgLy8gTWF5IGhhdmUgbXVsdGlwbGUgYW5jaG9ycyB3aXRo
+IHRoZSBzYW1lIGZ1bmN0aW9uIG5hbWUsCisgICAgICAgICAgICAgIC8vIHN0b3JlIGxpbmUgbnVt
+YmVyIGZvciBhY2N1cmF0ZSBsb2NhdGlvbiB1c2VkIGluIGxpc3QuanNwLgorICAgICAgICAgICAg
+ICAuYXBwZW5kKCJsbj1cIiIpLmFwcGVuZChJbnRlZ2VyLnRvU3RyaW5nKGxpbmUpKS5hcHBlbmQo
+IlwiPiIpCisgICAgICAgICAgICAgIC5hcHBlbmQoc3ltYm9sKS5hcHBlbmQoIjwvYT4iKTsKIAog
+ICAgICAgfSBlbHNlIGlmIChkZWZzICE9IG51bGwgJiYgZGVmcy5vY2N1cnJlbmNlcyhzeW1ib2wp
+ID09IDEpIHsKICAgICAgICAgICAvLyBUaGlzIGlzIGEgcmVmZXJlbmNlIHRvIGEgc3ltYm9sIGRl
+ZmluZWQgZXhhY3RseSBvbmNlIGluIHRoaXMgZmlsZS4KKyAgICAgICAgICBTdHJpbmcgc3R5bGVf
+Y2xhc3MgPSAiZCI7CiAKICAgICAgICAgICAvLyBHZW5lcmF0ZSBhIGRpcmVjdCBsaW5rIHRvIHRo
+ZSBzeW1ib2wgZGVmaW5pdGlvbi4KLSAgICAgICAgICBvdXQuYXBwZW5kKCI8YSBjbGFzcz1cImZc
+IiBocmVmPVwiIyIpLmFwcGVuZChzeW1ib2wpLmFwcGVuZCgiXCI+IikKKyAgICAgICAgICBvdXQu
+YXBwZW5kKCI8YSBjbGFzcz1cIiIpLmFwcGVuZChzdHlsZV9jbGFzcykuYXBwZW5kKCJcIiBocmVm
+PVwiIyIpLmFwcGVuZChzeW1ib2wpLmFwcGVuZCgiXCI+IikKICAgICAgICAgICAgICAgICAgIC5h
+cHBlbmQoc3ltYm9sKS5hcHBlbmQoIjwvYT4iKTsKIAogICAgICAgfSBlbHNlIHsKZGlmZiAtLWdp
+dCBhL3NyYy9vcmcvb3BlbnNvbGFyaXMvb3Blbmdyb2svaW5kZXgvSWdub3JlZE5hbWVzLmphdmEg
+Yi9zcmMvb3JnL29wZW5zb2xhcmlzL29wZW5ncm9rL2luZGV4L0lnbm9yZWROYW1lcy5qYXZhCi0t
+LSBhL3NyYy9vcmcvb3BlbnNvbGFyaXMvb3Blbmdyb2svaW5kZXgvSWdub3JlZE5hbWVzLmphdmEK
+KysrIGIvc3JjL29yZy9vcGVuc29sYXJpcy9vcGVuZ3Jvay9pbmRleC9JZ25vcmVkTmFtZXMuamF2
+YQpAQCAtNTEsNiArNTEsNyBAQAogICAgICAgICAidGFncyIsCiAgICAgICAgICIuc3ZuIiwKICAg
+ICAgICAgIi5naXQiLAorICAgICAgICAiLnJlcG8iLAogICAgICAgICAiLmhnIiwKICAgICAgICAg
+Ii5oZ3RhZ3MiLAogICAgICAgICAiLmJ6ciIsCmRpZmYgLS1naXQgYS9zcmMvb3JnL29wZW5zb2xh
+cmlzL29wZW5ncm9rL2luZGV4L0luZGV4RGF0YWJhc2UuamF2YSBiL3NyYy9vcmcvb3BlbnNvbGFy
+aXMvb3Blbmdyb2svaW5kZXgvSW5kZXhEYXRhYmFzZS5qYXZhCi0tLSBhL3NyYy9vcmcvb3BlbnNv
+bGFyaXMvb3Blbmdyb2svaW5kZXgvSW5kZXhEYXRhYmFzZS5qYXZhCisrKyBiL3NyYy9vcmcvb3Bl
+bnNvbGFyaXMvb3Blbmdyb2svaW5kZXgvSW5kZXhEYXRhYmFzZS5qYXZhCkBAIC0zMzQsNyArMzM0
+LDExIEBACiAgICAgICAgICAgICAgICAgdHJ5IHsKICAgICAgICAgICAgICAgICAgICAgdWlkSXRl
+ciA9IHJlYWRlci50ZXJtcyhuZXcgVGVybSgidSIsIHN0YXJ0dWlkKSk7IC8vIGluaXQgdWlkIGl0
+ZXJhdG9yCiAKLSAgICAgICAgICAgICAgICAgICAgaW5kZXhEb3duKHNvdXJjZVJvb3QsIGRpcik7
+CisgICAgICAgICAgICAgICAgICAgIGludCBmaWxlX2NudCA9IDA7CisgICAgICAgICAgICAgICAg
+ICAgIGZpbGVfY250ID0gaW5kZXhEb3duKHNvdXJjZVJvb3QsIGRpciwgdHJ1ZSwgMCwgMCk7Cisg
+ICAgICAgICAgICAgICAgICAgIFN5c3RlbS5vdXQucHJpbnQoIltYWFhMQ10gVG90YWwgZmlsZXM6
+ICIgKyBmaWxlX2NudCArICJcbiIpOworCisgICAgICAgICAgICAgICAgICAgIGluZGV4RG93bihz
+b3VyY2VSb290LCBkaXIsIGZhbHNlLCAwLCBmaWxlX2NudCk7CiAKICAgICAgICAgICAgICAgICAg
+ICAgd2hpbGUgKHVpZEl0ZXIudGVybSgpICE9IG51bGwgJiYgdWlkSXRlci50ZXJtKCkuZmllbGQo
+KS5lcXVhbHMoInUiKSAmJiB1aWRJdGVyLnRlcm0oKS50ZXh0KCkuc3RhcnRzV2l0aChzdGFydHVp
+ZCkpIHsKICAgICAgICAgICAgICAgICAgICAgICAgIHJlbW92ZUZpbGUoKTsKQEAgLTcwOCwxOSAr
+NzEyLDIwIEBACiAgICAgICogQHBhcmFtIGRpciB0aGUgcm9vdCBpbmRleERpcmVjdG9yeSB0byBn
+ZW5lcmF0ZSBpbmRleGVzIGZvcgogICAgICAqIEBwYXJhbSBwYXRoIHRoZSBwYXRoCiAgICAgICov
+Ci0gICAgcHJpdmF0ZSB2b2lkIGluZGV4RG93bihGaWxlIGRpciwgU3RyaW5nIHBhcmVudCkgdGhy
+b3dzIElPRXhjZXB0aW9uIHsKKyAgICBwcml2YXRlIGludCBpbmRleERvd24oRmlsZSBkaXIsIFN0
+cmluZyBwYXJlbnQsIGJvb2xlYW4gY291bnRfb25seSwgaW50IGN1cl9jb3VudCwgaW50IGVzdF90
+b3RhbCkgdGhyb3dzIElPRXhjZXB0aW9uIHsKKwogICAgICAgICBpZiAoaXNJbnRlcnJ1cHRlZCgp
+KSB7Ci0gICAgICAgICAgICByZXR1cm47CisgICAgICAgICAgICByZXR1cm4gY3VyX2NvdW50Owog
+ICAgICAgICB9CiAKICAgICAgICAgaWYgKCFhY2NlcHQoZGlyKSkgewotICAgICAgICAgICAgcmV0
+dXJuOworICAgICAgICAgICAgcmV0dXJuIGN1cl9jb3VudDsKICAgICAgICAgfQogCiAgICAgICAg
+IEZpbGVbXSBmaWxlcyA9IGRpci5saXN0RmlsZXMoKTsKICAgICAgICAgaWYgKGZpbGVzID09IG51
+bGwpIHsKICAgICAgICAgICAgIGxvZy5sb2coTGV2ZWwuU0VWRVJFLCAiRmFpbGVkIHRvIGdldCBm
+aWxlIGxpc3RpbmcgZm9yOiB7MH0iLCBkaXIuZ2V0QWJzb2x1dGVQYXRoKCkpOwotICAgICAgICAg
+ICAgcmV0dXJuOworICAgICAgICAgICAgcmV0dXJuIGN1cl9jb3VudDsKICAgICAgICAgfQogICAg
+ICAgICBBcnJheXMuc29ydChmaWxlcywgbmV3IENvbXBhcmF0b3I8RmlsZT4oKSB7CiAgICAgICAg
+ICAgICBAT3ZlcnJpZGUKQEAgLTczMiw5ICs3MzcsMTkgQEAKICAgICAgICAgZm9yIChGaWxlIGZp
+bGUgOiBmaWxlcykgewogICAgICAgICAgICAgaWYgKGFjY2VwdChmaWxlKSkgewogICAgICAgICAg
+ICAgICAgIFN0cmluZyBwYXRoID0gcGFyZW50ICsgJy8nICsgZmlsZS5nZXROYW1lKCk7CisKICAg
+ICAgICAgICAgICAgICBpZiAoZmlsZS5pc0RpcmVjdG9yeSgpKSB7Ci0gICAgICAgICAgICAgICAg
+ICAgIGluZGV4RG93bihmaWxlLCBwYXRoKTsKKyAgICAgICAgICAgICAgICAgICAgY3VyX2NvdW50
+ID0gaW5kZXhEb3duKGZpbGUsIHBhdGgsIGNvdW50X29ubHksIGN1cl9jb3VudCwgZXN0X3RvdGFs
+KTsKICAgICAgICAgICAgICAgICB9IGVsc2UgeworICAgICAgICAgICAgICAgICAgICBjdXJfY291
+bnQrKzsKKyAgICAgICAgICAgICAgICAgICAgaWYgKGNvdW50X29ubHkpCisgICAgICAgICAgICAg
+ICAgICAgICAgICBjb250aW51ZTsKKworICAgICAgICAgICAgICAgICAgICBpZiAoZXN0X3RvdGFs
+ID4gMCkKKyAgICAgICAgICAgICAgICAgICAgeworICAgICAgICAgICAgICAgICAgICAgICAgU3lz
+dGVtLm91dC5wcmludCgiW0lEWF0gIiArIGN1cl9jb3VudCArICIgKCIgKyBjdXJfY291bnQgKiAx
+MDAuMGYgLyBlc3RfdG90YWwgKyAiJSkgOiAiICsgcGF0aCArICJcbiIpOworICAgICAgICAgICAg
+ICAgICAgICB9CisKICAgICAgICAgICAgICAgICAgICAgaWYgKHVpZEl0ZXIgIT0gbnVsbCkgewog
+ICAgICAgICAgICAgICAgICAgICAgICAgU3RyaW5nIHVpZCA9IFV0aWwudWlkKHBhdGgsIERhdGVU
+b29scy50aW1lVG9TdHJpbmcoZmlsZS5sYXN0TW9kaWZpZWQoKSwgRGF0ZVRvb2xzLlJlc29sdXRp
+b24uTUlMTElTRUNPTkQpKTsgLy8gY29uc3RydWN0IHVpZCBmb3IgZG9jCiAgICAgICAgICAgICAg
+ICAgICAgICAgICB3aGlsZSAodWlkSXRlci50ZXJtKCkgIT0gbnVsbCAmJiB1aWRJdGVyLnRlcm0o
+KS5maWVsZCgpLmVxdWFscygidSIpICYmCkBAIC03NTksNiArNzc0LDggQEAKICAgICAgICAgICAg
+ICAgICB9CiAgICAgICAgICAgICB9CiAgICAgICAgIH0KKworICAgICAgICByZXR1cm4gY3VyX2Nv
+dW50OwogICAgIH0KIAogICAgIC8qKgpkaWZmIC0tZ2l0IGEvd2ViL2RlZmF1bHQvc3R5bGUuY3Nz
+IGIvd2ViL2RlZmF1bHQvc3R5bGUuY3NzCi0tLSBhL3dlYi9kZWZhdWx0L3N0eWxlLmNzcworKysg
+Yi93ZWIvZGVmYXVsdC9zdHlsZS5jc3MKQEAgLTE0NSwxMiArMTQ1LDM4IEBACiAuYyAge2NvbG9y
+OiM2NjY7fSAvKiBjb21tZW50cyAqLwogLmIgIHtjb2xvcjojMDAwOyBmb250LXdlaWdodDpib2xk
+O30gLyogY29tbWVudHMgKi8KIC5rICB7Y29sb3I6IzAwMDsgZm9udC1mYW1pbHk6bW9ub3NwYWNl
+O30gLyogY29tbWVudHMgKi8KLWEuZCB7Y29sb3I6IzkwOTsgZm9udC13ZWlnaHQ6Ym9sZDsgZm9u
+dC1zdHlsZTppdGFsaWM7dGV4dC1kZWNvcmF0aW9uOm5vbmU7fSAvKiBkZWZpbml0aW9ucyAqLwog
+YS5zIHtjb2xvcjojMDAwO30gIC8qIG1hdGNoZWQgbGluZXMgKi8KIGEuZiB7Y29sb3I6IzkwOTt9
+IC8qIGZpbGUgbG9jYWxzICovCiBkaXYuYSB7Y29sb3I6IzAwMH0KIGEuaCB7Zm9udC1zaXplOnNt
+YWxsOyBtYXJnaW4tbGVmdDoyZW07fQogCithLmQge2NvbG9yOiM5MzY7IGZvbnQtd2VpZ2h0OmJv
+bGQ7IHRleHQtZGVjb3JhdGlvbjpub25lO30gLyogZGVmaW5pdGlvbnMgKi8KKworYS54bSB7Y29s
+b3I6I2M2NjsgZm9udC13ZWlnaHQ6Ym9sZDsgdGV4dC1kZWNvcmF0aW9uOm5vbmU7fSAvKiBtYWNy
+byAqLworCithLnhhIHtjb2xvcjojNjBjOyBmb250LXdlaWdodDpib2xkOyB0ZXh0LWRlY29yYXRp
+b246bm9uZTt9IC8qIGFyZ3VtZW50ICovCithLnhsIHtjb2xvcjojOTYzOyBmb250LXdlaWdodDpi
+b2xkOyB0ZXh0LWRlY29yYXRpb246bm9uZTt9IC8qIGxvY2FsICovCithLnh2IHtjb2xvcjojYzMw
+OyBmb250LXdlaWdodDpib2xkOyB0ZXh0LWRlY29yYXRpb246bm9uZTt9IC8qIHZhcmlhYmxlICov
+CisKK2EueGMge2NvbG9yOiM5MDk7IGZvbnQtd2VpZ2h0OmJvbGQ7IGZvbnQtc3R5bGU6aXRhbGlj
+OyB0ZXh0LWRlY29yYXRpb246bm9uZTt9IC8qIGNsYXNzICovCithLnhpIHtjb2xvcjojOTA5OyBm
+b250LXdlaWdodDpib2xkOyBmb250LXN0eWxlOml0YWxpYzsgdGV4dC1kZWNvcmF0aW9uOm5vbmU7
+fSAvKiBpbnRlcmZhY2UgKi8KK2EueG4ge2NvbG9yOiM5MDk7IGZvbnQtd2VpZ2h0OmJvbGQ7IGZv
+bnQtc3R5bGU6aXRhbGljOyB0ZXh0LWRlY29yYXRpb246bm9uZTt9IC8qIG5hbWVzcGFjZSAqLwor
+CithLnhlIHtjb2xvcjojOTA5OyBmb250LXdlaWdodDpib2xkOyBmb250LXN0eWxlOml0YWxpYzsg
+dGV4dC1kZWNvcmF0aW9uOm5vbmU7fSAvKiBlbnVtICovCithLnhlciB7Y29sb3I6IzkwOTsgZm9u
+dC13ZWlnaHQ6Ym9sZDsgZm9udC1zdHlsZTppdGFsaWM7IHRleHQtZGVjb3JhdGlvbjpub25lO30g
+LyogZW51bWVyYXRvciAqLworYS54cyB7Y29sb3I6IzkwOTsgZm9udC13ZWlnaHQ6Ym9sZDsgZm9u
+dC1zdHlsZTppdGFsaWM7IHRleHQtZGVjb3JhdGlvbjpub25lO30gLyogc3RydWN0ICovCithLnh0
+IHtjb2xvcjojOTA5OyBmb250LXdlaWdodDpib2xkOyBmb250LXN0eWxlOml0YWxpYzsgdGV4dC1k
+ZWNvcmF0aW9uOm5vbmU7fSAvKiB0eXBlZGVmICovCithLnh0cyB7Y29sb3I6IzkwOTsgZm9udC13
+ZWlnaHQ6Ym9sZDsgZm9udC1zdHlsZTppdGFsaWM7IHRleHQtZGVjb3JhdGlvbjpub25lO30gLyog
+dHlwZWRlZnMgKi8KK2EueHUge2NvbG9yOiM5MDk7IGZvbnQtd2VpZ2h0OmJvbGQ7IGZvbnQtc3R5
+bGU6aXRhbGljOyB0ZXh0LWRlY29yYXRpb246bm9uZTt9IC8qIHVuaW9uICovCisKK2EueGZsZCB7
+Y29sb3I6IzA5MDsgZm9udC13ZWlnaHQ6Ym9sZDsgdGV4dC1kZWNvcmF0aW9uOm5vbmU7fSAvKiBm
+aWVsZCAqLworYS54bWIge2NvbG9yOiMwOTA7IGZvbnQtd2VpZ2h0OmJvbGQ7IHRleHQtZGVjb3Jh
+dGlvbjpub25lO30gLyogbWVtYmVyICovCisKK2EueGYge2NvbG9yOiMwMGY7IGZvbnQtd2VpZ2h0
+OmJvbGQ7IHRleHQtZGVjb3JhdGlvbjpub25lO30gLyogZnVuY3Rpb24gKi8KK2EueG10IHtjb2xv
+cjojMDBmOyBmb250LXdlaWdodDpib2xkOyB0ZXh0LWRlY29yYXRpb246bm9uZTt9IC8qIG1ldGhv
+ZCAqLworYS54c3Ige2NvbG9yOiMwMGY7IGZvbnQtd2VpZ2h0OmJvbGQ7IHRleHQtZGVjb3JhdGlv
+bjpub25lO30gLyogc3Vicm91dGluZSAqLworCisKICNyZXN1bHRzIHttYXJnaW4tdG9wOi41ZW07
+fQogI3Jlc3VsdHMgLmNvbntmb250LXNpemU6c21hbGw7Y29sb3I6IzAwMDt9CiAjbW9yZSAubCwg
+I3Jlc3VsdHMgLmwgeyBjb2xvcjojNjY2OyB9CmRpZmYgLS1naXQgYS93ZWIvZm9vdC5qc3BmIGIv
+d2ViL2Zvb3QuanNwZgotLS0gYS93ZWIvZm9vdC5qc3BmCisrKyBiL3dlYi9mb290LmpzcGYKQEAg
+LTMxLDUgKzMxLDExIEBACiBpZiAoIGZzZXJ2bGV0LnN0YXJ0c1dpdGgoIi94ciIpIHx8IGZzZXJ2
+bGV0LnN0YXJ0c1dpdGgoIi9oaSIpIHx8IGZzZXJ2bGV0LnN0YXJ0c1dpdGgoIi9kaSIpIHx8IGZz
+ZXJ2bGV0LnN0YXJ0c1dpdGgoIi9tbyIpICkgeyAlPgogPC9kaXY+PCUgfSAvLyBqdXN0IGZvciBj
+b250ZW50IGZyb20geHJlZiAvIGxpc3RlciAvIGhpc3RvcnkgLyBkaWZmIC8gbW9yZSBwYWdlcyAl
+PgogPC9kaXY+PCUgLy8gZnJvbSBwYWdlICU+Cis8c2NyaXB0IHR5cGU9InRleHQvamF2YXNjcmlw
+dCI+LyogPCFbQ0RBVEFbICovCitpZiAodHlwZW9mIGxzdHRvZ2dsZSA9PSAnZnVuY3Rpb24nKQor
+eworICAgIGxzdHRvZ2dsZSgpOworfQorLyogXV0+ICovPC9zY3JpcHQ+CiA8L2JvZHk+CiA8L2h0
+bWw+CmRpZmYgLS1naXQgYS93ZWIvbGlzdC5qc3AgYi93ZWIvbGlzdC5qc3AKLS0tIGEvd2ViL2xp
+c3QuanNwCisrKyBiL3dlYi9saXN0LmpzcApAQCAtMzMsNyArMzMsMzMgQEAKIG9yZy5vcGVuc29s
+YXJpcy5vcGVuZ3Jvay53ZWIuKiwKIG9yZy5vcGVuc29sYXJpcy5vcGVuZ3Jvay5oaXN0b3J5LioK
+ICIKLSU+PCVAaW5jbHVkZSBmaWxlPSJtYXN0LmpzcCIlPjxzY3JpcHQgdHlwZT0idGV4dC9qYXZh
+c2NyaXB0Ij4vKiA8IVtDREFUQVsgKi8KKyU+PCVAaW5jbHVkZSBmaWxlPSJtYXN0LmpzcCIlPgor
+PCUgaWYgKCFpc0RpcikgeyAlPgorPHN0eWxlIHR5cGU9InRleHQvY3NzIj4KKyAgICAuc3ltX2xp
+c3Rfc3R5bGUgeworICAgICAgICBwb3NpdGlvbjphYnNvbHV0ZTsKKyAgICAgICAgdG9wOjEwMHB4
+OworICAgICAgICBsZWZ0OjEwMHB4OworICAgICAgICB3aWR0aDoxMDBweDsKKyAgICAgICAgaGVp
+Z2h0OjEwMHB4OworICAgICAgICBvdmVyZmxvdzphdXRvOworICAgICAgICB6LWluZGV4OiAxMDsK
+KyAgICAgICAgYm9yZGVyOnNvbGlkIDFweCAjYzBjMGMwOworICAgICAgICBiYWNrZ3JvdW5kLWNv
+bG9yOiNmZmZmY2M7CisgICAgICAgIGNvbG9yOiMwMDA7CisgICAgICAgIGZvbnQtc2l6ZToxMnB4
+OworICAgICAgICBmb250LWZhbWlseTptb25vc3BhY2U7CisgICAgICAgIHBhZGRpbmc6NXB4Owor
+ICAgICAgICBvcGFjaXR5OjAuOTsKKyAgICAgICAgZmlsdGVyOmFscGhhKG9wYWNpdHk9OTApCisg
+ICAgfQorCisgICAgLnN5bV9saXN0X3N0eWxlX2hpZGUgeworICAgICAgICBkaXNwbGF5OiBub25l
+OworICAgIH0KK30KKzwvc3R5bGU+Cis8c2NyaXB0IHR5cGU9InRleHQvamF2YXNjcmlwdCI+Lyog
+PCFbQ0RBVEFbICovCiBmdW5jdGlvbiBsbnRvZ2dsZSgpIHsKICAgICQoImEiKS5lYWNoKGZ1bmN0
+aW9uKCkgewogICAgICAgaWYgKHRoaXMuY2xhc3NOYW1lID09ICdsJyB8fCB0aGlzLmNsYXNzTmFt
+ZSA9PSAnaGwnKSB7CkBAIC00OCw3ICs3NCwyMjQgQEAKICAgICAgfQogICAgICk7CiB9Ci0vKiBd
+XT4gKi88L3NjcmlwdD48JQorCitmdW5jdGlvbiBnZXRfc3ltX2xpc3RfY29udGVudHMoKQorewor
+ICAgIHZhciBjb250ZW50cyA9ICIiOworCisgICAgY29udGVudHMgKz0gIjxpbnB1dCBpZD1cImlu
+cHV0X2hpZ2hsaWdodFwiIG5hbWU9XCJpbnB1dF9oaWdobGlnaHRcIiBjbGFzcz1cInFcIi8+IjsK
+KyAgICBjb250ZW50cyArPSAiJm5ic3A7Jm5ic3A7IjsKKyAgICBjb250ZW50cyArPSAiPGI+PGEg
+aHJlZj1cIiNcIiBvbmNsaWNrPVwiamF2YXNjcmlwdDphZGRfaGlnaGxpZ2h0KCk7cmV0dXJuIGZh
+bHNlO1wiIHRpdGxlPVwiQWRkIGhpZ2hsaWdodFwiPkhpZ2hsaWdodDwvYT48L2I+PGJyPiI7CisK
+KyAgICB2YXIgY2xhc3NfbmFtZXM9WworICAgICAgICAieG0iLAorICAgICAgICAieGUiLAorICAg
+ICAgICAieHMiLAorICAgICAgICAieHQiLAorICAgICAgICAieHYiLAorICAgICAgICAieGkiLAor
+ICAgICAgICAieGMiLAorICAgICAgICAieGYiLAorICAgICAgICAieG10Il07CisgICAgdmFyIHR5
+cGVfbmFtZXM9WworICAgICAgICAiTWFjcm8iLAorICAgICAgICAiRW51bSIsCisgICAgICAgICJT
+dHJ1Y3QiLAorICAgICAgICAiVHlwZWRlZiIsCisgICAgICAgICJWYXJpYWJsZSIsCisgICAgICAg
+ICJJbnRlcmZhY2UiLAorICAgICAgICAiQ2xhc3MiLAorICAgICAgICAiRnVuY3Rpb24iLAorICAg
+ICAgICAiTWV0aG9kIl07CisgICAgdmFyIGNsYXNzX2NvbnRlbnRzPVsKKyAgICAgICAgIiIsCisg
+ICAgICAgICIiLAorICAgICAgICAiIiwKKyAgICAgICAgIiIsCisgICAgICAgICIiLAorICAgICAg
+ICAiIiwKKyAgICAgICAgIiIsCisgICAgICAgICIiLAorICAgICAgICAiIl07CisKKyAgICAkKCJh
+IikuZWFjaCgKKyAgICAgICAgZnVuY3Rpb24oKQorICAgICAgICB7CisgICAgICAgICAgICBmb3Ig
+KHZhciBpID0gMDsgaSA8IGNsYXNzX25hbWVzLmxlbmd0aDsgaSsrKQorICAgICAgICAgICAgewor
+ICAgICAgICAgICAgICAgIGlmICh0aGlzLmNsYXNzTmFtZSA9PSBjbGFzc19uYW1lc1tpXSkKKyAg
+ICAgICAgICAgICAgICB7CisgICAgICAgICAgICAgICAgICAgIHZhciBmbmFtZSA9IHRoaXMuaW5u
+ZXJIVE1MOworICAgICAgICAgICAgICAgICAgICBpZiAoZm5hbWUgIT0gIiIpCisgICAgICAgICAg
+ICAgICAgICAgIHsKKyAgICAgICAgICAgICAgICAgICAgICAgIC8vIFVzZSBsaW5lIG51bWJlciBh
+cyBhY2N1cmF0ZSBhbmNob3IKKyAgICAgICAgICAgICAgICAgICAgICAgIHZhciBsaW5lID0gdGhp
+cy5nZXRBdHRyaWJ1dGUoImxuIik7CisKKyAgICAgICAgICAgICAgICAgICAgICAgIGNsYXNzX2Nv
+bnRlbnRzW2ldICs9ICI8YSBocmVmPVwiIyIgKworICAgICAgICAgICAgICAgICAgICAgICAgICAg
+IGxpbmUgKyAiXCIgY2xhc3M9XCIiICsgY2xhc3NfbmFtZXNbaV0gKyAiXCI+IiArCisgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgdGhpcy5pbm5lckhUTUwgKyAiPC9hPjxicj4iOworCisgICAg
+ICAgICAgICAgICAgICAgIH0KKworICAgICAgICAgICAgICAgICAgICBicmVhazsKKyAgICAgICAg
+ICAgICAgICB9CisgICAgICAgICAgICB9CisgICAgICAgIH0KKyAgICApOworCisgICAgdmFyIGNv
+dW50ID0gMDsKKyAgICBmb3IgKHZhciBpID0gMDsgaSA8IGNsYXNzX25hbWVzLmxlbmd0aDsgaSsr
+KQorICAgIHsKKyAgICAgICAgaWYgKGNsYXNzX2NvbnRlbnRzW2ldICE9ICIiKQorICAgICAgICB7
+CisgICAgICAgICAgICBpZiAoY291bnQgPiAwKQorICAgICAgICAgICAgeworICAgICAgICAgICAg
+ICAgIGNvbnRlbnRzICs9ICI8YnI+IgorICAgICAgICAgICAgfQorICAgICAgICAgICAgY29udGVu
+dHMgKz0gIjxiPiIgKyB0eXBlX25hbWVzW2ldICsgIjwvYj48YnI+IgorICAgICAgICAgICAgY29u
+dGVudHMgKz0gY2xhc3NfY29udGVudHNbaV07CisKKyAgICAgICAgICAgIGNvdW50Kys7CisgICAg
+ICAgIH0KKyAgICB9CisKKyAgICByZXR1cm4gY29udGVudHM7Cit9CisKKy8vIEluaXRpYWwgdmFs
+dWUKK2RvY3VtZW50LnN5bV9kaXZfd2lkdGggPSAyNDA7Citkb2N1bWVudC5zeW1fZGl2X2hlaWdo
+dF9tYXggPSA0ODA7Citkb2N1bWVudC5zeW1fZGl2X3RvcCA9IDEwMDsKK2RvY3VtZW50LnN5bV9k
+aXZfbGVmdF9tYXJnaW4gPSA0MDsKK2RvY3VtZW50LnN5bV9kaXZfaGVpZ2h0X21hcmdpbiA9IDQw
+OworCitmdW5jdGlvbiBnZXRfc3ltX2Rpdl9sZWZ0KCkKK3sKKyAgICBkb2N1bWVudC5zeW1fZGl2
+X2xlZnQgPSAkKHdpbmRvdykud2lkdGgoKSAtIChkb2N1bWVudC5zeW1fZGl2X3dpZHRoICsgZG9j
+dW1lbnQuc3ltX2Rpdl9sZWZ0X21hcmdpbik7CisgICAgcmV0dXJuIGRvY3VtZW50LnN5bV9kaXZf
+bGVmdDsKK30KKworZnVuY3Rpb24gZ2V0X3N5bV9kaXZfaGVpZ2h0KCkKK3sKKyAgICBkb2N1bWVu
+dC5zeW1fZGl2X2hlaWdodCA9ICQod2luZG93KS5oZWlnaHQoKSAtIGRvY3VtZW50LnN5bV9kaXZf
+dG9wIC0gZG9jdW1lbnQuc3ltX2Rpdl9oZWlnaHRfbWFyZ2luOworCisgICAgaWYgKGRvY3VtZW50
+LnN5bV9kaXZfaGVpZ2h0ID4gZG9jdW1lbnQuc3ltX2Rpdl9oZWlnaHRfbWF4KQorICAgICAgICBk
+b2N1bWVudC5zeW1fZGl2X2hlaWdodCA9IGRvY3VtZW50LnN5bV9kaXZfaGVpZ2h0X21heDsKKwor
+ICAgIHJldHVybiBkb2N1bWVudC5zeW1fZGl2X2hlaWdodDsKK30KKworZnVuY3Rpb24gZ2V0X3N5
+bV9kaXZfdG9wKCkKK3sKKyAgICByZXR1cm4gZG9jdW1lbnQuc3ltX2Rpdl90b3A7Cit9CisKK2Z1
+bmN0aW9uIGdldF9zeW1fZGl2X3dpZHRoKCkKK3sKKyAgICByZXR1cm4gZG9jdW1lbnQuc3ltX2Rp
+dl93aWR0aDsKK30KKworZnVuY3Rpb24gbHN0dG9nZ2xlKCkKK3sKKyAgICBpZiAoZG9jdW1lbnQu
+c3ltX2RpdiA9PSBudWxsKQorICAgIHsKKyAgICAgICAgZG9jdW1lbnQuc3ltX2RpdiA9IGRvY3Vt
+ZW50LmNyZWF0ZUVsZW1lbnQoImRpdiIpOworICAgICAgICBkb2N1bWVudC5zeW1fZGl2LmlkID0g
+InN5bV9kaXYiOworCisgICAgICAgIGRvY3VtZW50LnN5bV9kaXYuY2xhc3NOYW1lID0gInN5bV9s
+aXN0X3N0eWxlIjsKKyAgICAgICAgZG9jdW1lbnQuc3ltX2Rpdi5zdHlsZS5tYXJnaW4gPSAiMHB4
+IGF1dG8iOworICAgICAgICBkb2N1bWVudC5zeW1fZGl2LnN0eWxlLndpZHRoID0gZ2V0X3N5bV9k
+aXZfd2lkdGgoKSArICJweCI7CisgICAgICAgIGRvY3VtZW50LnN5bV9kaXYuc3R5bGUuaGVpZ2h0
+ID0gZ2V0X3N5bV9kaXZfaGVpZ2h0KCkgKyAicHgiOworICAgICAgICBkb2N1bWVudC5zeW1fZGl2
+LnN0eWxlLnRvcCA9IGdldF9zeW1fZGl2X3RvcCgpICsgInB4IjsKKyAgICAgICAgZG9jdW1lbnQu
+c3ltX2Rpdi5zdHlsZS5sZWZ0ID0gZ2V0X3N5bV9kaXZfbGVmdCgpICsgInB4IjsKKworICAgICAg
+ICBkb2N1bWVudC5zeW1fZGl2LmlubmVySFRNTCA9IGdldF9zeW1fbGlzdF9jb250ZW50cygpOwor
+CisgICAgICAgIGRvY3VtZW50LmJvZHkuYXBwZW5kQ2hpbGQoZG9jdW1lbnQuc3ltX2Rpdik7Cisg
+ICAgICAgIGRvY3VtZW50LnN5bV9kaXZfc2hvd24gPSAxOworICAgIH0KKyAgICBlbHNlCisgICAg
+eworICAgICAgICBpZiAoZG9jdW1lbnQuc3ltX2Rpdl9zaG93biA9PSAxKQorICAgICAgICB7Cisg
+ICAgICAgICAgICBkb2N1bWVudC5zeW1fZGl2LmNsYXNzTmFtZSA9ICJzeW1fbGlzdF9zdHlsZV9o
+aWRlIjsKKyAgICAgICAgICAgIGRvY3VtZW50LnN5bV9kaXZfc2hvd24gPSAwOworICAgICAgICB9
+CisgICAgICAgIGVsc2UKKyAgICAgICAgeworICAgICAgICAgICAgZG9jdW1lbnQuc3ltX2Rpdi5z
+dHlsZS5oZWlnaHQgPSBnZXRfc3ltX2Rpdl9oZWlnaHQoKSArICJweCI7CisgICAgICAgICAgICBk
+b2N1bWVudC5zeW1fZGl2LnN0eWxlLndpZHRoID0gZ2V0X3N5bV9kaXZfd2lkdGgoKSArICJweCI7
+CisgICAgICAgICAgICBkb2N1bWVudC5zeW1fZGl2LnN0eWxlLnRvcCA9IGdldF9zeW1fZGl2X3Rv
+cCgpICsgInB4IjsKKyAgICAgICAgICAgIGRvY3VtZW50LnN5bV9kaXYuc3R5bGUubGVmdCA9IGdl
+dF9zeW1fZGl2X2xlZnQoKSArICJweCI7CisgICAgICAgICAgICBkb2N1bWVudC5zeW1fZGl2LmNs
+YXNzTmFtZSA9ICJzeW1fbGlzdF9zdHlsZSI7CisgICAgICAgICAgICBkb2N1bWVudC5zeW1fZGl2
+X3Nob3duID0gMTsKKyAgICAgICAgfQorICAgIH0KK30KKworJCh3aW5kb3cpLnJlc2l6ZSgKKyAg
+ICBmdW5jdGlvbigpCisgICAgeworICAgICAgICBpZiAoZG9jdW1lbnQuc3ltX2Rpdl9zaG93biA9
+PSAxKQorICAgICAgICB7CisgICAgICAgICAgICBkb2N1bWVudC5zeW1fZGl2LnN0eWxlLmxlZnQg
+PSBnZXRfc3ltX2Rpdl9sZWZ0KCkgKyAicHgiOworICAgICAgICAgICAgZG9jdW1lbnQuc3ltX2Rp
+di5zdHlsZS5oZWlnaHQgPSBnZXRfc3ltX2Rpdl9oZWlnaHQoKSArICJweCI7CisgICAgICAgIH0K
+KyAgICB9CispOworCisvLyBIaWdobGlnaHRpbmcKKy8qCisvLyBUaGlzIHdpbGwgcmVwbGFjZSBs
+aW5rJ3MgaHJlZiBjb250ZW50cyBhcyB3ZWxsLCBiZSBjYXJlZnVsCitmdW5jdGlvbiBIaWdobGln
+aHRLZXl3b3Jkc0Z1bGxUZXh0KGtleXdvcmRzKQoreworICAgIHZhciBlbCA9ICQoImJvZHkiKTsK
+KworICAgICQoa2V5d29yZHMpLmVhY2goCisgICAgICAgIGZ1bmN0aW9uKCkKKyAgICAgICAgewor
+ICAgICAgICAgICAgdmFyIHBhdHRlcm4gPSBuZXcgUmVnRXhwKCIoIit0aGlzKyIpIiwgWyJnaSJd
+KTsKKyAgICAgICAgICAgIHZhciBycyA9ICI8c3BhbiBzdHlsZT0nYmFja2dyb3VuZC1jb2xvcjoj
+RkZGRjAwO2ZvbnQtd2VpZ2h0OiBib2xkOyc+JDE8L3NwYW4+IjsKKyAgICAgICAgICAgIGVsLmh0
+bWwoZWwuaHRtbCgpLnJlcGxhY2UocGF0dGVybiwgcnMpKTsgCisgICAgICAgIH0KKyAgICApOwor
+fQorLy9IaWdobGlnaHRLZXl3b3Jkc0Z1bGxUZXh0KFsibmZzdGNwc29jayJdKTsKKyovCisKK2Rv
+Y3VtZW50LmhpZ2hsaWdodF9jb3VudCA9IDA7CisvLyBUaGlzIG9ubHkgY2hhbmdlcyBtYXRjaGlu
+ZyB0YWcncyBzdHlsZQorZnVuY3Rpb24gSGlnaGxpZ2h0S2V5d29yZChrZXl3b3JkKQoreworICAg
+IHZhciBoaWdoX2NvbG9ycz1bCisgICAgICAgICIjZmZmZjY2IiwKKyAgICAgICAgIiNmZmNjY2Mi
+LAorICAgICAgICAiI2NjY2NmZiIsCisgICAgICAgICIjOTlmZjk5IiwKKyAgICAgICAgIiNjYzY2
+ZmYiXTsKKworICAgIHZhciBwYXR0ZXJuID0gImE6Y29udGFpbnMoJyIgKyBrZXl3b3JkICsgIicp
+IjsKKyAgICAkKHBhdHRlcm4pLmNzcyh7CisgICAgICAgICd0ZXh0LWRlY29yYXRpb24nIDogJ3Vu
+ZGVybGluZScsCisgICAgICAgICdiYWNrZ3JvdW5kLWNvbG9yJyA6IGhpZ2hfY29sb3JzW2RvY3Vt
+ZW50LmhpZ2hsaWdodF9jb3VudCAlIGhpZ2hfY29sb3JzLmxlbmd0aF0sCisgICAgICAgICdmb250
+LXdlaWdodCcgOiAnYm9sZCcKKyAgICB9KTsKKworICAgIGRvY3VtZW50LmhpZ2hsaWdodF9jb3Vu
+dCsrOworfQorCisvL0hpZ2hsaWdodEtleXdvcmQoJ3RpbWV2YWwnKTsKKworZnVuY3Rpb24gYWRk
+X2hpZ2hsaWdodCgpCit7CisgICAgdmFyIHRib3ggPSBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgn
+aW5wdXRfaGlnaGxpZ2h0Jyk7CisgICAgSGlnaGxpZ2h0S2V5d29yZCh0Ym94LnZhbHVlKTsKK30K
+KworLyogXV0+ICovCis8L3NjcmlwdD4KKzwlIH0gJT4KKzwlCiBTdHJpbmcgcmV2ID0gbnVsbDsK
+IGlmKCFpc0RpciAmJiBlZiAhPSBudWxsKSB7CiAgICAgdHJ5IHsKZGlmZiAtLWdpdCBhL3dlYi9t
+YXN0LmpzcCBiL3dlYi9tYXN0LmpzcAotLS0gYS93ZWIvbWFzdC5qc3AKKysrIGIvd2ViL21hc3Qu
+anNwCkBAIC0yMDksNyArMjA5LDcgQEAKICAgICB9ICAgIAogICAgICAgICAgICAgaWYgKCFpc0Rp
+cikgewogICAgICAgICAgICAgICAgIGlmICggc2VydmxldC5zdGFydHNXaXRoKCIveHIiKSApIHsK
+LSAgICAgICAgICAgICAgICU+IHwgPGEgaHJlZj0iIyIgb25jbGljaz0iamF2YXNjcmlwdDpsbnRv
+Z2dsZSgpO3JldHVybiBmYWxzZTsiIHRpdGxlPSJTaG93IG9yIGhpZGUgbGluZSBudW1iZXJzICht
+aWdodCBiZSBzbG93ZXIgaWYgZmlsZSBoYXMgbW9yZSB0aGFuIDEwIDAwMCBsaW5lcykuIj5MaW5l
+ICM8L2E+PCUKKyAgICAgICAgICAgICAgICU+IHwgPGEgaHJlZj0iIyIgb25jbGljaz0iamF2YXNj
+cmlwdDpsbnRvZ2dsZSgpO3JldHVybiBmYWxzZTsiIHRpdGxlPSJTaG93IG9yIGhpZGUgbGluZSBu
+dW1iZXJzIChtaWdodCBiZSBzbG93ZXIgaWYgZmlsZSBoYXMgbW9yZSB0aGFuIDEwIDAwMCBsaW5l
+cykuIj5MaW5lICM8L2E+IHwgPGEgaHJlZj0iIyIgb25jbGljaz0iamF2YXNjcmlwdDpsc3R0b2dn
+bGUoKTtyZXR1cm4gZmFsc2U7IiB0aXRsZT0iU2hvdyBvciBoaWRlIHN5bWJvbCBsaXN0LiI+TGlz
+dDwvYT48JQogICAgICAgICAgICAgICAgIH0KICAgICAgICAgICAgICAgIFN0cmluZyByZXYgPSBy
+ZXF1ZXN0LmdldFBhcmFtZXRlcigiciIpOwogICAgICAgICAgICAgICAgaWYgKHJldiA9PSBudWxs
+IHx8IHJldi5lcXVhbHMoIiIpKSB7CkBAIC0yMjAsNyArMjIwLDggQEAKICAgICAgfQogCiAgICAg
+IFByb2plY3QgcHJvaiA9IFByb2plY3QuZ2V0UHJvamVjdChyZXNvdXJjZUZpbGUpOwotICAgICBp
+ZiAgKHByb2ogIT0gbnVsbCB8fCAhZW52aXJvbm1lbnQuaGFzUHJvamVjdHMoKSkgeworICAgICAv
+L2lmIChwcm9qICE9IG51bGwgfHwgIWVudmlyb25tZW50Lmhhc1Byb2plY3RzKCkpCisgICAgIHsK
+ICAgICAgICAgJT4gfCA8aW5wdXQgaWQ9InNlYXJjaCIgbmFtZT0icSIgY2xhc3M9InEiLz4KICAg
+ICAgICAgPGlucHV0IHR5cGU9InN1Ym1pdCIgdmFsdWU9IlNlYXJjaCIgY2xhc3M9InN1Ym1pdCIv
+PgogICAgICAgICA8JQo=
+</data>
+
+          </attachment>
+      
+
+    </bug>
+
+</bugzilla>

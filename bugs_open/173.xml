@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>173</bug_id>
+          
+          <creation_ts>2007-11-07 09:09:00 +0000</creation_ts>
+          <short_desc>Multiple term search yielding a intersection result on line content</short_desc>
+          <delta_ts>2007-11-15 08:24:23 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>webapp</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>ACCEPTED</bug_status>
+          
+          
+          
+          
+          
+          
+          <priority>P4</priority>
+          <bug_severity>enhancement</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Jason Leonard">jason</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          <cc>ldavis</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>443</commentid>
+            <who name="Jason Leonard">jason</who>
+            <bug_when>2007-11-07 09:09:03 +0000</bug_when>
+            <thetext>Currently a multi term search like &quot;main argc&quot; would result in an intersection of documents with these terms and a union of line content, but a user could be searching for only content lines with both these terms in. Therefore an intersection of documents and an intersection of line content.
+
+e.g. +main +argc
+
+main.c
+    20: int main(char* argv[], int argc)
+
+*** These results wouldn&apos;t be shown
+
+maintest.c
+    43: int main()
+    45: int argc;</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>461</commentid>
+            <who name="Leo Davis">ldavis</who>
+            <bug_when>2007-11-07 16:58:26 +0000</bug_when>
+            <thetext>I&apos;m interested in this as well.
+
+I had an idea that may be easier to implement (or harder, I didn&apos;t look into it that much).
+
+The idea is to color each search term like Google&apos;s cached results, so all terms will appear, but each term will have it&apos;s own color (up to about 10 terms).</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>605</commentid>
+            <who name="Trond Norbye">trond.norbye</who>
+            <bug_when>2007-11-15 08:24:23 +0000</bug_when>
+            <thetext>I am not sure what i like because:
+1. Sometimes the user format the code in a way that you would cause a single-line-seach-match to miss it.
+ex:
+int main(int argc, /* number of items present in argv */
+         char **argv) /* arguments blah.. */
+{
+
+2. Sometimes I cannot find what I want, since the symbol name is not unique enough (I get hundreds of match), but I do know the context it is used so I could limit the hits by adding another word on the line..
+
+I guess that a checkbox (or a link like we did on the sort order) would be a good compromise?</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

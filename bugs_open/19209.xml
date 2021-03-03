@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>19209</bug_id>
+          
+          <creation_ts>2012-05-03 12:07:00 +0000</creation_ts>
+          <short_desc>Parsing Error in xref and search for files containing strings like ~1.3 or ~1.2 in the path</short_desc>
+          <delta_ts>2012-05-03 12:07:54 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>indexer</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>NEW</bug_status>
+          
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>critical</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Shailey">shailey.gandhi</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>86430</commentid>
+            <who name="Shailey">shailey.gandhi</who>
+            <bug_when>2012-05-03 12:07:54 +0000</bug_when>
+            <thetext>Get the following error when cross referencing or viewing a file:
+
+Cannot parse &apos;/uddipub~1.3.0/uddipub/readme.txt&apos;: Minimum similarity for a FuzzyQuery has to be between 0.0f and 1.0f !
+ 
+
+All projects in our environment have been named in a similar way but the error comes up for files that have string like ~1.2.0 or ~1.3.0 in the path. 
+For eg; the following URL works fine: 
+
+http://popgrokapp01.msdwis.com:8080/source/xref/3dframework~10.0.0/3dframework/Src/DotNet/Web/fwkweb11/workframew/Other/Releases/3.6.0.0/Releases/3.6.0.0/Readme.txt
+
+BUt the following dont:
+
+http://popgrokapp01.msdwis.com:8080/source/xref/uddipub~1.3.0/uddipub/readme.txt
+ 
+OR
+
+http://popgrokapp01.msdwis.com:8080/source/xref/uddipub~1.3.0/uddipub/default.build
+
+This is an issue with search and xref.</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

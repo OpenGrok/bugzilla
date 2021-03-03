@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>12920</bug_id>
+          
+          <creation_ts>2009-11-27 16:55:00 +0000</creation_ts>
+          <short_desc>History page - Ordering of history items incorrect</short_desc>
+          <delta_ts>2010-04-18 18:41:02 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>webapp</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>WORKSFORME</resolution>
+          
+          
+          
+          
+          
+          <priority>P4</priority>
+          <bug_severity>minor</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Vasanth Manickam">vasanth.manickam</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          <cc>knut.hatlen</cc>
+    
+    <cc>Lubos.Kosco</cc>
+    
+    <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>57580</commentid>
+            <who name="Vasanth Manickam">vasanth.manickam</who>
+            <bug_when>2009-11-27 16:55:23 +0000</bug_when>
+            <thetext>The history page orderes the item based on revision number but it seems to do a string compare instead of taking the actual number into account..
+
+For example version 1.3 is ranked higher than 1.13</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>57823</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2009-12-01 14:16:23 +0000</bug_when>
+            <thetext>What kind of repository is this? CVS?
+
+Does this happen for all files, or just for directories?</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>71612</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2010-04-18 14:35:26 +0000</bug_when>
+            <thetext>No more information has been received. Closing the bug as &quot;Works for me&quot;.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>71614</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2010-04-18 18:41:02 +0000</bug_when>
+            <thetext>hmm, we might have fixed this one with 14953 , can submitter please check and reopen if the scenario was indeed different than CVS with branch ?</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

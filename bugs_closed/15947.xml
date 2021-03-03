@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>15947</bug_id>
+          
+          <creation_ts>2010-05-12 06:29:00 +0000</creation_ts>
+          <short_desc>SCCS repository does not support GNU SCCS (CSSC)</short_desc>
+          <delta_ts>2010-07-13 10:31:21 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>scm</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXED</resolution>
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>minor</bug_severity>
+          <target_milestone>0.10</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Jørgen Austvik">jaustvik</reporter>
+          <assigned_to name="Jørgen Austvik">jaustvik</assigned_to>
+          <cc>knut.hatlen</cc>
+    
+    <cc>Lubos.Kosco</cc>
+    
+    <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>72821</commentid>
+            <who name="Jørgen Austvik">jaustvik</who>
+            <bug_when>2010-05-12 06:29:29 +0000</bug_when>
+            <thetext>SCCSRepository:
+
+-----8&lt;-----------8&lt;-----------8&lt;-----------8&lt;-----------8&lt;------
+System.getProperty(&quot;org.opensolaris.opengrok.history.SCCS&quot;,&quot;sccs&quot;), &quot;help&quot;, &quot;help&quot; });
+-----8&lt;-----------8&lt;-----------8&lt;-----------8&lt;-----------8&lt;------
+
+GNU CSSC:
+
+-----8&lt;-----------8&lt;-----------8&lt;-----------8&lt;-----------8&lt;------
+austvik@music-server:/var/lib/hudson/.ant/lib$ sccs help help
+GNU CSSC does not provide the &quot;help&quot; command;
+please see the relevant entry in the GNU CSSC manual
+and the &quot;Missing Features and other Problems&quot; chapter
+in particular.
+
+/usr/lib/cssc/help: No such file or directory
+austvik@music-server:/var/lib/hudson/.ant/lib$ echo $?
+69
+-----8&lt;-----------8&lt;-----------8&lt;-----------8&lt;-----------8&lt;------
+
+Alternative that work:
+
+-----8&lt;-----------8&lt;-----------8&lt;-----------8&lt;-----------8&lt;------
+austvik@music-server:/var/lib/hudson/.ant/lib$ sccs --version
+sccs from GNU CSSC 1.0.1
+$Id: sccs.c,v 1.41 2004/10/03 10:57:35 james_youngman Exp $
+SccsPath = &apos;SCCS&apos;
+SccsDir = &apos;&apos;
+Default prefix for SCCS subcommands is &apos;/usr/lib/cssc/&apos;
+austvik@music-server:/var/lib/hudson/.ant/lib$ echo $?
+0
+-----8&lt;-----------8&lt;-----------8&lt;-----------8&lt;-----------8&lt;------
+
+Maybe we should try both &quot;sccs help help&quot; and &quot;sccs --version&quot;?</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>72824</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2010-05-12 07:36:40 +0000</bug_when>
+            <thetext>Workaround:
+
+for tests to succeed you need to fake /usr/lib/cssc/help file
+
+(as said in changeset:   807:6edf289b716a)</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>75378</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2010-07-13 10:31:21 +0000</bug_when>
+            <thetext>changeset:   1010:5333f864f779</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

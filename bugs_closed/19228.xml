@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>19228</bug_id>
+          
+          <creation_ts>2012-07-11 08:41:00 +0000</creation_ts>
+          <short_desc>changeset shorter than 8 bytes is detected in wrong way</short_desc>
+          <delta_ts>2012-07-11 12:56:03 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>analyzer</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXINSOURCE</resolution>
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>major</bug_severity>
+          <target_milestone>next</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Vladimir Kotal">vladimir.kotal</reporter>
+          <assigned_to name="Lubos Kosco">Lubos.Kosco</assigned_to>
+          <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>86546</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2012-07-11 08:41:25 +0000</bug_when>
+            <thetext>If first changeset of a file is shorter than 8 bytes it is processed in wrong way thanks to AnalyzerGuru.java#455 and PlainAnalyzerFactory.java#55.
+
+More details can be found in bug 19221.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86549</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2012-07-11 09:00:11 +0000</bug_when>
+            <thetext>--- a/src/org/opensolaris/opengrok/analysis/AnalyzerGuru.java   Thu Jul 05 13:13:30 2012 +0200
++++ b/src/org/opensolaris/opengrok/analysis/AnalyzerGuru.java   Wed Jul 11 10:59:09 2012 +0200
+@@ -450,17 +449,21 @@
+      * @param in The stream containing the data to analyze
+      * @return the analyzer factory to use
+      * @throws java.io.IOException if an error occurs while reading data from
+-     *                             the stream
++     * the stream
+      */
+     public static FileAnalyzerFactory find(InputStream in) throws IOException {
+         in.mark(8);
+-        byte[] content = new byte[8];
++        byte[] content = new byte[8];
+         int len = in.read(content);
+         in.reset();
+-
+-        /* Need at least 4 bytes to perform magic string matching. */
+-        if (len &lt; 4) {
+-            return null;
++        if (len &lt; 8) {
++            /*
++             * Need at least 4 bytes to perform magic string matching.
++             */
++            if (len &lt; 4) {
++                return null;
++            }
++            content = Arrays.copyOf(content, len);
+         }</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86550</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2012-07-11 12:56:03 +0000</bug_when>
+            <thetext>changeset:   1405:44f013d405e6</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

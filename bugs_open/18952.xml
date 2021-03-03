@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>18952</bug_id>
+          
+          <creation_ts>2011-09-20 16:10:00 +0000</creation_ts>
+          <short_desc>CVS history broken</short_desc>
+          <delta_ts>2011-09-20 16:10:28 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>analyzer</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>NEW</bug_status>
+          
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>trivial</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Milan Jurik">milan.jurik</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>85329</commentid>
+            <who name="Milan Jurik">milan.jurik</who>
+            <bug_when>2011-09-20 16:10:28 +0000</bug_when>
+            <thetext>http://&lt;grok&gt;/source/history/NetBSD-current/usr.bin/ftp/ftp.c
+
+- history is broken with sorting:
+
+[...]
+1.3
+1.2
+1.1
+1.1.2.1
+1.1.1.2
+1.1.1.1
+1.9.2.2
+1.9.2.1
+1.29.2.2
+[...]</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

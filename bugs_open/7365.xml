@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>7365</bug_id>
+          
+          <creation_ts>2009-03-12 19:00:00 +0000</creation_ts>
+          <short_desc>Attempting to get old version of file from ClearCase causes 100% CPU</short_desc>
+          <delta_ts>2009-11-25 12:28:11 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>scm</component>
+          <version>unspecified</version>
+          <rep_platform>i86pc/i386</rep_platform>
+          <op_sys>Windows</op_sys>
+          <bug_status>NEW</bug_status>
+          
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>normal</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Simex">simex</reporter>
+          <assigned_to name="Garen">garen</assigned_to>
+          <cc>garen</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>30815</commentid>
+            <who name="Simex">simex</who>
+            <bug_when>2009-03-12 19:00:44 +0000</bug_when>
+            <thetext>When browsing the history of a file under ClearCase control, clicking a specific version in the history causes an infinite loop in the webapp. This seems to be caused by ClearCaseRepository.drainStream(InputStream in) - specifically, on my systems at least, skipping doesn&apos;t seem to skip (!) so it sits in the while(true) loop forever
+.
+I have fixed it for my version by changing drainStream to:
+
+    /**
+     * Drain all data from a stream and close it.
+     * @param in the stream to drain
+     * @throws IOException if an I/O error occurs
+     */
+    private static void drainStream(InputStream in) throws IOException {
+	int nextByte = 0;
+	while (nextByte != -1) {
+            nextByte = in.read();
+        }
+        in.close();
+    }
+
+Which seems to work, since actually read()ing seems to work.
+
+I don&apos;t know if this is the most efficient solution (especially reading one byte at a time) but it&apos;s the only thing I can think of.
+
+Server running on Windows XP SP2 / Apache Tomcat 6.0.18 / Java HotSpot(TM) Client VM (build 1.6.0-b105, mixed mode, sharing)</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>42128</commentid>
+            <who name="Garen">garen</who>
+            <bug_when>2009-06-22 11:17:12 +0000</bug_when>
+            <thetext>When I click in the Revision column to select a specific version, I just get:
+
+Error reading file
+
+Also wondered if the forward-slash characters were causing a problem, which look like:
+
+http://opengrok:8080/source/xref/a/b/c/d/foo.c?r=%2Fmain%2F2
+
+Where %2F is the encoding for &apos;/&apos;, and the revision specifier would be /main/2 when expanded.
+
+
+Is that what you were seeing?  FWIW, on my side I&apos;m running Tomcat 5.5 on Linux, Java HotSpot(TM) 64-Bit Server VM (build 14.0-b16, mixed mode).</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>47217</commentid>
+            <who name="Simex">simex</who>
+            <bug_when>2009-08-20 07:03:12 +0000</bug_when>
+            <thetext>See also Bug 4165 which modifies the same method in the class, but does it to handle IOException&apos;s instead of 100% CPU...
+(Note that it still occurs with the changes introduced there)</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

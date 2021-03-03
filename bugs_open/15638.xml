@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>15638</bug_id>
+          
+          <creation_ts>2010-04-15 16:05:00 +0000</creation_ts>
+          <short_desc>hit summarizer should be improved</short_desc>
+          <delta_ts>2010-04-16 06:30:15 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>webapp</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>NEW</bug_status>
+          
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>minor</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          <blocked>8025</blocked>
+    
+    <blocked>15644</blocked>
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Lubos Kosco">Lubos.Kosco</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>71452</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2010-04-15 16:05:28 +0000</bug_when>
+            <thetext>this bug is also there in 0.9 RC1
+
+search for e.g. :
+
+http://src.opensolaris.org/source/search?q=&amp;defs=modify&amp;refs=&amp;path=&amp;hist=&amp;project=%2Fonnv
+
+the hits show also method calls, not only method definitions (as one would expect according to query) :(
+
+http://src.opensolaris.org/source/xref/opengrok/trunk/src/org/opensolaris/opengrok/search/Summarizer.java#19
+
+has a TODO on fixing the summarizer, it would be cool if it would work properly ...</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

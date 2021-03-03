@@ -1,0 +1,38 @@
+#!/usr/bin/sh
+
+PROGDIR=/user/opengrok-0.7
+
+# REQUIRED The root of your source tree
+SRC_ROOT=/user/opengrok/source_root
+
+# REQUIRED  The directory where the data files like
+# Lucene index and hypertext cross-references are stored
+DATA_ROOT=/user/opengrok/data_root
+
+# OPTIONAL A tab separated files that contains small
+# descriptions for paths in the source tree
+PATH_DESC=${PROGDIR}/paths.tsv
+
+# A modern Exubrant Ctags program
+# from http://ctags.sf.net
+EXUB_CTAGS=/usr/local/bin/exuberant-ctags
+
+#WEB APP URL
+WEBAPP_URL="localhost:2424"
+
+# If you need to set properties (Ex. override the mercurial binary)
+#PROPERTIES=-Dorg.opensolaris.opengrok.history.Mercurial=/home/trond/bin/hg
+
+# Uncomment the following line if your source contains Mercurial repositories.
+# SCAN_FOR_REPOS="-S"
+
+# You might want to add more available memory, and perhaps use a server jvm?
+#JAVA_OPTS="-server -Xmx1024m"
+
+LOGGER="-Djava.util.logging.config.file=conf/logging.properties"
+cvs update -dA ${SRC_ROOT}
+java -jar ${PROGDIR}/opengrok.jar -S -W ${PROGDIR}/opengrok-configuration.xml -c ${EXUB_CTAGS} -s ${SRC_ROOT} -d ${DATA_ROOT} -P -v
+java -jar ${PROGDIR}/opengrok.jar -U ${WEBAPP_URL} -R ${PROGDIR}/opengrok-configuration.xml -n
+
+# OPTIONAL
+#java ${LOGGER} -classpath ${PROGDIR}/opengrok.jar org.opensolaris.opengrok.web.EftarFile ${PATH_DESC} ${DATA_ROOT}/index/dtags.eftar

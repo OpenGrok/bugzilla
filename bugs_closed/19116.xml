@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>19116</bug_id>
+          
+          <creation_ts>2011-12-24 19:46:00 +0000</creation_ts>
+          <short_desc>SQLIntegrityConstraintViolationException when indexing Bazaar history</short_desc>
+          <delta_ts>2011-12-27 08:44:49 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>scm</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXED</resolution>
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>normal</bug_severity>
+          <target_milestone>0.11</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Knut Anders Hatlen">knut.hatlen</reporter>
+          <assigned_to name="Knut Anders Hatlen">knut.hatlen</assigned_to>
+          <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>85976</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2011-12-24 19:46:14 +0000</bug_when>
+            <thetext>I checked out a copy of MySQL Server from Launchpad (bzr branch lp:mysql-server) and ran the indexer with the JDBC history cache enabled. The indexing failed with this exception:
+
+org.opensolaris.opengrok.history.HistoryException: java.sql.SQLIntegrityConstraintViolationException: The statement was aborted because it would have caused a duplicate key value in a unique or primary key constraint or unique index identified by &apos;CHANGESETS_REPO_REV_UNIQUE&apos; defined on &apos;CHANGESETS&apos;.
+	at org.opensolaris.opengrok.history.JDBCHistoryCache.store(JDBCHistoryCache.java:603)
+	at org.opensolaris.opengrok.history.Repository.createCache(Repository.java:233)
+	at org.opensolaris.opengrok.history.HistoryGuru.createCache(HistoryGuru.java:450)
+	at org.opensolaris.opengrok.history.HistoryGuru.ensureHistoryCacheExists(HistoryGuru.java:603)
+	at org.opensolaris.opengrok.index.IndexDatabase.update(IndexDatabase.java:337)
+	at org.opensolaris.opengrok.index.IndexDatabase$1.run(IndexDatabase.java:158)
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:441)
+	at java.util.concurrent.FutureTask$Sync.innerRun(FutureTask.java:303)
+	at java.util.concurrent.FutureTask.run(FutureTask.java:138)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
+	at java.lang.Thread.run(Thread.java:662)
+Caused by: java.sql.SQLIntegrityConstraintViolationException: The statement was aborted because it would have caused a duplicate key value in a unique or primary key constraint or unique index identified by &apos;CHANGESETS_REPO_REV_UNIQUE&apos; defined on &apos;CHANGESETS&apos;.
+	at org.apache.derby.impl.jdbc.SQLExceptionFactory40.getSQLException(Unknown Source)
+	at org.apache.derby.impl.jdbc.Util.generateCsSQLException(Unknown Source)
+	at org.apache.derby.impl.jdbc.TransactionResourceImpl.wrapInSQLException(Unknown Source)
+	at org.apache.derby.impl.jdbc.TransactionResourceImpl.handleException(Unknown Source)
+	at org.apache.derby.impl.jdbc.EmbedConnection.handleException(Unknown Source)
+	at org.apache.derby.impl.jdbc.ConnectionChild.handleException(Unknown Source)
+	at org.apache.derby.impl.jdbc.EmbedStatement.executeStatement(Unknown Source)
+	at org.apache.derby.impl.jdbc.EmbedPreparedStatement.executeStatement(Unknown Source)
+	at org.apache.derby.impl.jdbc.EmbedPreparedStatement.executeUpdate(Unknown Source)
+	at org.opensolaris.opengrok.history.JDBCHistoryCache.storeHistory(JDBCHistoryCache.java:698)
+	at org.opensolaris.opengrok.history.JDBCHistoryCache.store(JDBCHistoryCache.java:598)
+	... 11 more
+Caused by: java.sql.SQLException: The statement was aborted because it would have caused a duplicate key value in a unique or primary key constraint or unique index identified by &apos;CHANGESETS_REPO_REV_UNIQUE&apos; defined on &apos;CHANGESETS&apos;.
+	at org.apache.derby.impl.jdbc.SQLExceptionFactory.getSQLException(Unknown Source)
+	at org.apache.derby.impl.jdbc.SQLExceptionFactory40.wrapArgsForTransportAcrossDRDA(Unknown Source)
+	... 22 more
+Caused by: ERROR 23505: The statement was aborted because it would have caused a duplicate key value in a unique or primary key constraint or unique index identified by &apos;CHANGESETS_REPO_REV_UNIQUE&apos; defined on &apos;CHANGESETS&apos;.
+	at org.apache.derby.iapi.error.StandardException.newException(Unknown Source)
+	at org.apache.derby.impl.sql.execute.IndexChanger.insertAndCheckDups(Unknown Source)
+	at org.apache.derby.impl.sql.execute.IndexChanger.doInsert(Unknown Source)
+	at org.apache.derby.impl.sql.execute.IndexChanger.insert(Unknown Source)
+	at org.apache.derby.impl.sql.execute.IndexSetChanger.insert(Unknown Source)
+	at org.apache.derby.impl.sql.execute.RowChangerImpl.insertRow(Unknown Source)
+	at org.apache.derby.impl.sql.execute.InsertResultSet.normalInsertCore(Unknown Source)
+	at org.apache.derby.impl.sql.execute.InsertResultSet.open(Unknown Source)
+	at org.apache.derby.impl.sql.GenericPreparedStatement.executeStmt(Unknown Source)
+	at org.apache.derby.impl.sql.GenericPreparedStatement.execute(Unknown Source)
+	... 16 more</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>85977</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2011-12-24 19:54:12 +0000</bug_when>
+            <thetext>I think the problem is caused by the following changeset, which confuses the Bazaar history parser because the commit message contains other commit messages:
+
+http://bazaar.launchpad.net/~mysql/mysql-server/trunk/revision/3388
+
+It probably thinks these are multiple changesets, and not a single one, and tries to add each of them to the database. But the revision numbers are already in the database, and the insert fails because duplicates are detected.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>85978</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2011-12-27 08:44:49 +0000</bug_when>
+            <thetext>Judging by the code and the unit tests, splitting of changesets like the one mentioned above, was intentional. With the flat file history backend, the duplicates won&apos;t be noticed, and the creation of the history cache will be successful. However, the revision numbers in the split changeset point to revisions in another branch, so choosing any of those changesets (or diffing them) in the history view won&apos;t work as expected. They&apos;ll instead show the revisions with that revision number in the branch that has been checked out. With the JDBC history cache backend, it fails earlier because it has checks on insert for duplicate revision numbers. So it seems like not splitting these changesets would be the right thing to do for both the backends.
+
+Checked in a fix:
+
+changeset:   1285:fbd6940954e7</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

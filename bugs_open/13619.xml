@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>13619</bug_id>
+          
+          <creation_ts>2009-12-29 23:34:00 +0000</creation_ts>
+          <short_desc>easier configuration procedure</short_desc>
+          <delta_ts>2010-01-01 21:53:47 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>misc</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>ACCEPTED</bug_status>
+          
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>normal</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Cristi Măgherușan">cristi.magherusan</reporter>
+          <assigned_to name="Lubos Kosco">Lubos.Kosco</assigned_to>
+          <cc>Lubos.Kosco</cc>
+    
+    <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>61029</commentid>
+            <who name="Cristi Măgherușan">cristi.magherusan</who>
+            <bug_when>2009-12-29 23:34:59 +0000</bug_when>
+            <thetext>The current configuration procedure is cumbersome and error-prone.
+
+Opengrok should have a more user-friendly configuration process, avoiding the manual editing of any of the scripts. 
+
+The settings could be defined in an independent config file (like /etc/opengrok.conf), which would be sourced by all the scripts at runtime.
+
+Optionally, an additional script may be created in order to modify the web.inf file inside the source WAR file at install time so that the users won&apos;t have to extract and then re-compress it themselves after main configuration file changes. The location to the source.war file could be specified in the main config so this could work even when updating opengrok.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>61093</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2009-12-31 08:35:01 +0000</bug_when>
+            <thetext>Can you please try:
+
+http://hub.opensolaris.org/bin/view/Project+opengrok/installdescription
+
+and let me know if it fixes your problem ? ;)
+
+thnx
+Lubos</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>61130</commentid>
+            <who name="Cristi Măgherușan">cristi.magherusan</who>
+            <bug_when>2010-01-01 21:53:47 +0000</bug_when>
+            <thetext>Thanks Lubos,
+
+Sorry for not reading the manual first. I installed it before when it was about at  version 0.6 and then it was different.
+
+I tried it and it kinda worked (History is grayed out and I can&apos;t seem to fix it), but this approach is set to use /var/opengrok, or otherwise it expects variables from the environment or even editing the script. 
+
+I still believe that an independent config file should be provided and it should contain all the stuff that may need to be set by the user, and heavily commented with instructions (the squid config is a good example :)
+
+The WAR can already be handled as in my proposal, so that is fine as it is, IMHO.
+
+Regards,
+Cristi</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

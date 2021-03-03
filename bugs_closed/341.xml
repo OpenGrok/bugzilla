@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>341</bug_id>
+          
+          <creation_ts>2008-01-04 11:44:00 +0000</creation_ts>
+          <short_desc>RFE: support searches across multiple projects</short_desc>
+          <delta_ts>2009-10-06 19:46:23 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>webapp</component>
+          <version>unspecified</version>
+          <rep_platform>Other</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXED</resolution>
+          
+          
+          
+          
+          
+          <priority>P4</priority>
+          <bug_severity>enhancement</bug_severity>
+          <target_milestone>0.8</target_milestone>
+          
+          <blocked>342</blocked>
+    
+    <blocked>11749</blocked>
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Hemang Lavana">HemangLavana</reporter>
+          <assigned_to name="Lubos Kosco">Lubos.Kosco</assigned_to>
+          <cc>garen</cc>
+    
+    <cc>guntasg</cc>
+    
+    <cc>lkundrak</cc>
+    
+    <cc>Lubos.Kosco</cc>
+    
+    <cc>vladimir.kotal</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>944</commentid>
+            <who name="Hemang Lavana">HemangLavana</who>
+            <bug_when>2008-01-04 11:44:35 +0000</bug_when>
+            <thetext>Hi,
+
+There was a recent thread discussing the need for supporting search across multiple projects:
+
+http://www.opensolaris.org/jive/thread.jspa?threadID=48141&amp;tstart=0
+
+It seems that the code in trunk creates separate index for each project. The primary benefit of doing this is that the spell checker will not provide suggestions for search terms outside of the defined project.
+
+On the other hand, creating separate index per project makes it difficult to search across multiple projects. A simple approach that was suggested in the thread would be to modify search.jsp to have a loop that repeats the search for each selected project. However, this might result in increased time required to search the keyword by number of projects and it may also skew the results. For example, the search keyword may occur only once in a given project and that result may still appear in the overall result which doesn&apos;t seem correct.
+
+This is RFE to support searches across multiple projects.
+
+Hemang.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>1931</commentid>
+            <who name="Lubomir Rintel">lkundrak</who>
+            <bug_when>2008-02-23 12:30:29 +0000</bug_when>
+            <thetext>Search across all/multiple project is my most frequent use case (list of projects containing thousand projects). Still I can use the path matching for that, it&apos;s just not as well integrated into the user interface.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>11091</commentid>
+            <who name="Trond Norbye">trond.norbye</who>
+            <bug_when>2008-08-26 01:24:03 +0000</bug_when>
+            <thetext>*** Bug 3068 has been marked as a duplicate of this bug. ***</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>11517</commentid>
+            <who name="Trond Norbye">trond.norbye</who>
+            <bug_when>2008-08-31 03:00:05 +0000</bug_when>
+            <thetext>I suggest that we implement this RFE in two steps. The first step will be to loop through the selected projects and search all of them (this is a small quick fix), and the second part will be to merge all the project index databases into a single database and search that database similar to the way we did before..</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>42161</commentid>
+            <who name="Garen">garen</who>
+            <bug_when>2009-06-22 17:11:09 +0000</bug_when>
+            <thetext>fwiw, my initial motivation to use opengrok was to be able to help with finding security vulnerabilities.
+
+When a new high profile open-source security vulnerability is announced, I want to be able to search with opengrok for some string that I find in the affected code and quickly verify if it is in the codebase indexed by opengrok.  I don&apos;t want to have to monotonously select each project one by one.
+
+The other common case I want it for is for finding all instances of a particular defect -- find all the sources that re-used a portion of &apos;defective&apos; code -- and make sure they all get fixed.
+
+Need to be able to search the entire codebase for both of those use cases.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>47424</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2009-08-21 15:16:30 +0000</bug_when>
+            <thetext>*** Bug 10758 has been marked as a duplicate of this bug. ***</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>48443</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2009-09-01 07:27:10 +0000</bug_when>
+            <thetext>will fix, since new lucene update provides methods to achieve this quite conveniently, even with parallel search if more cpus are available ;)
+
+I have some doubts on spellchecker though, but first idea is to have spellchecker suggestion per project, so it will show:
+project blah , have you meant: blah ?
+project foo , have you meant: bar ?
+project test , have you meant: testme ?
+underneath a failed search for the appropriate project, obviously results from the rest of the projects will be shown below suggestions
+
+
+
+the other change will be that project list will move to right and a checkbox &quot;all&quot; will be added</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>48965</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2009-09-04 14:47:32 +0000</bug_when>
+            <thetext>OK, changeset 830	f38eb240ab54 has the draft changes
+
+I have to note, that the spellchecker will kick in only when nothing found in ANY project (by design from old design) .
+
+Also I will not close this bug, since I&apos;d like to redesign how the search page looks like to make it a bit more usable then current one ...</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>51627</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2009-10-06 09:28:58 +0000</bug_when>
+            <thetext>created new bug for UI redesign, closing this one, most probably 0.8 will stay like it is in current trunk</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>51716</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2009-10-06 19:45:21 +0000</bug_when>
+            <thetext>almost forgot, OSR for this is # 12974</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>51717</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2009-10-06 19:46:23 +0000</bug_when>
+            <thetext>(In reply to comment #9)
+&gt; almost forgot, OSR for this is # 12974
+
+I mean the OSR for jquery used for autocomplete project input field :)</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

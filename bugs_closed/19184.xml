@@ -1,0 +1,357 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>19184</bug_id>
+          
+          <creation_ts>2012-02-22 13:09:00 +0000</creation_ts>
+          <short_desc>README file contents are not displayed anymore in directory listing</short_desc>
+          <delta_ts>2012-03-12 12:46:05 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>webapp</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>RESOLVED</bug_status>
+          <resolution>FIXINSOURCE</resolution>
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>normal</bug_severity>
+          <target_milestone>next</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Vladimir Kotal">vladimir.kotal</reporter>
+          <assigned_to name="Lubos Kosco">Lubos.Kosco</assigned_to>
+          <cc>knut.hatlen</cc>
+    
+    <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>86284</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2012-02-22 13:09:58 +0000</bug_when>
+            <thetext>In 0.10 (and earlier releases) README file contents were displayed under the directory listing. This is not the case in 0.11.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86285</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2012-02-22 13:20:30 +0000</bug_when>
+            <thetext>FWIW, README files are displayed in the directory listings with 0.11 in my environment.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86286</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2012-02-22 14:11:48 +0000</bug_when>
+            <thetext>I can see it now working on another 0.11 instance.
+
+When trussing the Tomcat process I can see this:
+
+=== working instance:
+
+/35:    stat64(&quot;/var/opengrok/data/xref/opengrok-dev/README.txt.gz&quot;, 0xE6DF51A0) = 0
+/35:    stat64(&quot;/var/opengrok/data/xref/opengrok-dev/README.txt.gz&quot;, 0xE6DF51C0) = 0
+/35:    stat64(&quot;/var/opengrok/data/xref/opengrok-dev/README.txt.gz&quot;, 0xE6DF51F0) = 0
+/35:    stat64(&quot;/var/opengrok/src/opengrok-dev&quot;, 0xE6DF51F0) = 0
+/35:    stat64(&quot;/var/opengrok/data/xref/opengrok-dev/README.txt.gz&quot;, 0xE6DF51E0) = 0
+/35:    open64(&quot;/var/opengrok/data/xref/opengrok-dev/README.txt.gz&quot;, O_RDONLY) = 19
+/35:    fstat64(19, 0xE6DF5210)                         = 0
+/35:    fcntl(19, F_DUPFD, 0x00000100)                  = 293
+/35:    close(19)                                       = 0
+/35:    fcntl(293, F_GETFD, 0x082DDD20)                 = 0
+/35:    fcntl(293, F_SETFD, 0x00000001)                 = 0
+/35:    read(293, &quot;1F&quot;, 1)                              = 1
+
+...
+
+/35:    stat64(&quot;/var/opengrok/data/timestamp&quot;, 0xE6DF5210) = 0
+
+
+
+=== non-working instance:
+
+9500/4322:      stat64(&quot;/opengrok-0.11/data/xref/opengrok-trunk/README.txt.gz&quot;, 0xB43C9360) = 0
+9500/4322:      stat64(&quot;/opengrok-0.11/data/xref/opengrok-trunk/README.txt.gz&quot;, 0xB43C9360) = 0
+9500/4322:      stat64(&quot;/opengrok-0.11/data/xref/opengrok-trunk/README.txt.gz&quot;, 0xB43C9390) = 0
+9500/4322:      stat64(&quot;/ws-local/opengrok-trunk&quot;, 0xB43C9380)  = 0
+9500/4322:      stat64(&quot;/opengrok-0.11/data/xref/opengrok-trunk/README.txt&quot;, 0xB43C9360) Err#2 ENOENT
+9500/4322:      stat64(&quot;/opengrok-0.11/data/timestamp&quot;, 0xB43C93A0) = 0
+
+
+
+Obviously, the non-working instance is checking for README.txt while the working one for README.txt.gz. The non-working instance is using Java DB as opposed to the working one.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86287</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2012-02-22 14:24:16 +0000</bug_when>
+            <thetext>The behavior matches this code in PageConfig.java:
+
+1001    public File[] findDataFiles(List&lt;String&gt; filenames) {
+1002        if (filenames == null || filenames.isEmpty()) {
+1003            return new File[0];
+1004        }
+1005        File[] res = new File[filenames.size()];
+1006        File dir = new File(getEnv().getDataRootPath() + Prefix.XREF_P + path);
+1007        if (dir.exists() &amp;&amp; dir.isDirectory()) {
+1008            getResourceFile();
+1009            boolean compressed = getEnv().isCompressXref();
+1010            for (int i = res.length - 1; i &gt;= 0; i--) {
+1011                res[i] = checkFile(dir, filenames.get(i), compressed);
+1012            }
+1013        }
+1014        return res;
+1015    }
+
+and 
+
+970    private File checkFile(File dir, String name, boolean compressed) {
+971        File f = null;
+972        if (compressed) {
+973            f = new File(dir, name + &quot;.gz&quot;);
+974            if (f.exists() &amp;&amp; f.isFile()
+975                    &amp;&amp; f.lastModified() &gt;= resourceFile.lastModified()) {
+976                return f;
+977            }
+978        }
+979        f = new File(dir, name);
+980        if (f.exists() &amp;&amp; f.isFile()
+981                &amp;&amp; f.lastModified() &gt;= resourceFile.lastModified()) {
+982            return f;
+983        }
+984        return null;
+985    }
+
+which means that compressed must be set to false for the non-working case (the file is not even checked which corresponds to truss output). Therefore getEnv().isCompressXref() returns false as well. I can&apos;t see how this is possible given that xrefs are compressed on the system.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86288</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2012-02-22 15:26:23 +0000</bug_when>
+            <thetext>So far I tried this:
+
+inserted the following to list.jsp:
+
+out.write(&quot;isCompressXref = &quot; + cfg.getEnv().isCompressXref());
+
+it reports &quot;true&quot;.
+
+Then I modified list.jsp:
+
+        // requesting a directory listing
+        DirectoryListing dl = new DirectoryListing(cfg.getEftarReader());
+        List&lt;String&gt; files = cfg.getResourceFileList();
+        if (!files.isEmpty()) {
+            List&lt;String&gt; readMes = dl.listTo(resourceFile, out, path, files);
+
+// DEBUG
+        for (Iterator it = readMes.iterator (); it.hasNext ();) {
+                        String s = (String) it.next ();
+                        out.write (s);
+        }
+
+            File[] catfiles = cfg.findDataFiles(readMes);
+            for (int i=0; i &lt; catfiles.length; i++) {
+                if (catfiles[i] == null) {
+                    continue;
+                }
+                out.write(&quot;file = &quot; + catfiles[i].getName()); // DEBUG: no output
+
+
+and it writes README.txt to the web page but the catfiles array is empty.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86289</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2012-02-22 15:29:07 +0000</bug_when>
+            <thetext>Also, I tried to restart Tomcat, no change.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86290</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2012-02-22 15:47:22 +0000</bug_when>
+            <thetext>(In reply to comment #2)
+
+&gt; Obviously, the non-working instance is checking for README.txt while the
+&gt; working one for README.txt.gz. The non-working instance is using Java DB as
+&gt; opposed to the working one.
+
+Actually, both are running JavaDB.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86291</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2012-02-22 16:02:07 +0000</bug_when>
+            <thetext>I did some syscall to Java matching against checkFile():
+
+9500/4322:      stat64(&quot;/opengrok-0.11/data/xref/opengrok-trunk/README.txt.gz&quot;,
+0xB43C9360) = 0
+9500/4322:      stat64(&quot;/opengrok-0.11/data/xref/opengrok-trunk/README.txt.gz&quot;,
+0xB43C9360) = 0
+
+973            f = new File(dir, name + &quot;.gz&quot;);
+974            if (f.exists() &amp;&amp; f.isFile()
+
+9500/4322:      stat64(&quot;/opengrok-0.11/data/xref/opengrok-trunk/README.txt.gz&quot;,
+0xB43C9390) = 0
+
+975                    &amp;&amp; f.lastModified() &gt;= resourceFile.lastModified()) {
+
+9500/4322:      stat64(&quot;/ws-local/opengrok-trunk&quot;, 0xB43C9380)  = 0
+
+this is probably second part of line 975
+
+9500/4322:      stat64(&quot;/opengrok-0.11/data/xref/opengrok-trunk/README.txt&quot;,
+0xB43C9360) Err#2 ENOENT
+
+980        if (f.exists() &amp;&amp; f.isFile()
+
+  - only the first part (f.exists())
+
+
+Therefore the check on line 975 was not true and because of this the file was not written.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86292</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2012-02-22 16:19:30 +0000</bug_when>
+            <thetext>I am assuming that resourcefile is the directory of source code (/ws-local/opengrok-trunk in the non-working case).
+
+Here are the time stamps from the non-working system:
+
+Feb 22 17:10 /ws-local/opengrok-trunk
+Feb 15 11:35 /opengrok-0.11/data/xref/opengrok-trunk/README.txt.gz
+
+so obviously the check &apos;f.lastModified() &gt;= resourceFile.lastModified()&apos; is not true.
+
+There are 2 outstanding questions:
+  - the validity of the time stamp check
+    - do we really want to suppress the printing of the README file just because the xref is stale ?
+    - what happens if there is a change in some other file in that directory ? this will lead to the problem as well.
+  - why the directory and not the corresponding source code file is checked ?</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86293</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2012-02-22 16:28:11 +0000</bug_when>
+            <thetext>(In reply to comment #8)
+
+&lt;snip&gt;
+
+&gt;     - what happens if there is a change in some other file in that directory ?
+&gt; this will lead to the problem as well.
+
+Expanding this scenario:
+
+1. source code is mirrored to /ws-local/opengrok-trunk/
+   - the directory has time stamp A
+2. code is xref&apos;d to /opengrok-0.11/data/xref/opengrok-trunk/
+   - README.gz in this directory has time stamp A+1
+3. hg update is run into again /ws-local/opengrok-trunk/
+   - some file in that directory is changed
+   - the directory has time stamp A+2
+4. reindex (xref) is run
+   - time stamp of README.gz remains the same
+5. list.jsp is run for code in /ws-local/opengrok-trunk/
+
+In step #5 a check is performed:
+
+  timestamp(README.gz) &gt;= timestamp(/ws-local/opengrok-trunk/)
+
+which is
+
+  A &gt;= A+2
+
+which is not true and therefore the README file will not be displayed.
+
+timestamp is last modification time.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86294</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2012-02-22 16:51:58 +0000</bug_when>
+            <thetext>To complete the data, here&apos;s the output from the working instance:
+
+root@virtual4:~# ls -ald /var/opengrok/src/opengrok-dev            
+drwxr-xr-x  19 webservd root          36 Oct  3 16:56 /var/opengrok/src/opengrok-dev
+root@virtual4:~# ls -ald /var/opengrok/data/xref/opengrok-dev/README.txt.gz 
+-rw-r--r--   1 webservd webservd   14256 Dec 13 09:44 /var/opengrok/data/xref/opengrok-dev/README.txt.gz</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86295</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2012-02-23 10:38:45 +0000</bug_when>
+            <thetext>(In reply to comment #10)
+&gt; To complete the data, here&apos;s the output from the working instance:
+&gt; 
+&gt; root@virtual4:~# ls -ald /var/opengrok/src/opengrok-dev            
+&gt; drwxr-xr-x  19 webservd root          36 Oct  3 16:56
+&gt; /var/opengrok/src/opengrok-dev
+&gt; root@virtual4:~# ls -ald /var/opengrok/data/xref/opengrok-dev/README.txt.gz 
+&gt; -rw-r--r--   1 webservd webservd   14256 Dec 13 09:44
+&gt; /var/opengrok/data/xref/opengrok-dev/README.txt.gz
+
+Of course, we only got lucky. This is because on the working instance the initial clone of opengrok-dev was performed and it was indexed afterwards only once and never since.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86328</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2012-03-09 17:01:32 +0000</bug_when>
+            <thetext>so I think the fix should be in proper resolving of resourceFile
+will push a fix in a while (one testing is done)</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86329</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2012-03-09 17:16:47 +0000</bug_when>
+            <thetext>(In reply to comment #12)
+&gt; so I think the fix should be in proper resolving of resourceFile
+&gt; will push a fix in a while (one testing is done)
+
+Yes, absolutely.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86331</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2012-03-12 10:09:24 +0000</bug_when>
+            <thetext>quick and dirty fix will be in 
+changeset:   1341:41d108d1affe</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86333</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2012-03-12 12:46:05 +0000</bug_when>
+            <thetext>(In reply to comment #14)
+&gt; quick and dirty fix will be in 
+&gt; changeset:   1341:41d108d1affe
+
+So, how would the nice and elegant version of the fix look like ? :)</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

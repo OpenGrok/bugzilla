@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>16660</bug_id>
+          
+          <creation_ts>2010-07-27 20:42:00 +0000</creation_ts>
+          <short_desc>Perforce repositories return months 1-12, not 0-11</short_desc>
+          <delta_ts>2010-08-10 06:04:54 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>scm</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>Linux</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXED</resolution>
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>normal</bug_severity>
+          <target_milestone>0.10</target_milestone>
+          
+          <blocked>16764</blocked>
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="leaf nunes">leaf.nunes+opensolaris</reporter>
+          <assigned_to name="Knut Anders Hatlen">knut.hatlen</assigned_to>
+          <cc>knut.hatlen</cc>
+    
+    <cc>Lubos.Kosco</cc>
+    
+    <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>75932</commentid>
+              <attachid>4219</attachid>
+            <who name="leaf nunes">leaf.nunes+opensolaris</who>
+            <bug_when>2010-07-27 20:42:25 +0000</bug_when>
+            <thetext>Created attachment 4219
+proposed fix, subtract one from the p4 date to give a 0-based month.
+
+The 0.9 implementation of the perforce history parser passes the month given
+for a change from perforce to GregorianCalendar.
+
+This leads to dates displayed for changes that are a month after the actual
+change time.
+
+I&apos;m not certain if this is a java implementation difference, or a perforce date
+format difference, or if it&apos;s incorrect everywhere.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>75945</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2010-07-28 07:17:20 +0000</bug_when>
+            <thetext>Can we make sure the problem is not in the local / remote timezone setting or dateformat(see http://grok.czech.sun.com:8080/source/xref/opengrok-trunk/src/org/opensolaris/opengrok/history/MercurialHistoryParser.java#105 ) ?
+
+also for accepting of the patch I will need an SCA number from you
+it&apos;s easy to get it (just one mail to Oracle/Sun) - http://hub.opensolaris.org/bin/view/Main/sun_contributor_agreement</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>75982</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2010-07-29 08:53:03 +0000</bug_when>
+            <thetext>I think you&apos;re right that this is caused by failure to convert 1-based month to 0-based month. That&apos;s a common mistake when using java.util.Calendar. Thanks for pointing it out! I&apos;ll work on integrating a fix and a unit test for this bug.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>75996</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2010-07-29 14:51:52 +0000</bug_when>
+            <thetext>changeset:   1055:061921c8bac2</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>75997</commentid>
+            <who name="leaf nunes">leaf.nunes+opensolaris</who>
+            <bug_when>2010-07-29 14:53:35 +0000</bug_when>
+            <thetext>Thanks!</thetext>
+          </long_desc>
+      
+          <attachment
+              isobsolete="0"
+              ispatch="0"
+              isprivate="0"
+              isurl="0"
+          >
+            <attachid>4219</attachid>
+            <date>2010-07-27 20:42:00 +0000</date>
+            <delta_ts>2010-07-27 20:42:25 +0000</delta_ts>
+            <desc>proposed fix, subtract one from the p4 date to give a 0-based month.</desc>
+            <filename>p4diff</filename>
+            <type>application/octet-stream</type>
+            <size>1502</size>
+            <attacher>leaf.nunes+opensolaris</attacher>
+            
+              <data encoding="base64">CmRpZmYgLXIgZWUxY2Q2YzZhODNkIHNyYy9vcmcvb3BlbnNvbGFyaXMvb3Blbmdyb2svaGlzdG9y
+eS9QZXJmb3JjZUhpc3RvcnlQYXJzZXIuamF2YQotLS0gYS9zcmMvb3JnL29wZW5zb2xhcmlzL29w
+ZW5ncm9rL2hpc3RvcnkvUGVyZm9yY2VIaXN0b3J5UGFyc2VyLmphdmEJV2VkIE1heSAyNiAxNDow
+NDozOCAyMDEwIC0wNzAwCisrKyBiL3NyYy9vcmcvb3BlbnNvbGFyaXMvb3Blbmdyb2svaGlzdG9y
+eS9QZXJmb3JjZUhpc3RvcnlQYXJzZXIuamF2YQlUdWUgSnVsIDI3IDEzOjM0OjU4IDIwMTAgLTA3
+MDAKQEAgLTExNSw2ICsxMTUsNyBAQAogICAgICAgICAgICAgICAgIGludCB5ZWFyID0gSW50ZWdl
+ci5wYXJzZUludChtYXRjaGVyLmdyb3VwKDIpKTsKICAgICAgICAgICAgICAgICBpbnQgbW9udGgg
+PSBJbnRlZ2VyLnBhcnNlSW50KG1hdGNoZXIuZ3JvdXAoMykpOwogICAgICAgICAgICAgICAgIGlu
+dCBkYXkgPSBJbnRlZ2VyLnBhcnNlSW50KG1hdGNoZXIuZ3JvdXAoNCkpOwotICAgICAgICAgICAg
+ICAgIENhbGVuZGFyIGNhbGVuZGFyID0gbmV3IEdyZWdvcmlhbkNhbGVuZGFyKHllYXIsIG1vbnRo
+LCBkYXkpOworICAgICAgICAgICAgICAgIC8qIEdyZWdvcmlhbkNhbGVuZGFyIG1vbnRocyBhcmUg
+MCBiYXNlZCwgYnV0IHA0J3MgYXJlIDEgYmFzZWQqLworICAgICAgICAgICAgICAgIENhbGVuZGFy
+IGNhbGVuZGFyID0gbmV3IEdyZWdvcmlhbkNhbGVuZGFyKHllYXIsIG1vbnRoIC0gMSwgZGF5KTsK
+ICAgICAgICAgICAgICAgICBlbnRyeS5zZXREYXRlKGNhbGVuZGFyLmdldFRpbWUoKSk7CiAgICAg
+ICAgICAgICAgICAgZW50cnkuc2V0QXV0aG9yKG1hdGNoZXIuZ3JvdXAoNSkpOwogICAgICAgICAg
+ICAgICAgIGVudHJ5LnNldE1lc3NhZ2UobWF0Y2hlci5ncm91cCg2KS50cmltKCkpOwpAQCAtMTU1
+LDcgKzE1Nyw5IEBACiAgICAgICAgICAgICAgICAgaW50IHllYXIgPSBJbnRlZ2VyLnBhcnNlSW50
+KG1hdGNoZXIuZ3JvdXAoMikpOwogICAgICAgICAgICAgICAgIGludCBtb250aCA9IEludGVnZXIu
+cGFyc2VJbnQobWF0Y2hlci5ncm91cCgzKSk7CiAgICAgICAgICAgICAgICAgaW50IGRheSA9IElu
+dGVnZXIucGFyc2VJbnQobWF0Y2hlci5ncm91cCg0KSk7Ci0gICAgICAgICAgICAgICAgQ2FsZW5k
+YXIgY2FsZW5kYXIgPSBuZXcgR3JlZ29yaWFuQ2FsZW5kYXIoeWVhciwgbW9udGgsIGRheSk7Cisg
+ICAgICAgICAgICAgICAgLyogR3JlZ29yaWFuQ2FsZW5kYXIgbW9udGhzIGFyZSAwIGJhc2VkLCBi
+dXQgcDQncyBhcmUgMSBiYXNlZCovCisgICAgICAgICAgICAgICAgQ2FsZW5kYXIgY2FsZW5kYXIg
+PSBuZXcgR3JlZ29yaWFuQ2FsZW5kYXIoeWVhciwgbW9udGggLSAxLCBkYXkpOwogICAgICAgICAg
+ICAgICAgIGVudHJ5LnNldERhdGUoY2FsZW5kYXIuZ2V0VGltZSgpKTsKICAgICAgICAgICAgICAg
+ICBlbnRyeS5zZXRBdXRob3IobWF0Y2hlci5ncm91cCg1KSk7CiAgICAgICAgICAgICAgICAgZW50
+cnkuc2V0QWN0aXZlKHRydWUpOwo=
+</data>
+
+          </attachment>
+      
+
+    </bug>
+
+</bugzilla>

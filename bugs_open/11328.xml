@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>11328</bug_id>
+          
+          <creation_ts>2009-09-12 12:44:00 +0000</creation_ts>
+          <short_desc>OpenGrok can&apos;t deal with the CMake language syntax.</short_desc>
+          <delta_ts>2009-09-12 12:44:10 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>analyzer</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>NEW</bug_status>
+          
+          
+          
+          
+          
+          
+          <priority>P4</priority>
+          <bug_severity>enhancement</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Edward OCallaghan">victoredwardocallaghan</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>49665</commentid>
+            <who name="Edward OCallaghan">victoredwardocallaghan</who>
+            <bug_when>2009-09-12 12:44:10 +0000</bug_when>
+            <thetext>Good day,
+
+OpenGrok can&apos;t deal with the CMake build system language syntax.
+
+For example:
+http://src.auroraux.org:8080/source/xref/org.auroraux.nebula.primary/source/CMakeLists.txt
+
+Leads to no proper syntax highlighting.
+
+Thanks for your time,
+Edward O&apos;Callaghan.</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

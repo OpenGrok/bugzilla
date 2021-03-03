@@ -1,0 +1,445 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>405</bug_id>
+          
+          <creation_ts>2008-01-25 05:42:00 +0000</creation_ts>
+          <short_desc>Mercurial history parser may easily get out of sync</short_desc>
+          <delta_ts>2009-06-12 06:47:15 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>scm</component>
+          <version>unspecified</version>
+          <rep_platform>Other</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXED</resolution>
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>enhancement</bug_severity>
+          <target_milestone>0.8</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Trond Norbye">trond.norbye</reporter>
+          <assigned_to name="Knut Anders Hatlen">knut.hatlen</assigned_to>
+          <cc>knut.hatlen</cc>
+    
+    <cc>milan.jurik</cc>
+    
+    <cc>vladimir.kotal</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>1162</commentid>
+            <who name="Trond Norbye">trond.norbye</who>
+            <bug_when>2008-01-25 05:42:14 +0000</bug_when>
+            <thetext>The history parser will execute hg log -v and try to parse the output. If a line starts with one of the keywords it will gladly try to use it as a header (even if it is currently parsing the change description.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>15273</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2008-10-19 13:21:53 +0000</bug_when>
+            <thetext>Fixed in changeset 635:74f3a60821a7.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>41372</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2009-06-11 05:32:46 +0000</bug_when>
+            <thetext>Could you elaborate what those keywords are ? I am running OpenGrok 0.7 and usr/src/uts/common/io/ib/adapters/hermon/hermon_misc.c is present in the index db but search results for any of the CRs in the history of this file do not contain the file.
+
+The &apos;hg log -v&apos; output for the file:
+
+b4u-v490b-prg06:/ws-local/onnv-clone$ hg log -v usr/src/uts/common/io/ib/adapters/hermon/hermon_misc.c
+
+changeset:   9673:0a383243d4ca
+user:        Bill Taylor &lt;Bill.Taylor@Sun.COM&gt;
+date:        Wed May 20 07:52:34 2009 -0700
+
+description:
+        6837893 add new fields to ibt_hca_portinto_t
+
+modified:
+   usr/src/uts/common/io/ib/adapters/hermon/hermon_misc.c
+   usr/src/uts/common/io/ib/adapters/tavor/tavor_misc.c
+   usr/src/uts/common/sys/ib/ibtl/ibtl_types.h
+
+
+changeset:   9580:5c66c10f4262
+user:        Bill Taylor &lt;Bill.Taylor@Sun.COM&gt;
+date:        Fri May 08 12:19:29 2009 -0700
+
+description:
+        6807854 ConnectX QDR devices fail to run when managed by a QDR-aware Subnet Manager
+
+modified:
+   usr/src/uts/common/io/ib/adapters/hermon/hermon_misc.c
+
+
+changeset:   9517:b4839b0aa7a4
+user:        Bill Taylor &lt;Bill.Taylor@Sun.COM&gt;
+date:        Thu Apr 30 13:42:05 2009 -0700
+
+description:
+        6808773 code for Mellanox devices (hermon, tavor, udapl, fwflash) can become open source
+
+modified:
+   usr/src/cmd/fwflash/plugins/Makefile
+   usr/src/cmd/fwflash/plugins/transport/i386/Makefile
+   usr/src/cmd/fwflash/plugins/transport/sparc/Makefile
+   usr/src/lib/udapl/Makefile
+   usr/src/uts/common/Makefile.files
+   usr/src/uts/common/Makefile.rules
+   usr/src/uts/common/sys/Makefile
+   usr/src/uts/intel/Makefile.intel.shared
+   usr/src/uts/sparc/Makefile.sparc.shared
+   usr/src/xmod/xmod_files
+added:
+   usr/src/cmd/fwflash/plugins/hdrs/MELLANOX.h
+   usr/src/cmd/fwflash/plugins/hdrs/hermon_ib.h
+   usr/src/cmd/fwflash/plugins/hdrs/tavor_ib.h
+   usr/src/cmd/fwflash/plugins/i386/Makefile
+   usr/src/cmd/fwflash/plugins/sparc/Makefile
+   usr/src/cmd/fwflash/plugins/transport/common/hermon.c
+   usr/src/cmd/fwflash/plugins/transport/common/tavor.c
+   usr/src/cmd/fwflash/plugins/vendor/hermon-MELLANOX.c
+   usr/src/cmd/fwflash/plugins/vendor/tavor-MELLANOX.c
+   usr/src/lib/udapl/udapl_tavor/Makefile
+   usr/src/lib/udapl/udapl_tavor/Makefile.com
+   usr/src/lib/udapl/udapl_tavor/SUNWudaplt.conf
+   usr/src/lib/udapl/udapl_tavor/amd64/Makefile
+   usr/src/lib/udapl/udapl_tavor/amd64/amd64.il
+   usr/src/lib/udapl/udapl_tavor/common/dapl_cno_create.c
+   usr/src/lib/udapl/udapl_tavor/common/dapl_cno_free.c
+   usr/src/lib/udapl/udapl_tavor/common/dapl_cno_modify_agent.c
+   usr/src/lib/udapl/udapl_tavor/common/dapl_cno_query.c
+   usr/src/lib/udapl/udapl_tavor/common/dapl_cno_util.c
+   usr/src/lib/udapl/udapl_tavor/common/dapl_cno_wait.c
+   usr/src/lib/udapl/udapl_tavor/common/dapl_cookie.c
+   usr/src/lib/udapl/udapl_tavor/common/dapl_cr_accept.c
+   usr/src/lib/udapl/udapl_tavor/common/dapl_cr_callback.c
+   usr/src/lib/udapl/udapl_tavor/common/dapl_cr_handoff.c
+   usr/src/lib/udapl/udapl_tavor/common/dapl_cr_query.c
+   usr/src/lib/udapl/udapl_tavor/common/dapl_cr_reject.c
+   usr/src/lib/udapl/udapl_tavor/common/dapl_cr_util.c
+   usr/src/lib/udapl/udapl_tavor/common/dapl_debug.c
+   usr/src/lib/udapl/udapl_tavor/common/dapl_ep_connect.c
+   usr/src/lib/udapl/udapl_tavor/common/dapl_ep_create.c
+   usr/src/lib/udapl/udapl_tavor/common/dapl_ep_create_with_srq.c
+   usr/src/lib/udapl/udapl_tavor/common/dapl_ep_disconnect.c
+   usr/src/lib/udapl/udapl_tavor/common/dapl_ep_dup_connect.c
+   usr/src/lib/udapl/udapl_tavor/common/dapl_ep_free.c
+   usr/src/lib/udapl/udapl_tavor/common/dapl_ep_get_status.c
+   usr/src/lib/udapl/udapl_tavor/common/dapl_ep_modify.c
+   usr/src/lib/udapl/udapl_tavor/common/dapl_ep_post_rdma_read.c
+   usr/src/lib/udapl/udapl_tavor/common/dapl_ep_post_rdma_write.c
+   usr/src/lib/udapl/udapl_tavor/common/dapl_ep_post_recv.c
+   usr/src/lib/udapl/udapl_tavor/common/dapl_ep_post_send.c
+   usr/src/lib/udapl/udapl_tavor/common/dapl_ep_query.c
+   usr/src/lib/udapl/udapl_tavor/common/dapl_ep_reset.c
+   usr/src/lib/udapl/udapl_tavor/common/dapl_ep_util.c
+   usr/src/lib/udapl/udapl_tavor/common/dapl_evd_clear_unwaitable.c
+   usr/src/lib/udapl/udapl_tavor/common/dapl_evd_connection_callb.c
+   usr/src/lib/udapl/udapl_tavor/common/dapl_evd_cq_async_error_callb.c
+   usr/src/lib/udapl/udapl_tavor/common/dapl_evd_create.c
+   usr/src/lib/udapl/udapl_tavor/common/dapl_evd_dequeue.c
+   usr/src/lib/udapl/udapl_tavor/common/dapl_evd_disable.c
+   usr/src/lib/udapl/udapl_tavor/common/dapl_evd_dto_callb.c
+   usr/src/lib/udapl/udapl_tavor/common/dapl_evd_enable.c
+   usr/src/lib/udapl/udapl_tavor/common/dapl_evd_free.c
+   usr/src/lib/udapl/udapl_tavor/common/dapl_evd_modify_cno.c
+   usr/src/lib/udapl/udapl_tavor/common/dapl_evd_post_se.c
+   usr/src/lib/udapl/udapl_tavor/common/dapl_evd_qp_async_error_callb.c
+   usr/src/lib/udapl/udapl_tavor/common/dapl_evd_query.c
+   usr/src/lib/udapl/udapl_tavor/common/dapl_evd_resize.c
+   usr/src/lib/udapl/udapl_tavor/common/dapl_evd_set_unwaitable.c
+   usr/src/lib/udapl/udapl_tavor/common/dapl_evd_un_async_error_callb.c
+   usr/src/lib/udapl/udapl_tavor/common/dapl_evd_util.c
+   usr/src/lib/udapl/udapl_tavor/common/dapl_evd_wait.c
+   usr/src/lib/udapl/udapl_tavor/common/dapl_get_consumer_context.c
+   usr/src/lib/udapl/udapl_tavor/common/dapl_get_handle_type.c
+   usr/src/lib/udapl/udapl_tavor/common/dapl_hash.c
+   usr/src/lib/udapl/udapl_tavor/common/dapl_hca_util.c
+   usr/src/lib/udapl/udapl_tavor/common/dapl_ia_close.c
+   usr/src/lib/udapl/udapl_tavor/common/dapl_ia_open.c
+   usr/src/lib/udapl/udapl_tavor/common/dapl_ia_query.c
+   usr/src/lib/udapl/udapl_tavor/common/dapl_ia_util.c
+   usr/src/lib/udapl/udapl_tavor/common/dapl_init.c
+   usr/src/lib/udapl/udapl_tavor/common/dapl_llist.c
+   usr/src/lib/udapl/udapl_tavor/common/dapl_lmr_create.c
+   usr/src/lib/udapl/udapl_tavor/common/dapl_lmr_free.c
+   usr/src/lib/udapl/udapl_tavor/common/dapl_lmr_query.c
+   usr/src/lib/udapl/udapl_tavor/common/dapl_lmr_sync_rdma.c
+   usr/src/lib/udapl/udapl_tavor/common/dapl_lmr_util.c
+   usr/src/lib/udapl/udapl_tavor/common/dapl_mr_util.c
+   usr/src/lib/udapl/udapl_tavor/common/dapl_name_service.c
+   usr/src/lib/udapl/udapl_tavor/common/dapl_osd.c
+   usr/src/lib/udapl/udapl_tavor/common/dapl_provider.c
+   usr/src/lib/udapl/udapl_tavor/common/dapl_psp_create.c
+   usr/src/lib/udapl/udapl_tavor/common/dapl_psp_create_any.c
+   usr/src/lib/udapl/udapl_tavor/common/dapl_psp_free.c
+   usr/src/lib/udapl/udapl_tavor/common/dapl_psp_query.c
+   usr/src/lib/udapl/udapl_tavor/common/dapl_pz_create.c
+   usr/src/lib/udapl/udapl_tavor/common/dapl_pz_free.c
+   usr/src/lib/udapl/udapl_tavor/common/dapl_pz_query.c
+   usr/src/lib/udapl/udapl_tavor/common/dapl_pz_util.c
+   usr/src/lib/udapl/udapl_tavor/common/dapl_ring_buffer_util.c
+   usr/src/lib/udapl/udapl_tavor/common/dapl_rmr_bind.c
+   usr/src/lib/udapl/udapl_tavor/common/dapl_rmr_create.c
+   usr/src/lib/udapl/udapl_tavor/common/dapl_rmr_free.c
+   usr/src/lib/udapl/udapl_tavor/common/dapl_rmr_query.c
+   usr/src/lib/udapl/udapl_tavor/common/dapl_rmr_util.c
+   usr/src/lib/udapl/udapl_tavor/common/dapl_rsp_create.c
+   usr/src/lib/udapl/udapl_tavor/common/dapl_rsp_free.c
+   usr/src/lib/udapl/udapl_tavor/common/dapl_rsp_query.c
+   usr/src/lib/udapl/udapl_tavor/common/dapl_set_consumer_context.c
+   usr/src/lib/udapl/udapl_tavor/common/dapl_sp_util.c
+   usr/src/lib/udapl/udapl_tavor/common/dapl_srq.c
+   usr/src/lib/udapl/udapl_tavor/common/dapl_srq_util.c
+   usr/src/lib/udapl/udapl_tavor/common/mapfile-vers
+   usr/src/lib/udapl/udapl_tavor/i386/Makefile
+   usr/src/lib/udapl/udapl_tavor/i386/i386.il
+   usr/src/lib/udapl/udapl_tavor/include/dapl.h
+   usr/src/lib/udapl/udapl_tavor/include/dapl_adapter_util.h
+   usr/src/lib/udapl/udapl_tavor/include/dapl_cno_util.h
+   usr/src/lib/udapl/udapl_tavor/include/dapl_cookie.h
+   usr/src/lib/udapl/udapl_tavor/include/dapl_cr_util.h
+   usr/src/lib/udapl/udapl_tavor/include/dapl_debug.h
+   usr/src/lib/udapl/udapl_tavor/include/dapl_ep_util.h
+   usr/src/lib/udapl/udapl_tavor/include/dapl_evd_util.h
+   usr/src/lib/udapl/udapl_tavor/include/dapl_hash.h
+   usr/src/lib/udapl/udapl_tavor/include/dapl_hca_util.h
+   usr/src/lib/udapl/udapl_tavor/include/dapl_ia_util.h
+   usr/src/lib/udapl/udapl_tavor/include/dapl_init.h
+   usr/src/lib/udapl/udapl_tavor/include/dapl_lmr_util.h
+   usr/src/lib/udapl/udapl_tavor/include/dapl_mr_util.h
+   usr/src/lib/udapl/udapl_tavor/include/dapl_name_service.h
+   usr/src/lib/udapl/udapl_tavor/include/dapl_osd.h
+   usr/src/lib/udapl/udapl_tavor/include/dapl_provider.h
+   usr/src/lib/udapl/udapl_tavor/include/dapl_pz_util.h
+   usr/src/lib/udapl/udapl_tavor/include/dapl_ring_buffer_util.h
+   usr/src/lib/udapl/udapl_tavor/include/dapl_rmr_util.h
+   usr/src/lib/udapl/udapl_tavor/include/dapl_sp_util.h
+   usr/src/lib/udapl/udapl_tavor/include/dapl_srq_util.h
+   usr/src/lib/udapl/udapl_tavor/include/dapl_vendor.h
+   usr/src/lib/udapl/udapl_tavor/sparc/Makefile
+   usr/src/lib/udapl/udapl_tavor/sparc/dapl_tavor_atomic_copy.s
+   usr/src/lib/udapl/udapl_tavor/sparcv9/Makefile
+   usr/src/lib/udapl/udapl_tavor/tavor/dapl_arbel_hw.c
+   usr/src/lib/udapl/udapl_tavor/tavor/dapl_hermon_hw.c
+   usr/src/lib/udapl/udapl_tavor/tavor/dapl_tavor_hca.c
+   usr/src/lib/udapl/udapl_tavor/tavor/dapl_tavor_hw.c
+   usr/src/lib/udapl/udapl_tavor/tavor/dapl_tavor_hw.h
+   usr/src/lib/udapl/udapl_tavor/tavor/dapl_tavor_ibtf.h
+   usr/src/lib/udapl/udapl_tavor/tavor/dapl_tavor_ibtf_cm.c
+   usr/src/lib/udapl/udapl_tavor/tavor/dapl_tavor_ibtf_dto.c
+   usr/src/lib/udapl/udapl_tavor/tavor/dapl_tavor_ibtf_impl.h
+   usr/src/lib/udapl/udapl_tavor/tavor/dapl_tavor_ibtf_mrsync.c
+   usr/src/lib/udapl/udapl_tavor/tavor/dapl_tavor_ibtf_qp.c
+   usr/src/lib/udapl/udapl_tavor/tavor/dapl_tavor_ibtf_util.c
+   usr/src/lib/udapl/udapl_tavor/tavor/dapl_tavor_wr.c
+   usr/src/lib/udapl/udapl_tavor/tavor/dapl_tavor_wr.h
+   usr/src/uts/common/io/ib/adapters/hermon/hermon.c
+   usr/src/uts/common/io/ib/adapters/hermon/hermon.conf
+   usr/src/uts/common/io/ib/adapters/hermon/hermon_agents.c
+   usr/src/uts/common/io/ib/adapters/hermon/hermon_cfg.c
+   usr/src/uts/common/io/ib/adapters/hermon/hermon_ci.c
+   usr/src/uts/common/io/ib/adapters/hermon/hermon_cmd.c
+   usr/src/uts/common/io/ib/adapters/hermon/hermon_cq.c
+   usr/src/uts/common/io/ib/adapters/hermon/hermon_event.c
+   usr/src/uts/common/io/ib/adapters/hermon/hermon_fm.c
+   usr/src/uts/common/io/ib/adapters/hermon/hermon_ioctl.c
+   usr/src/uts/common/io/ib/adapters/hermon/hermon_misc.c
+   usr/src/uts/common/io/ib/adapters/hermon/hermon_mr.c
+   usr/src/uts/common/io/ib/adapters/hermon/hermon_qp.c
+   usr/src/uts/common/io/ib/adapters/hermon/hermon_qpmod.c
+   usr/src/uts/common/io/ib/adapters/hermon/hermon_rsrc.c
+   usr/src/uts/common/io/ib/adapters/hermon/hermon_srq.c
+   usr/src/uts/common/io/ib/adapters/hermon/hermon_stats.c
+   usr/src/uts/common/io/ib/adapters/hermon/hermon_umap.c
+   usr/src/uts/common/io/ib/adapters/hermon/hermon_wr.c
+   usr/src/uts/common/io/ib/adapters/tavor/tavor.c
+   usr/src/uts/common/io/ib/adapters/tavor/tavor.conf
+   usr/src/uts/common/io/ib/adapters/tavor/tavor_agents.c
+   usr/src/uts/common/io/ib/adapters/tavor/tavor_cfg.c
+   usr/src/uts/common/io/ib/adapters/tavor/tavor_ci.c
+   usr/src/uts/common/io/ib/adapters/tavor/tavor_cmd.c
+   usr/src/uts/common/io/ib/adapters/tavor/tavor_cq.c
+   usr/src/uts/common/io/ib/adapters/tavor/tavor_event.c
+   usr/src/uts/common/io/ib/adapters/tavor/tavor_ioctl.c
+   usr/src/uts/common/io/ib/adapters/tavor/tavor_misc.c
+   usr/src/uts/common/io/ib/adapters/tavor/tavor_mr.c
+   usr/src/uts/common/io/ib/adapters/tavor/tavor_qp.c
+   usr/src/uts/common/io/ib/adapters/tavor/tavor_qpmod.c
+   usr/src/uts/common/io/ib/adapters/tavor/tavor_rsrc.c
+   usr/src/uts/common/io/ib/adapters/tavor/tavor_srq.c
+   usr/src/uts/common/io/ib/adapters/tavor/tavor_stats.c
+   usr/src/uts/common/io/ib/adapters/tavor/tavor_umap.c
+   usr/src/uts/common/io/ib/adapters/tavor/tavor_wr.c
+   usr/src/uts/common/io/ib/clients/daplt/daplt.c
+   usr/src/uts/common/io/ib/clients/daplt/daplt.conf
+   usr/src/uts/common/sys/ib/adapters/hermon/hermon.h
+   usr/src/uts/common/sys/ib/adapters/hermon/hermon_agents.h
+   usr/src/uts/common/sys/ib/adapters/hermon/hermon_cfg.h
+   usr/src/uts/common/sys/ib/adapters/hermon/hermon_cmd.h
+   usr/src/uts/common/sys/ib/adapters/hermon/hermon_cq.h
+   usr/src/uts/common/sys/ib/adapters/hermon/hermon_event.h
+   usr/src/uts/common/sys/ib/adapters/hermon/hermon_fm.h
+   usr/src/uts/common/sys/ib/adapters/hermon/hermon_hw.h
+   usr/src/uts/common/sys/ib/adapters/hermon/hermon_ioctl.h
+   usr/src/uts/common/sys/ib/adapters/hermon/hermon_misc.h
+   usr/src/uts/common/sys/ib/adapters/hermon/hermon_mr.h
+   usr/src/uts/common/sys/ib/adapters/hermon/hermon_qp.h
+   usr/src/uts/common/sys/ib/adapters/hermon/hermon_rsrc.h
+   usr/src/uts/common/sys/ib/adapters/hermon/hermon_srq.h
+   usr/src/uts/common/sys/ib/adapters/hermon/hermon_typedef.h
+   usr/src/uts/common/sys/ib/adapters/hermon/hermon_wr.h
+   usr/src/uts/common/sys/ib/adapters/mlnx_umap.h
+   usr/src/uts/common/sys/ib/adapters/tavor/tavor.h
+   usr/src/uts/common/sys/ib/adapters/tavor/tavor_agents.h
+   usr/src/uts/common/sys/ib/adapters/tavor/tavor_cfg.h
+   usr/src/uts/common/sys/ib/adapters/tavor/tavor_cmd.h
+   usr/src/uts/common/sys/ib/adapters/tavor/tavor_cq.h
+   usr/src/uts/common/sys/ib/adapters/tavor/tavor_event.h
+   usr/src/uts/common/sys/ib/adapters/tavor/tavor_hw.h
+   usr/src/uts/common/sys/ib/adapters/tavor/tavor_ioctl.h
+   usr/src/uts/common/sys/ib/adapters/tavor/tavor_misc.h
+   usr/src/uts/common/sys/ib/adapters/tavor/tavor_mr.h
+   usr/src/uts/common/sys/ib/adapters/tavor/tavor_qp.h
+   usr/src/uts/common/sys/ib/adapters/tavor/tavor_rsrc.h
+   usr/src/uts/common/sys/ib/adapters/tavor/tavor_srq.h
+   usr/src/uts/common/sys/ib/adapters/tavor/tavor_typedef.h
+   usr/src/uts/common/sys/ib/adapters/tavor/tavor_wr.h
+   usr/src/uts/common/sys/ib/clients/daplt/daplt.h
+   usr/src/uts/common/sys/ib/clients/daplt/daplt_if.h
+   usr/src/uts/intel/daplt/Makefile
+   usr/src/uts/intel/hermon/Makefile
+   usr/src/uts/intel/tavor/Makefile
+   usr/src/uts/sparc/daplt/Makefile
+   usr/src/uts/sparc/hermon/Makefile
+   usr/src/uts/sparc/tavor/Makefile
+
+b4u-v490b-prg06:/ws-local/onnv-clone$</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>41376</commentid>
+            <who name="Trond Norbye">trond.norbye</who>
+            <bug_when>2009-06-11 05:59:00 +0000</bug_when>
+            <thetext>I just did a search on http://src.opensolaris.org/source and inserted the CR&apos;s in the history field and got a match for all of the CR&apos;s ...</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>41377</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2009-06-11 06:13:06 +0000</bug_when>
+            <thetext>The keywords are those suffixed by : in the hg log output. changeset/user/date/description/added/modified/... These keywords must be first on of the lines in the commit message and be suffixed by : in order to cause problems.
+
+I don&apos;t think there should be any problems with the commit messages posted above.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>41379</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2009-06-11 06:25:25 +0000</bug_when>
+            <thetext>Thanks for the replies; we probably hit a different problem then.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>41381</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2009-06-11 06:53:27 +0000</bug_when>
+            <thetext>So, I have just checked src.opensolaris.org and it reports it is running:
+
+&lt;meta name=&quot;generator&quot; content=&quot;0.7 (74d2b3c3e076)&quot;/&gt;
+
+However, this changeset is not 0.7 release, it is the following:
+
+author	Trond Norbye &lt;trond.norbye@sun.com&gt;
+	Fri Dec 12 07:43:50 2008 +0100 (6 months ago)
+changeset 702	74d2b3c3e076
+parent 701	c4995a4924bc
+child 703	1d40cd812e23
+
+and this is 0.7:
+
+author	Knut Anders Hatlen &lt;Knut.Hatlen@Sun.COM&gt;
+	Fri Oct 17 12:15:23 2008 +0200 (7 months ago)
+changeset 621	7d74ac38ae63
+parent 620	2f4b8469aeae
+child 622	c28ec5b497ad
+
+and this bug was fixed after 0.7 was released.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>41382</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2009-06-11 06:57:55 +0000</bug_when>
+            <thetext>Also, it behaves correctly on another internal system running opengrok build based on the following changeset:
+
+author	Trond Norbye &lt;trond.norbye@sun.com&gt;
+	Tue Nov 11 15:32:05 2008 +0100 (7 months ago)
+changeset 681	85c934b53b1e
+parent 680	a1844b737cd9
+child 682	28fb291c81dc
+
+So, I am still not entirely convinced this is not the bug we are hitting.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>41386</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2009-06-11 07:16:59 +0000</bug_when>
+            <thetext>I have just figured out that in 0.7 different template is used so the output will look actually like this:
+
+---
+b4u-v490b-prg06:/ws-local/onnv-clone$ /usr/bin/hg log --template &quot;changeset:   {rev}:{node|short}\\n{branches}{tags}{parents}user:        {author}\\ndate:        {date|isodate}\\ndescription:\\n{desc|strip}\\n\\n&quot; usr/src/uts/common/io/ib/adapters/hermon/hermon_misc.c
+changeset:   9673:0a383243d4ca
+user:        Bill Taylor &lt;Bill.Taylor@Sun.COM&gt;
+date:        2009-05-20 07:52 -0700
+description:
+6837893 add new fields to ibt_hca_portinto_t
+
+changeset:   9580:5c66c10f4262
+user:        Bill Taylor &lt;Bill.Taylor@Sun.COM&gt;
+date:        2009-05-08 12:19 -0700
+description:
+6807854 ConnectX QDR devices fail to run when managed by a QDR-aware Subnet Manager
+
+changeset:   9517:b4839b0aa7a4
+user:        Bill Taylor &lt;Bill.Taylor@Sun.COM&gt;
+date:        2009-04-30 13:42 -0700
+description:
+6808773 code for Mellanox devices (hermon, tavor, udapl, fwflash) can become open source
+---
+
+This does not match the problem description so I am only adding it for completeness.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>41468</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2009-06-12 06:47:15 +0000</bug_when>
+            <thetext>I have just reindexed the whole clone and the problem went away; sorry for the false alarm (but the changeset trick in the meta tag is neat, eh ? ;-)).</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

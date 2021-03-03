@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>7830</bug_id>
+          
+          <creation_ts>2009-03-31 14:43:00 +0000</creation_ts>
+          <short_desc>cant pull revision of file or annotate if repo requires auth</short_desc>
+          <delta_ts>2010-11-02 08:17:32 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>webapp</component>
+          <version>unspecified</version>
+          <rep_platform>i86pc/i386</rep_platform>
+          <op_sys>Linux</op_sys>
+          <bug_status>REOPENED</bug_status>
+          
+          
+          
+          
+          
+          
+          <priority>P4</priority>
+          <bug_severity>major</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="John">romanj</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          <cc>knut.hatlen</cc>
+    
+    <cc>opengrok-dev</cc>
+    
+    <cc>tjb</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>33499</commentid>
+            <who name="John">romanj</who>
+            <bug_when>2009-03-31 14:43:29 +0000</bug_when>
+            <thetext>opengrok hangs when annotating a file, or when pulling a specific revision of the file if the backend repository uses a tls connection and requires authentication (https with basic auth)</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>33626</commentid>
+            <who name="John">romanj</who>
+            <bug_when>2009-04-01 08:14:42 +0000</bug_when>
+            <thetext>a localized file:// type repository solved this problem.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>78859</commentid>
+            <who name="Tony Butt">tjb</who>
+            <bug_when>2010-11-02 01:05:54 +0000</bug_when>
+            <thetext>I second this - I had configured opengrok to scan 2 subversion repositories using remote access via http://localhost to try to isolate the interfaces to our repositories better.
+
+I have history working using jdbc, but annotate or selection of a prior revision from the history would hang indefinitely.
+
+Snooping the traffic using wireshark showed that authentication was being requested but not handled. There is a password stored for the tomcat user that should have worked, but apparently the username was not being passed through, or there was some other difficulty.</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

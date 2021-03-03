@@ -1,0 +1,356 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>3401</bug_id>
+          
+          <creation_ts>2008-09-11 14:52:00 +0000</creation_ts>
+          <short_desc>Unable to get history and annontate works</short_desc>
+          <delta_ts>2012-07-09 18:45:42 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>webapp</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>NEW</bug_status>
+          
+          
+          
+          <bug_file_loc>http://www.opensolaris.org/jive/thread.jspa?threadID=70120&amp;tstart=0</bug_file_loc>
+          
+          
+          <priority>P1</priority>
+          <bug_severity>critical</bug_severity>
+          <target_milestone>0.11</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Emilio Monti">emilmont</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          <cc>fwans089</cc>
+    
+    <cc>guntasg</cc>
+    
+    <cc>kenjim</cc>
+    
+    <cc>Lubos.Kosco</cc>
+    
+    <cc>opengrok-dev</cc>
+    
+    <cc>phastman</cc>
+    
+    <cc>ssyk3s</cc>
+    
+    <cc>z.carter</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>12351</commentid>
+            <who name="Emilio Monti">emilmont</who>
+            <bug_when>2008-09-11 14:52:23 +0000</bug_when>
+            <thetext>When using an external repository the history and annontate links are dim.
+
+This is due to &quot;HistoryGuru.getInstance().hasHistory(resourceFile)&quot; returning false.
+That is due to &quot;getRepository(file)&quot; returning null.
+That is due to &quot;RuntimeEnvironment.getInstance().getRepositories()&quot; being an empty map.
+Basically, it seems that &quot;WebappListener&quot; is not correctly initing the &quot;HistoryParser&quot; instance calling its addRepositories method.
+In the current stable release of OpenGrok this was done calling &quot;HistoryGuru.getInstance().addExternalRepositories(source)&quot; in &quot;WebappListener&quot;.
+
+This could have happened because of this change:
+http://cvs.opensolaris.org/source/diff/opengrok/trunk/src/org/opensolaris/opengrok/web/WebappListener.java?r2=/opengrok/trunk/src/org/opensolaris/opengrok/web/WebappListener.java@423&amp;r1=/opengrok/trunk/src/org/opensolaris/opengrok/web/WebappListener.java@290
+
+Solution: Add a call to HistoryGuru.getInstance().addRepositories(source); in WebappListener.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>12555</commentid>
+            <who name="Trond Norbye">trond.norbye</who>
+            <bug_when>2008-09-16 01:47:59 +0000</bug_when>
+            <thetext>I believe this will work if you use the configuration file. Could you please verify that this doesn&apos;t work with Perforce repositories? (This is the way it works for all other SCM repositories so I would be surprised if it doesn&apos;t work for Perforce).
+
+Create a config file by running OpenGrok like:
+
+java -jar opengrok.jar -S -W configuration.xml &lt;all of the other options you normally use&gt;</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>12783</commentid>
+              <attachid>506</attachid>
+            <who name="Zach Carter">z.carter</who>
+            <bug_when>2008-09-19 09:22:36 +0000</bug_when>
+            <thetext>Created attachment 506
+my configuration.xml</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>12784</commentid>
+            <who name="Zach Carter">z.carter</who>
+            <bug_when>2008-09-19 09:23:22 +0000</bug_when>
+            <thetext>(In reply to comment #1)
+
+&gt; Create a config file by running OpenGrok like:
+&gt; 
+&gt; java -jar opengrok.jar -S -W configuration.xml &lt;all of the other options you
+&gt; normally use&gt;
+
+This doesn&apos;t work for me.   I&apos;ll attach my configuration.xml</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>12785</commentid>
+            <who name="Trond Norbye">trond.norbye</who>
+            <bug_when>2008-09-19 09:49:23 +0000</bug_when>
+            <thetext>Your configuration file does not include any repository objects, so that is the reason it isn&apos;t working. What is the SCM system you are using?</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>12786</commentid>
+            <who name="Zach Carter">z.carter</who>
+            <bug_when>2008-09-19 10:04:25 +0000</bug_when>
+            <thetext>(In reply to comment #4)
+&gt; Your configuration file does not include any repository objects, so that is the
+&gt; reason it isn&apos;t working. What is the SCM system you are using?
+
+Perforce.   
+
+I&apos;ve done all I know to do to set it up (.p4config file exists and points to the correct client, p4 user is logged in, p4 binary is available).</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>12836</commentid>
+            <who name="Trond Norbye">trond.norbye</who>
+            <bug_when>2008-09-20 04:10:52 +0000</bug_when>
+            <thetext>Could you post the output of:
+
+java -jar opengrok.jar -s /your/source/root -d /your/data/root -v -S -c /your/ctags -n</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>12946</commentid>
+            <who name="Zach Carter">z.carter</who>
+            <bug_when>2008-09-22 16:54:32 +0000</bug_when>
+            <thetext>(In reply to comment #6)
+&gt; Could you post the output of:
+&gt; 
+&gt; java -jar opengrok.jar -s /your/source/root -d /your/data/root -v -S -c
+&gt; /your/ctags -n
+
+[zcarter@mott opengrok-0.7beta]$ java -jar opengrok.jar -s /data/opengrok/source -d /data/opengrok/data -v -S -c /usr/bin/ctags 2&gt;&amp;1 | tee /var/tmp/indexing.out
+Scanning for repositories...
+Done searching for repositories (4086s)
+Sep 22, 2008 3:52:33 PM org.opensolaris.opengrok.index.Indexer doIndexerExecution
+INFO: Starting indexExecution
+[zcarter@mott opengrok-0.7beta]$</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>12968</commentid>
+            <who name="Trond Norbye">trond.norbye</who>
+            <bug_when>2008-09-23 03:17:48 +0000</bug_when>
+            <thetext>The output from the commands shows that it is not able to detect the existence of the repositories. To detect the Perforce repositories OpenGrok will try to run the p4 binary and parse the output. Could you try to run the following command from /data/opengrok/source/&lt;somedirectory&gt; and post the output?
+
+p4 dirs /data/opengrok/source/&lt;somedirectory&gt;</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>12995</commentid>
+            <who name="Zach Carter">z.carter</who>
+            <bug_when>2008-09-23 10:13:52 +0000</bug_when>
+            <thetext>(In reply to comment #8)
+&gt; The output from the commands shows that it is not able to detect the existence
+&gt; of the repositories. To detect the Perforce repositories OpenGrok will try to
+&gt; run the p4 binary and parse the output. Could you try to run the following
+&gt; command from /data/opengrok/source/&lt;somedirectory&gt; and post the output?
+&gt; 
+&gt; p4 dirs /data/opengrok/source/&lt;somedirectory&gt;
+
+It doesn&apos;t work unless I add a wildcard like this: /data/opengrok/source/&lt;somedirectory&gt;/*
+
+[zcarter@mott parkcity]$ pwd
+/data/opengrok/source/parkcity
+[zcarter@mott parkcity]$ p4 dirs /data/opengrok/source/parkcity
+Path &apos;/data/opengrok/source/parkcity/...&apos; is not under client&apos;s root &apos;/data/opengrok/source/parkcity/f5_build&apos;.
+[zcarter@mott parkcity]$ p4 dirs /data/opengrok/source/parkcity/*|head 
+//depot/project/parkcity/f5_build//hotfix/README
+
+...</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>17868</commentid>
+            <who name="Trond Norbye">trond.norbye</who>
+            <bug_when>2008-11-07 05:05:06 +0000</bug_when>
+            <thetext>We discovered a couple of days ago that the perforce client use the PWD environment variable, and that is not updated by the system call chdir(2). We have added a fix to this in the mercurial repository. If you still have this problem, could you try the latest version?</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>19531</commentid>
+            <who name="Zach Carter">z.carter</who>
+            <bug_when>2008-11-13 08:51:50 +0000</bug_when>
+            <thetext>(In reply to comment #10)
+&gt; We discovered a couple of days ago that the perforce client use the PWD
+&gt; environment variable, and that is not updated by the system call chdir(2). We
+&gt; have added a fix to this in the mercurial repository. If you still have this
+&gt; problem, could you try the latest version?
+
+The latest version still is not exactly working.  It detects the perforce repository, adds some information about it into the configuration.xml file, and it seems to scan the repository while indexing.  I can see lots of p4 commands being run.   However, in the webapp the History and Annotate links are still dimmed out.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>45017</commentid>
+            <who name="Harshit">guntasg</who>
+            <bug_when>2009-07-26 22:41:22 +0000</bug_when>
+            <thetext>(In reply to comment #11)
+&gt; (In reply to comment #10)
+&gt; &gt; We discovered a couple of days ago that the perforce client use the PWD
+&gt; &gt; environment variable, and that is not updated by the system call chdir(2). We
+&gt; &gt; have added a fix to this in the mercurial repository. If you still have this
+&gt; &gt; problem, could you try the latest version?
+&gt; 
+&gt; The latest version still is not exactly working.  It detects the perforce
+&gt; repository, adds some information about it into the configuration.xml file, and
+&gt; it seems to scan the repository while indexing.  I can see lots of p4 commands
+&gt; being run.   However, in the webapp the History and Annotate links are still
+&gt; dimmed out.
+
+We are facing the same problem with CVS. The History and Annotate links are disabled. And according to me these are the coolest features of OpenGrok!
+
+Please help.
+
+Thanks.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>73312</commentid>
+            <who name="Mike">phastman</who>
+            <bug_when>2010-05-20 22:40:59 +0000</bug_when>
+            <thetext>I have the same problem with Perforce.  The History and Annotate links are dimmed out.
+
+When I run OpenGrok, it can contact Perforce (I know because I am watching the Perforce server log) and it generates a History Cache, but the cache appears to contain no Perforce metadata.  Here&apos;s an example of the contents of a History Cache file:
+
+less CISOLOG.gz
+&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;java version=&quot;1.6.0_07&quot; class=&quot;java.beans.XMLDecoder&quot;&gt;
+ &lt;object class=&quot;org.opensolaris.opengrok.history.History&quot;/&gt;
+&lt;/java&gt;
+
+Should there be some sort of p4 metadata in the History Cache files?
+
+Failing the ability of getting the History Cache working, is there a way to make OpenGrok run live querying of Perforce (which browsing) to be able to annotate?</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>73434</commentid>
+            <who name="Mike">phastman</who>
+            <bug_when>2010-05-25 00:19:06 +0000</bug_when>
+            <thetext>Just following up and adding that I am having this problem with OpenGrok 0.9.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>73536</commentid>
+            <who name="Mark Bickford">mark_bickford</who>
+            <bug_when>2010-05-26 20:46:25 +0000</bug_when>
+            <thetext>I also experienced the problem using Subversion 1.5 with the svn server on a remote machine.  I eventually fixed it by deleting the data directory, running with the following set of options in run.sh, and finally bouncing the webapp:
+
+java -Xms512M -Xmx512M -XX:MaxPermSize=256M  -Djava.util.logging.config.file=/home/opengroklogging.properties -jar /home/opengrok/lib/opengrok.jar -v -S -H -r on -c /usr/bin/ctags -s ${SRC_ROOT} -d ${DATA_ROOT}  -W  /home/opengrok/data/configuration.xml
+
+(Note: I realize that the logging param has a typo; I have since fixed it).</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>73703</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2010-05-31 15:05:20 +0000</bug_when>
+            <thetext>redispatching this bug ... accidentally saw it, but since opengrok-dev@opensolaris.org wasn&apos;t cced I doubt that dev team saw these updates ...
+
+let&apos;s get this bug closed, it seems to be open too long ;)</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>80300</commentid>
+            <who name="sb">ssyk3s</who>
+            <bug_when>2011-01-05 18:54:49 +0000</bug_when>
+            <thetext>For which release is this one targeted? I thought it would be listed in 0.10 but don&apos;t see it here...
+
+http://opensolaris.org/jive/thread.jspa?messageID=506796</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>80308</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2011-01-05 21:57:55 +0000</bug_when>
+            <thetext>(In reply to comment #17)
+&gt; For which release is this one targeted? I thought it would be listed in 0.10
+&gt; but don&apos;t see it here...
+&gt; 
+&gt; http://opensolaris.org/jive/thread.jspa?messageID=506796
+
+not there, seems this bug needs more love ... 
+we can try to target it for the next release, but I leave that up to trond</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>80321</commentid>
+            <who name="Trond Norbye">trond.norbye</who>
+            <bug_when>2011-01-06 09:02:36 +0000</bug_when>
+            <thetext>Is there anyone that is facing this problem right now with some spare time so that I can get more information about the setup and hopefully figure out what&apos;s wrong?</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>80335</commentid>
+            <who name="Zach Carter">z.carter</who>
+            <bug_when>2011-01-06 17:33:00 +0000</bug_when>
+            <thetext>(In reply to comment #19)
+&gt; Is there anyone that is facing this problem right now with some spare time so
+&gt; that I can get more information about the setup and hopefully figure out what&apos;s
+&gt; wrong?
+
+Sure, let me know at z.carter@f5.com.  We are running opengrok 0.9 on a CentOS server with perforce.
+
+I could probably reproduce it in a test environment as well.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86399</commentid>
+            <who name="Fadel Wanssa">fwans089</who>
+            <bug_when>2012-04-10 16:42:58 +0000</bug_when>
+            <thetext>I am using version 0.11.1. I have the same problem with perforce repository, it is generating the history cache, but the history and Annotate tabs are dimmed. 
+
+Is there a workaround for this issue?
+
+Is this going to be fixed soon?</thetext>
+          </long_desc>
+      
+          <attachment
+              isobsolete="0"
+              ispatch="0"
+              isprivate="0"
+              isurl="0"
+          >
+            <attachid>506</attachid>
+            <date>2008-09-19 09:22:00 +0000</date>
+            <delta_ts>2008-09-19 09:22:36 +0000</delta_ts>
+            <desc>my configuration.xml</desc>
+            <filename>configuration.xml</filename>
+            <type>text/xml</type>
+            <size>747</size>
+            <attacher>z.carter</attacher>
+            
+              <data encoding="base64">PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4gCjxqYXZhIHZlcnNpb249IjEu
+Ni4wXzA2IiBjbGFzcz0iamF2YS5iZWFucy5YTUxEZWNvZGVyIj4gCiA8b2JqZWN0IGNsYXNzPSJv
+cmcub3BlbnNvbGFyaXMub3Blbmdyb2suY29uZmlndXJhdGlvbi5Db25maWd1cmF0aW9uIj4gCiAg
+PHZvaWQgcHJvcGVydHk9ImRhdGFSb290Ij4gCiAgIDxzdHJpbmc+L2RhdGEvb3Blbmdyb2svZGF0
+YTwvc3RyaW5nPiAKICA8L3ZvaWQ+IAogIDx2b2lkIHByb3BlcnR5PSJwcm9qZWN0cyI+IAogICA8
+dm9pZCBtZXRob2Q9ImFkZCI+IAogICAgPG9iamVjdCBjbGFzcz0ib3JnLm9wZW5zb2xhcmlzLm9w
+ZW5ncm9rLmNvbmZpZ3VyYXRpb24uUHJvamVjdCI+IAogICAgIDx2b2lkIHByb3BlcnR5PSJkZXNj
+cmlwdGlvbiI+IAogICAgICA8c3RyaW5nPnBhcmtjaXR5PC9zdHJpbmc+IAogICAgIDwvdm9pZD4g
+CiAgICAgPHZvaWQgcHJvcGVydHk9InBhdGgiPiAKICAgICAgPHN0cmluZz4vcGFya2NpdHk8L3N0
+cmluZz4gCiAgICAgPC92b2lkPiAKICAgIDwvb2JqZWN0PiAKICAgPC92b2lkPiAKICA8L3ZvaWQ+
+IAogIDx2b2lkIHByb3BlcnR5PSJzb3VyY2VSb290Ij4gCiAgIDxzdHJpbmc+L2RhdGEvb3Blbmdy
+b2svc291cmNlPC9zdHJpbmc+IAogIDwvdm9pZD4gCiAgPHZvaWQgcHJvcGVydHk9InZlcmJvc2Ui
+PiAKICAgPGJvb2xlYW4+dHJ1ZTwvYm9vbGVhbj4gCiAgPC92b2lkPiAKIDwvb2JqZWN0PiAKPC9q
+YXZhPiAK
+</data>
+
+          </attachment>
+      
+
+    </bug>
+
+</bugzilla>

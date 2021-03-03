@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>19197</bug_id>
+          
+          <creation_ts>2012-03-26 14:58:00 +0000</creation_ts>
+          <short_desc>FileHistoryCache does not take projects into account</short_desc>
+          <delta_ts>2012-07-13 11:26:15 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>misc</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>NEW</bug_status>
+          
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>blocker</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Steven Haehn">Steven.Haehn</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          <cc>knut.hatlen</cc>
+    
+    <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>86367</commentid>
+            <who name="Steven Haehn">Steven.Haehn</who>
+            <bug_when>2012-03-26 14:58:18 +0000</bug_when>
+            <thetext>When attempting to build a history cache involving projects, there are no subdirectories representing the projects created as is seen in the cross-reference area. Consequently, the historycache is corrupted with data from all the projects. The following changes to the getCachedFile method (@ line 83) will fix the issue so that the proper cache is created and that the query made in the browser will actually work. Lines marked with &apos;seh&apos; are the needed changes.
+
+
+        sb.append(&quot;historycache&quot;);
+
+        try {
+            String rd = file.getPath().substring(env.getSourceRootPath().length()); // seh
+            Project p = Project.getProject( rd );    // seh
+            if ( p != null ) {                       // seh
+                sb.append( p.getPath() );            // seh
+            }                                        // seh
+            
+            String add = env.getPathRelativeToSourceRoot(file, 0);</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86368</commentid>
+            <who name="Steven Haehn">Steven.Haehn</who>
+            <bug_when>2012-03-26 15:22:53 +0000</bug_when>
+            <thetext>I forgot to mention that the source that I am working with is from opengrok-0.11-src.tar</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86468</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2012-06-19 08:32:54 +0000</bug_when>
+            <thetext>This seems to work in my environment.
+
+% ls src 
+p1  p2  p3  p4
+% rm -rf data
+% java -jar /path/to/opengrok.jar -s src -d data -P -S
+jun 19, 2012 10:27:05 AM org.opensolaris.opengrok.index.Indexer prepareIndexer
+INFO: Scanning for repositories...
+(...)
+% ls data/historycache 
+p1  p2  p3  p4
+
+Each project gets its own sub-directory under historycache. Is this not what you are seeing?</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86557</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2012-07-13 11:26:15 +0000</bug_when>
+            <thetext>Had an offline discussion with Steven about this issue, and it turns out I can reproduce it if the project directories are not actual directories, but rather symbolic links to other directories.
+
+The problem seems to be present regardless of which cache back-end we use (happens with both FileHistoryCache and JDBCHistoryCache).</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>19161</bug_id>
+          
+          <creation_ts>2012-01-31 15:02:00 +0000</creation_ts>
+          <short_desc>Solaris package should not deliver source.war to /var/tomcat6 in any form</short_desc>
+          <delta_ts>2012-01-31 15:35:41 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>misc</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXINSOURCE</resolution>
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>minor</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Vladimir Kotal">vladimir.kotal</reporter>
+          <assigned_to name="Vladimir Kotal">vladimir.kotal</assigned_to>
+          <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>86160</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2012-01-31 15:02:15 +0000</bug_when>
+            <thetext>Installed OSOLopengrok package to fresh S11 system and tried to deploy:
+
+# /usr/opengrok/bin/OpenGrok deploy
+Loading the default instance configuration ...
+Installing /usr/opengrok/bin/../lib/source.war to /var/tomcat6/webapps ...
+cp: /usr/opengrok/bin/../lib/source.war and /var/tomcat6/webapps//source.war are identical
+
+FATAL ERROR: Web Application Installation FAILED - Aborting!
+
+
+The deploy script should just copy the source.war to Tomcat webapps directory. Installing the file into location maintained by another package is not a good idea anyway.
+
+The users should just install OSOLopengrok and run OpenGrok deploy.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86161</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2012-01-31 15:03:28 +0000</bug_when>
+            <thetext>The fix is easy - just remove both source.war entries from package prototype.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86162</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2012-01-31 15:07:37 +0000</bug_when>
+            <thetext>(In reply to comment #1)
+&gt; The fix is easy - just remove both source.war entries from package prototype.
+
+and have only single entry delivering source.war to /usr/opengrok/lib/source.war</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86163</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2012-01-31 15:13:54 +0000</bug_when>
+            <thetext>(In reply to comment #2)
+&gt; (In reply to comment #1)
+&gt; &gt; The fix is easy - just remove both source.war entries from package prototype.
+&gt; 
+&gt; and have only single entry delivering source.war to
+&gt; /usr/opengrok/lib/source.war
+
+given the package will deliver source.war as webservd:webservd the OpenGrok script should be ajusted so that &apos;deploy&apos; command does the right thing and preserves the ownership.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86164</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2012-01-31 15:32:48 +0000</bug_when>
+            <thetext>After the change it works like this:
+
+root:S11:/tmp# pkgadd -d OSOLopengrok-0.11-rc3.pkg all
+
+Processing package instance &lt;OSOLopengrok&gt; from &lt;OSOLopengrok-0.11-rc3.pkg&gt;
+
+OpenGrok(generic) 0.11-rc3
+http://www.opensolaris.org/os/project/opengrok/
+Using &lt;/&gt; as the package base directory.
+## Processing package information.
+## Processing system information.
+   9 package pathnames are already properly installed.
+## Verifying package dependencies.
+## Verifying disk space requirements.
+## Checking for conflicts with packages already installed.
+## Checking for setuid/setgid programs.
+
+Installing OpenGrok as &lt;OSOLopengrok&gt;
+
+## Installing part 1 of 1.
+/lib/svc/method/svc-opengrok
+/usr/opengrok/bin/OpenGrok
+/usr/opengrok/doc/CHANGES.txt
+/usr/opengrok/doc/EXAMPLE.txt
+/usr/opengrok/doc/LICENSE.txt
+/usr/opengrok/doc/NOTICE.txt
+/usr/opengrok/doc/README.txt
+/usr/opengrok/doc/logging.properties
+/usr/opengrok/doc/opengrok-agent.properties
+/usr/opengrok/doc/paths.tsv
+/usr/opengrok/lib/ant.jar
+/usr/opengrok/lib/bcel-5.2.jar
+/usr/opengrok/lib/jrcs.jar
+/usr/opengrok/lib/lib &lt;symbolic link&gt;
+/usr/opengrok/lib/lucene-core-3.0.2.jar
+/usr/opengrok/lib/lucene-spellchecker-3.0.2.jar
+/usr/opengrok/lib/ogindexd
+/usr/opengrok/lib/opengrok.jar
+/usr/opengrok/lib/source.war
+/usr/opengrok/lib/swing-layout-0.9.jar
+/usr/opengrok/man/man1/opengrok.1
+[ verifying class &lt;none&gt; ]
+[ verifying class &lt;manifest&gt; ]
+
+Installation of &lt;OSOLopengrok&gt; was successful.
+root:S11:/tmp# ls -al /var/tomcat6/webapps/
+total 15
+drwxr-xr-x   5 webservd webservd       5 Jan 31 17:21 .
+drwxr-xr-x   7 root     bin            7 Jan 31 16:20 ..
+drwxr-xr-x   2 root     bin            3 Jan 31 16:20 ROOT
+drwxr-xr-x   5 root     bin            8 Jan 31 16:20 host-manager
+drwxr-xr-x   5 root     bin            9 Jan 31 16:20 manager
+root:S11:/tmp# /usr/opengrok/bin/OpenGrok deploy
+Loading the default instance configuration ...
+ERROR: Unable to determine Exuberant CTags command name for SunOS 5.11
+(/usr/bin/ctags is not Exuberant CTags)
+Installing /usr/opengrok/bin/../lib/source.war to /var/tomcat6/webapps ...
+
+Start your application server (Tomcat), if it is not already
+running, or wait until it loads the just installed web application.
+
+OpenGrok should be available on &lt;HOST&gt;:&lt;PORT&gt;/source
+  where HOST and PORT are configured in Tomcat.
+
+root:S11:/tmp# ls -al /var/tomcat6/webapps/total 6936
+drwxr-xr-x   5 webservd webservd       6 Jan 31 17:31 .
+drwxr-xr-x   7 root     bin            7 Jan 31 16:20 ..
+drwxr-xr-x   2 root     bin            3 Jan 31 16:20 ROOT
+drwxr-xr-x   5 root     bin            8 Jan 31 16:20 host-manager
+drwxr-xr-x   5 root     bin            9 Jan 31 16:20 manager
+-r--r--r--   1 webservd webservd 3426144 Jan 31 16:31 source.war</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>86165</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2012-01-31 15:35:41 +0000</bug_when>
+            <thetext>fixed with:
+
+changeset:   1308:5b098488d787
+tag:         tip
+user:        Vladimir Kotal &lt;Vladimir.Kotal@oracle.com&gt;
+date:        Tue Jan 31 16:35:17 2012 +0100
+
+description:
+	Bug 19161 - Solaris package should not deliver source.war to /var/tomcat6 in any form
+
+modified:
+   OpenGrok
+   platform/solaris/pkgdef/pkginfo
+   platform/solaris/pkgdef/prototype
+
+
+reviewed by Lubos Kosco.</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

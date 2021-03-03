@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>2243</bug_id>
+          
+          <creation_ts>2008-06-15 05:57:00 +0000</creation_ts>
+          <short_desc>Show date and time of the last index update</short_desc>
+          <delta_ts>2008-11-07 04:59:24 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>webapp</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXED</resolution>
+          
+          
+          
+          
+          
+          <priority>P4</priority>
+          <bug_severity>enhancement</bug_severity>
+          <target_milestone>0.8</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Moisei">moisei</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>8096</commentid>
+            <who name="Moisei">moisei</who>
+            <bug_when>2008-06-15 05:57:42 +0000</bug_when>
+            <thetext>For the large codebases, the index is update periodically.
+In such a cases, it would be useful to know when the index is updated at last.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>8097</commentid>
+            <who name="Moisei">moisei</who>
+            <bug_when>2008-06-15 05:58:32 +0000</bug_when>
+            <thetext>it&apos;s supposed to be an RFE of course, not a bug.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>9702</commentid>
+            <who name="Trond Norbye">trond.norbye</who>
+            <bug_when>2008-08-01 06:17:40 +0000</bug_when>
+            <thetext>This should be added to the page footer..</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>17866</commentid>
+            <who name="Trond Norbye">trond.norbye</who>
+            <bug_when>2008-11-07 04:59:24 +0000</bug_when>
+            <thetext>Fixed in changeset:   667:425a92adde75</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

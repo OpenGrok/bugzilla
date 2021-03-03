@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>17972</bug_id>
+          
+          <creation_ts>2011-03-05 16:00:00 +0000</creation_ts>
+          <short_desc>Copy of snippet of code without line number</short_desc>
+          <delta_ts>2011-03-06 22:34:29 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>webapp</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>WORKSFORME</resolution>
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>enhancement</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Olivier Catteau">ocatteau</reporter>
+          <assigned_to name="Lubos Kosco">Lubos.Kosco</assigned_to>
+          <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>81591</commentid>
+            <who name="Olivier Catteau">ocatteau</who>
+            <bug_when>2011-03-05 16:00:59 +0000</bug_when>
+            <thetext>When you copy a piece of code by using OpenGrok, you also copy line numbers. So when you paste the copied code in an editor, you have to remove all line numbers.
+
+It would be really usefull to copy lines without line numbers such like Google code browser.
+For exemple : http://code.google.com/p/mtjtrader/source/browse/trunk/code/src/forex/auto/trade/ui/CandleChart.java?spec=svn3&amp;r=3
+
+Thanks.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>81596</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2011-03-06 20:36:54 +0000</bug_when>
+            <thetext>Hi Olivier
+there is a button called &quot;Line #&quot;
+which can disable line # and you can copy &amp; paste the code ;)
+
+give it a try, if it doesn&apos;t fit your use case, please let me know and change this bug back to new state
+
+if it does, please close this bug
+
+cheers
+L</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>81599</commentid>
+            <who name="Olivier Catteau">ocatteau</who>
+            <bug_when>2011-03-06 22:34:29 +0000</bug_when>
+            <thetext>Oh sorry, I have used regularly OpenGrok since 5 years and I didn&apos;t notice the button... That does the job.
+
+Thanks a lot !
+
+
+
+(In reply to comment #1)
+&gt; Hi Olivier
+&gt; there is a button called &quot;Line #&quot;
+&gt; which can disable line # and you can copy &amp; paste the code ;)
+&gt; 
+&gt; give it a try, if it doesn&apos;t fit your use case, please let me know and change
+&gt; this bug back to new state
+&gt; 
+&gt; if it does, please close this bug
+&gt; 
+&gt; cheers
+&gt; L</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

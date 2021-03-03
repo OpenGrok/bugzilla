@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>3624</bug_id>
+          
+          <creation_ts>2008-09-27 11:14:00 +0000</creation_ts>
+          <short_desc>History cache should be stored in Java DB</short_desc>
+          <delta_ts>2009-10-24 21:03:45 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>scm</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXED</resolution>
+          
+          
+          
+          
+          
+          <priority>P4</priority>
+          <bug_severity>enhancement</bug_severity>
+          <target_milestone>0.8</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Trond Norbye">trond.norbye</reporter>
+          <assigned_to name="Knut Anders Hatlen">knut.hatlen</assigned_to>
+          <cc>garen</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>13279</commentid>
+            <who name="Trond Norbye">trond.norbye</who>
+            <bug_when>2008-09-27 11:14:12 +0000</bug_when>
+            <thetext>The history cache is currently stored as xml files on the filesystem. this is a verbose format, and we duplicate the information a lot. It should be inserted into a database instead. I say we should target JavaDB first.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>13281</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2008-09-27 11:22:07 +0000</bug_when>
+            <thetext>We should also have bug #3052 in mind when we work out the solution.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>54068</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2009-10-24 21:03:45 +0000</bug_when>
+            <thetext>A cache that stores the history in a Java DB database is in the development sources and will be included in the 0.8 release, so I&apos;m closing this bug.
+
+Use the -D option when running the indexer in order to enable the Java DB backend. -j can be used to change the JDBC driver (Java DB client driver is the default, but the embedded driver is also supported), and -u to specify a custom database URL.
+
+Incremental update of the history cache (bug #3052) is also supported by the Java DB-backed cache.</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

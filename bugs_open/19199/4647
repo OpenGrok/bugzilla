@@ -1,0 +1,965 @@
+# HG changeset patch
+# User jel+opengrok@cs.uni-magdeburg.de
+# Date 1333697084 -7200
+# Node ID 856f914e23f89d730c517465822b3b648936610e
+# Parent  77a09a331652b6e2925c16f973cee2539fa84c98
+add missing icons for navbar and dir listing, fixes also 19105#c24
+
+diff -r 77a09a331652 -r 856f914e23f8 tools/img_combine.sh
+--- a/tools/img_combine.sh	Thu Apr 05 03:07:08 2012 +0200
++++ b/tools/img_combine.sh	Fri Apr 06 09:24:44 2012 +0200
+@@ -12,7 +12,7 @@
+  Combines several images into a sprite named combined.png and prints out
+  the required CSS infos. E.g.:
+ 
+- %s web/offwhite/img
++ %s web/static/offwhite/img
+ ' "$(basename $0)" "$(basename $0)"
+ }
+ 
+@@ -32,9 +32,9 @@
+ 	cd "$1"
+ 	[ $? -eq 0 ] || exit 1
+ fi
+-F_NAV="h.gif l.gif w.gif"
+-F_LST="d.gif p.gif"
+-F_MISC="Logo.png servedby.png rss.png q.gif" # q.gif must be the last
++F_NAV="h.gif l.gif w.gif a.gif lno.gif slst.gif"
++F_LST="do.gif d.gif p.gif"
++F_MISC="Logo.png servedby.png rss.png btn_close.gif q.gif" # q.gif must be the last
+ 
+ FILES="$F_MISC $F_LST $F_NAV"
+ FILES="$F_NAV $F_LST $F_MISC"
+@@ -44,8 +44,8 @@
+ # concat to GIF (results in smaller pics than to PNG directly)
+ $ECHO montage -background Transparent -tile x1 -mode Concatenate $FILES ${OUT}.$GIF
+ if [ "$GIF" = "gif" ]; then
+-# convert to PNG (transparent pics are rendered badly by FF on none-transparent
+-# BGs)
++# convert to PNG (transparent gifs are rendered badly by FF on none-transparent
++# BGs. Converting it manually e.g. with Gimp may produce better results.)
+ $ECHO convert ${OUT}.$GIF ${OUT}.png
+ fi
+ 
+diff -r 77a09a331652 -r 856f914e23f8 web/list.jsp
+--- a/web/list.jsp	Thu Apr 05 03:07:08 2012 +0200
++++ b/web/list.jsp	Fri Apr 06 09:24:44 2012 +0200
+@@ -136,7 +136,7 @@
+ 				long lastm = resourceFile.getParentFile().lastModified();
+ %>
+ <tr>
+-	<td><p class="r"/></td>
++	<td><p class="u"/></td>
+ 	<td><b><a href="..">..</a></b></td>
+ 	<td><%= now-lastm < 86400000 ? "Today" : dateFormatter.format(lastm) %></td>
+ 	<td><%= Util.readableSize(resourceFile.getParentFile().length()) %></td><%
+@@ -160,7 +160,7 @@
+ 				long lastm = child.lastModified();
+ %>
+ <tr>
+-	<td><p class="<%= isDir ? 'r' : 'p' %>"/></td>
++	<td><p class="<%= isDir ? 'v' : 'w' %>"/></td>
+ 	<td><a href="<%= Util.URIEncodePath(file) %>"><%= isDir ? "<b>" + file + "</b>" : file %></a></td>
+ 	<td><%= now-lastm < 86400000 ? "Today" : dateFormatter.format(lastm) %></td>
+ 	<td><%= Util.readableSize(child.length()) %></td><%
+diff -r 77a09a331652 -r 856f914e23f8 web/static/default/img/btn_close.gif
+Binary file web/static/default/img/btn_close.gif has changed
+diff -r 77a09a331652 -r 856f914e23f8 web/static/default/img/combined.png
+Binary file web/static/default/img/combined.png has changed
+diff -r 77a09a331652 -r 856f914e23f8 web/static/default/print.css
+--- a/web/static/default/print.css	Thu Apr 05 03:07:08 2012 +0200
++++ b/web/static/default/print.css	Fri Apr 06 09:24:44 2012 +0200
+@@ -269,21 +269,18 @@
+ /* *** list aka xref stuff *** */
+ 
+ /* directory listing */
+-table#dirlist { /* the "Name" column */
++#dirlist { /* the "Name" column */
+ 	font-family: monospace;
+ 	border-style: none;
+ 	border-collapse: collapse;
+ }
+-
+-#dirlist .r, #dirlist .p {
++.u, .v, .w {
+ 	padding: 0;
+ 	margin: 0 0 0 1em;
+ }
+-
+ #dirlist td:nth-child(n+2) { /* all but the first column */
+ 	padding-right: 1em;
+ }
+-
+ #dirlist tbody td:nth-child(4) {
+ 	text-align: right; /* CSS3 may allow " " (single space char) */
+ }
+@@ -474,7 +471,7 @@
+ 	width: 208px;
+ 	height: 45px;
+ 	vertical-align: middle;
+-	background-image: url(./img/combined.png);
++	background-image: url(img/combined.png);
+ 	background-repeat: no-repeat;
+ 	background-position: -171px 0;
+ }
+@@ -483,9 +480,9 @@
+ 	width: 80px;
+ 	height: 15px;
+ 	vertical-align: middle;
+-	background-image: url(./img/combined.png);
++	background-image: url(img/combined.png);
+ 	background-repeat: no-repeat;
+-	background-position: -459px 0;
++	background-position: -379px 0;
+ }
+ /* ############### end of footer ############## */
+ 
+diff -r 77a09a331652 -r 856f914e23f8 web/static/default/style.css
+--- a/web/static/default/style.css	Thu Apr 05 03:07:08 2012 +0200
++++ b/web/static/default/style.css	Fri Apr 06 09:24:44 2012 +0200
+@@ -32,7 +32,7 @@
+ .yui3-button {
+ 	/* Structure */
+ 	display: inline-block;
+-	font-size: 100%;
++/*	font-size: 100%;	// causes strange padding on .yui3-button-close:before */
+ 	margin: 0;
+ 	padding: 2px;
+ 	line-height: normal;
+@@ -99,7 +99,7 @@
+ .yui3-symbolspanel .yui3-widget-hd .yui3-widget-buttons {
+ 	position: absolute;
+ 	top: 0;
+-	right: -2px; /* the close button image has 2px empty on the right side */
++	right: 0;
+ 	line-height: 0; /* bad if bigger than icon height + margin+padding+border */
+ }
+ .yui3-symbolspanel .yui3-widget-ft .yui3-widget-buttons {
+@@ -141,26 +141,31 @@
+ 	background: transparent;
+ 	border: none;
+ 	box-shadow: none;
+-	/* assumes no inner padding/margin - see .yui3-button::-moz-focus-inner */
+-	width: 13px; /* 13px + 2*this.(padding + margin) */
+-	height: 13px; /* 13px + 2*this.(padding + margin) */
++	width: 10px;		/* same width as the close icon below */
++/*	height: 10px;		// let the background determine */
+ 	overflow: hidden;
+ 	vertical-align: top;
+ 	padding: 0;
+ }
+ .yui3-skin-sam .yui3-symbolspanel .yui3-widget-hd .yui3-button-close:before {
+-	content: url(img/sprite_icons.png);
++	/* btn_close.gif which in turn got extracted from sprite_icons.png */
++	background-image: url(img/combined.png);
++	background-position: -459px 0;
++	content: "";
+ 	display: inline-block;
+ 	text-align: center;
+ 	font-size: 0;
+ 	line-height: 0;
+ 	margin: 0;
++	width: 10px;
++	height: 10px;
+ }
+ .yui3-skin-sam .yui3-symbolspanel-hidden .yui3-widget-hd .yui3-button-close {
+ 	display: none;
+ }
+ 
+ /* ### resize-base/assets/skins/sam/resize-base.css ### */
++/* usage postponed: may be later:
+ .yui3-resize,.yui3-resize-wrapper {
+ 	z-index: 0;
+ }
+@@ -288,6 +293,7 @@
+ .yui3-resize-handle-inner-b,.yui3-resize-handle-inner-t {
+ 	background-position: -15px 0;
+ }
++*/
+ 
+ /* ##################################################################
+  * OpenGrok specific stuff
+@@ -375,7 +381,7 @@
+ 	width: 171px;
+ 	height: 40px;
+ 	float: left;
+-	background-image: url(./img/combined.png);
++	background-image: url(img/combined.png);
+ 	background-repeat: no-repeat;
+ 	background-position: 0 0;
+ 	margin: 0 0 0.5ex 0;
+@@ -487,6 +493,7 @@
+ 	color: black;
+ 	font-size: large;
+ 	font-weight: normal;
++	display: inline-block;
+ }
+ 
+ #search {
+@@ -690,21 +697,18 @@
+ /* *** list aka xref stuff *** */
+ 
+ /* directory listing */
+-table#dirlist { /* the "Name" column */
++#dirlist { /* the "Name" column */
+ 	font-family: monospace;
+ 	border-style: none;
+ 	border-collapse: collapse;
+ }
+-
+-#dirlist .r, #dirlist .p {
++.u, .v, .w {
+ 	padding: 0;
+ 	margin: 0 0 0 1em;
+ }
+-
+ #dirlist td:nth-child(n+2) { /* all but the first column */
+ 	padding-right: 1em;
+ }
+-
+ #dirlist tbody td:nth-child(4) {
+ 	text-align: right; /* CSS3 may allow " " (single space char) */
+ }
+@@ -865,6 +869,7 @@
+ 	margin: 0;
+ 	height: 0;
+ }
++/* usage postponed
+ .yui3-resize-handle-t, .yui3-resize-handle-tr, .yui3-resize-handle-tl {
+ 	top: -0.5ex;
+ }
+@@ -877,6 +882,8 @@
+ .yui3-resize-handle-tl, .yui3-resize-handle-l, .yui3-resize-handle-bl {
+ 	left: -0.5ex;
+ }
++*/
++
+ 
+ /* search result page */
+ #results {
+@@ -963,7 +970,7 @@
+ 	width: 208px;
+ 	height: 45px;
+ 	vertical-align: middle;
+-	background-image: url(./img/combined.png);
++	background-image: url(img/combined.png);
+ 	background-repeat: no-repeat;
+ 	background-position: -171px 0;
+ }
+@@ -972,9 +979,9 @@
+ 	width: 80px;
+ 	height: 15px;
+ 	vertical-align: middle;
+-	background-image: url(./img/combined.png);
++	background-image: url(img/combined.png);
+ 	background-repeat: no-repeat;
+-	background-position: -459px 0;
++	background-position: -379px 0;
+ }
+ /* ############### end of footer ############## */
+ 
+diff -r 77a09a331652 -r 856f914e23f8 web/static/offwhite/img/Logo.png
+Binary file web/static/offwhite/img/Logo.png has changed
+diff -r 77a09a331652 -r 856f914e23f8 web/static/offwhite/img/a.gif
+Binary file web/static/offwhite/img/a.gif has changed
+diff -r 77a09a331652 -r 856f914e23f8 web/static/offwhite/img/btn_close.gif
+Binary file web/static/offwhite/img/btn_close.gif has changed
+diff -r 77a09a331652 -r 856f914e23f8 web/static/offwhite/img/combined.png
+Binary file web/static/offwhite/img/combined.png has changed
+diff -r 77a09a331652 -r 856f914e23f8 web/static/offwhite/img/do.gif
+Binary file web/static/offwhite/img/do.gif has changed
+diff -r 77a09a331652 -r 856f914e23f8 web/static/offwhite/img/lno.gif
+Binary file web/static/offwhite/img/lno.gif has changed
+diff -r 77a09a331652 -r 856f914e23f8 web/static/offwhite/img/slst.gif
+Binary file web/static/offwhite/img/slst.gif has changed
+diff -r 77a09a331652 -r 856f914e23f8 web/static/offwhite/print.css
+--- a/web/static/offwhite/print.css	Thu Apr 05 03:07:08 2012 +0200
++++ b/web/static/offwhite/print.css	Fri Apr 06 09:24:44 2012 +0200
+@@ -270,14 +270,13 @@
+ /* *** list aka xref stuff *** */
+ 
+ /* directory listing */
+-table#dirlist { /* the "Name" column */
++#dirlist { /* the "Name" column */
+ 	font-family: monospace;
+ 	border-style: none;
+ 	border-collapse: collapse;
+ }
+-
+-#dirlist .r, #dirlist .p {
+-	background-image: url(./img/combined.png);
++.u, .v, .w {
++	background-image: url(img/combined.png);
+ 	background-repeat: no-repeat;
+ 	width: 15px;
+ 	height: 15px;
+@@ -285,19 +284,18 @@
+ 	vertical-align: middle;
+ 	margin: 0 1ex 0 1em;
+ }
+-
+-#dirlist .r { /* directory name, d.gif */
+-	background-position: -54px 0;
++.u { /* directory open: do.gif */
++	background-position: -108px 0;
+ }
+-
+-#dirlist .p { /* file name, p.gif */
+-	background-position: -69px 0;
++.v { /* directory: d.gif */
++	background-position: -123px 0;
+ }
+-
++.w { /* file: p.gif */
++	background-position: -138px 0;
++}
+ #dirlist td:nth-child(n+2) { /* all but the first column */
+ 	padding-right: 1em;
+ }
+-
+ #dirlist tbody td:nth-child(4) {
+ 	text-align: right; /* CSS3 may allow " " (single space char) */
+ }
+@@ -483,18 +481,18 @@
+ 	width: 177px;
+ 	height: 37px;
+ 	vertical-align: middle;
+-	background-image: url(./img/combined.png);
++	background-image: url(img/combined.png);
+ 	background-repeat: no-repeat;
+-	background-position: -255px 0;
++	background-position: -320px 0;
+ }
+ #rssi { /* rss.png */
+ 	display: inline-block;
+ 	width: 80px;
+ 	height: 15px;
+ 	vertical-align: middle;
+-	background-image: url(./img/combined.png);
++	background-image: url(img/combined.png);
+ 	background-repeat: no-repeat;
+-	background-position: -432px 0;
++	background-position: -497px 0;
+ }
+ /* ############### end of footer ############## */
+ 
+diff -r 77a09a331652 -r 856f914e23f8 web/static/offwhite/style.css
+--- a/web/static/offwhite/style.css	Thu Apr 05 03:07:08 2012 +0200
++++ b/web/static/offwhite/style.css	Fri Apr 06 09:24:44 2012 +0200
+@@ -32,7 +32,7 @@
+ .yui3-button {
+ 	/* Structure */
+ 	display: inline-block;
+-	font-size: 100%;
++/*	font-size: 100%; // causes strange padding on .yui3-button-close:before */
+ 	margin: 0;
+ 	padding: 2px;
+ 	line-height: normal;
+@@ -99,7 +99,7 @@
+ .yui3-symbolspanel .yui3-widget-hd .yui3-widget-buttons {
+ 	position: absolute;
+ 	top: 0;
+-	right: -2px; /* the close button image has 2px empty on the right side */
++	right: 0;
+ 	line-height: 0; /* bad if bigger than icon height + margin+padding+border */
+ }
+ .yui3-symbolspanel .yui3-widget-ft .yui3-widget-buttons {
+@@ -141,26 +141,31 @@
+ 	background: transparent;
+ 	border: none;
+ 	box-shadow: none;
+-	/* assumes no inner padding/margin - see .yui3-button::-moz-focus-inner */
+-	width: 13px; /* 13px + 2*this.(padding + margin) */
+-	height: 13px; /* 13px + 2*this.(padding + margin) */
++	width: 10px;		/* same width as the close icon below */
++	/* height: 10px; // let the background determine */
+ 	overflow: hidden;
+ 	vertical-align: top;
+ 	padding: 0;
+ }
+ .yui3-skin-sam .yui3-symbolspanel .yui3-widget-hd .yui3-button-close:before {
+-	content: url(img/sprite_icons.png);
++	/* btn_close.gif which in turn got extracted from sprite_icons.png */
++	background-image: url(img/combined.png);
++	background-position: -577px 0px;
++	content: "";
+ 	display: inline-block;
+ 	text-align: center;
+ 	font-size: 0;
+ 	line-height: 0;
+ 	margin: 0;
++	width: 10px;
++	height: 10px;
+ }
+ .yui3-skin-sam .yui3-symbolspanel-hidden .yui3-widget-hd .yui3-button-close {
+ 	display: none;
+ }
+ 
+ /* ### resize-base/assets/skins/sam/resize-base.css ### */
++/* usage postponed: may be later:
+ .yui3-resize,.yui3-resize-wrapper {
+ 	z-index: 0;
+ }
+@@ -288,6 +293,7 @@
+ .yui3-resize-handle-inner-b,.yui3-resize-handle-inner-t {
+ 	background-position: -15px 0;
+ }
++*/
+ 
+ /* ##################################################################
+  * OpenGrok specific stuff
+@@ -369,13 +375,13 @@
+ /* *** banner/deco above navbar *** */
+ #header { }
+ 
+-#MastheadLogo {
+-	width: 171px;
+-	height: 40px;
++#MastheadLogo { /* Logo.png */
++	width: 167px; /*171px; */
++	height: 43px; /* 40px; */
+ 	float: right;
+-	background-image: url(./img/combined.png);
++	background-image: url(img/combined.png);
+ 	background-repeat: no-repeat;
+-	background-position: -84px 0;
++	background-position: -153px 0;
+ 	margin: 0 0 1ex 0;
+ }
+ 
+@@ -485,44 +491,37 @@
+ 	margin-right: 0;
+ }
+ 
+-#home, #history, #download { /* menu item icons */
++#home, #history, #download, #annotate, #line, #defbox { /* menu item icons */
+ 	display: inline-block;
+ 	width: 18px;
+ 	height: 18px;
+ 	vertical-align: middle;
+-	background-image: url(./img/combined.png);
++	background-image: url(img/combined.png);
+ 	background-repeat: no-repeat;
+ 	margin-right: 0.25ex; /* distance between the icon and the label */
+ }
+-
+ #home { /* h.gif */
+ 	background-position: 0 0;
+ }
+-
+ #history { /* l.gif */
+ 	background-position: -18px 0;
+ }
+-
+ #download { /* w.gif */
+ 	background-position: -36px 0;
+ }
+-
+-#line, #defbox, #annotate { /* no icon available yet */
+-	width: 1px;
+-	height: 15px;
++#annotate { /* a.gif */
++	background-position: -54px 0;
+ }
+-#line::before, #defbox::before, #annotate::before {
+-	content: "|";
+-	padding-right: 0.25ex; /* distance between the icon and the label */
+-	color: black;
+-	font-size: large;
+-	font-weight: normal;
++#line { /* lno.gif */
++	background-position: -72px 0;
+ }
+-
++#defbox { /* slst.gif */
++	background-position: -90px 0;
++}
+ #search { /* q.gif */
+-	background-image: url(./img/combined.png);
++	background-image: url(img/combined.png);
+ 	background-repeat: no-repeat;
+-	background-position: -512px 2px;
++	background-position: -587px 2px; /* 2px padding */
+ 	padding-left: 19px;
+ 	min-height: 20px; /* 18px img + 2px padding */
+ }
+@@ -721,14 +720,13 @@
+ /* *** list aka xref stuff *** */
+ 
+ /* directory listing */
+-table#dirlist { /* the "Name" column */
++#dirlist { /* the "Name" column */
+ 	font-family: monospace;
+ 	border-style: none;
+ 	border-collapse: collapse;
+ }
+-
+-#dirlist .r, #dirlist .p {
+-	background-image: url(./img/combined.png);
++.u, .v, .w {
++	background-image: url(img/combined.png);
+ 	background-repeat: no-repeat;
+ 	width: 15px;
+ 	height: 15px;
+@@ -736,19 +734,18 @@
+ 	vertical-align: middle;
+ 	margin: 0 1ex 0 1em;
+ }
+-
+-#dirlist .r { /* directory name, d.gif */
+-	background-position: -54px 0;
++.u { /* directory open: do.gif */
++	background-position: -108px 0;
+ }
+-
+-#dirlist .p { /* file name, p.gif */
+-	background-position: -69px 0;
++.v { /* directory: d.gif */
++	background-position: -123px 0;
+ }
+-
++.w { /* file: p.gif */
++	background-position: -138px 0;
++}
+ #dirlist td:nth-child(n+2) { /* all but the first column */
+ 	padding-right: 1em;
+ }
+-
+ #dirlist tbody td:nth-child(4) {
+ 	text-align: right; /* CSS3 may allow " " (single space char) */
+ }
+@@ -910,6 +907,7 @@
+ 	margin: 0;
+ 	height: 0;
+ }
++/* usage postponed
+ .yui3-resize-handle-t, .yui3-resize-handle-tr, .yui3-resize-handle-tl {
+ 	top: -0.5ex;
+ }
+@@ -922,6 +920,9 @@
+ .yui3-resize-handle-tl, .yui3-resize-handle-l, .yui3-resize-handle-bl {
+ 	left: -0.5ex;
+ }
++*/
++
++
+ /* search result page */
+ #results {
+ }
+@@ -994,18 +995,18 @@
+ 	width: 177px;
+ 	height: 37px;
+ 	vertical-align: middle;
+-	background-image: url(./img/combined.png);
++	background-image: url(img/combined.png);
+ 	background-repeat: no-repeat;
+-	background-position: -255px 0;
++	background-position: -320px 0;
+ }
+ #rssi { /* rss.png */
+ 	display: inline-block;
+ 	width: 80px;
+ 	height: 15px;
+ 	vertical-align: middle;
+-	background-image: url(./img/combined.png);
++	background-image: url(img/combined.png);
+ 	background-repeat: no-repeat;
+-	background-position: -432px 0;
++	background-position: -497px 0;
+ }
+ /* ############### end of footer ############## */
+ 
+diff -r 77a09a331652 -r 856f914e23f8 web/static/opengrok.js
+--- a/web/static/opengrok.js	Thu Apr 05 03:07:08 2012 +0200
++++ b/web/static/opengrok.js	Fri Apr 06 09:24:44 2012 +0200
+@@ -372,7 +372,7 @@
+ 			display: button.getStyle('display'),
+ 			before: button.getStyle('content')
+ 		});
+-		button.setStyles({
++		button.setStyles({ /* unfortunately we can't put it into combined.png */
+ 			backgroundImage: O.normalizeCssURI('url("./img/loading-18x18.gif")'),
+ 			backgroundPosition: '0 0',
+ 			verticalAlign: 'middle',
+diff -r 77a09a331652 -r 856f914e23f8 web/static/polished/img/a.gif
+Binary file web/static/polished/img/a.gif has changed
+diff -r 77a09a331652 -r 856f914e23f8 web/static/polished/img/btn_close.gif
+Binary file web/static/polished/img/btn_close.gif has changed
+diff -r 77a09a331652 -r 856f914e23f8 web/static/polished/img/combined.png
+Binary file web/static/polished/img/combined.png has changed
+diff -r 77a09a331652 -r 856f914e23f8 web/static/polished/img/do.gif
+Binary file web/static/polished/img/do.gif has changed
+diff -r 77a09a331652 -r 856f914e23f8 web/static/polished/img/lno.gif
+Binary file web/static/polished/img/lno.gif has changed
+diff -r 77a09a331652 -r 856f914e23f8 web/static/polished/img/slst.gif
+Binary file web/static/polished/img/slst.gif has changed
+diff -r 77a09a331652 -r 856f914e23f8 web/static/polished/print.css
+--- a/web/static/polished/print.css	Thu Apr 05 03:07:08 2012 +0200
++++ b/web/static/polished/print.css	Fri Apr 06 09:24:44 2012 +0200
+@@ -274,14 +274,13 @@
+ /* *** list aka xref stuff *** */
+ 
+ /* directory listing */
+-table#dirlist { /* the "Name" column */
++#dirlist { /* the "Name" column */
+ 	font-family: monospace;
+ 	border-style: none;
+ 	border-collapse: collapse;
+ }
+-
+-#dirlist .r, #dirlist .p {
+-	background-image: url(./img/combined.png);
++.u, .v, .w {
++	background-image: url(img/combined.png);
+ 	background-repeat: no-repeat;
+ 	width: 15px;
+ 	height: 15px;
+@@ -289,26 +288,24 @@
+ 	vertical-align: middle;
+ 	margin: 0 1ex 0 1em;
+ }
+-
+-#dirlist .r { /* directory name, d.gif */
+-	background-position: -54px 0;
++.u { /* directory open: do.gif */
++	background-position: -108px 0;
+ }
+-
+-#dirlist .p { /* file name, p.gif */
+-	background-position: -69px 0;
++.v { /* directory: d.gif */
++	background-position: -123px 0;
+ }
+-
++.w { /* file: p.gif */
++	background-position: -138px 0;
++}
+ #dirlist td:nth-child(n+2) { /* all but the first column */
+ 	padding-right: 1em;
+ }
+-
+ #dirlist tbody td:nth-child(4) {
+ 	text-align: right; /* CSS3 may allow " " (single space char) */
+ }
+ 
+ 
+ /* source file display */
+-/* source file display */
+ #src {
+ 	font-size: small;
+ 	font-family: monospace;
+@@ -344,8 +341,7 @@
+ 	color: #000;
+ }
+ #src .l, #src .hl, .blame .r, .blame .a,
+-#results .l, #more .l,
+-#difftable i, del.d { /* line number/annotation block */
++#results .l, #more .l { /* line number/annotation block */
+ 	display: inline-block;
+ 	width: 6ex;
+ 	text-align: right;
+@@ -490,9 +486,9 @@
+ 	width: 177px;
+ 	height: 37px;
+ 	vertical-align: middle;
+-	background-image: url(./img/combined.png);
++	background-image: url(img/combined.png);
+ 	background-repeat: no-repeat;
+-	background-position: -255px 0;
++	background-position: -317px 0;
+ }
+ #rssi { /* rss.png */
+ 	display: inline-block;
+@@ -501,7 +497,7 @@
+ 	vertical-align: middle;
+ 	background-image: url(./img/combined.png);
+ 	background-repeat: no-repeat;
+-	background-position: -432px 0;
++	background-position: -494px 0;
+ }
+ /* ############### end of footer ############## */
+ 
+diff -r 77a09a331652 -r 856f914e23f8 web/static/polished/style.css
+--- a/web/static/polished/style.css	Thu Apr 05 03:07:08 2012 +0200
++++ b/web/static/polished/style.css	Fri Apr 06 09:24:44 2012 +0200
+@@ -32,7 +32,7 @@
+ .yui3-button {
+ 	/* Structure */
+ 	display: inline-block;
+-	font-size: 100%;
++/*	font-size: 100%;	// causes strange padding on .yui3-button-close:before */
+ 	margin: 0;
+ 	padding: 2px;
+ 	line-height: normal;
+@@ -99,7 +99,7 @@
+ .yui3-symbolspanel .yui3-widget-hd .yui3-widget-buttons {
+ 	position: absolute;
+ 	top: 0;
+-	right: -2px; /* the close button image has 2px empty on the right side */
++	right: 0;
+ 	line-height: 0; /* bad if bigger than icon height + margin+padding+border */
+ }
+ .yui3-symbolspanel .yui3-widget-ft .yui3-widget-buttons {
+@@ -141,26 +141,31 @@
+ 	background: transparent;
+ 	border: none;
+ 	box-shadow: none;
+-	/* assumes no inner padding/margin - see .yui3-button::-moz-focus-inner */
+-	width: 13px; /* 13px + 2*this.(padding + margin) */
+-	height: 13px; /* 13px + 2*this.(padding + margin) */
++	width: 10px;	/* same width as the close icon below */
++/*	height: 10px;	// let the background determine */
+ 	overflow: hidden;
+ 	vertical-align: top;
+ 	padding: 0;
+ }
+ .yui3-skin-sam .yui3-symbolspanel .yui3-widget-hd .yui3-button-close:before {
+-	content: url(img/sprite_icons.png);
++	/* btn_close.gif which in turn got extracted from sprite_icons.png */
++	background-image: url(img/combined.png);
++	background-position: -574px 0px;
++	content: "";
+ 	display: inline-block;
+ 	text-align: center;
+ 	font-size: 0;
+ 	line-height: 0;
+ 	margin: 0;
++	width: 10px;
++	height: 10px;
+ }
+ .yui3-skin-sam .yui3-symbolspanel-hidden .yui3-widget-hd .yui3-button-close {
+ 	display: none;
+ }
+ 
+ /* ### resize-base/assets/skins/sam/resize-base.css ### */
++/* usage postponed: may be later:
+ .yui3-resize,.yui3-resize-wrapper {
+ 	z-index: 0;
+ }
+@@ -288,6 +293,7 @@
+ .yui3-resize-handle-inner-b,.yui3-resize-handle-inner-t {
+ 	background-position: -15px 0;
+ }
++*/
+ 
+ /* ##################################################################
+  * OpenGrok specific stuff
+@@ -403,13 +409,13 @@
+ 	);
+ }
+ 
+-#MastheadLogo {
++#MastheadLogo { /* Logo.png */
+ 	width: 167px;
+ 	height: 43px;
+ 	float: right;
+-	background-image: url(./img/combined.png);
++	background-image: url(img/combined.png);
+ 	background-repeat: no-repeat;
+-	background-position: -81px 0;
++	background-position: -150px 0;
+ 	margin: 0;
+ }
+ 
+@@ -528,45 +534,38 @@
+ 	margin-right: 1ex;
+ }
+ 
+-#home, #history, #download { /* menu item icons */
++#home, #history, #download, #line, #defbox, #annotate { /* menu item icons */
+ 	display: inline-block;
+ 	width: 18px;
+ 	height: 18px;
+ 	vertical-align: middle;
+-	background-image: url(./img/combined.png);
++	background-image: url(img/combined.png);
+ 	background-repeat: no-repeat;
+ 	margin-right: 0.25ex; /* distance between the icon and the label */
+ }
+-
+ #home { /* h.gif */
+ 	background-position: 0 0;
+ }
+-
+ #history { /* l.gif */
+ 	background-position: -18px 0;
+ }
+-
+ #download { /* w.gif */
+ 	background-position: -36px 0;
+ }
+-
+-#line, #defbox, #annotate { /* no icon available yet */
+-	width: 1px;
+-	height: 15px;
++#annotate { /* a.gif */
++	background-position: -54px 0;
+ }
+-
+-#line::before, #defbox::before, #annotate::before {
+-	content: "|";
+-	padding-right: 0.25ex; /* distance between the icon and the label */
+-	color: black;
+-	font-size: large;
+-	font-weight: normal;
++#line { /* lno.gif */
++	background-position: -72px 0;
++}
++#defbox { /* slst.gif */
++	background-position: -90px 0;
+ }
+ 
+ #search { /* q.gif */
+-	background-image: url(./img/combined.png);
++	background-image: url(img/combined.png);
+ 	background-repeat: no-repeat;
+-	background-position: -505px 2px;
++	background-position: -584px 2px; /* 2px padding */
+ 	padding-left: 19px;
+ 	min-height: 20px; /* 18px img + 2px padding */
+ }
+@@ -691,20 +690,16 @@
+ 	/* +: "Added" heading + highlight of added text in diff lines */
+ 	background-color: #8bd98b;
+ }
+-
+ .dblegend, .dbtabs, .dbformats {
+ 	display: inline-block;
+ }
+-
+ .dblegend {
+ 	/* bottom must be the same as .tabs span(padding-bottom) */
+ 	margin: 0 3ex 0.75ex 1ex;
+ }
+-
+ .dblegend .m, .dblegend .p, .dbformat {
+ 	padding: 0.2ex 1ex; /* bottom must be less than margin-bottom(.dblegend) */
+ }
+-
+ .dbtab {
+ 	padding: 0.75ex 1ex;
+ 	margin-left: 1ex;
+@@ -713,19 +708,15 @@
+ 	-moz-border-radius: 0.75ex 0.75ex 0 00;
+ 	background-color: #f5f5dc; /* #bar like */
+ }
+-
+ .dbtabs .active, .dbformats .active {
+ 	background-color: #426477; /* same as for table thead */
+ }
+-
+ .dbtabs .active {
+ 	border-bottom-style: dashed;
+ }
+-
+ .dbformats {
+ 	margin-left: 3ex; /* see margin-left .dblegend */
+ }
+-
+ .dbformat {
+ 	border: 1px solid #755; /* same as for input */
+ 	border-radius: 0.75ex;
+@@ -781,14 +772,13 @@
+ /* *** list aka xref stuff *** */
+ 
+ /* directory listing */
+-table#dirlist { /* the "Name" column */
++#dirlist { /* the "Name" column */
+ 	font-family: monospace;
+ 	border-style: none;
+ 	border-collapse: collapse;
+ }
+-
+-#dirlist .r, #dirlist .p {
+-	background-image: url(./img/combined.png);
++.u, .v, .w {
++	background-image: url(img/combined.png);
+ 	background-repeat: no-repeat;
+ 	width: 15px;
+ 	height: 15px;
+@@ -796,19 +786,18 @@
+ 	vertical-align: middle;
+ 	margin: 0 1ex 0 1em;
+ }
+-
+-#dirlist .r { /* directory name, d.gif */
+-	background-position: -54px 0;
++.u { /* directory open: do.gif */
++	background-position: -108px 0;
+ }
+-
+-#dirlist .p { /* file name, p.gif */
+-	background-position: -69px 0;
++.v { /* directory: d.gif */
++	background-position: -123px 0;
+ }
+-
++.w { /* file: p.gif */
++	background-position: -138px 0;
++}
+ #dirlist td:nth-child(n+2) { /* all but the first column */
+ 	padding-right: 1em;
+ }
+-
+ #dirlist tbody td:nth-child(4) {
+ 	text-align: right; /* CSS3 may allow " " (single space char) */
+ }
+@@ -856,8 +845,7 @@
+ 	color: #000;
+ }
+ #src .l, #src .hl, .blame .r, .blame .a,
+-#results .l, #more .l,
+-#difftable i, del.d { /* line number/annotation block */
++#results .l, #more .l { /* line number/annotation block */
+ 	display: inline-block;
+ 	width: 6ex;
+ 	text-align: right;
+@@ -892,7 +880,7 @@
+ a.xp	{ /* package */			color: #909; font-weight: bold; font-style: italic; }
+ a.xi	{ /* interface */		color: #909; font-weight: bold; font-style: italic; }
+ a.xn	{ /* namespace */		color: #909; font-weight: bold; font-style: italic; }
+-a.xe	{ /* enum */			color: #909; font-weight: bold; font-style: italic; }
++.xe	{ /* enum */			color: #909; font-weight: bold; font-style: italic; }
+ a.xer	{ /* enumerator */		color: #909; font-weight: bold; font-style: italic; }
+ a.xs	{ /* struct */			color: #909; font-weight: bold; font-style: italic; }
+ a.xt	{ /* typedef */			color: #909; font-weight: bold; font-style: italic; }
+@@ -972,6 +960,7 @@
+ 	margin: 0;
+ 	height: 0;
+ }
++/* usage postponed
+ .yui3-resize-handle-t, .yui3-resize-handle-tr, .yui3-resize-handle-tl {
+ 	top: -0.5ex;
+ }
+@@ -984,6 +973,8 @@
+ .yui3-resize-handle-tl, .yui3-resize-handle-l, .yui3-resize-handle-bl {
+ 	left: -0.5ex;
+ }
++*/
++
+ 
+ /* search result page */
+ #results {
+@@ -1079,18 +1070,18 @@
+ 	width: 177px;
+ 	height: 37px;
+ 	vertical-align: middle;
+-	background-image: url(./img/combined.png);
++	background-image: url(img/combined.png);
+ 	background-repeat: no-repeat;
+-	background-position: -248px 0;
++	background-position: -317px 0;
+ }
+ #rssi { /* rss.png */
+ 	display: inline-block;
+ 	width: 80px;
+ 	height: 15px;
+ 	vertical-align: middle;
+-	background-image: url(./img/combined.png);
++	background-image: url(img/combined.png);
+ 	background-repeat: no-repeat;
+-	background-position: -425px 0;
++	background-position: -494px 0;
+ }
+ /* ############### end of footer ############## */
+ 

@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>355</bug_id>
+          
+          <creation_ts>2008-01-11 15:15:00 +0000</creation_ts>
+          <short_desc>NPE in AnalyzerGuru.getContentType</short_desc>
+          <delta_ts>2008-01-15 11:51:10 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>analyzer</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>Linux</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXED</resolution>
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>major</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Leo Davis">ldavis</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>984</commentid>
+              <attachid>55</attachid>
+            <who name="Leo Davis">ldavis</who>
+            <bug_when>2008-01-11 15:15:22 +0000</bug_when>
+            <thetext>Created attachment 55
+Fix for NPE
+
+The find() method may return null.  This patch should fix it.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>1012</commentid>
+            <who name="Trond Norbye">trond.norbye</who>
+            <bug_when>2008-01-15 11:51:10 +0000</bug_when>
+            <thetext>Applied patch in changeset 17bd8cf5906b</thetext>
+          </long_desc>
+      
+          <attachment
+              isobsolete="0"
+              ispatch="1"
+              isprivate="0"
+              isurl="0"
+          >
+            <attachid>55</attachid>
+            <date>2008-01-11 15:15:00 +0000</date>
+            <delta_ts>2008-01-11 15:15:22 +0000</delta_ts>
+            <desc>Fix for NPE</desc>
+            <filename>AnalyzerGuru-NPE.patch</filename>
+            <type>text/plain</type>
+            <size>1556</size>
+            <attacher>ldavis</attacher>
+            
+              <data encoding="base64">IyBIRyBjaGFuZ2VzZXQgcGF0Y2gKIyBVc2VyIExlbyBEYXZpcyA8bGRhdmlzQGZvbml4LmNvbT4K
+IyBEYXRlIDEyMDAwOTIxMzEgMjUyMDAKIyBOb2RlIElEIGE3OTMxZmZiZmU3MTI0MWQ3NmYyMGRj
+MDQwYWQ4Y2RlOTRlMzVkMzAKIyBQYXJlbnQgIDYwNGQxNmUzODJjMGE5NWFhMzEzNmIwMmIyMmQ0
+ZTMxNGVjODU5YmYKZml4IE5QRSBpbiBBbmFseXplckd1cnUuZ2V0Q29udGVudFR5cGUsIGFzIGZp
+bmQgbWF5IHJldHVybiBudWxsCgpzcmMvb3JnL29wZW5zb2xhcmlzL29wZW5ncm9rL2FuYWx5c2lz
+L0FuYWx5emVyR3VydS5qYXZhCihnZXRDb250ZW50VHlwZSkgOiBjaGFuZ2VkIGFzIGRlc2NyaWJl
+ZC4KCmRpZmYgLXIgNjA0ZDE2ZTM4MmMwIC1yIGE3OTMxZmZiZmU3MSBzcmMvb3JnL29wZW5zb2xh
+cmlzL29wZW5ncm9rL2FuYWx5c2lzL0FuYWx5emVyR3VydS5qYXZhCi0tLSBhL3NyYy9vcmcvb3Bl
+bnNvbGFyaXMvb3Blbmdyb2svYW5hbHlzaXMvQW5hbHl6ZXJHdXJ1LmphdmEJVGh1IEphbiAxMCAx
+ODozMzo0NyAyMDA4IC0wODAwCisrKyBiL3NyYy9vcmcvb3BlbnNvbGFyaXMvb3Blbmdyb2svYW5h
+bHlzaXMvQW5hbHl6ZXJHdXJ1LmphdmEJRnJpIEphbiAxMSAxNTo1NTozMSAyMDA4IC0wNzAwCkBA
+IC0yNTQsMTIgKzI1NCwxNyBAQCBwdWJsaWMgY2xhc3MgQW5hbHl6ZXJHdXJ1IHsKICAgICAgKiBA
+cGFyYW0gaW4gVGhlIGlucHV0IHN0cmVhbSB3ZSB3YW50IHRvIGdldCB0aGUgY29udGVudCB0eXBl
+IGZvciAoaWYKICAgICAgKiAgICAgICAgICAgd2UgY2Fubm90IGRldGVybWluZSB0aGUgY29udGVu
+dCB0eXBlIGJ5IHRoZSBmaWxlbmFtZSkKICAgICAgKiBAcGFyYW0gZmlsZSBUaGUgbmFtZSBvZiB0
+aGUgZmlsZQotICAgICAqIEByZXR1cm4gVGhlIGNvbnRlbnRUeXBlIHN1aXRhYmxlIGZvciBwcmlu
+dGluZyB0byByZXNwb25zZS5zZXRDb250ZW50VHlwZSgpCisgICAgICogQHJldHVybiBUaGUgY29u
+dGVudFR5cGUgc3VpdGFibGUgZm9yIHByaW50aW5nIHRvIHJlc3BvbnNlLnNldENvbnRlbnRUeXBl
+KCkgb3IgbnVsbAorICAgICAqICAgICAgICAgaWYgdGhlIGZhY3Rvcnkgd2FzIG5vdCBmb3VuZAog
+ICAgICAqIEB0aHJvd3MgamF2YS5pby5JT0V4Y2VwdGlvbiBJZiBhbiBlcnJvciBvY2N1cnMgd2hp
+bGUgYWNjZXNzaW5nIHRoZSBpbnB1dAogICAgICAqICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICBzdHJlYW0uCiAgICAgICovCiAgICAgcHVibGljIHN0YXRpYyBTdHJpbmcgZ2V0Q29udGVudFR5
+cGUoSW5wdXRTdHJlYW0gaW4sIFN0cmluZyBmaWxlKSB0aHJvd3MgSU9FeGNlcHRpb24gewotICAg
+ICAgICByZXR1cm4gZmluZChpbiwgZmlsZSkuZ2V0Q29udGVudFR5cGUoKTsKKyAgICAgICAgRmls
+ZUFuYWx5emVyRmFjdG9yeSBmYWN0b3J5ID0gZmluZChpbiwgZmlsZSk7CisgICAgICAgIFN0cmlu
+ZyB0eXBlID0gbnVsbDsKKyAgICAgICAgaWYgKGZhY3RvcnkgIT0gbnVsbCkKKyAgICAgICAgICAg
+IHR5cGUgPSBmYWN0b3J5LmdldENvbnRlbnRUeXBlKCk7CisgICAgICAgIHJldHVybiB0eXBlOwog
+ICAgIH0KIAogICAgIC8qKgo=
+</data>
+
+          </attachment>
+      
+
+    </bug>
+
+</bugzilla>

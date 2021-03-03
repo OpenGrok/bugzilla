@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>16936</bug_id>
+          
+          <creation_ts>2010-08-27 04:23:00 +0000</creation_ts>
+          <short_desc>Functions with the same name will have same anchors even though they have different prototypes</short_desc>
+          <delta_ts>2011-10-10 19:41:40 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>analyzer</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>NEW</bug_status>
+          
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>major</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="seadog">seadog1234567890</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          <cc>knut.hatlen</cc>
+    
+    <cc>Lubos.Kosco</cc>
+    
+    <cc>opengrok-dev</cc>
+    
+    <cc>seadog1234567890</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>77103</commentid>
+            <who name="seadog">seadog1234567890</who>
+            <bug_when>2010-08-27 04:23:57 +0000</bug_when>
+            <thetext>&quot;btw, there is a bug with same name for multiple functions, especially in java/cpp. The anchors will be same for all those functions with same name but different prototypes.&quot;
+
+See http://www.opensolaris.org/jive/thread.jspa?threadID=131993&amp;tstart=0</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>77105</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2010-08-27 08:23:17 +0000</bug_when>
+            <thetext>I noticed the same issue when I fixed bug #3435, and I added the following comment in JFlexXref.java:
+
+http://src.opensolaris.org/source/xref/opengrok/trunk/src/org/opensolaris/opengrok/analysis/JFlexXref.java#154
+
+          // 1) Create an anchor for direct links. (Perhaps, we should only
+          //    do this when there&apos;s exactly one definition of the symbol in
+          //    this file? Otherwise, we may end up with multiple anchors with
+          //    the same name.)
+
+We no longer generate links that point to these ambiguous anchors (at least we shouldn&apos;t after bug #3435), but we still generate the anchors in case someone has old links lying around that would break if we remove them. I suppose that&apos;s not much of an issue, so we could probably stop generating those anchors altogether. Or perhaps add a counter to the anchor name if there are multiple definitions with the same name.
+
+Of course, it would be better if we could distinguish between the different signatures and provide direct links from the references to the correct definition when there are many with the same name. However, we don&apos;t have the infrastructure in place to do that (missing number of arguments and type information), so I think that would require a larger effort.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>77108</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2010-08-27 08:24:41 +0000</bug_when>
+            <thetext>Changing component to analyzer, since that&apos;s where the anchors and links are generated.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>77137</commentid>
+            <who name="seadog">seadog1234567890</who>
+            <bug_when>2010-08-30 00:59:38 +0000</bug_when>
+            <thetext>(In reply to comment #1)
+&gt; 
+&gt; Of course, it would be better if we could distinguish between the different
+&gt; signatures and provide direct links from the references to the correct
+&gt; definition when there are many with the same name. However, we don&apos;t have the
+&gt; infrastructure in place to do that (missing number of arguments and type
+&gt; information), so I think that would require a larger effort.
+
+Is this a limitation in CTags or is this information just not being used?</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>77143</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2010-08-30 05:59:00 +0000</bug_when>
+            <thetext>(In reply to comment #3)
+&gt; (In reply to comment #1)
+&gt; &gt; 
+&gt; &gt; Of course, it would be better if we could distinguish between the different
+&gt; &gt; signatures and provide direct links from the references to the correct
+&gt; &gt; definition when there are many with the same name. However, we don&apos;t have the
+&gt; &gt; infrastructure in place to do that (missing number of arguments and type
+&gt; &gt; information), so I think that would require a larger effort.
+&gt; 
+&gt; Is this a limitation in CTags or is this information just not being used?
+
+afaik we don&apos;t use this info in this way ... ctags generates signature for most functions and we just detect those parameters as local variables ... (for most languages)</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

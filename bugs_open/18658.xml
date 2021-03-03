@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>18658</bug_id>
+          
+          <creation_ts>2011-07-04 11:31:00 +0000</creation_ts>
+          <short_desc>Add a haltOnFailure property in indexer</short_desc>
+          <delta_ts>2011-07-04 15:31:22 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>indexer</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>NEW</bug_status>
+          
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>normal</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="gaurav kochhar">gaurav.cse</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          <cc>knut.hatlen</cc>
+    
+    <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>84050</commentid>
+            <who name="gaurav kochhar">gaurav.cse</who>
+            <bug_when>2011-07-04 11:31:07 +0000</bug_when>
+            <thetext>I had a huge file (456M) an XML file in my repository.
+While indexing the project the indexer stops execution when it encounters this file, and hence the indexing is incomplete.
+
+Please add a variable/flag which can be set while running indexer to continue execution even on such failures.
+E.g. JUnit plugins have &quot;haltOnFailure&quot; attribute.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>84051</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2011-07-04 15:31:22 +0000</bug_when>
+            <thetext>This may have been fixed by bug #18618. Now the indexer should try to continue also if it encounters an OutOfMemoryError when processing a file (assuming an OOME was causing the issue you saw). It doesn&apos;t prevent the OOME from happening, though.</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

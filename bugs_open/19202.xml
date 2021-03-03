@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>19202</bug_id>
+          
+          <creation_ts>2012-04-05 09:58:00 +0000</creation_ts>
+          <short_desc>Clear button clears too much now</short_desc>
+          <delta_ts>2012-04-05 09:58:56 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>webapp</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>NEW</bug_status>
+          
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>minor</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Vladimir Kotal">vladimir.kotal</reporter>
+          <assigned_to name="Lubos Kosco">Lubos.Kosco</assigned_to>
+          <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>86391</commentid>
+            <who name="Vladimir Kotal">vladimir.kotal</who>
+            <bug_when>2012-04-05 09:58:56 +0000</bug_when>
+            <thetext>After the following changeset the Clear button works again:
+
+changeset:   1364:7ae333a245e7
+branch:      0.11.1
+user:        Lubos Kosco &lt;Lubos.Kosco@Oracle.COM&gt;
+date:        Mon Mar 12 17:51:48 2012 +0100
+description:
+        fix the clear button (take2) + fix the enter button in project field to work again
+
+
+But, it clears not only the fields but also the project selection which is not desirable. The Clear button action should let the project selection to remain intact.</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

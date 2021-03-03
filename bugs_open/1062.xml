@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>1062</bug_id>
+          
+          <creation_ts>2008-04-09 11:08:00 +0000</creation_ts>
+          <short_desc>RFE: use click-throughs to improve subsequent search results</short_desc>
+          <delta_ts>2010-04-15 16:13:00 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>indexer</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>All</op_sys>
+          <bug_status>NEW</bug_status>
+          
+          
+          
+          
+          
+          
+          <priority>P4</priority>
+          <bug_severity>enhancement</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter name="Hemang Lavana">HemangLavana</reporter>
+          <assigned_to name="Trond Norbye">trond.norbye</assigned_to>
+          <cc>Lubos.Kosco</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>3471</commentid>
+            <who name="Hemang Lavana">HemangLavana</who>
+            <bug_when>2008-04-09 11:08:47 +0000</bug_when>
+            <thetext>Click-throughs on search results should contribute to the internal indexing weightage so that it can improve overall search results capabilities of opengrok tool.
+
+Hemang.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>71453</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2010-04-15 16:13:00 +0000</bug_when>
+            <thetext>we upgraded lucene to 3.0.1 and I thing we might be able to get some boosting or ranking algorithm implemented which would harvest the feedback from human posted searches and then the choosing of a hit for a query
+
+this needs however some research to be done ...</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

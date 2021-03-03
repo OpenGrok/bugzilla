@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "http://defect.opensolaris.org/bz/bugzilla.dtd">
+
+<bugzilla version="3.6.5"
+          urlbase="http://defect.opensolaris.org/bz/"
+          
+          maintainer="website-admin@opensolaris.org"
+>
+
+    <bug>
+          <bug_id>17816</bug_id>
+          
+          <creation_ts>2011-02-03 15:00:00 +0000</creation_ts>
+          <short_desc>Link to include file without file extension performs definition search</short_desc>
+          <delta_ts>2011-02-06 23:22:43 +0000</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>2</classification_id>
+          <classification>Development</classification>
+          <product>opengrok</product>
+          <component>analyzer</component>
+          <version>unspecified</version>
+          <rep_platform>ANY/Generic</rep_platform>
+          <op_sys>Linux</op_sys>
+          <bug_status>CLOSED</bug_status>
+          <resolution>FIXED</resolution>
+          
+          
+          
+          
+          
+          <priority>P3</priority>
+          <bug_severity>enhancement</bug_severity>
+          <target_milestone>0.11</target_milestone>
+          
+          
+          
+          <everconfirmed>1</everconfirmed>
+          <reporter>zweiberg</reporter>
+          <assigned_to name="Knut Anders Hatlen">knut.hatlen</assigned_to>
+          <cc>knut.hatlen</cc>
+    
+    <cc>Lubos.Kosco</cc>
+    
+    <cc>opengrok-dev</cc>
+          
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>80853</commentid>
+            <who name="">zweiberg</who>
+            <bug_when>2011-02-03 15:00:04 +0000</bug_when>
+            <thetext>OpenGrok 0.9: In xref when using file link to include file without file extenssion “#include &lt;vector&gt;” one will get java exception:
+
+java.lang.NullPointerException
+	at org.apache.jsp.search_jsp._jspService(search_jsp.java:346)
+	at org.apache.jasper.runtime.HttpJspBase.service(HttpJspBase.java:98)
+	at javax.servlet.http.HttpServlet.service(HttpServlet.java:729)
+	at org.apache.jasper.servlet.JspServletWrapper.service(JspServletWrapper.java:331)
+	at org.apache.jasper.servlet.JspServlet.serviceJspFile(JspServlet.java:329)
+	at org.apache.jasper.servlet.JspServlet.service(JspServlet.java:265)
+	at javax.servlet.http.HttpServlet.service(HttpServlet.java:729)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:269)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:188)
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:213)
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:172)
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:127)
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:117)
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:108)
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:174)
+	at org.apache.coyote.http11.Http11Processor.process(Http11Processor.java:875)
+	at org.apache.coyote.http11.Http11BaseProtocol$Http11ConnectionHandler.processConnection(Http11BaseProtocol.java:665)
+	at org.apache.tomcat.util.net.PoolTcpEndpoint.processSocket(PoolTcpEndpoint.java:528)
+	at org.apache.tomcat.util.net.LeaderFollowerWorkerThread.runIt(LeaderFollowerWorkerThread.java:81)
+	at org.apache.tomcat.util.threads.ThreadPool$ControlRunnable.run(ThreadPool.java:689)
+	at java.lang.Thread.run(Thread.java:662)</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>80855</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2011-02-03 15:39:13 +0000</bug_when>
+            <thetext>Can you please try to reproduce with 0.10 ?
+
+I remember fixing similar problem in 0.10
+
+thanks
+L</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>80932</commentid>
+            <who name="">zweiberg</who>
+            <bug_when>2011-02-04 11:23:09 +0000</bug_when>
+            <thetext>(In reply to comment #1)
+&gt; Can you please try to reproduce with 0.10 ?
+&gt; 
+&gt; I remember fixing similar problem in 0.10
+&gt; 
+&gt; thanks
+&gt; L
+
+I tried with 0.10 and it seems that now &quot;&lt;vector&gt;&quot; is searched as a definition, not as a file (which is still wrong in my opinion).</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>80933</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2011-02-04 11:40:00 +0000</bug_when>
+            <thetext>
+important thing is that you don&apos;t get the stack trace ;)
+
+and hence this changes this bug to a request for enhancement of c/c++ analyzer
+ev. ctags
+
+care to pick this up?
+it doesn&apos;t need that much love, you just need to write 3-4 of lines of lex/yacc code
+and maybe 2 lines of java code, hmm?
+
+(In reply to comment #2)
+&gt; (In reply to comment #1)
+&gt; &gt; Can you please try to reproduce with 0.10 ?
+&gt; &gt; 
+&gt; &gt; I remember fixing similar problem in 0.10
+&gt; &gt; 
+&gt; &gt; thanks
+&gt; &gt; L
+&gt; 
+&gt; I tried with 0.10 and it seems that now &quot;&lt;vector&gt;&quot; is searched as a definition,
+&gt; not as a file (which is still wrong in my opinion).</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>80934</commentid>
+            <who name="Lubos Kosco">Lubos.Kosco</who>
+            <bug_when>2011-02-04 11:41:03 +0000</bug_when>
+            <thetext>(In reply to comment #3)
+&gt; important thing is that you don&apos;t get the stack trace ;)
+&gt; 
+&gt; and hence this changes this bug to a request for enhancement of c/c++ analyzer
+&gt; ev. ctags
+&gt; 
+&gt; care to pick this up?
+&gt; it doesn&apos;t need that much love, you just need to write 3-4 of lines of lex/yacc
+&gt; code
+
+I obviously meant jflex code, sorry for typo ;)
+
+&gt; and maybe 2 lines of java code, hmm?
+&gt; 
+&gt; (In reply to comment #2)
+&gt; &gt; (In reply to comment #1)
+&gt; &gt; &gt; Can you please try to reproduce with 0.10 ?
+&gt; &gt; &gt; 
+&gt; &gt; &gt; I remember fixing similar problem in 0.10
+&gt; &gt; &gt; 
+&gt; &gt; &gt; thanks
+&gt; &gt; &gt; L
+&gt; &gt; 
+&gt; &gt; I tried with 0.10 and it seems that now &quot;&lt;vector&gt;&quot; is searched as a definition,
+&gt; &gt; not as a file (which is still wrong in my opinion).</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>80970</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2011-02-06 23:12:31 +0000</bug_when>
+            <thetext>Using defs search for #include &lt;vector&gt; sounds wrong, so we should change that. Updating bug title to reflect that this is what should be fixed, since the NPE was fixed earlier.</thetext>
+          </long_desc>
+          <long_desc isprivate="0">
+            <commentid>80971</commentid>
+            <who name="Knut Anders Hatlen">knut.hatlen</who>
+            <bug_when>2011-02-06 23:22:43 +0000</bug_when>
+            <thetext>Fixed in changeset 1163:01baa36566ca.</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>
